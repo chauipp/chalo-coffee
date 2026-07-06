@@ -1,0 +1,82 @@
+// src/constants/api-endpoints.ts
+
+export const API = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    REGISTER: "/auth/register",
+    REFRESH: "/auth/refresh-token",
+    LOGOUT: "/auth/logout",
+    ME: "/auth/me",
+  },
+  USER: {
+    PAGE: "/user/page",
+    CREATE: "/user/create",
+    UPDATE: "/user/update",
+    CHANGE_PASSWORD: "/user/change-password",
+    DELETE: "/user/delete",
+  },
+  CATEGORY: {
+    LIST: "/menu/category/list",
+    SIMPLE_LIST: "/menu/category/simple-list",
+    DETAIL: "/menu/category/detail",
+    CREATE: "/menu/category/create",
+    UPDATE: "/menu/category/update",
+    DELETE: "/menu/category/delete",
+  },
+  PRODUCT: {
+    LIST: "/menu/product/list",
+    PAGE: "/menu/product/page",
+    DETAIL: "/menu/product/detail",
+    SIMPLE_LIST: "/menu/product/simple-list",
+    CREATE: "/menu/product/create",
+    UPDATE: "/menu/product/update",
+    UPDATE_STATUS: "/menu/product/status",
+    DELETE: "/menu/product/delete",
+  },
+  TABLE: {
+    PAGE: "/table/page",
+    LIST: "/table/list",
+    BY_TOKEN: "/table/by-token",
+    AREAS: "/table/areas",
+    CREATE: "/table/create",
+    UPDATE: "/table/update",
+    DELETE: "/table/delete",
+    REGENERATE_QR: "/table/regenerate-qr",
+  },
+  ORDER: {
+    CREATE: "/order/create",
+    PAGE: "/order/page",
+    ACTIVE: "/order/active",
+    DETAIL: "/order/detail",
+    BY_TOKEN: "/order/by-token",
+    ESTIMATED_WAIT: "/order/estimated-wait",
+    UPDATE_STATUS: "/order/status",
+    REQUEST_PAYMENT: "/order/request-payment",
+    PAY: "/order/pay",
+    PAY_ALL: "/order/pay-all",
+    CHECKOUT_PREVIEW: "/order/checkout/preview",
+    CHECKOUT_START: "/order/checkout/start",
+    CHECKOUT_COMPLETE: "/order/checkout/complete",
+    STATS_REVENUE: "/order/stats/revenue",
+    STATS_TOP_PRODUCTS: "/order/stats/top-products",
+  },
+  PAGER: {
+    LIST: "/pager/list",
+    ASSIGN: "/pager/assign",
+    CALL: "/pager/call",
+    RELEASE: "/pager/release",
+  },
+  SETTINGS: {
+    GET: "/settings",
+    UPDATE: "/settings",
+  },
+  UPLOAD: {
+    IMAGE: "/upload/image",
+  },
+  SSE: {
+    ORDER_EVENTS: "/order/events",
+  },
+  HEALTH: {
+    CHECK: "/health",
+  },
+} as const;
