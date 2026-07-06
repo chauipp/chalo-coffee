@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-brand-50: #FFF8EE;
+  --color-brand-100: #FEECD0;
+  --color-brand-200: #FDD4A0;
+  --color-brand-300: #FBB060;
+  --color-brand-400: #F8921A;
+  --color-brand-500: #E67E0F;
+  --color-brand-600: #B85E09;
+  --color-brand-700: #8A4306;
+  --color-brand-800: #5C2C04;
+  --color-brand-900: #2E1602;
+
+  /* Coffee tones */
+  --color-coffee-light: #D4A96A;
+  --color-coffee-default: #8B5E3C;
+  --color-coffee-dark: #4A2C17;
+
+  /* Font */
+  --font-sans: var(--font-inter), sans-serif;
+
+  /* Breakpoints bổ sung */
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1280px;
+}
+
+/* ── Receipt printing ─────────────────────────────────────────── */
+/* On screen the receipt is hidden; only #receipt-print is visible
+   when printing so no surrounding UI (modal, POS panels) leaks in. */
+.receipt-print-root {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #receipt-print,
+  #receipt-print * {
+    visibility: visible;
+  }
+  #receipt-print {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm; /* standard receipt roll width */
+    margin: 0;
+    padding: 4mm;
+    color: #000;
+    background: #fff;
+    font-family: ui-monospace, "Courier New", monospace;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .receipt-print-root {
+    display: block;
+  }
+  @page {
+    margin: 0;
+  }
+}
