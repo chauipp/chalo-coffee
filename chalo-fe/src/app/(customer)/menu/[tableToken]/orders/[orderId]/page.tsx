@@ -295,7 +295,7 @@ export default function OrderTrackingPage() {
         </main>
 
         {/* Cụm Action Bottom (Sticky Dock) */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 px-4 py-4 z-30 shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.1)] space-y-3">
+        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-gray-100 bg-white/90 px-4 py-4 shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.1)] backdrop-blur-lg dark:border-gray-800 dark:bg-gray-900/90">
           {/* Nút Thanh toán (Nổi bật nhất) */}
           {canPay && (
             <button

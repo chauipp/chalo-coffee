@@ -176,7 +176,7 @@ export default function OrdersPage() {
         </main>
 
         {/* bottom CTA */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 px-4 py-4 z-30 space-y-2.5">
+        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-gray-100 bg-white px-4 py-4 dark:border-gray-800 dark:bg-gray-900">
           {unpaidOrders.length > 0 && (
             <button
               onClick={() => router.push(`/menu/${tableToken}/checkout`)}

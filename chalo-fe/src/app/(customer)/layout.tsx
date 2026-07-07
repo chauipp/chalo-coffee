@@ -4,5 +4,9 @@ export default function CustomerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="max-w-md mx-auto">{children}</div>;
+  return (
+    <div className="mx-auto min-h-screen w-full max-w-md bg-gray-50 dark:bg-gray-950">
+      {children}
+    </div>
+  );
 }

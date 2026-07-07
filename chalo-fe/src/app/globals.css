@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+body {
+  margin: 0;
+  background: #f9fafb;
+}
+
+html.dark body {
+  background: #030712;
+}
+
 @theme {
   /* Brand colors */
   --color-brand-50: #FFF8EE;
