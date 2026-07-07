@@ -151,7 +151,7 @@ export default function OrdersPage() {
                       <span className="font-medium text-green-600 dark:text-green-400">
                         -{" "}
                         {orders
-                          .filter((o) => o.status)
+                          .filter((o) => o.paidStatus)
                           .reduce((s, o) => s + o.totalAmount, 0)
                           .toLocaleString("vi-VN")}
                         đ
