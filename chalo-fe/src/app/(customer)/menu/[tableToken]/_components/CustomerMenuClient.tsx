@@ -138,14 +138,24 @@ export const CustomerMenuClient = ({
 
             <div className="grid gap-3 md:grid-cols-[minmax(16rem,24rem)_1fr] md:items-center">
               <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">
-                  Tìm
-                </span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Tìm món..."
-                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-12 pr-4 text-sm text-gray-950 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-50 dark:placeholder:text-gray-500"
+                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-950 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-50 dark:placeholder:text-gray-500"
                 />
               </div>
 
