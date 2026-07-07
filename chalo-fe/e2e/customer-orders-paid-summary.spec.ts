@@ -16,7 +16,8 @@ test("orders page paid-total only counts orders with paidStatus true", async ({
   const auth = { Authorization: `Bearer ${adminToken}` };
 
   const tablesRes = await request.get(`${BE}/table/list`, { headers: auth });
-  const tableToken: string = (await tablesRes.json()).data[0].qrToken;
+  const tables = (await tablesRes.json()).data;
+  const tableToken: string = (tables[1] ?? tables[0]).qrToken;
 
   const prodRes = await request.get(`${BE}/menu/product/simple-list`, {
     headers: auth,
