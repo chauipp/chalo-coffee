@@ -95,7 +95,7 @@ export const CustomerMenuClient = ({
 
       <div className="min-h-screen bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-gray-50">
         <header className="sticky top-0 z-30 border-b border-gray-100/80 bg-white/90 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-gray-800/80 dark:bg-gray-950/90 dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          <div className="mx-auto flex flex-col gap-3 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white shadow-sm">
@@ -184,7 +184,7 @@ export const CustomerMenuClient = ({
           </div>
         </header>
 
-        <main className="mx-auto max-w-6xl px-4 pb-28 pt-4 sm:px-6 lg:px-8">
+        <main className="mx-auto px-4 pb-28 pt-4">
           {activeCateId || search ? (
             <>
               {filterProduct.length === 0 ? (
@@ -192,7 +192,7 @@ export const CustomerMenuClient = ({
                   <p className="text-sm">Không tìm thấy món phù hợp</p>
                 </div>
               ) : (
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-3">
                   {filterProduct.map((p) => (
                     <ProductCard
                       product={p}
@@ -210,7 +210,7 @@ export const CustomerMenuClient = ({
                   <h2 className="mb-3 text-base font-bold text-gray-950 dark:text-gray-50 sm:text-lg">
                     {category.name}
                   </h2>
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid gap-3">
                     {products.map((p) => (
                       <ProductCard
                         product={p}
