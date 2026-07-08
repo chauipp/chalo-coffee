@@ -9,6 +9,7 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   size?: "sm" | "md" | "lg";
+  panelTestId?: string;
 }
 
 const sizeClass = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
@@ -17,6 +18,7 @@ export const Modal = ({
   children,
   onClose,
   open,
+  panelTestId,
   size = "md",
   title,
 }: ModalProps) => {
@@ -38,6 +40,10 @@ export const Modal = ({
       />
       {/* panel */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        data-testid={panelTestId}
         className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-gray-900 shadow-2xl`}
       >
         {/* header */}
