@@ -1728,7 +1728,7 @@ git commit -m "feat(fe): khu pha chế lấy món làm trung tâm, tick tự đ�
 
 ---
 
-## - [ ] Task 9: FE — Dải tiến độ theo bàn + popup
+## - [x] Task 9: FE — Dải tiến độ theo bàn + popup
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/_components/TableProgressBar.tsx`
