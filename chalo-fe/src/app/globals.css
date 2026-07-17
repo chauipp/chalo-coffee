@@ -5,6 +5,23 @@
    chuyển dark: sang class-based — thiếu dòng này là toggle vô tác dụng. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Tailwind v3 đặt cursor:pointer cho button trong preflight; v4 bỏ đi, nên mọi
+   button trong app trỏ mũi tên thường. Khôi phục ở đây thay vì rải cursor-pointer
+   vào 112 button — người viết button tiếp theo không phải nhớ gì cả.
+   Backdrop là <div> nên không dính luật: click ra ngoài để đóng không phải nút. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+}
+
 body {
   margin: 0;
   background: #f9fafb;

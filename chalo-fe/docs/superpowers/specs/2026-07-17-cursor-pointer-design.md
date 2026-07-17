@@ -76,16 +76,20 @@ Add `e2e/cursor.spec.ts`. Every anchor below was verified against the current co
 | # | Anchor | Expected |
 |---|---|---|
 | 1 | Sidebar avatar trigger, `data-testid="user-menu-trigger"` — an enabled `<button>` | `pointer` |
-| 2 | `/admin/orders` → DataTable's "← Trước" on page 1 (`disabled={!pagination.hasPrevPage}`) | `not-allowed` |
+| 2 | Customer menu → the quantity stepper's "Giảm số lượng" button | `not-allowed` |
 | 3 | `/admin/dashboard` → the period filter, a `<Select>` rendering `<select>` | `pointer` |
-| 4 | `/admin/menu/categories` → open "Thêm danh mục mới" → the modal backdrop | `default` |
+| 4 | `/admin/menu/categories` → open "Thêm danh mục" → the modal backdrop | `auto` |
 | 5 | A sidebar nav `<Link>` → `<a href>` | `pointer` |
 
-All five live behind an admin login, so one `loginAsAdmin` helper serves the file. Follow `e2e/admin-user-menu.spec.ts`, which already has that helper — do not duplicate it across files if it can be imported.
+The backdrop (#4) has no test id and must not gain one — this spec changes no `.tsx`. Select it by class substring: `div[class*="bg-black/50"]`. #4 and #5 are the load-bearing guards: they pin the two decisions (backdrops excluded, links untouched) that a future widening of the rule would silently break. Both already pass before the fix — that is their job.
 
-The backdrop (#4) has no test id and must not gain one — this spec changes no `.tsx`. Select it by class substring: `div[class*="bg-black/50"]`. #4 and #5 are the load-bearing tests: they pin the two decisions (backdrops excluded, links untouched) that a future widening of the rule would silently break.
+**Two things the red run corrected in this spec, both worth recording:**
 
-**Note on the disabled anchor:** the login submit button is *not* usable for #2. It is `disabled={isLoading}` — disabled only while the request is in flight, not when the form is empty.
+*The backdrop computes to `auto`, not `default`.* `auto` is the CSS initial value for `cursor`; `default` is an explicit arrow. Buttons, by contrast, do compute to `default` before the fix.
+
+*The disabled anchor must be a button with no cursor utility of its own.* The first draft used DataTable's "← Trước" — it passed **before** the fix, because DataTable already declares `disabled:cursor-not-allowed`, so it proved nothing about the global rule. The quantity stepper is the right anchor: `disabled={quantity <= 1}` with `quantity` initialised to 1 makes it disabled at rest, and `stepperButtonClass` carries only `disabled:opacity-30` — no cursor. It genuinely fails without the rule.
+
+The login submit button is also unusable for #2: it is `disabled={isLoading}`, disabled only while the request is in flight, so a test would race the loading state.
 
 ## Out of scope
 
