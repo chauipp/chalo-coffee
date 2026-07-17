@@ -114,15 +114,23 @@ export class OrderService {
       .createQueryBuilder('o')
       .leftJoinAndSelect('o.items', 'items')
       .leftJoinAndSelect('o.table', 'table')
-      // Chỉ lấy các đơn hàng đang trong luồng phục vụ
-      .where('o.status IN (:...statuses)', {
-        statuses: [
-          OrderStatus.PENDING,
-          OrderStatus.CONFIRMED,
-          OrderStatus.PREPARING,
-          OrderStatus.READY,
-        ],
-      })
+      // Đang xử lý = (PENDING/CONFIRMED/PREPARING/READY) HOẶC (COMPLETED nhưng
+      // chưa thanh toán). Đơn đã phục vụ mà chưa thu tiền vẫn phải đứng trong
+      // bảng staff (cột "Đã phục vụ") để thu ngân biết mà đi thu; chỉ rời bảng
+      // khi COMPLETED + đã trả tiền.
+      .where(
+        '(o.status IN (:...statuses) OR (o.status = :completedStatus AND o.paidStatus = :isUnpaid))',
+        {
+          statuses: [
+            OrderStatus.PENDING,
+            OrderStatus.CONFIRMED,
+            OrderStatus.PREPARING,
+            OrderStatus.READY,
+          ],
+          completedStatus: OrderStatus.COMPLETED,
+          isUnpaid: false,
+        },
+      )
       // Bảng staff reset lúc 0h00 mỗi đêm — đơn hôm qua không còn là "đang xử lý"
       .andWhere('o.createdAt >= :cutoff', { cutoff: this.startOfTodayVN() })
       // Đơn hàng cũ nhất xếp lên đầu (First In - First Out)
