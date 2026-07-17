@@ -97,6 +97,18 @@ export class OrderService {
     };
   }
 
+  /**
+   * 0h00 hôm nay theo giờ VN (+07:00). Bảng staff reset theo mốc này mỗi đêm.
+   * Không cần cron — chỉ là điều kiện truy vấn, tự đúng khi đồng hồ qua nửa đêm.
+   */
+  private startOfTodayVN(): Date {
+    const nowVN = new Date(Date.now() + 7 * 60 * 60 * 1000);
+    const y = nowVN.getUTCFullYear();
+    const m = String(nowVN.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(nowVN.getUTCDate()).padStart(2, '0');
+    return new Date(`${y}-${m}-${d}T00:00:00.000+07:00`);
+  }
+
   async getActiveQueue() {
     const orders = await this.orderRepo
       .createQueryBuilder('o')
@@ -111,10 +123,8 @@ export class OrderService {
           OrderStatus.READY,
         ],
       })
-      // Đơn bỏ quên quá 24h không còn là "đang xử lý" — khỏi ngập bảng bếp
-      .andWhere('o.createdAt > :cutoff', {
-        cutoff: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      })
+      // Bảng staff reset lúc 0h00 mỗi đêm — đơn hôm qua không còn là "đang xử lý"
+      .andWhere('o.createdAt >= :cutoff', { cutoff: this.startOfTodayVN() })
       // Đơn hàng cũ nhất xếp lên đầu (First In - First Out)
       .orderBy('o.createdAt', 'ASC')
       .getMany();
