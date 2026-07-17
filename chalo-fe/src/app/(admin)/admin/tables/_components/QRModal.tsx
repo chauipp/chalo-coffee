@@ -1,8 +1,10 @@
 "use client";
 // src/app/(admin)/admin/tables/_components/QRModal.tsx
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
+import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
 import { Modal } from "@/components/shared/ui/Modal";
 import { TableDto, useRegenerateQr } from "@/services/table";
+import { useState } from "react";
 
 interface QRModalProps {
   table: TableDto | null;
@@ -11,8 +13,9 @@ interface QRModalProps {
 
 export const QRModal = ({ table, onClose }: QRModalProps) => {
   const regenerateQrMutation = useRegenerateQr();
+  const [showRegenConfirm, setShowRegenConfirm] = useState(false);
 
-  if (!table) return;
+  if (!table) return null;
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
@@ -31,7 +34,7 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
         <body>
           <img src="${table.qrCodeUrl}" />
           <h2>${table.name}</h2>
-          <p>Khu vực: ${table.area}</p>
+          ${table.area ? `<p>Khu vực: ${table.area}</p>` : ""}
           <script>window.onload = () => { window.print(); window.close(); }</script>
         </body>
       </html>
@@ -65,7 +68,7 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
         {/* Actions */}
         <div className="flex w-full gap-3">
           <button
-            onClick={() => regenerateQrMutation.mutate(table.id)}
+            onClick={() => setShowRegenConfirm(true)}
             disabled={regenerateQrMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
           >
@@ -82,6 +85,20 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showRegenConfirm}
+        title="Tạo mã QR mới?"
+        message="Mã QR hiện tại của bàn sẽ hết hiệu lực ngay lập tức. Khách đang dùng mã cũ sẽ không truy cập được nữa."
+        confirmLabel="Tạo QR mới"
+        isLoading={regenerateQrMutation.isPending}
+        onConfirm={() =>
+          regenerateQrMutation.mutate(table.id, {
+            onSuccess: () => setShowRegenConfirm(false),
+          })
+        }
+        onClose={() => setShowRegenConfirm(false)}
+      />
     </Modal>
   );
 };

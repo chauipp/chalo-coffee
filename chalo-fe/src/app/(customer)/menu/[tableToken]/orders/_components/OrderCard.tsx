@@ -1,6 +1,6 @@
 // src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.tsx
 import { OrderDto } from "@/services/order/order.types";
-import { STATUS_META } from "../page";
+import { STATUS_META } from "./status-meta";
 
 export const OrderCard = ({
   order,
@@ -72,8 +72,7 @@ export const OrderCard = ({
       {/* footer */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800">
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          Tổng: {order.items.reduce((sum, i) => sum + i.quantity, 0)} món (đồ
-          uống, đồ ăn, ...)
+          Tổng: {order.items.reduce((sum, i) => sum + i.quantity, 0)} món
         </span>
         <span className="text-base font-bold text-brand-600 dark:text-brand-400">
           {order.totalAmount.toLocaleString("vi-VN")}đ

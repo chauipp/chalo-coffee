@@ -11,7 +11,12 @@ export const OccupiedModal = ({
 }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm px-0 sm:px-4">
-      <div className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${tableName} đang được sử dụng`}
+        className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]"
+      >
         {/* Icon */}
         <div className="flex justify-center mb-4">
           <div className="size-16 rounded-2xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-3xl">
@@ -24,20 +29,23 @@ export const OccupiedModal = ({
         </h2>
 
         {/* description */}
-        <p>
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">
           Bàn này đang có đơn chưa được thanh toán.
           <br />
           Nếu quý khách chung nhóm, hãy chọn{" "}
-          <strong>"Chung nhóm, tiếp tục"</strong>.
+          <strong className="text-gray-700 dark:text-gray-200">
+            &quot;Ăn chung, tiếp tục đặt món&quot;
+          </strong>
+          .
         </p>
 
         {/* actions */}
-        <div>
+        <div className="space-y-3">
           <button
             onClick={onContinue}
             className="w-full rounded-2xl bg-brand-500 dark:bg-brand-600 py-3.5 text-sm font-semibold text-white hover:bg-brand-600 dark:hover:bg-brand-500 active:scale-[0.98] transition-all"
           >
-            🍽️ Ăn chung, tiếp tục đặt món
+            Ăn chung, tiếp tục đặt món
           </button>
           <button
             onClick={onGoBack}

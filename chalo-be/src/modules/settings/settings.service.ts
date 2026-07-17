@@ -36,6 +36,11 @@ export class SettingsService {
     const settings = await this.get();
     if (dto.waitTimeEnabled !== undefined) settings.waitTimeEnabled = dto.waitTimeEnabled;
     if (dto.baristaCount !== undefined) settings.baristaCount = dto.baristaCount;
+    // Chuỗi rỗng = xoá cấu hình (lưu null)
+    if (dto.bankBin !== undefined) settings.bankBin = dto.bankBin || null;
+    if (dto.bankAccountNo !== undefined) settings.bankAccountNo = dto.bankAccountNo || null;
+    if (dto.bankAccountName !== undefined)
+      settings.bankAccountName = dto.bankAccountName.trim() || null;
     return this.settingsRepo.save(settings);
   }
 }

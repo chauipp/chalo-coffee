@@ -1,58 +1,22 @@
 // src/app/(customer)/menu/[tableToken]/orders/page.tsx
 "use client";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
+import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
 import { useGetOrderByToken } from "@/services/order/order.queries";
-import { OrderStatus } from "@/services/order/order.types";
 import { useParams, useRouter } from "next/navigation";
 import { OrderCard } from "./_components/OrderCard";
-
-export const STATUS_META: Record<
-  OrderStatus,
-  { label: string; emoji: string; bgColor: string; textColor: string }
-> = {
-  PENDING: {
-    label: "Chờ xác nhận",
-    emoji: "📋",
-    bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
-    textColor: "text-yellow-700 dark:text-yellow-400",
-  },
-  CONFIRMED: {
-    label: "Đã xác nhận",
-    emoji: "✅",
-    bgColor: "bg-blue-100 dark:bg-blue-900/30",
-    textColor: "text-blue-700 dark:text-blue-400",
-  },
-  PREPARING: {
-    label: "Đang pha chế",
-    emoji: "☕",
-    bgColor: "bg-orange-100 dark:bg-orange-900/30",
-    textColor: "text-orange-700 dark:text-orange-400",
-  },
-  READY: {
-    label: "Sẵn sàng",
-    emoji: "🔔",
-    bgColor: "bg-green-100 dark:bg-green-900/30",
-    textColor: "text-green-700 dark:text-green-400",
-  },
-  COMPLETED: {
-    label: "Đã phục vụ",
-    emoji: "🎁",
-    bgColor: "bg-gray-100 dark:bg-gray-800",
-    textColor: "text-gray-600 dark:text-gray-400",
-  },
-  CANCELLED: {
-    label: "Đã huỷ",
-    emoji: "❌",
-    bgColor: "bg-red-100 dark:bg-red-900/30",
-    textColor: "text-red-700 dark:text-red-400",
-  },
-};
 
 export default function OrdersPage() {
   const { tableToken } = useParams<{ tableToken: string }>();
   const router = useRouter();
 
-  const { data: orders, isLoading } = useGetOrderByToken(tableToken);
+  const {
+    data: orders,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetOrderByToken(tableToken);
+  useCustomerOrderEvents(tableToken);
 
   const unpaidOrders = orders?.filter((o) => !o.paidStatus) ?? [];
   const unpaidTotal = unpaidOrders.reduce((sum, o) => sum + o.totalAmount, 0);
@@ -88,6 +52,18 @@ export default function OrdersPage() {
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
+            </div>
+          ) : isError ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 dark:text-gray-500">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Không tải được danh sách đơn
+              </p>
+              <button
+                onClick={() => refetch()}
+                className="rounded-full bg-brand-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors"
+              >
+                Thử lại
+              </button>
             </div>
           ) : !orders || orders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 dark:text-gray-500">
@@ -146,7 +122,7 @@ export default function OrdersPage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-green-600 dark:text-green-400">
                         Đã thanh toán{" "}
-                        {orders.filter((o) => o.paidStatus).length} dơn
+                        {orders.filter((o) => o.paidStatus).length} đơn
                       </span>
                       <span className="font-medium text-green-600 dark:text-green-400">
                         -{" "}
@@ -182,7 +158,7 @@ export default function OrdersPage() {
               onClick={() => router.push(`/menu/${tableToken}/checkout`)}
               className="w-full rounded-2xl bg-green-500 py-3.5 text-base font-semibold text-white hover:bg-green-600 active:scale-[0.98] transition-all shadow-sm"
             >
-              💳 Thanh toán tất cả — {unpaidTotal.toLocaleString("vi-VN")}đ
+              Thanh toán tất cả · {unpaidTotal.toLocaleString("vi-VN")}đ
             </button>
           )}
           <button

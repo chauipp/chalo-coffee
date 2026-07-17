@@ -1,6 +1,7 @@
 // src/app/(customer)/menu/[tableToken]/orders/[orderId]/page.tsx
 "use client";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
+import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
 import {
   useGetOrderByToken,
   usePayOrder,
@@ -28,6 +29,7 @@ export default function OrderTrackingPage() {
 
   const { data: orders, isLoading } = useGetOrderByToken(tableToken);
   const order = orders?.find((o) => o.id === orderId);
+  useCustomerOrderEvents(tableToken);
 
   const payOrderMutation = usePayOrder(tableToken);
 
@@ -46,10 +48,10 @@ export default function OrderTrackingPage() {
             ✅
           </div>
           <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-            Đơn hàng đã hoàn tất
+            Đơn không còn hoạt động
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-            Đơn đã được phục vụ và thanh toán xong.
+            Đơn này có thể đã được phục vụ và thanh toán xong.
           </p>
           <button
             onClick={() => router.push(`/menu/${tableToken}/orders`)}
@@ -72,7 +74,7 @@ export default function OrderTrackingPage() {
   const canPay = !isPaid && !isCancelled;
 
   const handlePay = async () => {
-    await payOrderMutation.mutateAsync({ orderId: order.id });
+    await payOrderMutation.mutateAsync({ orderId: order.id, tableToken });
     setShowPayConfirm(false);
   };
 
@@ -84,6 +86,7 @@ export default function OrderTrackingPage() {
           onCancel={() => setShowPayConfirm(false)}
           onConfirm={handlePay}
           total={order.totalAmount}
+          addInfo={`CHALO ${order.tableName ?? ""} DON ${order.id.slice(-6)}`}
         />
       )}
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

@@ -36,9 +36,10 @@ test("orders page paid-total only counts orders with paidStatus true", async ({
   });
   expect(unpaidOrderRes.status()).toBe(201);
 
-  // Mark only the first order as paid (public endpoint, no auth needed).
+  // Mark only the first order as paid (public endpoint; requires the table's
+  // qrToken to match the order — anti-abuse check).
   const payRes = await request.post(`${BE}/order/pay`, {
-    data: { orderId: paidOrder.id },
+    data: { orderId: paidOrder.id, tableToken },
   });
   expect(payRes.ok()).toBeTruthy();
 

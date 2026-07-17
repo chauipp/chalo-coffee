@@ -8,7 +8,8 @@ export type SseEventType =
   | 'payment_request_batch'
   | 'order_status_changed'
   | 'checkout_completed'
-  | 'payment_completed';
+  | 'payment_completed'
+  | 'staff_call';
 
 export interface SseEvent {
   type: SseEventType;
@@ -26,5 +27,20 @@ export class SseService {
   stream(types?: SseEventType[]): Observable<SseEvent> {
     if (!types || types.length === 0) return this.subject.asObservable();
     return this.subject.pipe(filter((e) => types.includes(e.type)));
+  }
+
+  /** Stream công khai cho khách: chỉ sự kiện của đúng bàn (khớp tableToken). */
+  streamForTable(tableToken: string): Observable<SseEvent> {
+    const customerTypes: SseEventType[] = [
+      'order_status_changed',
+      'payment_completed',
+      'new_order',
+    ];
+    return this.subject.pipe(
+      filter(
+        (e) =>
+          customerTypes.includes(e.type) && e.data.tableToken === tableToken,
+      ),
+    );
   }
 }

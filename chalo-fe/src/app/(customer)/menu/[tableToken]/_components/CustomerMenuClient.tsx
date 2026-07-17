@@ -2,11 +2,14 @@
 // src/app/(customer)/menu/[tableToken]/_components/CustomerMenuClient.tsx
 import { useTheme } from "@/providers/ThemeProvider";
 import { CategoryDto, ProductDto } from "@/services/menu";
+import { useCallStaff } from "@/services/order/order.queries";
 import { useCartStore } from "@/stores/cart.store";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { OccupiedModal } from "./OccupiedModal";
 import { ProductCard } from "./ProductCard";
+
+const CALL_STAFF_COOLDOWN_MS = 30_000;
 
 interface CustomerMenuClientProps {
   tableName: string;
@@ -32,19 +35,48 @@ export const CustomerMenuClient = ({
   const { theme, changeTheme } = useTheme();
   const [activeCateId, setActiveCateId] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
+  // Cảnh báo bàn đang có khách — mỗi phiên chỉ hiện một lần, khoá theo token
   const [showOccupiedModal, setShowOccupiedModal] = useState<boolean>(() => {
     if (typeof window === "undefined" || !isOccupied) return false;
-
-    const storageKey = `occupied_modal_${tableName}`;
-    const hasShownModal = sessionStorage.getItem(storageKey);
-    if (hasShownModal) return false;
-
+    const storageKey = `occupied_modal_${tableToken}`;
+    if (sessionStorage.getItem(storageKey)) return false;
     sessionStorage.setItem(storageKey, "true");
     return true;
   });
+  const [callCooldown, setCallCooldown] = useState<boolean>(false);
+  const cooldownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const itemCount = useCartStore((s) => s.getItemCount());
   const addItem = useCartStore((s) => s.addItem);
+  const setTable = useCartStore((s) => s.setTable);
+  const callStaffMutation = useCallStaff();
+
+  // Giỏ hàng gắn với bàn — quét QR bàn khác thì làm mới giỏ
+  useEffect(() => {
+    if (tableToken) setTable(tableToken);
+  }, [tableToken, setTable]);
+
+  useEffect(() => {
+    return () => {
+      if (cooldownTimer.current) clearTimeout(cooldownTimer.current);
+    };
+  }, []);
+
+  const handleCallStaff = () => {
+    if (callCooldown || callStaffMutation.isPending) return;
+    callStaffMutation.mutate(
+      { tableToken },
+      {
+        onSuccess: () => {
+          setCallCooldown(true);
+          cooldownTimer.current = setTimeout(
+            () => setCallCooldown(false),
+            CALL_STAFF_COOLDOWN_MS,
+          );
+        },
+      },
+    );
+  };
 
   const filterProduct = useMemo(() => {
     let list = initProducts;
@@ -68,13 +100,18 @@ export const CustomerMenuClient = ({
       .filter((g) => g.products.length > 0);
   }, [search, activeCateId, initProducts, categories]);
 
-  const handleAddToCart = (product: ProductDto, quantity: number) => {
+  const handleAddToCart = (
+    product: ProductDto,
+    quantity: number,
+    itemNote?: string,
+  ) => {
     addItem(
       {
         productId: product.id,
         price: product.price,
         productImageUrl: product.imageUrl,
         productName: product.name,
+        note: itemNote,
       },
       quantity,
     );
@@ -112,6 +149,31 @@ export const CustomerMenuClient = ({
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCallStaff}
+                  disabled={callCooldown || callStaffMutation.isPending}
+                  aria-label="Gọi nhân viên"
+                  title={
+                    callCooldown
+                      ? "Đã gọi, nhân viên đang đến"
+                      : "Gọi nhân viên đến bàn"
+                  }
+                  className="flex size-8 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:bg-brand-50 hover:text-brand-600 disabled:opacity-40 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="size-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                  </svg>
+                </button>
                 <div className="flex rounded-full border border-gray-200 bg-gray-50 p-0.5 dark:border-gray-800 dark:bg-gray-900">
                   {themeOptions.map((option) => (
                     <button
@@ -160,8 +222,8 @@ export const CustomerMenuClient = ({
               </div>
 
               <div className="relative min-w-0">
-                <div className="pointer-events-none absolute inset-y-1 left-0 z-10 w-6 bg-gradient-to-r from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
-                <div className="pointer-events-none absolute inset-y-1 right-0 z-10 w-6 bg-gradient-to-l from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
+                <div className="pointer-events-none absolute inset-y-1 left-0 z-10 w-6 bg-linear-to-r from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
+                <div className="pointer-events-none absolute inset-y-1 right-0 z-10 w-6 bg-linear-to-l from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
                 <div className="flex gap-2 overflow-x-auto rounded-full border border-gray-200 bg-gray-100/80 p-1 shadow-inner dark:border-gray-800 dark:bg-gray-900/80 md:justify-end">
                   <button
                     onClick={() => setActiveCateId(null)}
@@ -195,7 +257,16 @@ export const CustomerMenuClient = ({
         </header>
 
         <main className="mx-auto px-4 pb-28 pt-4">
-          {activeCateId || search ? (
+          {initProducts.length === 0 ? (
+            <div className="py-24 text-center text-gray-500 dark:text-gray-400">
+              <p className="text-sm font-medium">
+                Thực đơn đang được cập nhật
+              </p>
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                Vui lòng quay lại sau hoặc gọi nhân viên để được hỗ trợ.
+              </p>
+            </div>
+          ) : activeCateId || search ? (
             <>
               {filterProduct.length === 0 ? (
                 <div className="py-20 text-center text-gray-500 dark:text-gray-400">
@@ -207,7 +278,9 @@ export const CustomerMenuClient = ({
                     <ProductCard
                       product={p}
                       key={p.id}
-                      onAddToCart={(quantity) => handleAddToCart(p, quantity)}
+                      onAddToCart={(quantity, itemNote) =>
+                        handleAddToCart(p, quantity, itemNote)
+                      }
                     />
                   ))}
                 </div>
@@ -225,7 +298,9 @@ export const CustomerMenuClient = ({
                       <ProductCard
                         product={p}
                         key={p.id}
-                        onAddToCart={(quantity) => handleAddToCart(p, quantity)}
+                        onAddToCart={(quantity, itemNote) =>
+                        handleAddToCart(p, quantity, itemNote)
+                      }
                       />
                     ))}
                   </div>
@@ -255,7 +330,10 @@ export const CustomerMenuClient = ({
             <circle cx="19" cy="21" r="1" />
             <path d="M2.05 2.05h2l2.4 12.25a2 2 0 0 0 2 1.7h8.8a2 2 0 0 0 2-1.55l1.35-7.45H5.12" />
           </svg>
-          <span className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-gray-950 px-1.5 py-0.5 text-xs font-bold text-white shadow-sm ring-2 ring-white dark:bg-white dark:text-gray-950 dark:ring-gray-950">
+          <span
+            key={itemCount}
+            className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-gray-950 px-1.5 py-0.5 text-xs font-bold text-white shadow-sm ring-2 ring-white motion-safe:animate-[badge-pop_0.25s_cubic-bezier(0.16,1,0.3,1)] dark:bg-white dark:text-gray-950 dark:ring-gray-950"
+          >
             {itemCount}
           </span>
         </button>

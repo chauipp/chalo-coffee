@@ -20,6 +20,7 @@ import {
   RequestPaymentDto,
   PaySingleOrderDto,
   PayUnpaidOrdersByTableDto,
+  CallStaffDto,
 } from './dto/update-order-status.dto';
 import {
   CheckoutPreviewDto,
@@ -40,7 +41,6 @@ const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
   [OrderStatus.CONFIRMED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
   [OrderStatus.PREPARING]: [OrderStatus.READY, OrderStatus.CANCELLED],
   [OrderStatus.READY]: [OrderStatus.COMPLETED, OrderStatus.CANCELLED],
-  [OrderStatus.COMPLETED]: [OrderStatus.CANCELLED],
 };
 
 @Injectable()
@@ -101,6 +101,10 @@ export class OrderService {
           OrderStatus.PREPARING,
           OrderStatus.READY,
         ],
+      })
+      // Đơn bỏ quên quá 24h không còn là "đang xử lý" — khỏi ngập bảng bếp
+      .andWhere('o.createdAt > :cutoff', {
+        cutoff: new Date(Date.now() - 24 * 60 * 60 * 1000),
       })
       // Đơn hàng cũ nhất xếp lên đầu (First In - First Out)
       .orderBy('o.createdAt', 'ASC')
@@ -369,7 +373,12 @@ export class OrderService {
 
       this.sseService.emit({
         type: 'new_order',
-        data: { orderId: result.id, tableId: result.tableId, tableName: result.tableName },
+        data: {
+          orderId: result.id,
+          tableId: result.tableId,
+          tableName: result.tableName,
+          tableToken: result.tableToken,
+        },
       });
 
       return result;
@@ -499,7 +508,13 @@ export class OrderService {
 
       this.sseService.emit({
         type: 'order_status_changed',
-        data: { orderId: result.id, status: result.status, tableId: result.tableId, tableName: result.tableName },
+        data: {
+          orderId: result.id,
+          status: result.status,
+          tableId: result.tableId,
+          tableName: result.tableName,
+          tableToken: result.tableToken,
+        },
       });
 
       return result;
@@ -612,10 +627,28 @@ export class OrderService {
         orderId: order.id,
         tableId: order.tableId,
         tableName: table?.name ?? null,
+        tableToken: order.tableToken,
       },
     });
 
     return { message: 'Đã gửi yêu cầu thanh toán' };
+  }
+
+  async callStaff(dto: CallStaffDto) {
+    const table = await this.tableRepo.findOneBy({ qrToken: dto.tableToken });
+    if (!table) throw new NotFoundException('Bàn không tồn tại');
+
+    this.sseService.emit({
+      type: 'staff_call',
+      data: {
+        tableId: table.id,
+        tableName: table.name,
+        tableToken: dto.tableToken,
+        reason: dto.reason ?? null,
+      },
+    });
+
+    return { message: 'Đã gọi nhân viên' };
   }
 
   async paySingleOrder(dto: PaySingleOrderDto) {
@@ -625,6 +658,9 @@ export class OrderService {
         lock: { mode: 'pessimistic_write' },
       });
       if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
+      if (order.tableToken !== dto.tableToken) {
+        throw new BadRequestException('Đơn hàng không thuộc bàn này');
+      }
       if (order.status === OrderStatus.CANCELLED) {
         throw new BadRequestException('Đơn hàng đã huỷ, không thể thanh toán');
       }
@@ -641,6 +677,16 @@ export class OrderService {
       order.paymentRequested = false;
       await manager.save(Order, order);
       await this.syncTableOccupancyAfterOrderChange(manager, order.tableId);
+
+      this.sseService.emit({
+        type: 'payment_completed',
+        data: {
+          orderIds: [order.id],
+          tableId: order.tableId,
+          tableToken: order.tableToken,
+          totalAmount: order.totalAmount,
+        },
+      });
 
       return {
         orderId: order.id,
@@ -675,6 +721,18 @@ export class OrderService {
       }
 
       await this.syncTableOccupancyAfterOrderChange(manager, table.id);
+
+      if (orders.length) {
+        this.sseService.emit({
+          type: 'payment_completed',
+          data: {
+            orderIds: orders.map((o) => o.id),
+            tableId: table.id,
+            tableToken: dto.tableToken,
+            totalAmount: orders.reduce((s, o) => s + o.totalAmount, 0),
+          },
+        });
+      }
 
       return {
         tableToken: dto.tableToken,
@@ -855,6 +913,7 @@ export class OrderService {
             status: o.status,
             tableId: o.tableId,
             tableName: o.tableName,
+            tableToken: o.tableToken,
           },
         });
       }
@@ -914,6 +973,7 @@ export class OrderService {
             status: o.status,
             tableId: o.tableId,
             tableName: o.tableName,
+            tableToken: o.tableToken,
           },
         });
       }

@@ -36,22 +36,40 @@ export function RevenueChart({
       <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">Doanh thu</h3>
       <ResponsiveContainer width="100%" height={300}>
         <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 8, left: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+          <XAxis dataKey="date" tick={{ fontSize: 12, fill: "var(--chart-text)" }} />
           <YAxis
             yAxisId="left"
             tickFormatter={formatVndCompact}
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: "var(--chart-text)" }}
             width={56}
           />
-          <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12 }} allowDecimals={false} />
+          <YAxis
+            yAxisId="right"
+            orientation="right"
+            tick={{ fontSize: 12, fill: "var(--chart-text)" }}
+            allowDecimals={false}
+          />
           <Tooltip
             formatter={(val, name) =>
               name === "Doanh thu" ? formatVnd(Number(val)) : val
             }
+            contentStyle={{
+              backgroundColor: "var(--chart-tooltip-bg)",
+              border: "1px solid var(--chart-grid)",
+              borderRadius: 12,
+              color: "var(--chart-tooltip-text)",
+            }}
+            labelStyle={{ color: "var(--chart-tooltip-text)" }}
           />
-          <Legend />
-          <Bar yAxisId="left" dataKey="revenue" name="Doanh thu" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+          <Legend wrapperStyle={{ color: "var(--chart-text)" }} />
+          <Bar
+            yAxisId="left"
+            dataKey="revenue"
+            name="Doanh thu"
+            fill="var(--color-brand-400)"
+            radius={[6, 6, 0, 0]}
+          />
           <Line yAxisId="right" dataKey="orderCount" name="Số đơn" stroke="#2563eb" strokeWidth={2} dot={false} />
         </ComposedChart>
       </ResponsiveContainer>

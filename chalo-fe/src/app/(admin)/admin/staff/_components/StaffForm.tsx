@@ -137,7 +137,7 @@ export const StaffForm = ({
           disabled={isLoading}
           className="flex items-center gap-2 rounded-xl bg-brand-400 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-500 transition-colors disabled:opacity-60"
         >
-          {isLoading && <SpinnerIcon className="animate-spin" />}
+          {isLoading && <SpinnerIcon className="size-4 animate-spin" />}
           {isEdit ? "Cập nhật" : "Tạo mới"}
         </button>
       </div>

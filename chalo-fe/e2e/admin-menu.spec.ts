@@ -40,11 +40,14 @@ test("admin tables use continuous scrolling instead of pagination controls", asy
   await expect(page.locator("tbody tr").first()).toBeVisible({
     timeout: 15_000,
   });
-  const totalText = await page
+  // The "Tổng số bàn" stat renders "0" until the table list resolves (and the
+  // tbody shows skeleton rows meanwhile) — wait for the loaded value first.
+  const totalCell = page
     .locator(".grid.grid-cols-3 > div")
     .first()
-    .locator("p.text-2xl")
-    .textContent();
+    .locator("p.text-2xl");
+  await expect(totalCell).not.toHaveText("0", { timeout: 15_000 });
+  const totalText = await totalCell.textContent();
   await expect(page.locator("tbody tr")).toHaveCount(Number(totalText?.trim()));
   await expect(page.getByText(/^1 \/ \d+$/)).toHaveCount(0);
   await expect(page.getByRole("button", { name: /Sau/ })).toHaveCount(0);

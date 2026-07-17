@@ -5,7 +5,7 @@ import { Toggle } from "@/components/shared/ui/Toggle";
 import { type CategoryFormType, CategorySchema } from "@/schemas/menu.schema";
 import { CategoryDto } from "@/services/menu/menu.types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 interface CategoryFormProps {
   defaultValues?: CategoryDto;

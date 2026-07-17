@@ -6,6 +6,15 @@ import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { ROUTES } from "@/constants";
 import { useRouter } from "next/navigation";
 
+const formatAge = (ms: number): string => {
+  const min = Math.floor(ms / 60_000);
+  if (min < 1) return "vừa xong";
+  if (min < 60) return `${min} phút trước`;
+  const hours = Math.floor(min / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  return `${Math.floor(hours / 24)} ngày trước`;
+};
+
 export const OrderCard = ({
   order,
   onStatusChange,
@@ -19,7 +28,6 @@ export const OrderCard = ({
   const nextStatus = NEXT_STATUS[order.status];
   const nextLabel = NEXT_STATUS_LABEL[order.status];
   const ageMs = Date.now() - new Date(order.createdAt).getTime();
-  const ageMin = Math.floor(ageMs / 60_000);
 
   // Soft-navigate to the intercepted detail route so the modal opens as an
   // overlay (@modal/(.)orders/[orderId]).
@@ -50,7 +58,7 @@ export const OrderCard = ({
           </p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-xs text-gray-400">{ageMin} phút trước</p>
+          <p className="text-xs text-gray-400">{formatAge(ageMs)}</p>
           {order.paidStatus && (
             <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded-full">
               Đã thanh toán

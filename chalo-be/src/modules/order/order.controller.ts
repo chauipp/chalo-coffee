@@ -17,6 +17,7 @@ import {
   RequestPaymentDto,
   PaySingleOrderDto,
   PayUnpaidOrdersByTableDto,
+  CallStaffDto,
 } from './dto/update-order-status.dto';
 import {
   CheckoutPreviewDto,
@@ -74,6 +75,7 @@ export class OrderController {
 
   @Get('page')
   @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
   @ApiQuery({ name: 'pageNo', required: false })
   @ApiQuery({ name: 'pageSize', required: false })
   @ApiQuery({ name: 'status', required: false, enum: OrderStatus })
@@ -107,6 +109,7 @@ export class OrderController {
 
   @Get('detail')
   @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
   @ApiQuery({ name: 'id', required: true })
   @ApiOkResponse({
     description: 'Order detail',
@@ -188,6 +191,7 @@ export class OrderController {
 
   @Put('status')
   @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
   @ApiOkResponse({
     description: 'Update order status',
     schema: {
@@ -260,6 +264,23 @@ export class OrderController {
   })
   payBulkByTable(@Body() dto: PayUnpaidOrdersByTableDto) {
     return this.orderService.payUnpaidOrdersByTable(dto);
+  }
+
+  @Post('call-staff')
+  @Public()
+  @HttpCode(200)
+  @ApiOkResponse({
+    description: 'Khách gọi nhân viên đến bàn (SSE staff_call)',
+    schema: {
+      example: {
+        code: 200,
+        message: 'success',
+        data: { message: 'Đã gọi nhân viên' },
+      },
+    },
+  })
+  callStaff(@Body() dto: CallStaffDto) {
+    return this.orderService.callStaff(dto);
   }
 
   @Post('checkout/preview')

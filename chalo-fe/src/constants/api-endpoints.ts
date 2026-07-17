@@ -54,6 +54,7 @@ export const API = {
     REQUEST_PAYMENT: "/order/request-payment",
     PAY: "/order/pay",
     PAY_ALL: "/order/pay-all",
+    CALL_STAFF: "/order/call-staff",
     CHECKOUT_PREVIEW: "/order/checkout/preview",
     CHECKOUT_START: "/order/checkout/start",
     CHECKOUT_COMPLETE: "/order/checkout/complete",
@@ -75,6 +76,7 @@ export const API = {
   },
   SSE: {
     ORDER_EVENTS: "/order/events",
+    ORDER_EVENTS_BY_TABLE: "/order/events/by-table",
   },
   HEALTH: {
     CHECK: "/health",

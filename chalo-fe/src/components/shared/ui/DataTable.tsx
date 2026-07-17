@@ -107,7 +107,7 @@ export function DataTable<T>({
       {/* pagination */}
       {pagination && onPageChange && onPageSizeChange && (
         <div className="flex items-center justify-between px-1">
-          <div className="flex flex-col gap 2">
+          <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-500">
               Tổng:{" "}
               <span className="font-medium text-gray-700 dark:text-gray-300">

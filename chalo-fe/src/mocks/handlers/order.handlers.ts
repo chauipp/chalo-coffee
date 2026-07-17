@@ -316,6 +316,12 @@ export const orderHandlers = [
     return ok(orders[idx]);
   }),
 
+  // POST /api/order/call-staff (Customer)
+  http.post("*/api/order/call-staff", async () => {
+    await delay(300);
+    return ok({ message: "Đã gọi nhân viên" });
+  }),
+
   // POST /api/order/pay-all (Customer)
   http.post("*/api/order/pay-all", async ({ request }) => {
     await delay(500);

@@ -1,22 +1,44 @@
 // src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/PayConfirmModal.tsx
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
+import { buildVietQR } from "@/lib/vietqr";
+import { useGetSettings } from "@/services/settings";
+import { QRCodeSVG } from "qrcode.react";
 
 export const PayConfirmModal = ({
   total,
+  addInfo,
   onConfirm,
   onCancel,
   isPending,
 }: {
   total: number;
+  /** Nội dung chuyển khoản in vào QR, VD "CHALO BAN 01 DON A1B2C3" */
+  addInfo?: string;
   onConfirm: () => void;
   onCancel: () => void;
   isPending: boolean;
 }) => {
+  const { data: settings } = useGetSettings();
+  const bankConfigured =
+    !!settings?.bankBin && !!settings?.bankAccountNo && !!settings?.bankAccountName;
+  const qrPayload = bankConfigured
+    ? buildVietQR({
+        bankBin: settings!.bankBin!,
+        accountNo: settings!.bankAccountNo!,
+        amount: total,
+        addInfo,
+      })
+    : null;
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm px-0 sm:px-4 transition-opacity">
-      
+
       {/* Modal Surface */}
-      <div className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 transform transition-all duration-300">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Xác nhận thanh toán"
+        className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]"
+      >
         
         {/* 1. Icon Section (Đã sửa lỗi nằm chèn) */}
         <div className="flex justify-center mb-5">
@@ -40,6 +62,28 @@ export const PayConfirmModal = ({
               {total.toLocaleString("vi-VN")}đ
             </p>
           </div>
+
+          {/* VietQR chuyển khoản — số tiền + nội dung điền sẵn */}
+          {qrPayload && (
+            <div className="mt-5 flex flex-col items-center gap-2">
+              {/* QR luôn nền trắng để app ngân hàng quét được ở cả dark mode */}
+              <div
+                data-testid="vietqr-code"
+                className="rounded-2xl border-2 border-gray-100 bg-white p-3 dark:border-gray-800"
+              >
+                <QRCodeSVG value={qrPayload} size={180} marginSize={1} />
+              </div>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                {settings!.bankAccountName}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                {settings!.bankAccountNo}
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">
+                Quét bằng app ngân hàng bất kỳ, chuyển xong bấm xác nhận.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* 3. Actions Section */}

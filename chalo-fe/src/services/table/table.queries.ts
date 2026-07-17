@@ -40,6 +40,8 @@ export const useGetTableList = () =>
   useQuery({
     queryKey: QUERY_KEYS.TABLES.LIST,
     queryFn: getTableList,
+    // Nhân viên sàn cần trạng thái bàn tương đối tươi
+    refetchInterval: 15_000,
   });
 
 export const useGetTableByToken = (token: string) => {

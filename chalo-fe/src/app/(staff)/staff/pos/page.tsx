@@ -8,7 +8,7 @@ import { useGetCategorySimpleList } from "@/services/lookup/lookup.queries";
 import { getProductPage, ProductDto, ProductPageParam } from "@/services/menu";
 import { useCreateOrder } from "@/services/order/order.queries";
 import { useGetTableList } from "@/services/table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CartItem } from "./_components/CartItem";
 import { PagerBoard } from "./_components/PagerBoard";
@@ -36,14 +36,24 @@ export default function StaffPOSPage() {
   const [showPagerBoard, setShowPagerBoard] = useState(false);
 
   const { data: categories } = useGetCategorySimpleList();
+
+  // Tìm món theo tên — debounce 300ms để không spam API theo từng phím
+  const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
   const productFilter = useMemo<ProductPageParam>(
     () => ({
       pageNo: 1,
       pageSize: 50,
       categoryId: selectedCategoryId || undefined,
+      name: debouncedSearch || undefined,
       status: "AVAILABLE",
     }),
-    [selectedCategoryId],
+    [selectedCategoryId, debouncedSearch],
   );
   const productPage = useInfinitePagination<ProductDto, ProductPageParam>({
     initialFilter: productFilter,
@@ -113,8 +123,15 @@ export default function StaffPOSPage() {
     <div className="h-full flex gap-0 overflow-hidden">
       {/* Left — Product Grid */}
       <div className="flex-1 flex flex-col overflow-hidden border-r border-gray-200 dark:border-gray-800">
-        {/* Category tabs */}
+        {/* Search + Category tabs */}
         <div className="flex gap-2 p-3 border-b border-gray-200 dark:border-gray-800 overflow-x-auto shrink-0 bg-white dark:bg-gray-900">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm món..."
+            aria-label="Tìm món"
+            className="w-44 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-gray-400"
+          />
           <button
             onClick={() => setSelectedCategoryId("")}
             className={`shrink-0 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors
@@ -148,8 +165,13 @@ export default function StaffPOSPage() {
             <div className="flex items-center justify-center h-40">
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
             </div>
+          ) : products.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-40 gap-1 text-gray-400">
+              <p className="text-sm">Không tìm thấy món phù hợp</p>
+              <p className="text-xs">Thử đổi từ khoá hoặc danh mục khác</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(11.5rem,1fr))] gap-2">
               {products.map((p) => {
                 const inCart = cart.find((i) => i.productId === p.id);
                 return (
@@ -210,8 +232,8 @@ export default function StaffPOSPage() {
               {(tables ?? []).map((t) => (
                 <option key={t.id} value={t.qrToken}>
                   {t.name}
-                  {t.area ? `${t.area}` : ``}
-                  {t.status === "OCCUPIED" ? " 🔴" : " 🟢"}
+                  {t.area ? ` · ${t.area}` : ""}
+                  {t.status === "OCCUPIED" ? " (có khách)" : ""}
                 </option>
               ))}
             </select>

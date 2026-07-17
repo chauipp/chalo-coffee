@@ -8,6 +8,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  callStaff,
   checkoutComplete,
   checkoutPreview,
   checkoutStart,
@@ -24,6 +25,7 @@ import {
   updateOrderStatus,
 } from "./order.api";
 import {
+  CallStaffPayload,
   CheckoutCompletePayload,
   CheckoutStartPayload,
   CreateOrderPayload,
@@ -142,13 +144,14 @@ export const useUpdateOrderStatus = () => {
   });
 };
 
-// export const useRequestPayment = () => {
-//   return useMutation({
-//     mutationFn: (orderId: string) => requestPayment(orderId),
-//     onSuccess: () => toast.success("Đã gửi yêu cầu thanh toán đến quầy"),
-//     onError: (e: Error) => toast.error(e.message),
-//   });
-// };
+export const useCallStaff = () => {
+  return useMutation({
+    mutationFn: (data: CallStaffPayload) => callStaff(data),
+    onSuccess: () =>
+      toast.success("Đã gọi nhân viên, vui lòng chờ trong giây lát"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
 
 export const usePayOrder = (tableToken: string) => {
   const qc = useQueryClient();

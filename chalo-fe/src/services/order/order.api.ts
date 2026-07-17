@@ -1,6 +1,7 @@
 // src/services/order/order.api.ts
 import { request } from "@/lib/api-client";
 import {
+  CallStaffPayload,
   CheckoutCompletePayload,
   CheckoutCompleteResult,
   CheckoutPreviewPayload,
@@ -53,6 +54,9 @@ export const updateOrderStatus = (
 
 export const requestPayment = (orderId: string): Promise<void> =>
   request.post(API.ORDER.REQUEST_PAYMENT, { orderId });
+
+export const callStaff = (data: CallStaffPayload): Promise<{ message: string }> =>
+  request.post(API.ORDER.CALL_STAFF, data);
 
 export const payOrder = (data: PayOrderPayload): Promise<OrderDto> =>
   request.post(API.ORDER.PAY, data);

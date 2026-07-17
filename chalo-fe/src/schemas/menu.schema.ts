@@ -18,7 +18,11 @@ export const ProductSchema = z.object({
   description: z.string().max(500, 'Tối đa 500 ký tự').optional(),
   imageUrl: z.url('URL không hợp lệ').optional().or(z.literal('')),
   price: z.coerce.number().min(1000, "Giá tối thiểu 1,000đ"),
-  prepTime: z.coerce.number().int(),
+  prepTime: z.coerce
+    .number()
+    .int()
+    .min(1, "Tối thiểu 1 phút")
+    .max(60, "Tối đa 60 phút"),
   sortOrder: z.coerce.number().int().min(0).optional(),
   status: z.enum(PRODUCT_STATUS),
   isActive: z.boolean().default(true)

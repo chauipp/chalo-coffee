@@ -7,6 +7,7 @@ import {
   useCheckoutComplete,
 } from "@/services/order/order.queries";
 import { CheckoutSessionResult } from "@/services/order/order.types";
+import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { CheckoutSummary } from "./_components/CheckoutSummary";
@@ -17,6 +18,7 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const { data: preview, isLoading, isError } = useCheckoutPreview(tableToken);
+  useCustomerOrderEvents(tableToken);
   const startMutation = useCheckoutStart();
   const completeMutation = useCheckoutComplete(tableToken);
 
@@ -95,6 +97,8 @@ export default function CheckoutPage() {
           <CheckoutSessionPanel
             totalAmount={session.totalAmount}
             expiresAt={session.expiresAt}
+            sessionId={session.sessionId}
+            tableName={preview?.tableName}
             onConfirm={handleComplete}
             onRestart={handleRestart}
             isPending={completeMutation.isPending}
@@ -118,7 +122,7 @@ export default function CheckoutPage() {
             {startMutation.isPending && (
               <SpinnerIcon className="size-5 animate-spin" />
             )}
-            💳 Thanh toán {preview.totalAmount.toLocaleString("vi-VN")}đ
+            Thanh toán {preview.totalAmount.toLocaleString("vi-VN")}đ
           </button>
         </div>
       )}

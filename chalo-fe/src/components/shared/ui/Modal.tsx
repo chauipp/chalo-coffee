@@ -1,6 +1,6 @@
 "use client";
 // src/components/shared/ui/Modal.tsx
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 interface ModalProps {
@@ -22,11 +22,24 @@ export const Modal = ({
   size = "md",
   title,
 }: ModalProps) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+
+    // Khoá scroll nền + trả focus về chỗ cũ khi đóng
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panelRef.current?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+      previouslyFocused?.focus?.();
+    };
   }, [open, onClose]);
 
   if (!open) return null;
@@ -35,16 +48,18 @@ export const Modal = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm motion-safe:animate-[modal-fade_0.15s_ease-out]"
         onClick={onClose}
       />
       {/* panel */}
       <div
+        ref={panelRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={title}
         data-testid={panelTestId}
-        className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-gray-900 shadow-2xl`}
+        className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-gray-900 shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]`}
       >
         {/* header */}
         <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-6 py-4">
@@ -52,6 +67,7 @@ export const Modal = ({
             {title}
           </h2>
           <button
+            aria-label="Đóng"
             className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 transition-colors"
             onClick={onClose}
           >

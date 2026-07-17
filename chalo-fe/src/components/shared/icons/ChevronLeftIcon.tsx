@@ -1,6 +1,6 @@
 import { SVGProps } from "react";
 
-export const TableIcon = (props: SVGProps<SVGSVGElement>) => (
+export const ChevronLeftIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -11,9 +11,6 @@ export const TableIcon = (props: SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    <rect x="3" y="3" width="18" height="18" rx="2" />
-    <path d="M3 9h18" />
-    <path d="M9 9v12" />
-    <path d="M15 9v12" />
+    <path d="M15 18l-6-6 6-6" />
   </svg>
 );

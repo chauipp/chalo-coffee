@@ -82,6 +82,26 @@ export const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
   READY: "Hoàn thành",
 };
 
+/** Tiếng "ting" báo hiệu — pitch tuỳ loại sự kiện */
+const playBeep = (frequency = 880) => {
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext;
+    const ctx = new AudioContextClass();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+  } catch {}
+};
+
 export default function StaffOrdersPage() {
   const qc = useQueryClient();
   const prevPendingCountRef = useRef<number>(0);
@@ -90,45 +110,14 @@ export default function StaffOrdersPage() {
 
   const accessToken = useAuthStore((s) => s.accessToken);
 
-  // const { data, isLoading, refetch } = useGetOrderPage({
-  //   pageNo: 1,
-  //   pageSize: 100,
-  // });
-
   const { data: activeOrders, isLoading, refetch } = useGetActiveOrder();
 
   const updateStatusMutation = useUpdateOrderStatus();
 
-  // const handleSSEEvent = useCallback(
-  //   <T extends SSEEventType>(type: T, data: SSEPayload[T]) => {
-  //     switch (type) {
-  //       case "new_order":
-  //       case "order_status_changed":
-  //       case "payment_request":
-  //       case "payment_completed":
-  //         qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
-  //         break;
-  //     }
-  //   },
-  //   [qc],
-  // );
-
-  // const handleSSEEventTyped = useCallback(
-  //   (
-  //     type: Parameters<typeof handleSSEEvent>[0],
-  //     payload: Parameters<typeof handleSSEEvent>[1],
-  //   ) => {
-  //     handleSSEEvent(type, payload);
-  //     if (type === "new_order") {
-  //       setIsSSEConnected(true);
-  //     }
-  //   },
-  //   [handleSSEEvent],
-  // );
-
   useSSE({
-    url: `${API_BASE}/${API.SSE.ORDER_EVENTS}`,
+    url: `${API_BASE}${API.SSE.ORDER_EVENTS}`,
     token: accessToken,
+    onConnectionChange: setIsSSEConnected,
     onEvent: (type, data) => {
       switch (type) {
         case "new_order":
@@ -139,15 +128,34 @@ export default function StaffOrdersPage() {
           });
           qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
           break;
-        // case "payment_request":
-        //   toast.info(
-        //     `🙋 Bàn ${(data as SSEPayload["payment_request"]).tableName} yêu cầu thanh toán`,
-        //     {
-        //       duration: 6000,
-        //     },
-        //   );
-        //   qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
-        //   break;
+        case "payment_request": {
+          const p = data as SSEPayload["payment_request"];
+          playBeep(660);
+          toast.info(`Bàn ${p.tableName ?? ""} yêu cầu thanh toán`, {
+            duration: 8000,
+          });
+          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
+          break;
+        }
+        case "payment_request_batch": {
+          const p = data as SSEPayload["payment_request_batch"];
+          playBeep(660);
+          toast.info(
+            `Bàn ${p.tableName ?? ""} yêu cầu thanh toán gộp (${p.totalAmount.toLocaleString("vi-VN")}đ)`,
+            { duration: 8000 },
+          );
+          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
+          break;
+        }
+        case "staff_call": {
+          const p = data as SSEPayload["staff_call"];
+          playBeep(520);
+          toast.warning(
+            `Bàn ${p.tableName ?? ""} đang gọi nhân viên${p.reason ? `: ${p.reason}` : ""}`,
+            { duration: 10000 },
+          );
+          break;
+        }
       }
     },
     enabled: !!accessToken,
@@ -155,7 +163,6 @@ export default function StaffOrdersPage() {
   });
 
   // ─── Sound for new PENDING orders ────────────────────────────────────────────────────────
-  // const activeOrders = data?.list ?? [];
   const pendingCount = (activeOrders || []).filter(
     (o) => o.status === "PENDING",
   ).length;
@@ -165,22 +172,7 @@ export default function StaffOrdersPage() {
       pendingCount > prevPendingCountRef.current &&
       prevPendingCountRef.current > 0
     ) {
-      try {
-        const AudioContextClass =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext })
-            .webkitAudioContext;
-        const ctx = new AudioContextClass();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.5);
-      } catch {}
+      playBeep(880);
       toast.info("🔔 Có đơn hàng mới!", { duration: 4000 });
     }
     prevPendingCountRef.current = pendingCount;

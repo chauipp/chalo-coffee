@@ -229,7 +229,11 @@ export const ProductForm = ({
         >
           Hủy
         </button>
-        <button type="submit" disabled={isLoading}>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 transition-colors disabled:opacity-50"
+        >
           {isLoading && <SpinnerIcon className="size-4 animate-spin" />}
           {defaultValue ? "Cập nhật" : "Thêm mới"}
         </button>

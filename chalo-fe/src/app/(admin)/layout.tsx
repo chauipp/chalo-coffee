@@ -1,6 +1,8 @@
+"use client";
 // src/app/(admin)/layout.tsx
 
-import { AdminSidebar } from "./_components/AdminSidebar";
+import { Sidebar } from "@/components/shared/Sidebar";
+import { ADMIN_NAV_ITEMS } from "./_components/sidebar.config";
 
 export default function AdminLayout({
   children,
@@ -9,7 +11,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
-      <AdminSidebar />
+      <Sidebar subtitle="Admin Panel" items={ADMIN_NAV_ITEMS} />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );

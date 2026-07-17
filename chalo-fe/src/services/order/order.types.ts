@@ -65,6 +65,12 @@ export interface OrderPageParams extends PageParam {
 
 export interface PayOrderPayload {
   orderId: string;
+  tableToken: string;
+}
+
+export interface CallStaffPayload {
+  tableToken: string;
+  reason?: string;
 }
 
 export interface PayAllOrdersPayload {

@@ -21,16 +21,22 @@ test("customer registers through the UI and lands authenticated", async ({
   // The persisted user object (Zustand -> localStorage "chalo-auth") only
   // contains the username once the 201 was unwrapped and setUser ran — this is
   // the real "logged-in" signal (not the mere presence of the key).
+  // .catch: the post-register redirect can destroy the execution context
+  // mid-evaluate — treat that tick as "not yet" instead of failing the poll.
   await expect
     .poll(
       async () =>
-        await page.evaluate(() => localStorage.getItem("chalo-auth")),
+        await page
+          .evaluate(() => localStorage.getItem("chalo-auth"))
+          .catch(() => null),
       { timeout: 20_000 },
     )
     .toContain(username);
 
   // CUSTOMER default route is /menu — the register hook redirected there.
-  expect(page.url()).toContain("/menu");
+  // Poll: the redirect (router.push) lands after the tokens hit localStorage,
+  // and on a cold dev server the /menu compile can take a few seconds.
+  await expect.poll(() => page.url(), { timeout: 20_000 }).toContain("/menu");
 });
 
 test("duplicate username surfaces the backend error on the form", async ({

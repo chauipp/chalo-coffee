@@ -21,6 +21,17 @@ test("checkout previews open orders and opens a pay-all session", async ({
   const tablesRes = await request.get(`${BE}/table/list`, { headers: auth });
   const tableToken: string = (await tablesRes.json()).data[0].qrToken;
 
+  // Configure VietQR bank settings so the session step renders the payment QR.
+  const settingsRes = await request.put(`${BE}/settings`, {
+    headers: auth,
+    data: {
+      bankBin: "970422",
+      bankAccountNo: "0123456789",
+      bankAccountName: "CHALO COFFEE",
+    },
+  });
+  expect(settingsRes.ok()).toBeTruthy();
+
   const prodRes = await request.get(`${BE}/menu/product/simple-list`, {
     headers: auth,
   });
@@ -57,6 +68,12 @@ test("checkout previews open orders and opens a pay-all session", async ({
     timeout: 15_000,
   });
   await expect(page.getByText(/Hết hạn sau \d+:\d{2}/)).toBeVisible();
+
+  // VietQR: with bank settings configured, the panel shows a scannable
+  // bank-transfer QR locked to this table's total, plus the account holder.
+  await expect(page.getByTestId("vietqr-code")).toBeVisible();
+  await expect(page.getByText("CHALO COFFEE")).toBeVisible();
+
   const confirmCta = page.getByRole("button", { name: "✓ Tôi đã thanh toán" });
   await expect(confirmCta).toBeVisible();
 

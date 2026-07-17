@@ -15,7 +15,7 @@ export const KanbanColumn = ({
   updatingId: string | null;
 }) => {
   return (
-    <div className="flex flex-col min-w-[240px] w-[240px]">
+    <div className="flex min-w-[280px] flex-1 flex-col">
       <div
         className={`flex items-center justify-between px-3 py-2.5 rounded-t-xl border ${config.bgColor} ${config.borderColor}`}
       >

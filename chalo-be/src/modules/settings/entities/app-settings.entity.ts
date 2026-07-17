@@ -18,6 +18,18 @@ export class AppSettings {
   @Column({ type: 'int', default: 3 })
   baristaCount: number;
 
+  /** VietQR: mã BIN ngân hàng nhận tiền (VD MB = 970422). Null = chưa cấu hình. */
+  @Column({ type: 'varchar', length: 6, nullable: true })
+  bankBin: string | null;
+
+  /** VietQR: số tài khoản nhận tiền */
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  bankAccountNo: string | null;
+
+  /** VietQR: tên chủ tài khoản (hiển thị cho khách đối chiếu) */
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  bankAccountName: string | null;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }
