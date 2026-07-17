@@ -92,14 +92,18 @@ export const UserMenu = ({ collapsed }: { collapsed: boolean }) => {
           data-testid="user-menu-panel"
           className="absolute bottom-full left-0 z-50 mb-2 w-56 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
         >
-          <div className="px-3 py-2">
-            <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-              {name}
-            </p>
-            <p className="text-xs text-gray-400">{user?.role}</p>
-          </div>
+          {collapsed && (
+            <>
+              <div className="px-3 py-2">
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {name}
+                </p>
+                <p className="text-xs text-gray-400">{user?.role}</p>
+              </div>
 
-          <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+            </>
+          )}
 
           <div className="flex justify-center py-2">
             <ThemeSwitch />

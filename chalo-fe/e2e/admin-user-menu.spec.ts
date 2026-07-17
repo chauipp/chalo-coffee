@@ -115,6 +115,34 @@ test("keyboard-activating the sidebar collapse chevron closes the menu", async (
   await expect(page.getByTestId("user-menu-panel")).toBeHidden();
 });
 
+test("sidebar expanded: panel does not repeat the name/role already shown on the trigger", async ({
+  page,
+}) => {
+  await loginAsAdmin(page);
+
+  const trigger = page.getByTestId("user-menu-trigger");
+  await expect(trigger).toContainText("ADMIN");
+
+  await trigger.click();
+  const panel = page.getByTestId("user-menu-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel).not.toContainText("ADMIN");
+});
+
+test("sidebar collapsed: panel shows the name/role since the trigger no longer does", async ({
+  page,
+}) => {
+  await loginAsAdmin(page);
+
+  await page.getByTitle("Thu gọn menu").click();
+
+  const trigger = page.getByTestId("user-menu-trigger");
+  await trigger.click();
+  const panel = page.getByTestId("user-menu-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel).toContainText("ADMIN");
+});
+
 test.describe("system theme with OS dark preference", () => {
   test.use({ colorScheme: "dark" });
 
