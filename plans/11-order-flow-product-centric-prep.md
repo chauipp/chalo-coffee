@@ -553,7 +553,7 @@ git commit -m "feat(be): tick số ly đã pha trên server, đủ ly thì đơn
 
 ---
 
-## - [ ] Task 3: BE — Bảng staff lọc từ 0h00 giờ VN
+## - [x] Task 3: BE — Bảng staff lọc từ 0h00 giờ VN
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/order.service.ts` (`getActiveQueue` dòng ~91-114, thêm `startOfTodayVN`)
@@ -692,7 +692,7 @@ git commit -m "feat(be): bảng staff chỉ hiện đơn trong ngày, reset 0h00
 
 ---
 
-## - [ ] Task 4: BE — Gỡ smartBatchingEnabled
+## - [x] Task 4: BE — Gỡ smartBatchingEnabled
 
 **Files:**
 - Create: `chalo-be/src/migrations/1752990100000-DropSmartBatchingSetting.ts`
