@@ -4,11 +4,8 @@
 import { useState, type ComponentType, type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "./ThemeToggle";
 import { ChevronLeftIcon } from "./icons/ChevronLeftIcon";
-import { LogoutIcon } from "./icons/LogoutIcon";
-import { useLogout } from "@/hooks/useLogout";
-import { useAuthStore } from "@/stores/auth.store";
+import { UserMenu } from "./UserMenu";
 
 type NavItem = {
   label: string;
@@ -24,17 +21,12 @@ export const Sidebar = ({
   items: NavItem[];
 }) => {
   const pathname = usePathname();
-  const { user } = useAuthStore();
-  const handleLogout = useLogout();
 
   // ponytail: in-memory — persists across navigation (layout stays mounted), resets on hard reload
   const [collapsed, setCollapsed] = useState(false);
   const toggle = () => setCollapsed((c) => !c);
 
   return (
-    <>
-      {/* fixed top-right theme icon */}
-      <ThemeToggle />
     <aside
       className={`flex flex-col border-r border-gray-200 bg-white transition-[width] duration-200 dark:border-gray-800 dark:bg-gray-900 ${
         collapsed ? "w-16" : "w-60"
@@ -98,46 +90,8 @@ export const Sidebar = ({
 
       {/* Profile */}
       <div className="border-t border-gray-100 p-3 dark:border-gray-700">
-        {collapsed ? (
-          <div className="flex flex-col items-center gap-2">
-            <div
-              title={user?.fullName ?? "Người dùng"}
-              className="flex size-8 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-600 dark:bg-brand-900/30 dark:text-brand-400"
-            >
-              {user?.fullName?.[0] ?? "?"}
-            </div>
-            <button
-              onClick={handleLogout}
-              title="Đăng xuất"
-              className="flex size-8 items-center justify-center rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-950/30 dark:hover:text-red-400"
-            >
-              <LogoutIcon className="size-4" />
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="mb-1 flex items-center gap-3 rounded-xl px-3 pt-2.5">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
-                {user?.fullName?.[0] ?? "?"}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {user?.fullName ?? "Người dùng"}
-                </p>
-                <p className="text-sm text-gray-400">{user?.role}</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-950/30 dark:hover:text-red-400"
-            >
-              <LogoutIcon className="size-4" />
-              Đăng xuất
-            </button>
-          </>
-        )}
+        <UserMenu collapsed={collapsed} />
       </div>
     </aside>
-    </>
   );
 };
