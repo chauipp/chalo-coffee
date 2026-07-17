@@ -2,7 +2,9 @@
 // src/app/(staff)/_components/SplitPane.tsx
 // Chia đôi màn hình với thanh kéo (Split Resizer): pointer drag + bàn phím
 // (←/→ ±2%, Home/End = min/max), double-click reset. Tỷ lệ lưu localStorage.
-// Vùng phải có thể phóng to chiếm trọn ứng dụng (expanded) — Esc để thu lại.
+// Vùng phải có thể phóng to chiếm hết phần bên phải menu (expanded) — Esc,
+// bấm nút, hoặc chuyển sang menu khác đều đưa về lại chế độ chia đôi.
+import { usePathname } from "next/navigation";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 const clamp = (v: number, min: number, max: number) =>
@@ -37,35 +39,30 @@ export const SplitPane = ({
   const [expanded, setExpanded] = useState(false);
   const ratioRef = useRef(ratio);
   ratioRef.current = ratio;
-
-  const expandKey = `${storageKey}:expanded`;
+  const pathname = usePathname();
 
   useEffect(() => {
     const saved = Number(localStorage.getItem(storageKey));
     if (Number.isFinite(saved) && saved > 0)
       setRatio(clamp(saved, minRatio, maxRatio));
-    setExpanded(localStorage.getItem(expandKey) === "1");
-  }, [storageKey, expandKey, minRatio, maxRatio]);
+  }, [storageKey, minRatio, maxRatio]);
 
   const save = (v: number) => localStorage.setItem(storageKey, String(v));
 
-  const toggleExpand = useCallback(() => {
-    setExpanded((prev) => {
-      const next = !prev;
-      localStorage.setItem(expandKey, next ? "1" : "0");
-      return next;
-    });
-  }, [expandKey]);
+  const toggleExpand = useCallback(() => setExpanded((prev) => !prev), []);
+
+  // Chuyển sang menu khác → trả vùng phải về tỷ lệ chia đôi ban đầu
+  useEffect(() => setExpanded(false), [pathname]);
 
   // Esc để thoát chế độ phóng to
   useEffect(() => {
     if (!expanded) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") toggleExpand();
+      if (e.key === "Escape") setExpanded(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [expanded, toggleExpand]);
+  }, [expanded]);
 
   const moveTo = (clientX: number) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -137,14 +134,9 @@ export const SplitPane = ({
           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400`}
       />
 
-      {/* Cùng một element ở cả 2 chế độ → phóng to/thu lại không remount vùng phải */}
-      <div
-        className={
-          expanded
-            ? "fixed inset-0 z-50 bg-gray-50 dark:bg-gray-950 p-3"
-            : "h-full min-w-0 flex-1 py-3 pr-3"
-        }
-      >
+      {/* Phóng to = vùng trái ẩn đi, vùng này flex-1 nên tự chiếm hết chỗ
+          còn lại bên phải menu (sidebar vẫn hiển thị) */}
+      <div className={`h-full min-w-0 flex-1 py-3 pr-3 ${expanded ? "pl-3" : ""}`}>
         {right({ expanded, toggleExpand })}
       </div>
     </div>

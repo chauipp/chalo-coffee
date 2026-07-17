@@ -60,12 +60,12 @@ export const PrepStation = ({
             aria-label={
               expanded
                 ? "Thu khu pha chế về chế độ chia đôi (Esc)"
-                : "Phóng to khu pha chế toàn màn hình"
+                : "Mở rộng khu pha chế chiếm hết vùng bên phải menu"
             }
             title={
               expanded
                 ? "Thu lại · Esc"
-                : "Phóng to khu pha chế chiếm trọn màn hình"
+                : "Mở rộng khu pha chế · chuyển menu khác sẽ tự thu lại"
             }
             className="rounded-lg p-1.5 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
           >

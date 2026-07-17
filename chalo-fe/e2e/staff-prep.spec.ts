@@ -59,13 +59,24 @@ test("khu pha chế hiển thị ở mọi màn staff và phóng to/thu lại đ
     await expect(resizer).toBeVisible();
   }
 
-  // Phóng to: chiếm trọn ứng dụng → vùng trái và thanh kéo biến mất
+  // Mở rộng: chiếm hết chỗ bên phải menu → vùng trái và thanh kéo biến mất,
+  // nhưng menu (sidebar) vẫn còn để chuyển màn
+  const collapsedBox = await toggle.boundingBox();
   await toggle.click();
   await expect(resizer).toBeHidden();
   const expandedBox = await toggle.boundingBox();
-  expect(expandedBox!.x).toBeLessThan(60); // sát mép trái màn hình
+  expect(expandedBox!.x).toBeLessThan(collapsedBox!.x); // đã nới sang trái
+  await expect(page.getByRole("link", { name: "POS" })).toBeVisible();
+  const sidebarBox = await page.getByRole("link", { name: "POS" }).boundingBox();
+  expect(expandedBox!.x).toBeGreaterThan(sidebarBox!.x); // không đè lên menu
 
-  // Thu lại: về chế độ chia đôi
+  // Thu lại bằng nút
   await toggle.click();
   await expect(resizer).toBeVisible();
+
+  // Chuyển sang menu khác → tự thu về chế độ chia đôi
+  await toggle.click();
+  await expect(resizer).toBeHidden();
+  await page.getByRole("link", { name: "Đơn hàng" }).click();
+  await expect(resizer).toBeVisible({ timeout: 15_000 });
 });
