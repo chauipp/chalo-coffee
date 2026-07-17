@@ -37,10 +37,17 @@ import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
 
 const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
-  [OrderStatus.PENDING]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
+  // Khách đặt -> kéo thẳng vào pha, bỏ bước xác nhận
+  [OrderStatus.PENDING]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
+  // CONFIRMED đã gỡ khỏi luồng nhưng đơn cũ trong DB vẫn phải đi tiếp được
   [OrderStatus.CONFIRMED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
   [OrderStatus.PREPARING]: [OrderStatus.READY, OrderStatus.CANCELLED],
-  [OrderStatus.READY]: [OrderStatus.COMPLETED, OrderStatus.CANCELLED],
+  // READY -> PREPARING: đường lùi khi tick nhầm ly cuối làm đơn tự nhảy sang READY
+  [OrderStatus.READY]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.PREPARING,
+    OrderStatus.CANCELLED,
+  ],
 };
 
 @Injectable()
