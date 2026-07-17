@@ -41,6 +41,8 @@ export class SettingsService {
     if (dto.bankAccountNo !== undefined) settings.bankAccountNo = dto.bankAccountNo || null;
     if (dto.bankAccountName !== undefined)
       settings.bankAccountName = dto.bankAccountName.trim() || null;
+    if (dto.smartBatchingEnabled !== undefined)
+      settings.smartBatchingEnabled = dto.smartBatchingEnabled;
     return this.settingsRepo.save(settings);
   }
 }

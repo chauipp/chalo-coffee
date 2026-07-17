@@ -18,6 +18,7 @@ describe('SettingsService', () => {
     bankBin: null,
     bankAccountNo: null,
     bankAccountName: null,
+    smartBatchingEnabled: true,
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
   };
 
@@ -66,5 +67,13 @@ describe('SettingsService', () => {
     const result = await service.update({ baristaCount: 5 });
     expect(result.baristaCount).toBe(5);
     expect(result.waitTimeEnabled).toBe(true);
+  });
+
+  it('update() can flip smartBatchingEnabled alone', async () => {
+    repo.findOneBy.mockResolvedValue({ ...defaultRow });
+    const result = await service.update({ smartBatchingEnabled: false });
+    expect(result.smartBatchingEnabled).toBe(false);
+    expect(result.waitTimeEnabled).toBe(true); // untouched
+    expect(result.baristaCount).toBe(3); // untouched
   });
 });

@@ -30,6 +30,10 @@ export class AppSettings {
   @Column({ type: 'varchar', length: 100, nullable: true })
   bankAccountName: string | null;
 
+  /** Bật/tắt gợi ý gộp đơn thông minh ở màn pha chế của staff */
+  @Column({ type: 'boolean', default: true })
+  smartBatchingEnabled: boolean;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }

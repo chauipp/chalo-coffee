@@ -39,4 +39,9 @@ export class UpdateSettingsDto {
   @IsOptional()
   @MaxLength(100)
   bankAccountName?: string;
+
+  @ApiPropertyOptional({ example: true, description: 'Bật/tắt gợi ý gộp đơn thông minh (staff prep)' })
+  @IsOptional()
+  @IsBoolean()
+  smartBatchingEnabled?: boolean;
 }
