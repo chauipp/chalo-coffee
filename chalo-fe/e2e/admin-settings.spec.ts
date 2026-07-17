@@ -24,7 +24,8 @@ test("admin toggles wait-time setting and it persists, then restores default", a
   await expect(countInput).toHaveValue("3", { timeout: 15_000 });
   await expect(countInput).toBeEnabled();
 
-  const toggleTrack = page.locator("div.h-6.w-11");
+  // .first(): trang giờ có thêm toggle "Gợi ý gộp đơn thông minh" phía dưới
+  const toggleTrack = page.locator("div.h-6.w-11").first();
   const save = page.getByRole("button", { name: "Lưu thay đổi" });
 
   // 4. Flip waitTimeEnabled OFF -> barista input disables, Save enables.

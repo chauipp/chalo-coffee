@@ -20,7 +20,7 @@
 ---
 
 - [x] Task 1: BE — setting `smartBatchingEnabled`
-- [ ] Task 2: FE — settings service + Admin toggle + sửa e2e admin-settings
+- [x] Task 2: FE — settings service + Admin toggle + sửa e2e admin-settings
 - [ ] Task 3: FE logic core — orders.config, utils/batching (+unit test), prep.store
 - [ ] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
 - [ ] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
@@ -117,9 +117,9 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
 - Consumes: BE field từ Task 1.
 - Produces: `SettingsDto.smartBatchingEnabled: boolean`; staff page (Task 6) đọc qua `useGetSettings()`.
 
-- [ ] **Step 1:** `settings.types.ts` — thêm `smartBatchingEnabled: boolean;` vào `SettingsDto` và `smartBatchingEnabled: boolean;` vào `UpdateSettingsPayload`.
+- [x] **Step 1:** `settings.types.ts` — thêm `smartBatchingEnabled: boolean;` vào `SettingsDto` và `smartBatchingEnabled: boolean;` vào `UpdateSettingsPayload`.
 
-- [ ] **Step 2:** Admin page — thêm biến `const smartBatchingEnabled = current?.smartBatchingEnabled ?? true;`, đưa field vào `patch()` object, vào điều kiện `dirty`, vào payload `save()`; thêm block toggle mới (card riêng, đặt SAU card wait-time để toggle wait-time vẫn là `.first()`):
+- [x] **Step 2:** Admin page — thêm biến `const smartBatchingEnabled = current?.smartBatchingEnabled ?? true;`, đưa field vào `patch()` object, vào điều kiện `dirty`, vào payload `save()`; thêm block toggle mới (card riêng, đặt SAU card wait-time để toggle wait-time vẫn là `.first()`):
 
 ```tsx
       <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
@@ -141,11 +141,11 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
       </div>
 ```
 
-- [ ] **Step 3:** Sửa `e2e/admin-settings.spec.ts`: `const toggleTrack = page.locator("div.h-6.w-11").first();`
+- [x] **Step 3:** Sửa `e2e/admin-settings.spec.ts`: `const toggleTrack = page.locator("div.h-6.w-11").first();`
 
-- [ ] **Step 4:** `cd chalo-fe && pnpm lint` → PASS (kiểm tra type qua `pnpm exec tsc --noEmit` nếu cần).
+- [x] **Step 4:** `cd chalo-fe && pnpm lint` → PASS (kiểm tra type qua `pnpm exec tsc --noEmit` nếu cần).
 
-- [ ] **Step 5: Commit** — `git add chalo-fe && git commit -m "feat(fe): admin toggle for smart batching suggestion"`
+- [x] **Step 5: Commit** — `git add chalo-fe && git commit -m "feat(fe): admin toggle for smart batching suggestion"`
 
 ---
 
