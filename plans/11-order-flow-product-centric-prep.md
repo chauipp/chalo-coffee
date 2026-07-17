@@ -1442,7 +1442,7 @@ git commit -m "feat(fe): hàm thuần gom đơn pha chế theo món, tách mẻ 
 
 ---
 
-## - [ ] Task 8: FE — Card món + PrepStation theo món
+## - [x] Task 8: FE — Card món + PrepStation theo món
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/_components/PrepProductCard.tsx`
