@@ -1,31 +1,28 @@
 "use client";
 // src/app/(staff)/_components/PrepStation.tsx
-// Khu vực Pha chế (vùng phải màn split): gom các đơn PREPARING thành ticket,
-// mỗi đơn một ticket riêng.
+// Khu vực Pha chế: gom các đơn PREPARING theo MÓN (không theo bàn). Không có
+// nút "Sẵn sàng" — tick đủ mọi ly của một bàn thì BE tự đẩy đơn sang READY.
 import { CollapseIcon } from "@/components/shared/icons/CollapseIcon";
 import { ExpandIcon } from "@/components/shared/icons/ExpandIcon";
-import { OrderDto, OrderStatus } from "@/services/order/order.types";
+import { OrderDto } from "@/services/order/order.types";
+import { PrepUnit, groupByProduct } from "@/utils/prep-grouping";
 import { useMemo } from "react";
-import { PrepTicket } from "./PrepTicket";
+import { PrepProductCard } from "./PrepProductCard";
+import { TableProgressBar } from "./TableProgressBar";
 
 export const PrepStation = ({
   orders,
-  onStatusChange,
-  updatingId,
+  onToggleUnit,
   expanded,
   onToggleExpand,
 }: {
   /** Các đơn PREPARING, sort cũ → mới */
   orders: OrderDto[];
-  onStatusChange: (orderId: string, status: OrderStatus) => void;
-  updatingId: string | null;
+  onToggleUnit: (unit: PrepUnit) => void;
   expanded: boolean;
   onToggleExpand: () => void;
 }) => {
-  const tickets = useMemo(
-    () => orders.map((o) => ({ key: o.id, orders: [o] })),
-    [orders],
-  );
+  const groups = useMemo(() => groupByProduct(orders), [orders]);
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-orange-200 dark:border-orange-800/50 bg-orange-50/40 dark:bg-orange-950/10">
@@ -66,24 +63,25 @@ export const PrepStation = ({
       </div>
 
       <div className="flex-1 overflow-y-auto p-2">
-        {tickets.length === 0 ? (
+        {groups.length === 0 ? (
           <p className="text-xs text-gray-400 dark:text-gray-600 text-center py-10">
-            Chưa có món nào đang pha — chọn đơn &quot;Đã xác nhận&quot; và bấm
-            &quot;Bắt đầu pha&quot;.
+            Chưa có món nào đang pha — chọn đơn ở cột &quot;Khách đặt&quot; và
+            bấm &quot;Bắt đầu pha&quot;.
           </p>
         ) : (
-          <div className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
-            {tickets.map((t) => (
-              <PrepTicket
-                key={t.key}
-                orders={t.orders}
-                onStatusChange={onStatusChange}
-                updatingId={updatingId}
+          <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
+            {groups.map((g) => (
+              <PrepProductCard
+                key={g.productId}
+                group={g}
+                onToggleUnit={onToggleUnit}
               />
             ))}
           </div>
         )}
       </div>
+
+      <TableProgressBar orders={orders} onToggleUnit={onToggleUnit} />
     </div>
   );
 };
