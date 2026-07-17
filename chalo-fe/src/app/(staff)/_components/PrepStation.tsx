@@ -1,11 +1,10 @@
 "use client";
 // src/app/(staff)/_components/PrepStation.tsx
-// Khu vực Pha chế (vùng phải màn split): gom các đơn PREPARING thành ticket —
-// đơn cùng batch (gộp thủ công / gợi ý) chung 1 ticket, còn lại ticket lẻ.
+// Khu vực Pha chế (vùng phải màn split): gom các đơn PREPARING thành ticket,
+// mỗi đơn một ticket riêng.
 import { CollapseIcon } from "@/components/shared/icons/CollapseIcon";
 import { ExpandIcon } from "@/components/shared/icons/ExpandIcon";
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
-import { usePrepStore } from "@/stores/prep.store";
 import { useMemo } from "react";
 import { PrepTicket } from "./PrepTicket";
 
@@ -23,31 +22,10 @@ export const PrepStation = ({
   expanded: boolean;
   onToggleExpand: () => void;
 }) => {
-  const batches = usePrepStore((s) => s.batches);
-
-  const tickets = useMemo(() => {
-    const byId = new Map(orders.map((o) => [o.id, o] as const));
-    const used = new Set<string>();
-    const result: { key: string; batchId?: string; orders: OrderDto[] }[] = [];
-
-    for (const [batchId, memberIds] of Object.entries(batches)) {
-      const members = memberIds
-        .filter((id) => byId.has(id))
-        .map((id) => byId.get(id)!);
-      if (members.length < 2) continue; // batch chỉ còn 1 đơn đang pha → hiển thị lẻ
-      members.forEach((m) => used.add(m.id));
-      result.push({ key: batchId, batchId, orders: members });
-    }
-    for (const o of orders) {
-      if (!used.has(o.id)) result.push({ key: o.id, orders: [o] });
-    }
-    // đơn (cũ nhất trong ticket) vào trước đứng trước
-    result.sort(
-      (a, b) =>
-        +new Date(a.orders[0].createdAt) - +new Date(b.orders[0].createdAt),
-    );
-    return result;
-  }, [orders, batches]);
+  const tickets = useMemo(
+    () => orders.map((o) => ({ key: o.id, orders: [o] })),
+    [orders],
+  );
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-orange-200 dark:border-orange-800/50 bg-orange-50/40 dark:bg-orange-950/10">
@@ -91,7 +69,7 @@ export const PrepStation = ({
         {tickets.length === 0 ? (
           <p className="text-xs text-gray-400 dark:text-gray-600 text-center py-10">
             Chưa có món nào đang pha — chọn đơn &quot;Đã xác nhận&quot; và bấm
-            &quot;Bắt đầu pha&quot;, hoặc chọn nhiều đơn để pha chung.
+            &quot;Bắt đầu pha&quot;.
           </p>
         ) : (
           <div className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
@@ -99,7 +77,6 @@ export const PrepStation = ({
               <PrepTicket
                 key={t.key}
                 orders={t.orders}
-                batchId={t.batchId}
                 onStatusChange={onStatusChange}
                 updatingId={updatingId}
               />

@@ -49,19 +49,16 @@ const groupByProduct = (orders: OrderDto[]): ProductGroup[] => {
 
 export const PrepTicket = ({
   orders,
-  batchId,
   onStatusChange,
   updatingId,
 }: {
   /** 1 phần tử = đơn lẻ; nhiều phần tử = nhóm gộp */
   orders: OrderDto[];
-  batchId?: string;
   onStatusChange: (orderId: string, status: OrderStatus) => void;
   updatingId: string | null;
 }) => {
   const ticks = usePrepStore((s) => s.ticks);
   const toggleTick = usePrepStore((s) => s.toggleTick);
-  const dissolveBatch = usePrepStore((s) => s.dissolveBatch);
 
   const groups = useMemo(() => groupByProduct(orders), [orders]);
   const isBatch = orders.length > 1;
@@ -101,22 +98,6 @@ export const PrepTicket = ({
             {orders.map((o) => `#${o.id.slice(-6).toUpperCase()}`).join("  ")}
           </p>
         </div>
-        {isBatch && (
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-1.5 py-0.5 rounded-full">
-              Gộp {orders.length} đơn
-            </span>
-            {batchId && (
-              <button
-                onClick={() => dissolveBatch(batchId)}
-                className="text-[10px] text-gray-400 hover:text-red-500 underline underline-offset-2 transition-colors"
-                title="Tách nhóm về các đơn riêng (không mất tiến độ tick)"
-              >
-                Tách
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Ticklist theo món */}

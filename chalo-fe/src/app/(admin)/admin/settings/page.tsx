@@ -34,7 +34,6 @@ export default function SettingsPage() {
   const bankBin = current?.bankBin ?? "";
   const bankAccountNo = current?.bankAccountNo ?? "";
   const bankAccountName = current?.bankAccountName ?? "";
-  const smartBatchingEnabled = current?.smartBatchingEnabled ?? true;
 
   const patch = (p: Partial<SettingsDto>) =>
     setDraft({
@@ -43,7 +42,6 @@ export default function SettingsPage() {
       bankBin: bankBin || null,
       bankAccountNo: bankAccountNo || null,
       bankAccountName: bankAccountName || null,
-      smartBatchingEnabled,
       ...p,
     });
 
@@ -60,8 +58,7 @@ export default function SettingsPage() {
       draft.baristaCount !== data.baristaCount ||
       (draft.bankBin ?? null) !== (data.bankBin ?? null) ||
       (draft.bankAccountNo ?? null) !== (data.bankAccountNo ?? null) ||
-      (draft.bankAccountName ?? null) !== (data.bankAccountName ?? null) ||
-      draft.smartBatchingEnabled !== data.smartBatchingEnabled);
+      (draft.bankAccountName ?? null) !== (data.bankAccountName ?? null));
 
   // Cấu hình bank hợp lệ khi đủ cả 3 hoặc trống cả 3
   const bankPartial =
@@ -76,7 +73,6 @@ export default function SettingsPage() {
         bankBin: bankBin || "",
         bankAccountNo: bankAccountNo || "",
         bankAccountName: bankAccountName || "",
-        smartBatchingEnabled,
       },
       { onSuccess: () => setDraft(null) },
     );
@@ -127,24 +123,6 @@ export default function SettingsPage() {
             className="w-40"
           />
         </FormField>
-      </div>
-
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              Gợi ý gộp đơn thông minh
-            </p>
-            <p className="text-xs text-gray-400">
-              Tự quét 3 đơn kế tiếp trong hàng chờ pha chế, gợi ý staff gộp các
-              đơn trùng nhiều món để pha chung một lượt
-            </p>
-          </div>
-          <Toggle
-            checked={smartBatchingEnabled}
-            onChange={(v) => patch({ smartBatchingEnabled: v })}
-          />
-        </div>
       </div>
 
       <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5">
