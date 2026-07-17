@@ -24,7 +24,7 @@
 
 ---
 
-## - [ ] Task 1: BE — Bảng chuyển trạng thái mới
+## - [x] Task 1: BE — Bảng chuyển trạng thái mới
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/order.service.ts:39-44`
@@ -177,7 +177,7 @@ git commit -m "feat(be): luồng trạng thái mới - bỏ bước xác nhận,
 
 ---
 
-## - [ ] Task 2: BE — Cột preparedQuantity + endpoint tick + tự đẩy READY
+## - [x] Task 2: BE — Cột preparedQuantity + endpoint tick + tự đẩy READY
 
 **Files:**
 - Create: `chalo-be/src/migrations/1752990000000-AddOrderItemPreparedQuantity.ts`
@@ -236,7 +236,7 @@ Trong `chalo-be/src/modules/order/entities/order-item.entity.ts`, thêm ngay sau
 - [ ] **Step 3: Chạy migration**
 
 ```bash
-cd chalo-be && DB_PORT=5433 npx typeorm-ts-node-commonjs migration:run -d src/config/data-source.ts
+cd chalo-be && DB_PORT=5433 npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts
 ```
 Expected: `Migration AddOrderItemPreparedQuantity1752990000000 has been executed successfully.`
 
@@ -774,7 +774,7 @@ export class DropSmartBatchingSetting1752990100000 implements MigrationInterface
 - [ ] **Step 5: Chạy migration**
 
 ```bash
-cd chalo-be && DB_PORT=5433 npx typeorm-ts-node-commonjs migration:run -d src/config/data-source.ts
+cd chalo-be && DB_PORT=5433 npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts
 ```
 Expected: `Migration DropSmartBatchingSetting1752990100000 has been executed successfully.`
 
