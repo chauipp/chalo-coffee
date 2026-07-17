@@ -2130,7 +2130,7 @@ git commit -m "feat(fe): cột Khách đặt/Sẵn sàng/Đã phục vụ, viề
 
 ---
 
-## - [ ] Task 11: E2E + kiểm chứng tay
+## - [x] Task 11: E2E + kiểm chứng tay
 
 **Files:**
 - Create: `chalo-fe/e2e/prep-product-centric.spec.ts`
