@@ -57,7 +57,7 @@ Props: `{ collapsed: boolean }`.
 Trigger — the avatar button:
 - Collapsed: avatar circle only, centred.
 - Expanded: avatar + full name + role, matching the current footer layout.
-- `aria-haspopup="menu"`, `aria-expanded={open}`.
+- `aria-haspopup="true"`, `aria-expanded={open}`.
 
 Panel — `w-56`, absolutely positioned, opens upward (`bottom-full mb-2`) because the footer sits at the bottom of the sidebar. When the sidebar is collapsed the panel is wider than the 64px rail and overflows to the right; this is correct dropdown behaviour and is not clipped, as `aside` sets no `overflow-hidden`.
 
@@ -66,13 +66,14 @@ Panel contents, top to bottom:
 2. Divider.
 3. `<ThemeSwitch />`, horizontally centred.
 4. Divider.
-5. Logout row: `LogoutIcon` + "Đăng xuất", red hover, `role="menuitem"`.
+5. Logout row: `LogoutIcon` + "Đăng xuất", red hover, a plain `<button>`.
 
 Behaviour:
 - Click trigger toggles open state.
 - Click outside closes (document `mousedown` listener, added only while open).
 - `Escape` closes and returns focus to the trigger.
-- Panel is `role="menu"`.
+
+The panel carries no ARIA `menu` role. `role="menu"` would be wrong here: it requires its children to be `menuitem`/`menuitemcheckbox`/`menuitemradio`, and this panel holds a name/role header, a `switch`, and dividers — that combination violates `aria-required-children` and axe flags it. A plain popover is conformant and loses nothing: `aria-haspopup` + `aria-expanded` on the trigger already convey the disclosure, and the logout button and the switch expose themselves correctly on their own.
 
 Deliberately excluded, to match the level `Modal.tsx` already sets: no focus trap, no arrow-key roving focus. Adding them here would make this the only component in the codebase with that behaviour.
 

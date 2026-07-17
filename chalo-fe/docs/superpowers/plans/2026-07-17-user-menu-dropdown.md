@@ -126,7 +126,7 @@ test("logout from the menu returns to the login page", async ({ page }) => {
   await loginAsAdmin(page);
 
   await page.getByTestId("user-menu-trigger").click();
-  await page.getByRole("menuitem", { name: "Đăng xuất" }).click();
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
 
   await page.waitForURL("**/login");
   await expect(page.getByRole("button", { name: "Đăng nhập" })).toBeVisible();
@@ -191,7 +191,6 @@ export const UserMenu = ({ collapsed }: { collapsed: boolean }) => {
     <div ref={rootRef} className="relative">
       {open && (
         <div
-          role="menu"
           data-testid="user-menu-panel"
           className="absolute bottom-full left-0 z-50 mb-2 w-56 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
         >
@@ -205,7 +204,6 @@ export const UserMenu = ({ collapsed }: { collapsed: boolean }) => {
           <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
 
           <button
-            role="menuitem"
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-950/30 dark:hover:text-red-400"
           >
@@ -218,7 +216,7 @@ export const UserMenu = ({ collapsed }: { collapsed: boolean }) => {
       <button
         ref={triggerRef}
         onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded={open}
         data-testid="user-menu-trigger"
         title={collapsed ? name : undefined}
@@ -442,11 +440,10 @@ In `src/components/shared/UserMenu.tsx`, add the import below the `LogoutIcon` i
 import { ThemeSwitch } from "./ThemeSwitch";
 ```
 
-Then replace the entire panel block — everything from `<div role="menu"` through its closing `</div>` — with the version below. The panel gains a switch row and a second divider, so it reads header → switch → logout:
+Then replace the entire panel block — everything from `<div data-testid="user-menu-panel"` through its closing `</div>` — with the version below. The panel gains a switch row and a second divider, so it reads header → switch → logout:
 
 ```tsx
         <div
-          role="menu"
           data-testid="user-menu-panel"
           className="absolute bottom-full left-0 z-50 mb-2 w-56 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
         >
@@ -466,7 +463,6 @@ Then replace the entire panel block — everything from `<div role="menu"` throu
           <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
 
           <button
-            role="menuitem"
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-950/30 dark:hover:text-red-400"
           >
