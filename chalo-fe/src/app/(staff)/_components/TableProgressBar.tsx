@@ -5,7 +5,7 @@
 // đủ món của bàn đó.
 import { OrderDto } from "@/services/order/order.types";
 import { PrepUnit, TableProgress, tableProgress } from "@/utils/prep-grouping";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { TablePopover } from "./TablePopover";
 
 export const TableProgressBar = ({
@@ -20,6 +20,15 @@ export const TableProgressBar = ({
     table: TableProgress;
     rect: DOMRect;
   } | null>(null);
+
+  const handleClose = useCallback(() => setOpen(null), []);
+  const handleToggleUnit = useCallback(
+    (u: PrepUnit) => {
+      onToggleUnit(u);
+      setOpen(null);
+    },
+    [onToggleUnit],
+  );
 
   if (tables.length === 0) return null;
 
@@ -60,11 +69,8 @@ export const TableProgressBar = ({
         <TablePopover
           table={open.table}
           anchorRect={open.rect}
-          onClose={() => setOpen(null)}
-          onToggleUnit={(u) => {
-            onToggleUnit(u);
-            setOpen(null);
-          }}
+          onClose={handleClose}
+          onToggleUnit={handleToggleUnit}
         />
       )}
     </>

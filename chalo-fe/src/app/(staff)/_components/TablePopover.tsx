@@ -22,7 +22,9 @@ export const TablePopover = ({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    el.showPopover();
+    // Guard: effect có thể chạy lại khi cha re-render lúc popover đang mở.
+    // showPopover() trên popover đã mở sẽ ném InvalidStateError.
+    if (!el.matches(":popover-open")) el.showPopover();
     // Bung lên phía trên chip, canh giữa theo chiều ngang, không tràn mép màn
     const { width, height } = el.getBoundingClientRect();
     const left = Math.min(
