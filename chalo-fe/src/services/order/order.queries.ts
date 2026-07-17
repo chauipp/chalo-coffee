@@ -74,11 +74,13 @@ export const useGetEstimatedWait = (orderId?: string) => {
 };
 
 // ===STAFF===
-export const useGetActiveOrder = () =>
+/** `refetchInterval` cho nơi không có SSE (vd khu pha chế ở layout, mở trên mọi màn staff) */
+export const useGetActiveOrder = (options?: { refetchInterval?: number }) =>
   useQuery({
     queryKey: QUERY_KEYS.ORDERS.ACTIVE,
     queryFn: () => getActiveOrders(),
     staleTime: 10_000,
+    ...options,
   });
 
 // ===Revenue===

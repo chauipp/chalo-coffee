@@ -38,3 +38,34 @@ test("staff orders page shows split layout with draggable/keyboard resizer", asy
   const reloaded = await page.getByTestId("split-resizer").boundingBox();
   expect(Math.abs(reloaded!.x - after!.x)).toBeLessThan(8);
 });
+
+test("khu pha chế hiển thị ở mọi màn staff và phóng to/thu lại được", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.locator("#username").fill("staff");
+  await page.locator("#password").fill("staff");
+  await page.getByRole("button", { name: "Đăng nhập" }).click();
+  await page.waitForURL("**/staff/**");
+
+  const prep = page.getByRole("heading", { name: "Đang pha chế" });
+  const resizer = page.getByTestId("split-resizer");
+  const toggle = page.getByTestId("prep-expand-toggle");
+
+  // Khu pha chế nằm ở layout → có mặt trên cả POS và Bàn, không chỉ Đơn hàng
+  for (const path of ["/staff/orders", "/staff/pos", "/staff/tables"]) {
+    await page.goto(path);
+    await expect(prep).toBeVisible({ timeout: 15_000 });
+    await expect(resizer).toBeVisible();
+  }
+
+  // Phóng to: chiếm trọn ứng dụng → vùng trái và thanh kéo biến mất
+  await toggle.click();
+  await expect(resizer).toBeHidden();
+  const expandedBox = await toggle.boundingBox();
+  expect(expandedBox!.x).toBeLessThan(60); // sát mép trái màn hình
+
+  // Thu lại: về chế độ chia đôi
+  await toggle.click();
+  await expect(resizer).toBeVisible();
+});

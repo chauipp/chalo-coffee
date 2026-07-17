@@ -16,8 +16,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BatchSuggestion } from "./_components/BatchSuggestion";
 import { KanbanColumn } from "./_components/KanbanColumn";
-import { PrepStation } from "./_components/PrepStation";
-import { SplitPane } from "./_components/SplitPane";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { KANBAN_COLUMNS, LEFT_STATUSES } from "./orders.config";
 
@@ -58,7 +56,6 @@ export default function StaffOrdersPage() {
   const { data: activeOrders, isLoading, refetch } = useGetActiveOrder();
 
   const updateStatusMutation = useUpdateOrderStatus();
-  const prune = usePrepStore((s) => s.prune);
   const createBatch = usePrepStore((s) => s.createBatch);
 
   // ─── Manual batching: chọn nhiều đơn CONFIRMED để pha chung ─────────────
@@ -162,17 +159,6 @@ export default function StaffOrdersPage() {
     [activeOrders],
   );
 
-  /** Đơn đang pha chế, cũ nhất trước (thứ tự nên pha) */
-  const preparingOrders = useMemo(
-    () => [...(ordersByStatus.PREPARING ?? [])].sort(byCreatedAsc),
-    [ordersByStatus],
-  );
-
-  // Dọn tick/batch của các đơn đã rời PREPARING (READY/COMPLETED/CANCELLED)
-  useEffect(() => {
-    if (activeOrders) prune(preparingOrders.map((o) => o.id));
-  }, [activeOrders, preparingOrders, prune]);
-
   /** Hàng chờ pha chế: CONFIRMED, cũ nhất trước */
   const confirmedQueue = useMemo(
     () => [...(ordersByStatus.CONFIRMED ?? [])].sort(byCreatedAsc),
@@ -269,79 +255,66 @@ export default function StaffOrdersPage() {
           <SpinnerIcon className="size-8 animate-spin text-brand-400" />
         </div>
       ) : (
-        <div className="flex-1 min-h-0 p-4">
-          <SplitPane
-            storageKey="staff-prep-split"
-            left={
-              <div className="relative h-full overflow-x-auto pr-1">
-                <div className="flex gap-3 h-full min-w-[680px]">
-                  {leftColumns.map((col) => (
-                    <KanbanColumn
-                      config={col}
-                      onStatusChange={handleStatusChange}
-                      updatingId={updatingId}
-                      orders={
-                        col.status === "CONFIRMED"
-                          ? confirmedQueue
-                          : ordersByStatus[col.status]
-                      }
-                      selectable={col.status === "CONFIRMED"}
-                      selectedIds={selectedIds}
-                      onToggleSelect={toggleSelect}
-                      banner={
-                        col.status === "CONFIRMED" && suggestion ? (
-                          <BatchSuggestion
-                            suggestion={suggestion}
-                            onAccept={startBatch}
-                            onDismiss={dismiss}
-                            isBatching={isBatching}
-                          />
-                        ) : null
-                      }
-                      key={col.status}
-                    />
-                  ))}
-                </div>
-
-                {/* Action bar gộp đơn thủ công */}
-                {selectedIds.size > 0 && (
-                  <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 flex items-center gap-2 rounded-full border border-brand-200 dark:border-brand-800 bg-white dark:bg-gray-900 px-4 py-2 shadow-lg">
-                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                      Đã chọn {selectedIds.size} đơn
-                    </span>
-                    <button
-                      onClick={() => startBatch([...selectedIds])}
-                      disabled={selectedIds.size < 2 || isBatching}
-                      title={
-                        selectedIds.size < 2
-                          ? "Chọn ít nhất 2 đơn để pha chung"
-                          : "Chuyển các đơn đã chọn vào khu pha chế, gộp 1 ticket"
-                      }
-                      className="flex items-center gap-1.5 rounded-full bg-brand-400 hover:bg-brand-500 active:bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors disabled:opacity-50 whitespace-nowrap"
-                    >
-                      {isBatching ? (
-                        <SpinnerIcon className="size-3 animate-spin" />
-                      ) : null}
-                      Pha chung ▶
-                    </button>
-                    <button
-                      onClick={() => setSelectedIds(new Set())}
-                      className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors whitespace-nowrap"
-                    >
-                      Bỏ chọn
-                    </button>
-                  </div>
-                )}
-              </div>
-            }
-            right={
-              <PrepStation
-                orders={preparingOrders}
+        // Khu pha chế (cột "Đang pha chế") nằm ở layout staff — luôn hiển thị
+        <div className="relative flex-1 min-h-0 overflow-x-auto p-4">
+          <div className="flex gap-3 h-full min-w-[680px]">
+            {leftColumns.map((col) => (
+              <KanbanColumn
+                config={col}
                 onStatusChange={handleStatusChange}
                 updatingId={updatingId}
+                orders={
+                  col.status === "CONFIRMED"
+                    ? confirmedQueue
+                    : ordersByStatus[col.status]
+                }
+                selectable={col.status === "CONFIRMED"}
+                selectedIds={selectedIds}
+                onToggleSelect={toggleSelect}
+                banner={
+                  col.status === "CONFIRMED" && suggestion ? (
+                    <BatchSuggestion
+                      suggestion={suggestion}
+                      onAccept={startBatch}
+                      onDismiss={dismiss}
+                      isBatching={isBatching}
+                    />
+                  ) : null
+                }
+                key={col.status}
               />
-            }
-          />
+            ))}
+          </div>
+
+          {/* Action bar gộp đơn thủ công */}
+          {selectedIds.size > 0 && (
+            <div className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 flex items-center gap-2 rounded-full border border-brand-200 dark:border-brand-800 bg-white dark:bg-gray-900 px-4 py-2 shadow-lg">
+              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                Đã chọn {selectedIds.size} đơn
+              </span>
+              <button
+                onClick={() => startBatch([...selectedIds])}
+                disabled={selectedIds.size < 2 || isBatching}
+                title={
+                  selectedIds.size < 2
+                    ? "Chọn ít nhất 2 đơn để pha chung"
+                    : "Chuyển các đơn đã chọn vào khu pha chế, gộp 1 ticket"
+                }
+                className="flex items-center gap-1.5 rounded-full bg-brand-400 hover:bg-brand-500 active:bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors disabled:opacity-50 whitespace-nowrap"
+              >
+                {isBatching ? (
+                  <SpinnerIcon className="size-3 animate-spin" />
+                ) : null}
+                Pha chung ▶
+              </button>
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors whitespace-nowrap"
+              >
+                Bỏ chọn
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

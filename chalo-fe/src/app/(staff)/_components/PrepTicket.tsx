@@ -1,5 +1,5 @@
 "use client";
-// src/app/(staff)/staff/orders/_components/PrepTicket.tsx
+// src/app/(staff)/_components/PrepTicket.tsx
 // Ticket khu pha chế: 1 đơn lẻ hoặc 1 nhóm gộp (batch). Món hiển thị kèm
 // checkbox từng ly — pha đến đâu tick đến đó, tránh làm trùng/sót món.
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
