@@ -25,7 +25,7 @@
 - [x] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
 - [x] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
 - [x] Task 6: FE — Smart batching suggestion + gate theo settings
-- [ ] Task 7: Chạy migration + servers (BE 8082 / FE 3020), verify end-to-end, chốt
+- [x] Task 7: Chạy migration + servers (BE 8082 / FE 3020), verify end-to-end, chốt
 
 ---
 
@@ -233,9 +233,9 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
 
 ### Task 7: Chạy migration + servers + verify end-to-end
 
-- [ ] **Step 1:** `cd chalo-be && pnpm run migration:run` (DB 5433 dùng chung — migration additive, an toàn).
-- [ ] **Step 2:** Chạy BE: `PORT=8082 CORS_ORIGIN=http://localhost:3020 pnpm start:dev` (background). Smoke: `curl localhost:8082/api/settings` → có `smartBatchingEnabled: true`.
-- [ ] **Step 3:** Chạy FE: `NEXT_PUBLIC_API_BASE_URL=http://localhost:8082/api INTERNAL_API_BASE_URL=http://localhost:8082/api pnpm dev -p 3020` (background).
-- [ ] **Step 4:** BE jest toàn bộ settings + FE `pnpm exec playwright test e2e/batching.unit.spec.ts`; e2e smoke `E2E_BASE_URL=http://localhost:3020 pnpm exec playwright test e2e/staff-prep.spec.ts`.
-- [ ] **Step 5:** Verify bằng browser (Playwright MCP): login staff/staff → tạo 3 đơn test qua POS/menu → thấy suggestion → gộp → tick từng món → Sẵn sàng; login admin/admin → tắt toggle → suggestion biến mất; kéo resizer; reload giữ tick + tỷ lệ. Dọn đơn test (CANCELLED/COMPLETED) sau khi verify.
-- [ ] **Step 6:** Commit chốt + báo user: **FE http://localhost:3020, BE http://localhost:8082** để test trước khi merge.
+- [x] **Step 1:** `cd chalo-be && pnpm run migration:run` (DB 5433 dùng chung — migration additive, an toàn).
+- [x] **Step 2:** Chạy BE: `PORT=8082 CORS_ORIGIN=http://localhost:3020 pnpm start:dev` (background). Smoke: `curl localhost:8082/api/settings` → có `smartBatchingEnabled: true`.
+- [x] **Step 3:** Chạy FE: `NEXT_PUBLIC_API_BASE_URL=http://localhost:8082/api INTERNAL_API_BASE_URL=http://localhost:8082/api pnpm dev -p 3020` (background).
+- [x] **Step 4:** BE jest toàn bộ settings + FE `pnpm exec playwright test e2e/batching.unit.spec.ts`; e2e smoke `E2E_BASE_URL=http://localhost:3020 pnpm exec playwright test e2e/staff-prep.spec.ts`.
+- [x] **Step 5:** Verify bằng browser (Playwright MCP): login staff/staff → tạo 3 đơn test qua POS/menu → thấy suggestion → gộp → tick từng món → Sẵn sàng; login admin/admin → tắt toggle → suggestion biến mất; kéo resizer; reload giữ tick + tỷ lệ. Dọn đơn test (CANCELLED/COMPLETED) sau khi verify.
+- [x] **Step 6:** Commit chốt + báo user: **FE http://localhost:3020, BE http://localhost:8082** để test trước khi merge.
