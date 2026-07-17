@@ -24,7 +24,7 @@
 - [x] Task 3: FE logic core — orders.config, utils/batching (+unit test), prep.store
 - [x] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
 - [x] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
-- [ ] Task 6: FE — Smart batching suggestion + gate theo settings
+- [x] Task 6: FE — Smart batching suggestion + gate theo settings
 - [ ] Task 7: Chạy migration + servers (BE 8082 / FE 3020), verify end-to-end, chốt
 
 ---
@@ -225,9 +225,9 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
 - `BatchSuggestion.tsx`: thẻ nổi bật (border brand, icon 💡): "Gợi ý: N đơn trùng M món — pha chung 1 lượt?" + liệt kê tên món chung (`commonProducts`), 2 nút: **"Gộp & pha ngay"** (dùng chung handler `startBatch(orderIds)` của Task 5) và **"Bỏ qua"** (`dismiss(signature)`).
 - Gate: `const { data: settings } = useGetSettings();` → `const smartEnabled = settings?.smartBatchingEnabled ?? true;` (GET /settings public, staff gọi được).
 
-- [ ] **Step 1:** Implement.
-- [ ] **Step 2:** `pnpm lint` + `tsc --noEmit` PASS.
-- [ ] **Step 3: Commit** — `git commit -m "feat(fe): smart batching suggestion gated by admin setting"`
+- [x] **Step 1:** Implement.
+- [x] **Step 2:** `pnpm lint` + `tsc --noEmit` PASS.
+- [x] **Step 3: Commit** — `git commit -m "feat(fe): smart batching suggestion gated by admin setting"`
 
 ---
 

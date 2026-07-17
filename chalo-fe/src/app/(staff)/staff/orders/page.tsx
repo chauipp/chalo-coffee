@@ -7,11 +7,14 @@ import {
   useUpdateOrderStatus,
 } from "@/services/order/order.queries";
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
+import { useGetSettings } from "@/services/settings";
 import { useAuthStore } from "@/stores/auth.store";
 import { usePrepStore } from "@/stores/prep.store";
+import { computeBatchSuggestion } from "@/utils/batching";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { BatchSuggestion } from "./_components/BatchSuggestion";
 import { KanbanColumn } from "./_components/KanbanColumn";
 import { PrepStation } from "./_components/PrepStation";
 import { SplitPane } from "./_components/SplitPane";
@@ -185,6 +188,18 @@ export default function StaffOrdersPage() {
     });
   }, [confirmedQueue]);
 
+  // ─── Smart batching suggestion (bật/tắt trong Admin Settings) ───────────
+  const { data: settings } = useGetSettings();
+  const smartEnabled = settings?.smartBatchingEnabled ?? true;
+  const dismissed = usePrepStore((s) => s.dismissed);
+  const dismiss = usePrepStore((s) => s.dismiss);
+
+  const suggestion = useMemo(() => {
+    if (!smartEnabled) return null; // admin tắt → bỏ qua bước quét
+    const s = computeBatchSuggestion(confirmedQueue);
+    return s && !dismissed.includes(s.signature) ? s : null;
+  }, [smartEnabled, confirmedQueue, dismissed]);
+
   /** Gộp N đơn: chuyển từng đơn sang PREPARING rồi ghép chung 1 ticket */
   const startBatch = async (orderIds: string[]) => {
     if (isBatching || orderIds.length < 2) return;
@@ -273,6 +288,16 @@ export default function StaffOrdersPage() {
                       selectable={col.status === "CONFIRMED"}
                       selectedIds={selectedIds}
                       onToggleSelect={toggleSelect}
+                      banner={
+                        col.status === "CONFIRMED" && suggestion ? (
+                          <BatchSuggestion
+                            suggestion={suggestion}
+                            onAccept={startBatch}
+                            onDismiss={dismiss}
+                            isBatching={isBatching}
+                          />
+                        ) : null
+                      }
                       key={col.status}
                     />
                   ))}
