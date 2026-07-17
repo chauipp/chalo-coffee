@@ -12,11 +12,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
-  PENDING: "Chờ xác nhận",
-  CONFIRMED: "Đã xác nhận",
+  PENDING: "Khách đặt",
+  CONFIRMED: "Khách đặt", // trạng thái di sản, hiển thị như PENDING
   PREPARING: "Đang pha chế",
-  READY: "Sẵn sàng",
-  COMPLETED: "Hoàn thành",
+  READY: "Sẵn sàng phục vụ",
+  COMPLETED: "Đã phục vụ",
   CANCELLED: "Đã huỷ",
 };
 

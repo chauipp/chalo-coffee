@@ -8,12 +8,12 @@ const ORDER_STATUS_CONFIG: Record<
   { label: string; bg: string; text: string }
 > = {
   PENDING: {
-    label: "Chờ xác nhận",
+    label: "Khách đặt",
     bg: "bg-yellow-100 dark:bg-yellow-900/30",
     text: "text-yellow-700 dark:text-yellow-400",
   },
   CONFIRMED: {
-    label: "Đã xác nhận",
+    label: "Khách đặt",
     bg: "bg-blue-100 dark:bg-blue-900/30",
     text: "text-blue-700 dark:text-blue-400",
   },
@@ -23,7 +23,7 @@ const ORDER_STATUS_CONFIG: Record<
     text: "text-orange-700 dark:text-orange-400",
   },
   READY: {
-    label: "Sẵn sàng",
+    label: "Sẵn sàng phục vụ",
     bg: "bg-green-100 dark:bg-green-900/30",
     text: "text-green-700 dark:text-green-400",
   },

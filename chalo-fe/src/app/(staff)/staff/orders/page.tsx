@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { KanbanColumn } from "./_components/KanbanColumn";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-import { KANBAN_COLUMNS, LEFT_STATUSES } from "./orders.config";
+import { KANBAN_COLUMNS, KHACH_DAT_STATUSES } from "./orders.config";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
@@ -37,9 +37,6 @@ const playBeep = (frequency = 880) => {
     osc.stop(ctx.currentTime + 0.5);
   } catch {}
 };
-
-const byCreatedAsc = (a: OrderDto, b: OrderDto) =>
-  +new Date(a.createdAt) - +new Date(b.createdAt);
 
 export default function StaffOrdersPage() {
   const qc = useQueryClient();
@@ -104,7 +101,7 @@ export default function StaffOrdersPage() {
 
   // ─── Sound for new PENDING orders ────────────────────────────────────────────────────────
   const pendingCount = (activeOrders || []).filter(
-    (o) => o.status === "PENDING",
+    (o) => o.status === "PENDING" || o.status === "CONFIRMED",
   ).length;
 
   useEffect(() => {
@@ -128,31 +125,20 @@ export default function StaffOrdersPage() {
     }
   };
 
-  // ─── Group orders by status ────────────────────────────────────────────────────────
-  const ordersByStatus = useMemo(
-    () =>
-      KANBAN_COLUMNS.reduce<Record<OrderStatus, OrderDto[]>>(
-        (acc, col) => {
-          acc[col.status] = (activeOrders ?? []).filter(
-            (o) => o.status === col.status,
-          );
-          return acc;
-        },
-        {} as Record<OrderStatus, OrderDto[]>,
-      ),
-    [activeOrders],
-  );
-
-  /** Hàng chờ pha chế: CONFIRMED, cũ nhất trước */
-  const confirmedQueue = useMemo(
-    () => [...(ordersByStatus.CONFIRMED ?? [])].sort(byCreatedAsc),
-    [ordersByStatus],
-  );
+  /** Đơn của từng cột: "Khách đặt" gom cả CONFIRMED cũ; "Đã phục vụ" chỉ đơn chưa trả tiền */
+  const ordersForColumn = useMemo(() => {
+    const all = activeOrders ?? [];
+    return (status: OrderStatus): OrderDto[] => {
+      if (status === "PENDING")
+        return all.filter((o) => KHACH_DAT_STATUSES.includes(o.status));
+      if (status === "COMPLETED")
+        return all.filter((o) => o.status === "COMPLETED" && !o.paidStatus);
+      return all.filter((o) => o.status === status);
+    };
+  }, [activeOrders]);
 
   const totalActive = activeOrders?.length ?? 0;
-  const leftColumns = KANBAN_COLUMNS.filter((c) =>
-    LEFT_STATUSES.includes(c.status),
-  );
+  const leftColumns = KANBAN_COLUMNS;
 
   return (
     <div className="h-full flex flex-col">
@@ -196,11 +182,7 @@ export default function StaffOrdersPage() {
                 config={col}
                 onStatusChange={handleStatusChange}
                 updatingId={updatingId}
-                orders={
-                  col.status === "CONFIRMED"
-                    ? confirmedQueue
-                    : ordersByStatus[col.status]
-                }
+                orders={ordersForColumn(col.status)}
                 key={col.status}
               />
             ))}

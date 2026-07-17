@@ -13,51 +13,45 @@ export const KANBAN_COLUMNS: {
 }[] = [
   {
     status: "PENDING",
-    label: "Chờ xác nhận",
+    label: "Khách đặt",
     emoji: "📋",
     bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
     textColor: "text-yellow-700 dark:text-yellow-400",
     borderColor: "border-yellow-200 dark:border-yellow-800/50",
   },
   {
-    status: "CONFIRMED",
-    label: "Đã xác nhận",
-    emoji: "✅",
-    bgColor: "bg-blue-50 dark:bg-blue-950/20",
-    textColor: "text-blue-700 dark:text-blue-400",
-    borderColor: "border-blue-200 dark:border-blue-800/50",
-  },
-  {
-    status: "PREPARING",
-    label: "Đang pha chế",
-    emoji: "☕",
-    bgColor: "bg-orange-50 dark:bg-orange-950/20",
-    textColor: "text-orange-700 dark:text-orange-400",
-    borderColor: "border-orange-200 dark:border-orange-800/50",
-  },
-  {
     status: "READY",
-    label: "Sẵn sàng",
+    label: "Sẵn sàng phục vụ",
     emoji: "🔔",
     bgColor: "bg-green-50 dark:bg-green-950/20",
     textColor: "text-green-700 dark:text-green-400",
     borderColor: "border-green-200 dark:border-green-800/50",
   },
+  {
+    status: "COMPLETED",
+    label: "Đã phục vụ",
+    emoji: "🍽️",
+    bgColor: "bg-blue-50 dark:bg-blue-950/20",
+    textColor: "text-blue-700 dark:text-blue-400",
+    borderColor: "border-blue-200 dark:border-blue-800/50",
+  },
 ];
 
-/** 3 cột hiển thị ở vùng trái màn split — PREPARING nằm riêng ở khu pha chế phải */
-export const LEFT_STATUSES: OrderStatus[] = ["PENDING", "CONFIRMED", "READY"];
+/** 3 cột vùng trái — PREPARING nằm riêng ở khu pha chế bên phải */
+export const LEFT_STATUSES: OrderStatus[] = ["PENDING", "READY", "COMPLETED"];
 
+/** Đơn CONFIRMED cũ trong DB gom chung cột "Khách đặt" — không tạo mới trạng thái này */
+export const KHACH_DAT_STATUSES: OrderStatus[] = ["PENDING", "CONFIRMED"];
+
+/** PREPARING → READY KHÔNG có ở đây: tick đủ ly thì BE tự đẩy */
 export const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  PENDING: "CONFIRMED",
+  PENDING: "PREPARING",
   CONFIRMED: "PREPARING",
-  PREPARING: "READY",
   READY: "COMPLETED",
 };
 
 export const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
-  PENDING: "Xác nhận",
+  PENDING: "Bắt đầu pha",
   CONFIRMED: "Bắt đầu pha",
-  PREPARING: "Sẵn sàng",
-  READY: "Hoàn thành",
+  READY: "Đã bê ra",
 };

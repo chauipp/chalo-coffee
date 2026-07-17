@@ -45,11 +45,11 @@ export const OrderCard = ({
           openDetail();
         }
       }}
-      className={`cursor-pointer rounded-xl border bg-white dark:bg-gray-900 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
+      className={`cursor-pointer rounded-xl border-2 bg-white dark:bg-gray-900 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
         ${
-          order.status === "PENDING"
-            ? "border-l-4 border-l-yellow-400 dark:border-l-yellow-500"
-            : "border-gray-100 dark:border-gray-800"
+          order.paidStatus
+            ? "border-green-400 dark:border-green-600"
+            : "border-red-400 dark:border-red-600"
         }`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -65,9 +65,13 @@ export const OrderCard = ({
         </div>
         <div className="text-right shrink-0">
           <p className="text-xs text-gray-400">{formatAge(ageMs)}</p>
-          {order.paidStatus && (
+          {order.paidStatus ? (
             <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded-full">
               Đã thanh toán
+            </span>
+          ) : (
+            <span className="text-[10px] font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded-full">
+              Chưa thanh toán
             </span>
           )}
         </div>

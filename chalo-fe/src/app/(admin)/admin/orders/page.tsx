@@ -18,11 +18,11 @@ import { useState } from "react";
 
 const STATUS_BADGE: Record<OrderStatus, { label: string; variant: BadgeVariant }> =
   {
-    PENDING: { label: "Chờ xác nhận", variant: "yellow" },
-    CONFIRMED: { label: "Đã xác nhận", variant: "blue" },
+    PENDING: { label: "Khách đặt", variant: "yellow" },
+    CONFIRMED: { label: "Khách đặt", variant: "blue" },
     PREPARING: { label: "Đang pha chế", variant: "blue" },
-    READY: { label: "Sẵn sàng", variant: "green" },
-    COMPLETED: { label: "Hoàn tất", variant: "gray" },
+    READY: { label: "Sẵn sàng phục vụ", variant: "green" },
+    COMPLETED: { label: "Đã phục vụ", variant: "gray" },
     CANCELLED: { label: "Đã huỷ", variant: "red" },
   };
 
