@@ -15,6 +15,7 @@ import { Product } from '../product/entities/product.entity';
 import { PagerToken } from '../pager/entities/pager-token.entity';
 import { PagerStatus } from '../../common/enums/pager-status.enum';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateItemPreparedDto } from './dto/update-item-prepared.dto';
 import {
   UpdateOrderStatusDto,
   RequestPaymentDto,
@@ -81,6 +82,7 @@ export class OrderService {
         productImageUrl: item.productImageUrl,
         price: item.price,
         quantity: item.quantity,
+        preparedQuantity: item.preparedQuantity,
         subtotal: item.subtotal,
         note: item.note,
       })),
@@ -523,6 +525,73 @@ export class OrderService {
           tableToken: result.tableToken,
         },
       });
+
+      return result;
+    });
+  }
+
+  /**
+   * Tick số ly đã pha của một item. Nhận GIÁ TRỊ TUYỆT ĐỐI (không phải +1) nên
+   * hai máy cùng tick một ly không bị đếm đôi, và gọi lại cùng request không đổi kết quả.
+   * Tick đủ mọi item của đơn -> đơn tự chuyển READY.
+   */
+  async setItemPrepared(itemId: string, dto: UpdateItemPreparedDto) {
+    return this.dataSource.transaction(async (manager) => {
+      const item = await manager.findOne(OrderItem, { where: { id: itemId } });
+      if (!item) throw new NotFoundException('Món trong đơn không tồn tại');
+
+      const lockedOrder = await manager.findOne(Order, {
+        where: { id: item.orderId },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!lockedOrder) throw new NotFoundException('Đơn hàng không tồn tại');
+
+      if (lockedOrder.status !== OrderStatus.PREPARING) {
+        throw new BadRequestException('Chỉ tick được đơn đang pha chế');
+      }
+      if (dto.preparedQuantity > item.quantity) {
+        throw new BadRequestException('Số ly đã pha vượt quá số lượng đặt');
+      }
+
+      item.preparedQuantity = dto.preparedQuantity;
+      await manager.save(OrderItem, item);
+
+      const items = await manager.find(OrderItem, {
+        where: { orderId: lockedOrder.id },
+      });
+      const allDone = items.every((i) => i.preparedQuantity >= i.quantity);
+      if (allDone) {
+        lockedOrder.status = OrderStatus.READY;
+        await manager.save(Order, lockedOrder);
+      }
+
+      const full = await manager.findOne(Order, {
+        where: { id: lockedOrder.id },
+        relations: ['items', 'table'],
+      });
+      const result = this.buildDto(full!);
+
+      this.sseService.emit(
+        allDone
+          ? {
+              type: 'order_status_changed',
+              data: {
+                orderId: result.id,
+                status: result.status,
+                tableId: result.tableId,
+                tableName: result.tableName,
+                tableToken: result.tableToken,
+              },
+            }
+          : {
+              type: 'order_prep_progress',
+              data: {
+                orderId: result.id,
+                tableId: result.tableId,
+                tableName: result.tableName,
+              },
+            },
+      );
 
       return result;
     });
