@@ -1,3 +1,6 @@
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  # msw's postinstall keeps public/mockServiceWorker.js in sync with the package version.
+  msw: true
+  # sharp and unrs-resolver ship prebuilt binaries; building from source is not needed.
+  sharp: false
+  unrs-resolver: false
