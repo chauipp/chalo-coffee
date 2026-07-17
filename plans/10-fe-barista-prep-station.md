@@ -23,7 +23,7 @@
 - [x] Task 2: FE — settings service + Admin toggle + sửa e2e admin-settings
 - [x] Task 3: FE logic core — orders.config, utils/batching (+unit test), prep.store
 - [x] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
-- [ ] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
+- [x] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
 - [ ] Task 6: FE — Smart batching suggestion + gate theo settings
 - [ ] Task 7: Chạy migration + servers (BE 8082 / FE 3020), verify end-to-end, chốt
 
@@ -211,9 +211,9 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
 - Modify: `PrepStation.tsx` — gom PREPARING orders theo `batches` từ store; order lẻ → ticket đơn.
 - Modify: `page.tsx` — state `selected: Set<string>` (chỉ card CONFIRMED được chọn); action bar nổi khi chọn ≥2: "Pha chung (n) ▶" → tuần tự `updateStatus(id, "PREPARING")` từng order rồi `createBatch(ids)`, clear selection; nút "Bỏ chọn".
 
-- [ ] **Step 1:** Implement như trên; tick trong batch vẫn key theo `orderId:itemId` nên tách nhóm không mất tiến độ.
-- [ ] **Step 2:** `pnpm lint` + `tsc --noEmit` PASS.
-- [ ] **Step 3: Commit** — `git commit -m "feat(fe): manual batching - select confirmed orders and prep together"`
+- [x] **Step 1:** Implement như trên; tick trong batch vẫn key theo `orderId:itemId` nên tách nhóm không mất tiến độ.
+- [x] **Step 2:** `pnpm lint` + `tsc --noEmit` PASS.
+- [x] **Step 3: Commit** — `git commit -m "feat(fe): manual batching - select confirmed orders and prep together"`
 
 ---
 

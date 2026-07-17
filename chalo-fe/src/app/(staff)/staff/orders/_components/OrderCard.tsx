@@ -19,10 +19,17 @@ export const OrderCard = ({
   order,
   onStatusChange,
   isUpdating,
+  selectable = false,
+  selected = false,
+  onToggleSelect,
 }: {
   order: OrderDto;
   onStatusChange: (orderId: string, status: OrderStatus) => void;
   isUpdating: boolean;
+  /** Cho phép chọn đơn để gộp pha chung (chỉ cột Đã xác nhận) */
+  selectable?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (orderId: string) => void;
 }) => {
   const router = useRouter();
   const nextStatus = NEXT_STATUS[order.status];
@@ -46,16 +53,35 @@ export const OrderCard = ({
         }
       }}
       className={`cursor-pointer rounded-xl border bg-white dark:bg-gray-900 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
-        ${order.status === "PENDING" ? "border-l-4 border-l-yellow-400 dark:border-l-yellow-500" : "border-gray-100 dark:border-gray-800"}`}
+        ${
+          selected
+            ? "border-brand-400 ring-2 ring-brand-400/40"
+            : order.status === "PENDING"
+              ? "border-l-4 border-l-yellow-400 dark:border-l-yellow-500"
+              : "border-gray-100 dark:border-gray-800"
+        }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-            {order.tableName}
-          </p>
-          <p className="text-xs text-gray-400 font-mono">
-            #{order.id.slice(-6).toUpperCase()}
-          </p>
+        <div className="flex items-start gap-2 min-w-0">
+          {selectable && (
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => onToggleSelect?.(order.id)}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              aria-label={`Chọn đơn ${order.tableName} để pha chung`}
+              className="mt-0.5 size-4 shrink-0 accent-brand-500 cursor-pointer"
+            />
+          )}
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+              {order.tableName}
+            </p>
+            <p className="text-xs text-gray-400 font-mono">
+              #{order.id.slice(-6).toUpperCase()}
+            </p>
+          </div>
         </div>
         <div className="text-right shrink-0">
           <p className="text-xs text-gray-400">{formatAge(ageMs)}</p>
