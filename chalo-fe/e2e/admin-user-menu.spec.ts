@@ -41,3 +41,28 @@ test("logout from the menu returns to the login page", async ({ page }) => {
   await page.waitForURL("**/login");
   await expect(page.getByRole("button", { name: "Đăng nhập" })).toBeVisible();
 });
+
+test("theme switch flips the theme and persists it", async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.getByTestId("user-menu-trigger").click();
+
+  const html = page.locator("html");
+  const before = (await html.getAttribute("class")) ?? "";
+  const wasDark = before.includes("dark");
+
+  await page.getByTestId("theme-switch").click();
+  await expect(html).toHaveClass(wasDark ? /light/ : /dark/);
+  await expect(page.getByTestId("theme-switch")).toHaveAttribute(
+    "aria-checked",
+    wasDark ? "false" : "true",
+  );
+
+  // The choice is explicit now, so it must survive a reload.
+  await page.reload();
+  await expect(html).toHaveClass(wasDark ? /light/ : /dark/);
+});
+
+test("the fixed top-right theme toggle is gone", async ({ page }) => {
+  await loginAsAdmin(page);
+  await expect(page.getByLabel(/Đổi giao diện/)).toHaveCount(0);
+});

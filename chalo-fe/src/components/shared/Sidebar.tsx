@@ -4,7 +4,6 @@
 import { useState, type ComponentType, type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "./ThemeToggle";
 import { ChevronLeftIcon } from "./icons/ChevronLeftIcon";
 import { UserMenu } from "./UserMenu";
 
@@ -28,9 +27,6 @@ export const Sidebar = ({
   const toggle = () => setCollapsed((c) => !c);
 
   return (
-    <>
-      {/* fixed top-right theme icon */}
-      <ThemeToggle />
     <aside
       className={`flex flex-col border-r border-gray-200 bg-white transition-[width] duration-200 dark:border-gray-800 dark:bg-gray-900 ${
         collapsed ? "w-16" : "w-60"
@@ -97,6 +93,5 @@ export const Sidebar = ({
         <UserMenu collapsed={collapsed} />
       </div>
     </aside>
-    </>
   );
 };

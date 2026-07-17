@@ -45,7 +45,7 @@ Login credentials seeded in the restored dump: `admin` / `admin` (ADMIN), `staff
 
 ---
 
-- [ ] ### Task 1: UserMenu dropdown with logout
+- [x] ### Task 1: UserMenu dropdown with logout
 
 Builds the avatar dropdown and wires it into the sidebar. Theme is untouched here — `ThemeToggle` stays pinned top-right until Task 2 replaces it. This keeps the app shippable at every commit.
 
@@ -312,7 +312,7 @@ Adds the sun/moon pill to the menu, removes the fixed top-right toggle, and dele
 - Consumes: `useTheme()` from `@/providers/ThemeProvider` → `{ theme: Theme; resolvedTheme: "light" | "dark"; changeTheme: (t: Theme) => void }`. `UserMenu`'s `data-testid="user-menu-panel"` from Task 1.
 - Produces: `ThemeSwitch` — `() => JSX.Element`, no props. Test hook: `data-testid="theme-switch"`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `e2e/admin-user-menu.spec.ts`:
 
@@ -343,7 +343,7 @@ test("the fixed top-right theme toggle is gone", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 ```bash
 cd chalo-fe && PLAYWRIGHT_BASE_URL=http://localhost:3002 npx playwright test e2e/admin-user-menu.spec.ts --reporter=line
@@ -351,7 +351,7 @@ cd chalo-fe && PLAYWRIGHT_BASE_URL=http://localhost:3002 npx playwright test e2e
 
 Expected: the 3 Task 1 tests pass; the 2 new ones FAIL — `theme-switch` does not exist, and the old toggle still resolves to 1 element.
 
-- [ ] **Step 3: Create the ThemeSwitch component**
+- [x] **Step 3: Create the ThemeSwitch component**
 
 The knob is drawn in CSS, not from an icon — the reference calls for a solid glowing disc and a cratered moon, which the repo's thin-stroke icons cannot express.
 
@@ -432,7 +432,7 @@ export const ThemeSwitch = () => {
 };
 ```
 
-- [ ] **Step 4: Put the switch in the menu**
+- [x] **Step 4: Put the switch in the menu**
 
 In `src/components/shared/UserMenu.tsx`, add the import below the `LogoutIcon` import:
 
@@ -472,7 +472,7 @@ Then replace the entire panel block — everything from `<div data-testid="user-
         </div>
 ```
 
-- [ ] **Step 5: Remove ThemeToggle from the Sidebar**
+- [x] **Step 5: Remove ThemeToggle from the Sidebar**
 
 In `src/components/shared/Sidebar.tsx`, delete the import:
 
@@ -512,7 +512,7 @@ to:
   );
 ```
 
-- [ ] **Step 6: Delete the dead files**
+- [x] **Step 6: Delete the dead files**
 
 `ThemeToggle` was `SunIcon` and `MoonIcon`'s only consumer. `MonitorIcon` is NOT dead — the staff POS nav imports it.
 
@@ -532,7 +532,7 @@ grep -rn "MonitorIcon" --include=*.ts --include=*.tsx src/
 
 Expected: the first prints nothing. The second prints the `header.config.ts` import and the icon file itself. Note the `--include=*.ts` — a `.tsx`-only grep silently misses `header.config.ts`.
 
-- [ ] **Step 7: Run the tests to verify they pass**
+- [x] **Step 7: Run the tests to verify they pass**
 
 ```bash
 cd chalo-fe && PLAYWRIGHT_BASE_URL=http://localhost:3002 npx playwright test e2e/admin-user-menu.spec.ts --reporter=line
@@ -540,7 +540,7 @@ cd chalo-fe && PLAYWRIGHT_BASE_URL=http://localhost:3002 npx playwright test e2e
 
 Expected: `5 passed`.
 
-- [ ] **Step 8: Verify the staff sidebar and the rest of the suite**
+- [x] **Step 8: Verify the staff sidebar and the rest of the suite**
 
 The staff area shares `Sidebar`, and `MonitorIcon` lives in its nav:
 

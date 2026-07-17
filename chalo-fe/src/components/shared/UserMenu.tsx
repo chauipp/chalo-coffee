@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LogoutIcon } from "./icons/LogoutIcon";
+import { ThemeSwitch } from "./ThemeSwitch";
 import { useLogout } from "@/hooks/useLogout";
 import { useAuthStore } from "@/stores/auth.store";
 
@@ -47,6 +48,12 @@ export const UserMenu = ({ collapsed }: { collapsed: boolean }) => {
               {name}
             </p>
             <p className="text-xs text-gray-400">{user?.role}</p>
+          </div>
+
+          <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+
+          <div className="flex justify-center py-2">
+            <ThemeSwitch />
           </div>
 
           <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
