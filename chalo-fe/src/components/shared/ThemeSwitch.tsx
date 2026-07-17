@@ -15,10 +15,10 @@ export const ThemeSwitch = () => {
       aria-label="Chế độ tối"
       data-testid="theme-switch"
       onClick={() => changeTheme(isDark ? "light" : "dark")}
-      className={`relative h-8 w-16 shrink-0 overflow-hidden rounded-full border motion-safe:transition-colors motion-safe:duration-300 ${
+      className={`relative h-8 w-16 shrink-0 overflow-hidden rounded-full ring-1 ring-inset motion-safe:transition-colors motion-safe:duration-300 ${
         isDark
-          ? "border-gray-700 bg-gradient-to-b from-gray-800 to-gray-950"
-          : "border-sky-300 bg-gradient-to-b from-sky-300 to-sky-500"
+          ? "ring-gray-700 bg-gradient-to-b from-gray-800 to-gray-950"
+          : "ring-sky-300 bg-gradient-to-b from-sky-300 to-sky-500"
       }`}
     >
       {/* Clouds — decorative, light only */}

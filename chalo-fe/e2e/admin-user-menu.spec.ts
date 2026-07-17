@@ -64,5 +64,69 @@ test("theme switch flips the theme and persists it", async ({ page }) => {
 
 test("the fixed top-right theme toggle is gone", async ({ page }) => {
   await loginAsAdmin(page);
+  // Anchor the absence claim to a page that actually rendered — otherwise
+  // this would also pass if the sidebar failed to render at all.
+  await expect(page.getByTestId("user-menu-trigger")).toBeVisible();
   await expect(page.getByLabel(/Đổi giao diện/)).toHaveCount(0);
+});
+
+test("keyboard: Tab from the open trigger reaches the theme switch, not main content", async ({
+  page,
+}) => {
+  await loginAsAdmin(page);
+
+  await page.getByTestId("user-menu-trigger").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("user-menu-panel")).toBeVisible();
+
+  await page.keyboard.press("Tab");
+  await expect(page.getByTestId("theme-switch")).toBeFocused();
+});
+
+test("keyboard-activating a sidebar nav link closes the menu on navigation", async ({
+  page,
+}) => {
+  await loginAsAdmin(page);
+
+  await page.getByTestId("user-menu-trigger").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("user-menu-panel")).toBeVisible();
+
+  const menuLink = page.getByRole("link", { name: "Thực đơn" });
+  await menuLink.focus();
+  await page.keyboard.press("Enter");
+
+  await page.waitForURL("**/admin/menu/categories");
+  await expect(page.getByTestId("user-menu-panel")).toBeHidden();
+});
+
+test("keyboard-activating the sidebar collapse chevron closes the menu", async ({
+  page,
+}) => {
+  await loginAsAdmin(page);
+
+  await page.getByTestId("user-menu-trigger").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("user-menu-panel")).toBeVisible();
+
+  await page.getByTitle("Thu gọn menu").focus();
+  await page.keyboard.press("Enter");
+
+  await expect(page.getByTestId("user-menu-panel")).toBeHidden();
+});
+
+test.describe("system theme with OS dark preference", () => {
+  test.use({ colorScheme: "dark" });
+
+  test("theme switch knob agrees with OS dark preference before any interaction", async ({
+    page,
+  }) => {
+    await loginAsAdmin(page);
+    await page.getByTestId("user-menu-trigger").click();
+
+    await expect(page.getByTestId("theme-switch")).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+  });
 });
