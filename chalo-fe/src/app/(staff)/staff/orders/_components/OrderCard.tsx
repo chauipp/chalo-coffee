@@ -1,7 +1,7 @@
 "use client";
 // src/app/(staff)/staff/orders/_components/OrderCard.tsx
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
-import { NEXT_STATUS, NEXT_STATUS_LABEL } from "../page";
+import { NEXT_STATUS, NEXT_STATUS_LABEL } from "../orders.config";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { ROUTES } from "@/constants";
 import { useRouter } from "next/navigation";

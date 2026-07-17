@@ -13,74 +13,10 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { KanbanColumn } from "./_components/KanbanColumn";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-
-// ─── Config ────────────────────────────────────────────────────────
-export const KANBAN_COLUMNS: {
-  status: OrderStatus;
-  label: string;
-  emoji: string;
-  bgColor: string;
-  textColor: string;
-  borderColor: string;
-}[] = [
-  {
-    status: "PENDING",
-    label: "Chờ xác nhận",
-    emoji: "📋",
-    bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
-    textColor: "text-yellow-700 dark:text-yellow-400",
-    borderColor: "border-yellow-200 dark:border-yellow-800/50",
-  },
-  {
-    status: "CONFIRMED",
-    label: "Đã xác nhận",
-    emoji: "✅",
-    bgColor: "bg-blue-50 dark:bg-blue-950/20",
-    textColor: "text-blue-700 dark:text-blue-400",
-    borderColor: "border-blue-200 dark:border-blue-800/50",
-  },
-  {
-    status: "PREPARING",
-    label: "Đang pha chế",
-    emoji: "☕",
-    bgColor: "bg-orange-50 dark:bg-orange-950/20",
-    textColor: "text-orange-700 dark:text-orange-400",
-    borderColor: "border-orange-200 dark:border-orange-800/50",
-  },
-  {
-    status: "READY",
-    label: "Sẵn sàng",
-    emoji: "🔔",
-    bgColor: "bg-green-50 dark:bg-green-950/20",
-    textColor: "text-green-700 dark:text-green-400",
-    borderColor: "border-green-200 dark:border-green-800/50",
-  },
-  // {
-  //   status: "COMPLETED",
-  //   label: "Hoàn thành",
-  //   emoji: "🎁",
-  //   bgColor: "bg-gray-50 dark:bg-gray-800/50",
-  //   textColor: "text-gray-600 dark:text-gray-400",
-  //   borderColor: "border-gray-200 dark:border-gray-700",
-  // },
-];
+import { KANBAN_COLUMNS } from "./orders.config";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
-
-export const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  PENDING: "CONFIRMED",
-  CONFIRMED: "PREPARING",
-  PREPARING: "READY",
-  READY: "COMPLETED",
-};
-
-export const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
-  PENDING: "Xác nhận",
-  CONFIRMED: "Bắt đầu pha",
-  PREPARING: "Sẵn sàng",
-  READY: "Hoàn thành",
-};
 
 /** Tiếng "ting" báo hiệu — pitch tuỳ loại sự kiện */
 const playBeep = (frequency = 880) => {

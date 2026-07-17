@@ -21,7 +21,7 @@
 
 - [x] Task 1: BE — setting `smartBatchingEnabled`
 - [x] Task 2: FE — settings service + Admin toggle + sửa e2e admin-settings
-- [ ] Task 3: FE logic core — orders.config, utils/batching (+unit test), prep.store
+- [x] Task 3: FE logic core — orders.config, utils/batching (+unit test), prep.store
 - [ ] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
 - [ ] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
 - [ ] Task 6: FE — Smart batching suggestion + gate theo settings
@@ -169,13 +169,13 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
   - `dismissed: string[]` — signature gợi ý đã bỏ qua.
   - actions: `toggleTick(orderId, itemId, unitIndex, quantity)`, `createBatch(orderIds): void`, `dissolveBatch(batchId)`, `dismiss(signature)`, `prune(activeOrderIds: string[])` (xoá ticks/batch-member của order không còn active; batch còn <2 member thì giải tán; dismissed giữ tối đa 20).
 
-- [ ] **Step 1: Viết unit test fail trước** — `e2e/batching.unit.spec.ts` với các case: (a) queue <2 đơn → null; (b) 3 đơn cùng chung 1 món → gộp cả 3; (c) chỉ 2/3 đơn trùng → gợi ý đúng cặp có nhiều món chung nhất; (d) không đơn nào trùng → null; (e) chỉ quét 3 đơn đầu — đơn thứ 4 trùng cũng bị bỏ qua; (f) signature ổn định không phụ thuộc thứ tự. Chạy `pnpm exec playwright test e2e/batching.unit.spec.ts` → FAIL (module chưa tồn tại).
+- [x] **Step 1: Viết unit test fail trước** — `e2e/batching.unit.spec.ts` với các case: (a) queue <2 đơn → null; (b) 3 đơn cùng chung 1 món → gộp cả 3; (c) chỉ 2/3 đơn trùng → gợi ý đúng cặp có nhiều món chung nhất; (d) không đơn nào trùng → null; (e) chỉ quét 3 đơn đầu — đơn thứ 4 trùng cũng bị bỏ qua; (f) signature ổn định không phụ thuộc thứ tự. Chạy `pnpm exec playwright test e2e/batching.unit.spec.ts` → FAIL (module chưa tồn tại).
 
-- [ ] **Step 2: Implement `utils/batching.ts` + `orders.config.ts` + đổi import + `prep.store.ts`** (code đầy đủ — xem diff commit; giữ nguyên object config copy verbatim từ page.tsx).
+- [x] **Step 2: Implement `utils/batching.ts` + `orders.config.ts` + đổi import + `prep.store.ts`** (code đầy đủ — xem diff commit; giữ nguyên object config copy verbatim từ page.tsx).
 
-- [ ] **Step 3:** `pnpm exec playwright test e2e/batching.unit.spec.ts` → PASS; `pnpm lint` PASS; `pnpm exec tsc --noEmit` PASS.
+- [x] **Step 3:** `pnpm exec playwright test e2e/batching.unit.spec.ts` → PASS; `pnpm lint` PASS; `pnpm exec tsc --noEmit` PASS.
 
-- [ ] **Step 4: Commit** — `git add chalo-fe && git commit -m "feat(fe): prep-station logic core (batching util + prep store + orders config)"`
+- [x] **Step 4: Commit** — `git add chalo-fe && git commit -m "feat(fe): prep-station logic core (batching util + prep store + orders config)"`
 
 ---
 
