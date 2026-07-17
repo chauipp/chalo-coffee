@@ -41,7 +41,7 @@ async function discoverFixtures(
   expect(productsRes.ok()).toBeTruthy();
   const products = (await productsRes.json()).data as Product[];
 
-  expect(tables.length).toBeGreaterThan(0);
+  expect(tables.length).toBeGreaterThanOrEqual(3);
   expect(products.length).toBeGreaterThan(0);
   return { tables, products };
 }
@@ -81,10 +81,10 @@ test("tick đủ ly của một bàn thì đơn tự sang Sẵn sàng phục v�
   await loginUI(page);
   await page.goto("/staff/orders");
 
-  // Cột mới đúng nhãn
-  await expect(page.getByText("Khách đặt")).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText("Sẵn sàng phục vụ")).toBeVisible();
-  await expect(page.getByText("Đã phục vụ")).toBeVisible();
+  // Cột mới đúng nhãn — scope theo span.text-sm.font-bold để tránh khớp hint rỗng
+  await expect(page.locator("span.text-sm.font-bold", { hasText: "Khách đặt" })).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator("span.text-sm.font-bold", { hasText: "Sẵn sàng phục vụ" })).toBeVisible();
+  await expect(page.locator("span.text-sm.font-bold", { hasText: "Đã phục vụ" })).toBeVisible();
 
   // Kéo một đơn "Khách đặt" vào pha
   // Lưu ý: card đơn (OrderCard) là một <div role="button"> bọc ngoài chứa

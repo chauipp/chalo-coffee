@@ -19,9 +19,10 @@ test("staff orders page shows split layout with draggable/keyboard resizer", asy
     page.getByRole("heading", { name: "Đang pha chế" }),
   ).toBeVisible();
   // 3 cột trái — nhãn đổi theo luồng đơn hàng mới (Task 10)
-  await expect(page.getByText("Khách đặt")).toBeVisible();
-  await expect(page.getByText("Sẵn sàng phục vụ")).toBeVisible();
-  await expect(page.getByText("Đã phục vụ")).toBeVisible();
+  // Scope theo span.text-sm.font-bold để tránh khớp hint rỗng
+  await expect(page.locator("span.text-sm.font-bold", { hasText: "Khách đặt" })).toBeVisible();
+  await expect(page.locator("span.text-sm.font-bold", { hasText: "Sẵn sàng phục vụ" })).toBeVisible();
+  await expect(page.locator("span.text-sm.font-bold", { hasText: "Đã phục vụ" })).toBeVisible();
 
   // Resize bằng bàn phím: ← 2 lần → thanh chia dịch sang trái
   const before = await resizer.boundingBox();

@@ -175,11 +175,12 @@ const notFound = (msg = "Không tìm thấy") =>
 
 export const orderHandlers = [
   // ─── [NEW] GET /api/order/active (Staff — Kanban) ────────────────────────
-  // Mirror BE getActiveQueue(): chỉ trả PENDING/CONFIRMED/PREPARING/READY, sort ASC
+  // Mirror BE getActiveQueue(): trả PENDING/CONFIRMED/PREPARING/READY hoặc
+  // COMPLETED nếu chưa thanh toán (để hiển thị trên kanban), sort ASC
   http.get("*/api/order/active", async () => {
     await delay(300);
     const activeOrders = orders
-      .filter((o) => ACTIVE_STATUSES.includes(o.status))
+      .filter((o) => ACTIVE_STATUSES.includes(o.status) || (o.status === "COMPLETED" && !o.paidStatus))
       .sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
