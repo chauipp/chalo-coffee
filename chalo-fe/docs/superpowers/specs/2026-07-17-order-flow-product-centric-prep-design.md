@@ -183,9 +183,11 @@ ADD COLUMN IF NOT EXISTS "preparedQuantity" integer NOT NULL DEFAULT 0;
 
 ### API
 
-`PATCH /api/order/item/:itemId/prepared`, guard `@Roles(UserRole.ADMIN, UserRole.MODERATOR)` — cùng chuẩn với các endpoint staff khác.
+`PUT /api/order/item/:itemId/prepared`, guard `@Roles(UserRole.ADMIN, UserRole.MODERATOR)` — cùng chuẩn với các endpoint staff khác.
 
 Body: `{ preparedQuantity: number }` — **giá trị tuyệt đối, không phải lệnh tăng**. Đây là điểm thiết kế có chủ đích: hai máy cùng tick một ly sẽ không bị đếm thành hai, và gọi lại cùng một request không đổi kết quả.
+
+**Vì sao PUT chứ không PATCH:** wrapper `request` ở `src/lib/api-client.ts:153-172` chỉ có `get/post/put/delete`, không có `patch` — thêm vào là sửa file dùng chung, dễ đụng agent khác. PUT cũng đúng nghĩa hơn: "thay giá trị này bằng giá trị kia", khớp với thiết kế giá trị tuyệt đối, và cùng chuẩn với `@Put('status')` sẵn có.
 
 Xử lý trong **một transaction có khoá** (`pessimistic_write` trên order):
 
@@ -202,6 +204,17 @@ Xử lý trong **một transaction có khoá** (`pessimistic_write` trên order)
 Thêm loại sự kiện `order_prep_progress` với payload `{ orderId, tableId, tableName }`. FE nhận thì `invalidateQueries(ORDERS.ACTIVE)`.
 
 Không tái dùng `order_status_changed` cho việc này vì trạng thái không đổi — đặt tên sai sẽ khiến handler tương lai xử lý nhầm.
+
+### Hệ quả: tick theo kiểu "chấm sao"
+
+`preparedQuantity` là **một con số đếm**, không phải mảng cờ từng ly. Nên khi một bàn gọi 3 ly cùng món cùng ghi chú, tick hoạt động như thanh chấm sao:
+
+- Bấm ly chưa tick ở vị trí `i` → `preparedQuantity = i + 1` (tick luôn các ly trước nó).
+- Bấm ly đã tick ở vị trí `i` → `preparedQuantity = i` (bỏ tick nó và các ly sau).
+
+Chấp nhận được vì các ly trong cùng một item là **hàng giống hệt nhau cho cùng một bàn** — không có ly nào "riêng" để mà tick lẻ. Thực tế barista cũng tick từ trái sang. Đổi lại ta được tính idempotent (mục trên) và schema tối giản. Dùng mảng cờ từng ly sẽ phức tạp hơn mà không đổi lấy được gì.
+
+Lưu ý: mỗi item có `preparedQuantity` riêng, nên tick ly của bàn này **không** ảnh hưởng bàn khác — kể cả khi hai bàn nằm chung một mẻ.
 
 ### DTO
 
@@ -299,7 +312,7 @@ Quy tắc "chỉ thêm không xoá" tồn tại để **không phá agent khác*
 |---|---|
 | `src/modules/order/entities/order-item.entity.ts` | `+ preparedQuantity` |
 | `src/modules/order/order.service.ts` | `STATUS_TRANSITIONS`, `setItemPrepared()`, `startOfTodayVN()`, `getActiveQueue()`, `buildDto()` |
-| `src/modules/order/order.controller.ts` | `PATCH item/:itemId/prepared` |
+| `src/modules/order/order.controller.ts` | `PUT item/:itemId/prepared` |
 | `src/modules/sse/sse.service.ts:5-12` | `+ 'order_prep_progress'` vào union `SseEventType`. **Không** thêm vào `customerTypes` trong `streamForTable()` — tiến độ pha là việc nội bộ của barista, khách không cần. |
 | `src/modules/sse/sse.controller.ts:20` | cập nhật mô tả Swagger liệt kê sự kiện |
 | `src/modules/settings/*` | gỡ `smartBatchingEnabled` |
