@@ -968,7 +968,7 @@ git commit -m "refactor(fe): gỡ gộp đơn thủ công + gợi ý thông minh
 
 ---
 
-## - [ ] Task 6: FE — Types + API + hook tick
+## - [x] Task 6: FE — Types + API + hook tick
 
 **Files:**
 - Modify: `chalo-fe/src/services/order/order.types.ts`
