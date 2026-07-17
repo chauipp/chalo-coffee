@@ -37,9 +37,6 @@ export const KANBAN_COLUMNS: {
   },
 ];
 
-/** 3 cột vùng trái — PREPARING nằm riêng ở khu pha chế bên phải */
-export const LEFT_STATUSES: OrderStatus[] = ["PENDING", "READY", "COMPLETED"];
-
 /** Đơn CONFIRMED cũ trong DB gom chung cột "Khách đặt" — không tạo mới trạng thái này */
 export const KHACH_DAT_STATUSES: OrderStatus[] = ["PENDING", "CONFIRMED"];
 

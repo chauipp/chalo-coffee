@@ -10,6 +10,7 @@ import { OrderStatus } from "@/services/order/order.types";
 import { useGetActivePagers } from "@/services/pager";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { NEXT_STATUS, NEXT_STATUS_LABEL } from "../../../orders.config";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: "Khách đặt",
@@ -18,13 +19,6 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   READY: "Sẵn sàng phục vụ",
   COMPLETED: "Đã phục vụ",
   CANCELLED: "Đã huỷ",
-};
-
-const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  PENDING: "CONFIRMED",
-  CONFIRMED: "PREPARING",
-  PREPARING: "READY",
-  READY: "COMPLETED",
 };
 
 export default function OrderDetailModal() {
@@ -191,7 +185,7 @@ export default function OrderDetailModal() {
                   {updateStatusMutation.isPending && (
                     <SpinnerIcon className="size-4 animate-spin" />
                   )}
-                  Chuyển trạng thái →
+                  {NEXT_STATUS_LABEL[order.status]} →
                 </button>
               )}
             </div>
