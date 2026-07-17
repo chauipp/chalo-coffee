@@ -297,7 +297,7 @@ git commit -m "feat: move logout into an avatar dropdown in the sidebar"
 
 ---
 
-- [ ] ### Task 2: ThemeSwitch and retiring ThemeToggle
+- [x] ### Task 2: ThemeSwitch and retiring ThemeToggle
 
 Adds the sun/moon pill to the menu, removes the fixed top-right toggle, and deletes what that leaves dead.
 
