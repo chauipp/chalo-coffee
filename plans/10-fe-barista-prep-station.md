@@ -22,7 +22,7 @@
 - [x] Task 1: BE — setting `smartBatchingEnabled`
 - [x] Task 2: FE — settings service + Admin toggle + sửa e2e admin-settings
 - [x] Task 3: FE logic core — orders.config, utils/batching (+unit test), prep.store
-- [ ] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
+- [x] Task 4: FE UI — SplitPane + PrepStation/PrepTicket + rewrite page
 - [ ] Task 5: FE — Manual batching (chọn nhiều đơn → pha chung)
 - [ ] Task 6: FE — Smart batching suggestion + gate theo settings
 - [ ] Task 7: Chạy migration + servers (BE 8082 / FE 3020), verify end-to-end, chốt
@@ -195,10 +195,10 @@ export class AddSmartBatchingSetting1752900000000 implements MigrationInterface 
 - `PrepTicket` (chế độ 1 order): tên bàn + `#id`, mỗi item 1 hàng: tên món + note (📝) + `quantity` ô checkbox vuông to (touch-friendly, `size-7`) tick từng ly (đọc/ghi `prep.store.ticks`); progress bar `ticked/total`; khi đủ 100% → nút "Sẵn sàng →" đổi nhấn mạnh (pulse); nút gọi `onStatusChange(orderId, "READY")` như cũ.
 - `page.tsx`: giữ nguyên SSE + beep + refetch + intercepted modal; thêm `useEffect` gọi `prune(activeOrderIds)` khi data đổi; PREPARING orders sort cũ→mới.
 
-- [ ] **Step 1:** Implement 3 component + rewrite page (code đầy đủ trong commit).
-- [ ] **Step 2:** `pnpm lint` + `pnpm exec tsc --noEmit` PASS.
-- [ ] **Step 3:** Viết `e2e/staff-prep.spec.ts` smoke (chạy ở Task 7 khi có server; spec dùng `process.env.E2E_BASE_URL`). Sửa `playwright.config.ts`: `baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000"`.
-- [ ] **Step 4: Commit** — `git commit -m "feat(fe): split-screen prep station with per-item ticklist"`
+- [x] **Step 1:** Implement 3 component + rewrite page (code đầy đủ trong commit).
+- [x] **Step 2:** `pnpm lint` + `pnpm exec tsc --noEmit` PASS.
+- [x] **Step 3:** Viết `e2e/staff-prep.spec.ts` smoke (chạy ở Task 7 khi có server; spec dùng `process.env.E2E_BASE_URL`). Sửa `playwright.config.ts`: `baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000"`.
+- [x] **Step 4: Commit** — `git commit -m "feat(fe): split-screen prep station with per-item ticklist"`
 
 ---
 

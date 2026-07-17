@@ -8,12 +8,15 @@ import {
 } from "@/services/order/order.queries";
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
 import { useAuthStore } from "@/stores/auth.store";
+import { usePrepStore } from "@/stores/prep.store";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { KanbanColumn } from "./_components/KanbanColumn";
+import { PrepStation } from "./_components/PrepStation";
+import { SplitPane } from "./_components/SplitPane";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-import { KANBAN_COLUMNS } from "./orders.config";
+import { KANBAN_COLUMNS, LEFT_STATUSES } from "./orders.config";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
@@ -38,6 +41,9 @@ const playBeep = (frequency = 880) => {
   } catch {}
 };
 
+const byCreatedAsc = (a: OrderDto, b: OrderDto) =>
+  +new Date(a.createdAt) - +new Date(b.createdAt);
+
 export default function StaffOrdersPage() {
   const qc = useQueryClient();
   const prevPendingCountRef = useRef<number>(0);
@@ -49,6 +55,7 @@ export default function StaffOrdersPage() {
   const { data: activeOrders, isLoading, refetch } = useGetActiveOrder();
 
   const updateStatusMutation = useUpdateOrderStatus();
+  const prune = usePrepStore((s) => s.prune);
 
   useSSE({
     url: `${API_BASE}${API.SSE.ORDER_EVENTS}`,
@@ -125,17 +132,35 @@ export default function StaffOrdersPage() {
   };
 
   // ─── Group orders by status ────────────────────────────────────────────────────────
-  const ordersByStatus = KANBAN_COLUMNS.reduce<Record<OrderStatus, OrderDto[]>>(
-    (acc, col) => {
-      acc[col.status] = (activeOrders ?? []).filter(
-        (o) => o.status === col.status,
-      );
-      return acc;
-    },
-    {} as Record<OrderStatus, OrderDto[]>,
+  const ordersByStatus = useMemo(
+    () =>
+      KANBAN_COLUMNS.reduce<Record<OrderStatus, OrderDto[]>>(
+        (acc, col) => {
+          acc[col.status] = (activeOrders ?? []).filter(
+            (o) => o.status === col.status,
+          );
+          return acc;
+        },
+        {} as Record<OrderStatus, OrderDto[]>,
+      ),
+    [activeOrders],
   );
 
+  /** Đơn đang pha chế, cũ nhất trước (thứ tự nên pha) */
+  const preparingOrders = useMemo(
+    () => [...(ordersByStatus.PREPARING ?? [])].sort(byCreatedAsc),
+    [ordersByStatus],
+  );
+
+  // Dọn tick/batch của các đơn đã rời PREPARING (READY/COMPLETED/CANCELLED)
+  useEffect(() => {
+    if (activeOrders) prune(preparingOrders.map((o) => o.id));
+  }, [activeOrders, preparingOrders, prune]);
+
   const totalActive = activeOrders?.length ?? 0;
+  const leftColumns = KANBAN_COLUMNS.filter((c) =>
+    LEFT_STATUSES.includes(c.status),
+  );
 
   return (
     <div className="h-full flex flex-col">
@@ -171,18 +196,32 @@ export default function StaffOrdersPage() {
           <SpinnerIcon className="size-8 animate-spin text-brand-400" />
         </div>
       ) : (
-        <div className="flex-1 overflow-x-auto p-4">
-          <div className="flex gap-3 h-full pb-4">
-            {KANBAN_COLUMNS.map((col) => (
-              <KanbanColumn
-                config={col}
+        <div className="flex-1 min-h-0 p-4">
+          <SplitPane
+            storageKey="staff-prep-split"
+            left={
+              <div className="h-full overflow-x-auto pr-1">
+                <div className="flex gap-3 h-full min-w-[680px]">
+                  {leftColumns.map((col) => (
+                    <KanbanColumn
+                      config={col}
+                      onStatusChange={handleStatusChange}
+                      updatingId={updatingId}
+                      orders={ordersByStatus[col.status]}
+                      key={col.status}
+                    />
+                  ))}
+                </div>
+              </div>
+            }
+            right={
+              <PrepStation
+                orders={preparingOrders}
                 onStatusChange={handleStatusChange}
                 updatingId={updatingId}
-                orders={ordersByStatus[col.status]}
-                key={col.status}
               />
-            ))}
-          </div>
+            }
+          />
         </div>
       )}
     </div>
