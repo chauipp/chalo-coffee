@@ -51,6 +51,7 @@ export const API = {
     BY_TOKEN: "/order/by-token",
     ESTIMATED_WAIT: "/order/estimated-wait",
     UPDATE_STATUS: "/order/status",
+    ITEM_PREPARED: (itemId: string) => `/order/item/${itemId}/prepared`,
     REQUEST_PAYMENT: "/order/request-payment",
     PAY: "/order/pay",
     PAY_ALL: "/order/pay-all",

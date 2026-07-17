@@ -62,6 +62,7 @@ export default function StaffOrdersPage() {
         case "new_order":
         case "payment_completed":
         case "order_status_changed":
+        case "order_prep_progress":
           qc.invalidateQueries({
             queryKey: QUERY_KEYS.ORDERS.ACTIVE,
           });

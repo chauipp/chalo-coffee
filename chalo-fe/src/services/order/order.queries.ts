@@ -23,12 +23,14 @@ import {
   payAllOrders,
   payOrder,
   updateOrderStatus,
+  setItemPrepared,
 } from "./order.api";
 import {
   CallStaffPayload,
   CheckoutCompletePayload,
   CheckoutStartPayload,
   CreateOrderPayload,
+  OrderDto,
   OrderPageParams,
   OrderStatus,
   PayAllOrdersPayload,
@@ -216,5 +218,43 @@ export const useCheckoutComplete = (tableToken: string) => {
       toast.success("Thanh toán gộp thành công!");
     },
     onError: (e: Error) => toast.error(e.message),
+  });
+};
+
+/**
+ * Tick số ly đã pha. Cập nhật optimistic để barista thấy phản hồi tức thì;
+ * BE có thể tự đẩy đơn sang READY nên luôn invalidate lại ở onSettled.
+ */
+export const useSetItemPrepared = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      itemId,
+      preparedQuantity,
+    }: {
+      itemId: string;
+      preparedQuantity: number;
+    }) => setItemPrepared(itemId, preparedQuantity),
+    onMutate: async ({ itemId, preparedQuantity }) => {
+      await qc.cancelQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
+      const prev = qc.getQueryData<OrderDto[]>(QUERY_KEYS.ORDERS.ACTIVE);
+      qc.setQueryData<OrderDto[]>(QUERY_KEYS.ORDERS.ACTIVE, (old) =>
+        (old ?? []).map((o) => ({
+          ...o,
+          items: o.items.map((i) =>
+            i.id === itemId ? { ...i, preparedQuantity } : i,
+          ),
+        })),
+      );
+      return { prev };
+    },
+    onError: (e: Error, _vars, ctx) => {
+      if (ctx?.prev) qc.setQueryData(QUERY_KEYS.ORDERS.ACTIVE, ctx.prev);
+      toast.error(e.message);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
+    },
   });
 };
