@@ -1090,7 +1090,7 @@ git commit -m "feat(fe): API + hook tick số ly đã pha (optimistic) + SSE ord
 
 ---
 
-## - [ ] Task 7: FE — Hàm thuần gom món
+## - [x] Task 7: FE — Hàm thuần gom món
 
 **Files:**
 - Create: `chalo-fe/src/utils/prep-grouping.ts`
