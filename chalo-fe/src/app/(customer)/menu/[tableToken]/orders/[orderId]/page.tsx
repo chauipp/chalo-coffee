@@ -11,12 +11,13 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PayConfirmModal } from "./_components/PayConfirmModal";
 
-const SERVICE_STEPS: { status: OrderStatus; label: string; emoji: string }[] = [
-  { status: "PENDING", label: "Chờ xác nhận", emoji: "📋" },
-  { status: "CONFIRMED", label: "Đã xác nhận", emoji: "✅" },
-  { status: "PREPARING", label: "Đang pha chế", emoji: "☕" },
-  { status: "READY", label: "Sẵn sàng phục vụ", emoji: "🔔" },
-  { status: "COMPLETED", label: "Đã phục vụ", emoji: "🎁" },
+// CONFIRMED là trạng thái di sản (BE không còn chuyển PENDING → CONFIRMED),
+// nên gộp chung một bước với PENDING — tránh 2 bước trùng nhãn trong stepper.
+const SERVICE_STEPS: { statuses: OrderStatus[]; label: string; emoji: string }[] = [
+  { statuses: ["PENDING", "CONFIRMED"], label: "Đã tiếp nhận", emoji: "📋" },
+  { statuses: ["PREPARING"], label: "Đang pha chế", emoji: "☕" },
+  { statuses: ["READY"], label: "Sẵn sàng phục vụ", emoji: "🔔" },
+  { statuses: ["COMPLETED"], label: "Đã phục vụ", emoji: "🎁" },
 ];
 
 export default function OrderTrackingPage() {
@@ -67,8 +68,8 @@ export default function OrderTrackingPage() {
   const isServed = order.status === "COMPLETED";
   const isPaid = order.paidStatus;
 
-  const currentStepIndex = SERVICE_STEPS.findIndex(
-    (s) => s.status === order.status,
+  const currentStepIndex = SERVICE_STEPS.findIndex((s) =>
+    s.statuses.includes(order.status),
   );
 
   const canPay = !isPaid && !isCancelled;
@@ -179,16 +180,13 @@ export default function OrderTrackingPage() {
               <div className="relative pl-2">
                 <div className="absolute left-[1.35rem] top-4 bottom-4 w-0.5 bg-gray-100 dark:bg-gray-800" />
                 <div className="space-y-6">
-                  {SERVICE_STEPS.map((step) => {
-                    const stepIdx = SERVICE_STEPS.findIndex(
-                      (s) => s.status === step.status,
-                    );
+                  {SERVICE_STEPS.map((step, stepIdx) => {
                     const isDone = currentStepIndex > stepIdx;
                     const isCurrent = currentStepIndex === stepIdx;
 
                     return (
                       <div
-                        key={step.status}
+                        key={step.statuses.join("-")}
                         className="relative flex items-start gap-4"
                       >
                         <div

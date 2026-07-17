@@ -25,6 +25,8 @@ export interface OrderItemDto {
   productImageUrl: string | null;
   price: number;
   quantity: number;
+  /** Số ly đã pha xong — barista tick ở khu pha chế */
+  preparedQuantity: number;
   subtotal: number;
   note: string | null;
 }

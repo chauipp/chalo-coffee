@@ -15,6 +15,7 @@ import { Product } from '../product/entities/product.entity';
 import { PagerToken } from '../pager/entities/pager-token.entity';
 import { PagerStatus } from '../../common/enums/pager-status.enum';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateItemPreparedDto } from './dto/update-item-prepared.dto';
 import {
   UpdateOrderStatusDto,
   RequestPaymentDto,
@@ -37,10 +38,17 @@ import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
 
 const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
-  [OrderStatus.PENDING]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
+  // Khách đặt -> kéo thẳng vào pha, bỏ bước xác nhận
+  [OrderStatus.PENDING]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
+  // CONFIRMED đã gỡ khỏi luồng nhưng đơn cũ trong DB vẫn phải đi tiếp được
   [OrderStatus.CONFIRMED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
   [OrderStatus.PREPARING]: [OrderStatus.READY, OrderStatus.CANCELLED],
-  [OrderStatus.READY]: [OrderStatus.COMPLETED, OrderStatus.CANCELLED],
+  // READY -> PREPARING: đường lùi khi tick nhầm ly cuối làm đơn tự nhảy sang READY
+  [OrderStatus.READY]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.PREPARING,
+    OrderStatus.CANCELLED,
+  ],
 };
 
 @Injectable()
@@ -74,6 +82,7 @@ export class OrderService {
         productImageUrl: item.productImageUrl,
         price: item.price,
         quantity: item.quantity,
+        preparedQuantity: item.preparedQuantity,
         subtotal: item.subtotal,
         note: item.note,
       })),
@@ -88,24 +97,42 @@ export class OrderService {
     };
   }
 
+  /**
+   * 0h00 hôm nay theo giờ VN (+07:00). Bảng staff reset theo mốc này mỗi đêm.
+   * Không cần cron — chỉ là điều kiện truy vấn, tự đúng khi đồng hồ qua nửa đêm.
+   */
+  private startOfTodayVN(): Date {
+    const nowVN = new Date(Date.now() + 7 * 60 * 60 * 1000);
+    const y = nowVN.getUTCFullYear();
+    const m = String(nowVN.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(nowVN.getUTCDate()).padStart(2, '0');
+    return new Date(`${y}-${m}-${d}T00:00:00.000+07:00`);
+  }
+
   async getActiveQueue() {
     const orders = await this.orderRepo
       .createQueryBuilder('o')
       .leftJoinAndSelect('o.items', 'items')
       .leftJoinAndSelect('o.table', 'table')
-      // Chỉ lấy các đơn hàng đang trong luồng phục vụ
-      .where('o.status IN (:...statuses)', {
-        statuses: [
-          OrderStatus.PENDING,
-          OrderStatus.CONFIRMED,
-          OrderStatus.PREPARING,
-          OrderStatus.READY,
-        ],
-      })
-      // Đơn bỏ quên quá 24h không còn là "đang xử lý" — khỏi ngập bảng bếp
-      .andWhere('o.createdAt > :cutoff', {
-        cutoff: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      })
+      // Đang xử lý = (PENDING/CONFIRMED/PREPARING/READY) HOẶC (COMPLETED nhưng
+      // chưa thanh toán). Đơn đã phục vụ mà chưa thu tiền vẫn phải đứng trong
+      // bảng staff (cột "Đã phục vụ") để thu ngân biết mà đi thu; chỉ rời bảng
+      // khi COMPLETED + đã trả tiền.
+      .where(
+        '(o.status IN (:...statuses) OR (o.status = :completedStatus AND o.paidStatus = :isUnpaid))',
+        {
+          statuses: [
+            OrderStatus.PENDING,
+            OrderStatus.CONFIRMED,
+            OrderStatus.PREPARING,
+            OrderStatus.READY,
+          ],
+          completedStatus: OrderStatus.COMPLETED,
+          isUnpaid: false,
+        },
+      )
+      // Bảng staff reset lúc 0h00 mỗi đêm — đơn hôm qua không còn là "đang xử lý"
+      .andWhere('o.createdAt >= :cutoff', { cutoff: this.startOfTodayVN() })
       // Đơn hàng cũ nhất xếp lên đầu (First In - First Out)
       .orderBy('o.createdAt', 'ASC')
       .getMany();
@@ -516,6 +543,73 @@ export class OrderService {
           tableToken: result.tableToken,
         },
       });
+
+      return result;
+    });
+  }
+
+  /**
+   * Tick số ly đã pha của một item. Nhận GIÁ TRỊ TUYỆT ĐỐI (không phải +1) nên
+   * hai máy cùng tick một ly không bị đếm đôi, và gọi lại cùng request không đổi kết quả.
+   * Tick đủ mọi item của đơn -> đơn tự chuyển READY.
+   */
+  async setItemPrepared(itemId: string, dto: UpdateItemPreparedDto) {
+    return this.dataSource.transaction(async (manager) => {
+      const item = await manager.findOne(OrderItem, { where: { id: itemId } });
+      if (!item) throw new NotFoundException('Món trong đơn không tồn tại');
+
+      const lockedOrder = await manager.findOne(Order, {
+        where: { id: item.orderId },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!lockedOrder) throw new NotFoundException('Đơn hàng không tồn tại');
+
+      if (lockedOrder.status !== OrderStatus.PREPARING) {
+        throw new BadRequestException('Chỉ tick được đơn đang pha chế');
+      }
+      if (dto.preparedQuantity > item.quantity) {
+        throw new BadRequestException('Số ly đã pha vượt quá số lượng đặt');
+      }
+
+      item.preparedQuantity = dto.preparedQuantity;
+      await manager.save(OrderItem, item);
+
+      const items = await manager.find(OrderItem, {
+        where: { orderId: lockedOrder.id },
+      });
+      const allDone = items.every((i) => i.preparedQuantity >= i.quantity);
+      if (allDone) {
+        lockedOrder.status = OrderStatus.READY;
+        await manager.save(Order, lockedOrder);
+      }
+
+      const full = await manager.findOne(Order, {
+        where: { id: lockedOrder.id },
+        relations: ['items', 'table'],
+      });
+      const result = this.buildDto(full!);
+
+      this.sseService.emit(
+        allDone
+          ? {
+              type: 'order_status_changed',
+              data: {
+                orderId: result.id,
+                status: result.status,
+                tableId: result.tableId,
+                tableName: result.tableName,
+                tableToken: result.tableToken,
+              },
+            }
+          : {
+              type: 'order_prep_progress',
+              data: {
+                orderId: result.id,
+                tableId: result.tableId,
+                tableName: result.tableName,
+              },
+            },
+      );
 
       return result;
     });

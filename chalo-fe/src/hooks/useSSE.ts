@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 export const ALL_SSE_EVENTS = [
   "new_order",
   "order_status_changed",
+  "order_prep_progress",
   "payment_request",
   "payment_request_batch",
   "payment_completed",
@@ -27,6 +28,11 @@ export interface SSEPayload {
     tableId: string;
     tableName: string;
     tableToken: string;
+  };
+  order_prep_progress: {
+    orderId: string;
+    tableId: string;
+    tableName: string;
   };
   payment_request: {
     orderId: string;

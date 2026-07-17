@@ -31,6 +31,10 @@ export class OrderItem {
   @Column({ type: 'int' })
   quantity: number;
 
+  /** Số ly đã pha xong. Giá trị tuyệt đối do FE gửi lên, không phải bộ đếm tăng dần. */
+  @Column({ type: 'int', default: 0 })
+  preparedQuantity: number;
+
   @Column({ type: 'int' })
   subtotal: number;
 

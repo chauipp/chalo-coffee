@@ -7,6 +7,7 @@ export type SseEventType =
   | 'payment_request'
   | 'payment_request_batch'
   | 'order_status_changed'
+  | 'order_prep_progress'
   | 'checkout_completed'
   | 'payment_completed'
   | 'staff_call';

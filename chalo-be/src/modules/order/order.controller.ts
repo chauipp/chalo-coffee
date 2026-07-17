@@ -12,6 +12,7 @@ import { ApiBearerAuth, ApiTags, ApiQuery, ApiOkResponse } from '@nestjs/swagger
 import { SkipThrottle } from '@nestjs/throttler';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateItemPreparedDto } from './dto/update-item-prepared.dto';
 import {
   UpdateOrderStatusDto,
   RequestPaymentDto,
@@ -204,6 +205,27 @@ export class OrderController {
   })
   updateStatus(@Body() dto: UpdateOrderStatusDto) {
     return this.orderService.updateStatus(dto);
+  }
+
+  @Put('item/:itemId/prepared')
+  @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiOkResponse({
+    description:
+      'Tick số ly đã pha của một item (giá trị tuyệt đối). Đủ mọi item thì đơn tự sang READY.',
+    schema: {
+      example: {
+        code: 200,
+        message: 'success',
+        data: { id: 'uuid', status: 'READY' },
+      },
+    },
+  })
+  setItemPrepared(
+    @Param('itemId') itemId: string,
+    @Body() dto: UpdateItemPreparedDto,
+  ) {
+    return this.orderService.setItemPrepared(itemId, dto);
   }
 
   @Post('request-payment')

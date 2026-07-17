@@ -6,13 +6,13 @@ export const STATUS_META: Record<
   { label: string; emoji: string; bgColor: string; textColor: string }
 > = {
   PENDING: {
-    label: "Chờ xác nhận",
+    label: "Đã tiếp nhận",
     emoji: "📋",
     bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
     textColor: "text-yellow-700 dark:text-yellow-400",
   },
   CONFIRMED: {
-    label: "Đã xác nhận",
+    label: "Đã tiếp nhận",
     emoji: "✅",
     bgColor: "bg-blue-100 dark:bg-blue-900/30",
     textColor: "text-blue-700 dark:text-blue-400",
@@ -24,7 +24,7 @@ export const STATUS_META: Record<
     textColor: "text-orange-700 dark:text-orange-400",
   },
   READY: {
-    label: "Sẵn sàng",
+    label: "Sẵn sàng phục vụ",
     emoji: "🔔",
     bgColor: "bg-green-100 dark:bg-green-900/30",
     textColor: "text-green-700 dark:text-green-400",

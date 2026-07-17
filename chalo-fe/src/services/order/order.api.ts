@@ -100,3 +100,10 @@ export const getTopProducts = (
       ...(params.to ? { to: params.to } : {}),
     },
   });
+
+/** Gửi GIÁ TRỊ TUYỆT ĐỐI số ly đã pha (không phải +1) — hai máy cùng tick không đếm đôi */
+export const setItemPrepared = (
+  itemId: string,
+  preparedQuantity: number,
+): Promise<OrderDto> =>
+  request.put(API.ORDER.ITEM_PREPARED(itemId), { preparedQuantity });

@@ -17,7 +17,7 @@ export class SseController {
   @ApiOperation({
     summary: 'SSE stream — nhân viên nhận sự kiện real-time',
     description: [
-      'Sự kiện phát: `new_order`, `payment_request`, `order_status_changed`.',
+      'Sự kiện phát: `new_order`, `payment_request`, `order_status_changed`, `order_prep_progress`.',
       'Browser EventSource không gửi header → truyền token qua query param `?token=<accessToken>`.',
     ].join('\n'),
   })

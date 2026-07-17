@@ -1,6 +1,6 @@
 // src/app/(staff)/staff/orders/_components/KanbanColumn.tsx
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
-import { KANBAN_COLUMNS } from "../page";
+import { KANBAN_COLUMNS } from "../orders.config";
 import { OrderCard } from "./OrderCard";
 
 export const KanbanColumn = ({
@@ -15,7 +15,7 @@ export const KanbanColumn = ({
   updatingId: string | null;
 }) => {
   return (
-    <div className="flex min-w-[280px] flex-1 flex-col">
+    <div className="flex min-w-[220px] flex-1 flex-col">
       <div
         className={`flex items-center justify-between px-3 py-2.5 rounded-t-xl border ${config.bgColor} ${config.borderColor}`}
       >

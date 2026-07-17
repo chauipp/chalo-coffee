@@ -9,78 +9,14 @@ import {
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
 import { useAuthStore } from "@/stores/auth.store";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { KanbanColumn } from "./_components/KanbanColumn";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-
-// ─── Config ────────────────────────────────────────────────────────
-export const KANBAN_COLUMNS: {
-  status: OrderStatus;
-  label: string;
-  emoji: string;
-  bgColor: string;
-  textColor: string;
-  borderColor: string;
-}[] = [
-  {
-    status: "PENDING",
-    label: "Chờ xác nhận",
-    emoji: "📋",
-    bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
-    textColor: "text-yellow-700 dark:text-yellow-400",
-    borderColor: "border-yellow-200 dark:border-yellow-800/50",
-  },
-  {
-    status: "CONFIRMED",
-    label: "Đã xác nhận",
-    emoji: "✅",
-    bgColor: "bg-blue-50 dark:bg-blue-950/20",
-    textColor: "text-blue-700 dark:text-blue-400",
-    borderColor: "border-blue-200 dark:border-blue-800/50",
-  },
-  {
-    status: "PREPARING",
-    label: "Đang pha chế",
-    emoji: "☕",
-    bgColor: "bg-orange-50 dark:bg-orange-950/20",
-    textColor: "text-orange-700 dark:text-orange-400",
-    borderColor: "border-orange-200 dark:border-orange-800/50",
-  },
-  {
-    status: "READY",
-    label: "Sẵn sàng",
-    emoji: "🔔",
-    bgColor: "bg-green-50 dark:bg-green-950/20",
-    textColor: "text-green-700 dark:text-green-400",
-    borderColor: "border-green-200 dark:border-green-800/50",
-  },
-  // {
-  //   status: "COMPLETED",
-  //   label: "Hoàn thành",
-  //   emoji: "🎁",
-  //   bgColor: "bg-gray-50 dark:bg-gray-800/50",
-  //   textColor: "text-gray-600 dark:text-gray-400",
-  //   borderColor: "border-gray-200 dark:border-gray-700",
-  // },
-];
+import { KANBAN_COLUMNS, KHACH_DAT_STATUSES } from "./orders.config";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
-
-export const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  PENDING: "CONFIRMED",
-  CONFIRMED: "PREPARING",
-  PREPARING: "READY",
-  READY: "COMPLETED",
-};
-
-export const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
-  PENDING: "Xác nhận",
-  CONFIRMED: "Bắt đầu pha",
-  PREPARING: "Sẵn sàng",
-  READY: "Hoàn thành",
-};
 
 /** Tiếng "ting" báo hiệu — pitch tuỳ loại sự kiện */
 const playBeep = (frequency = 880) => {
@@ -123,6 +59,7 @@ export default function StaffOrdersPage() {
         case "new_order":
         case "payment_completed":
         case "order_status_changed":
+        case "order_prep_progress":
           qc.invalidateQueries({
             queryKey: QUERY_KEYS.ORDERS.ACTIVE,
           });
@@ -164,7 +101,7 @@ export default function StaffOrdersPage() {
 
   // ─── Sound for new PENDING orders ────────────────────────────────────────────────────────
   const pendingCount = (activeOrders || []).filter(
-    (o) => o.status === "PENDING",
+    (o) => o.status === "PENDING" || o.status === "CONFIRMED",
   ).length;
 
   useEffect(() => {
@@ -188,18 +125,20 @@ export default function StaffOrdersPage() {
     }
   };
 
-  // ─── Group orders by status ────────────────────────────────────────────────────────
-  const ordersByStatus = KANBAN_COLUMNS.reduce<Record<OrderStatus, OrderDto[]>>(
-    (acc, col) => {
-      acc[col.status] = (activeOrders ?? []).filter(
-        (o) => o.status === col.status,
-      );
-      return acc;
-    },
-    {} as Record<OrderStatus, OrderDto[]>,
-  );
+  /** Đơn của từng cột: "Khách đặt" gom cả CONFIRMED cũ; "Đã phục vụ" chỉ đơn chưa trả tiền */
+  const ordersForColumn = useMemo(() => {
+    const all = activeOrders ?? [];
+    return (status: OrderStatus): OrderDto[] => {
+      if (status === "PENDING")
+        return all.filter((o) => KHACH_DAT_STATUSES.includes(o.status));
+      if (status === "COMPLETED")
+        return all.filter((o) => o.status === "COMPLETED" && !o.paidStatus);
+      return all.filter((o) => o.status === status);
+    };
+  }, [activeOrders]);
 
   const totalActive = activeOrders?.length ?? 0;
+  const leftColumns = KANBAN_COLUMNS;
 
   return (
     <div className="h-full flex flex-col">
@@ -235,14 +174,15 @@ export default function StaffOrdersPage() {
           <SpinnerIcon className="size-8 animate-spin text-brand-400" />
         </div>
       ) : (
-        <div className="flex-1 overflow-x-auto p-4">
-          <div className="flex gap-3 h-full pb-4">
-            {KANBAN_COLUMNS.map((col) => (
+        // Khu pha chế (cột "Đang pha chế") nằm ở layout staff — luôn hiển thị
+        <div className="relative flex-1 min-h-0 overflow-x-auto p-4">
+          <div className="flex gap-3 h-full min-w-[680px]">
+            {leftColumns.map((col) => (
               <KanbanColumn
                 config={col}
                 onStatusChange={handleStatusChange}
                 updatingId={updatingId}
-                orders={ordersByStatus[col.status]}
+                orders={ordersForColumn(col.status)}
                 key={col.status}
               />
             ))}

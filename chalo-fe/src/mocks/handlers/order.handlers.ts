@@ -22,6 +22,7 @@ let orders: OrderDto[] = [
         productImageUrl: null,
         price: 25000,
         quantity: 2,
+        preparedQuantity: 0,
         subtotal: 50000,
         note: null,
       },
@@ -32,6 +33,7 @@ let orders: OrderDto[] = [
         productImageUrl: null,
         price: 35000,
         quantity: 1,
+        preparedQuantity: 0,
         subtotal: 35000,
         note: "Ít đá",
       },
@@ -57,6 +59,7 @@ let orders: OrderDto[] = [
         productImageUrl: null,
         price: 45000,
         quantity: 2,
+        preparedQuantity: 0,
         subtotal: 90000,
         note: null,
       },
@@ -82,6 +85,7 @@ let orders: OrderDto[] = [
         productImageUrl: null,
         price: 35000,
         quantity: 1,
+        preparedQuantity: 0,
         subtotal: 35000,
         note: null,
       },
@@ -107,6 +111,7 @@ let orders: OrderDto[] = [
         productImageUrl: null,
         price: 45000,
         quantity: 3,
+        preparedQuantity: 0,
         subtotal: 135000,
         note: "Ít đường",
       },
@@ -132,6 +137,7 @@ let orders: OrderDto[] = [
         productImageUrl: null,
         price: 30000,
         quantity: 1,
+        preparedQuantity: 0,
         subtotal: 30000,
         note: null,
       },
@@ -169,11 +175,12 @@ const notFound = (msg = "Không tìm thấy") =>
 
 export const orderHandlers = [
   // ─── [NEW] GET /api/order/active (Staff — Kanban) ────────────────────────
-  // Mirror BE getActiveQueue(): chỉ trả PENDING/CONFIRMED/PREPARING/READY, sort ASC
+  // Mirror BE getActiveQueue(): trả PENDING/CONFIRMED/PREPARING/READY hoặc
+  // COMPLETED nếu chưa thanh toán (để hiển thị trên kanban), sort ASC
   http.get("*/api/order/active", async () => {
     await delay(300);
     const activeOrders = orders
-      .filter((o) => ACTIVE_STATUSES.includes(o.status))
+      .filter((o) => ACTIVE_STATUSES.includes(o.status) || (o.status === "COMPLETED" && !o.paidStatus))
       .sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
@@ -275,6 +282,7 @@ export const orderHandlers = [
           productImageUrl: null,
           price: mockPrice,
           quantity: item.quantity,
+          preparedQuantity: 0,
           subtotal: mockPrice * item.quantity,
           note: item.note || null,
         };
