@@ -22,6 +22,18 @@
   }
 }
 
+/* Khai báo color-scheme để trình duyệt biết trang TỰ xử lý dark mode:
+   - tắt "Auto dark mode for web contents" (Edge/Chrome) khỏi đảo màu lần 2
+     (triệu chứng: chữ dark:text-gray-100 bị lộn thành xám tối, button thành pill trắng)
+   - form control/scrollbar mặc định render đúng tông sáng/tối */
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
   background: #f9fafb;

@@ -18,6 +18,14 @@ import { KANBAN_COLUMNS, KHACH_DAT_STATUSES } from "./orders.config";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
 
+/** So khớp không phân biệt hoa thường và dấu — gõ "ban 5" vẫn ra "Bàn 05" */
+const normalize = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/đ/gi, "d")
+    .toLowerCase();
+
 /** Tiếng "ting" báo hiệu — pitch tuỳ loại sự kiện */
 const playBeep = (frequency = 880) => {
   try {
@@ -43,6 +51,7 @@ export default function StaffOrdersPage() {
   const prevPendingCountRef = useRef<number>(0);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [isSSEConnected, setIsSSEConnected] = useState<boolean>(false);
+  const [tableSearch, setTableSearch] = useState("");
 
   const accessToken = useAuthStore((s) => s.accessToken);
 
@@ -127,7 +136,10 @@ export default function StaffOrdersPage() {
 
   /** Đơn của từng cột: "Khách đặt" gom cả CONFIRMED cũ; "Đã phục vụ" chỉ đơn chưa trả tiền */
   const ordersForColumn = useMemo(() => {
-    const all = activeOrders ?? [];
+    const q = normalize(tableSearch.trim());
+    const all = (activeOrders ?? []).filter(
+      (o) => !q || normalize(o.tableName ?? "").includes(q),
+    );
     return (status: OrderStatus): OrderDto[] => {
       if (status === "PENDING")
         return all.filter((o) => KHACH_DAT_STATUSES.includes(o.status));
@@ -135,7 +147,7 @@ export default function StaffOrdersPage() {
         return all.filter((o) => o.status === "COMPLETED" && !o.paidStatus);
       return all.filter((o) => o.status === status);
     };
-  }, [activeOrders]);
+  }, [activeOrders, tableSearch]);
 
   const totalActive = activeOrders?.length ?? 0;
   const leftColumns = KANBAN_COLUMNS;
@@ -152,6 +164,13 @@ export default function StaffOrdersPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <input
+            type="search"
+            value={tableSearch}
+            onChange={(e) => setTableSearch(e.target.value)}
+            placeholder="🔍 Tìm bàn..."
+            className="w-44 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-400"
+          />
           <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
             <span
               className={`size-2 rounded-full ${

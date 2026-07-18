@@ -15,7 +15,7 @@ export const KANBAN_COLUMNS: {
     status: "PENDING",
     label: "Khách đặt",
     emoji: "📋",
-    bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
+    bgColor: "bg-yellow-50 dark:bg-yellow-950/40",
     textColor: "text-yellow-700 dark:text-yellow-400",
     borderColor: "border-yellow-200 dark:border-yellow-800/50",
   },
@@ -23,7 +23,7 @@ export const KANBAN_COLUMNS: {
     status: "READY",
     label: "Sẵn sàng phục vụ",
     emoji: "🔔",
-    bgColor: "bg-green-50 dark:bg-green-950/20",
+    bgColor: "bg-green-50 dark:bg-green-950/40",
     textColor: "text-green-700 dark:text-green-400",
     borderColor: "border-green-200 dark:border-green-800/50",
   },
@@ -31,7 +31,7 @@ export const KANBAN_COLUMNS: {
     status: "COMPLETED",
     label: "Đã phục vụ",
     emoji: "🍽️",
-    bgColor: "bg-blue-50 dark:bg-blue-950/20",
+    bgColor: "bg-blue-50 dark:bg-blue-950/40",
     textColor: "text-blue-700 dark:text-blue-400",
     borderColor: "border-blue-200 dark:border-blue-800/50",
   },
@@ -52,3 +52,10 @@ export const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
   CONFIRMED: "Bắt đầu pha",
   READY: "Đã bê ra",
 };
+
+/**
+ * MIME type cho HTML5 drag & drop: card mang type của trạng thái ĐÍCH nên
+ * drop zone chỉ cần check types trong dragover (lúc đó chưa đọc được data).
+ */
+export const orderDragType = (status: OrderStatus) =>
+  `chalo/${status.toLowerCase()}`;

@@ -6,6 +6,7 @@
 import {
   useGetActiveOrder,
   useSetItemPrepared,
+  useUpdateOrderStatus,
 } from "@/services/order/order.queries";
 import { OrderDto } from "@/services/order/order.types";
 import { PrepUnit, nextPreparedQuantity } from "@/utils/prep-grouping";
@@ -29,6 +30,7 @@ export const PrepDock = ({
     refetchInterval: PREP_POLL_MS,
   });
   const setPrepared = useSetItemPrepared();
+  const updateStatus = useUpdateOrderStatus();
 
   /** Đơn đang pha chế, cũ nhất trước (thứ tự nên pha) */
   const preparingOrders = useMemo(
@@ -51,6 +53,9 @@ export const PrepDock = ({
       onToggleUnit={handleToggleUnit}
       expanded={expanded}
       onToggleExpand={toggleExpand}
+      onDropOrder={(orderId) =>
+        updateStatus.mutate({ orderId, status: "PREPARING" })
+      }
     />
   );
 };

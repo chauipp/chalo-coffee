@@ -4,6 +4,7 @@ import { Receipt, ReceiptVariant } from "@/components/shared/Receipt";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import {
   useGetOrderById,
+  usePayOrder,
   useUpdateOrderStatus,
 } from "@/services/order/order.queries";
 import { OrderStatus } from "@/services/order/order.types";
@@ -27,6 +28,8 @@ export default function OrderDetailModal() {
 
   const { data: order, isLoading } = useGetOrderById(orderId);
   const updateStatusMutation = useUpdateOrderStatus();
+  // tableToken chỉ dùng để invalidate query của bàn; order chưa load → ""
+  const payOrderMutation = usePayOrder(order?.tableToken ?? "");
 
   // Prefer order.pagerNumber (from 04); fall back to matching the active-pager
   // list by orderId so a released pager shows no badge.
@@ -50,6 +53,15 @@ export default function OrderDetailModal() {
   const handleStatusChange = async (status: OrderStatus) => {
     if (!order) return;
     await updateStatusMutation.mutateAsync({ orderId: order.id, status });
+    handleClose();
+  };
+
+  const handlePay = async () => {
+    if (!order) return;
+    await payOrderMutation.mutateAsync({
+      orderId: order.id,
+      tableToken: order.tableToken,
+    });
     handleClose();
   };
 
@@ -176,6 +188,18 @@ export default function OrderDetailModal() {
               >
                 🖨️ In hoá đơn
               </button>
+              {!order.paidStatus && (
+                <button
+                  onClick={handlePay}
+                  disabled={payOrderMutation.isPending}
+                  className="flex-1 min-w-[8rem] flex items-center justify-center gap-2 rounded-xl bg-green-500 hover:bg-green-600 py-2.5 text-sm font-bold text-white transition-colors disabled:opacity-50"
+                >
+                  {payOrderMutation.isPending && (
+                    <SpinnerIcon className="size-4 animate-spin" />
+                  )}
+                  💵 Đã thanh toán
+                </button>
+              )}
               {NEXT_STATUS[order.status] && (
                 <button
                   onClick={() => handleStatusChange(NEXT_STATUS[order.status]!)}

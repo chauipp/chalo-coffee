@@ -1,7 +1,11 @@
 "use client";
 // src/app/(staff)/staff/orders/_components/OrderCard.tsx
 import { OrderDto, OrderStatus } from "@/services/order/order.types";
-import { NEXT_STATUS, NEXT_STATUS_LABEL } from "../orders.config";
+import {
+  NEXT_STATUS,
+  NEXT_STATUS_LABEL,
+  orderDragType,
+} from "../orders.config";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { ROUTES } from "@/constants";
 import { useRouter } from "next/navigation";
@@ -38,6 +42,13 @@ export const OrderCard = ({
     <div
       role="button"
       tabIndex={0}
+      draggable={!!nextStatus}
+      onDragStart={(e) => {
+        if (!nextStatus) return;
+        e.dataTransfer.setData("text/plain", order.id);
+        e.dataTransfer.setData(orderDragType(nextStatus), order.id);
+        e.dataTransfer.effectAllowed = "move";
+      }}
       onClick={openDetail}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -45,7 +56,7 @@ export const OrderCard = ({
           openDetail();
         }
       }}
-      className={`cursor-pointer rounded-xl border-2 bg-white dark:bg-gray-900 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
+      className={`cursor-pointer rounded-xl border-2 bg-white dark:bg-gray-800 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
         ${
           order.paidStatus
             ? "border-green-400 dark:border-green-600"
