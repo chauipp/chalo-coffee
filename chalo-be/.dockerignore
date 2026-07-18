@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+uploads
+test
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+Dockerfile
+.dockerignore
+db-dump.sql

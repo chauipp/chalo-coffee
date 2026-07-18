@@ -1,0 +1,31 @@
+# =========================================================
+# Chalo Coffee — Caddy reverse proxy
+# Caddy TỰ ĐỘNG xin & gia hạn SSL (Let's Encrypt) cho {$DOMAIN}.
+# Kiến trúc 1 tên miền, định tuyến theo path:
+#   /api/*     -> backend  (NestJS, global prefix /api)
+#   /uploads/* -> backend  (file tĩnh đã upload)
+#   /*         -> frontend (Next.js)
+# DOMAIN và ACME_EMAIL lấy từ biến môi trường (set ở docker-compose).
+# =========================================================
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# API của backend
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+
+	# File upload phục vụ tĩnh từ backend
+	handle /uploads/* {
+		reverse_proxy backend:8080
+	}
+
+	# Còn lại đẩy vào frontend Next.js
+	handle {
+		reverse_proxy frontend:3000
+	}
+}

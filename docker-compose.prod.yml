@@ -1,0 +1,91 @@
+# =========================================================
+# Chalo Coffee — Production stack
+# Chạy:  docker compose -f docker-compose.prod.yml up -d --build
+# Biến ${...} lấy từ file .env (copy từ deploy/.env.example) đặt cạnh file này.
+# =========================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Không mở port ra ngoài — chỉ nội bộ mạng docker cho backend truy cập.
+
+  backend:
+    build:
+      context: ./chalo-be
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_SYNCHRONIZE: "false"
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_ACCESS_EXPIRES: ${JWT_ACCESS_EXPIRES:-15m}
+      JWT_REFRESH_EXPIRES: ${JWT_REFRESH_EXPIRES:-7d}
+      APP_URL: https://${DOMAIN}
+      APP_FRONTEND_URL: https://${DOMAIN}
+      CORS_ORIGIN: https://${DOMAIN}
+      # Seed demo dùng tài khoản hardcode admin/admin, staff/staff (SEED_*_PASSWORD chưa được backend dùng)
+      SEED_ON_STARTUP: ${SEED_ON_STARTUP:-false}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./chalo-fe
+      dockerfile: Dockerfile
+      args:
+        # Nhúng vào bundle lúc build -> đổi domain thì phải build lại frontend.
+        NEXT_PUBLIC_API_BASE_URL: https://${DOMAIN}/api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Server components gọi backend qua mạng nội bộ docker.
+      INTERNAL_API_BASE_URL: http://backend:8080/api
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  postgres_data:
+  uploads_data:
+  caddy_data:
+  caddy_config:

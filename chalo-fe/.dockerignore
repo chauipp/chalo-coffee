@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+coverage
+test-results
+playwright-report
+playwright/.cache
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+Dockerfile
+.dockerignore
