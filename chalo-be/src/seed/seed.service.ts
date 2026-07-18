@@ -133,6 +133,14 @@ export class SeedService implements OnModuleInit {
       return;
     }
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction) {
+      await this.seedEssentials();
+      return;
+    }
+
+    // Dev/demo: reset toàn bộ + tạo dữ liệu giả (đơn hàng) để test giao diện.
     await this.resetAllData();
     await this.seedUsers();
     const categories = await this.seedCategoriesFromMenu();
@@ -140,6 +148,31 @@ export class SeedService implements OnModuleInit {
     const tables = await this.seedTables(25);
     await this.seedOrders(products, tables, 250);
     await this.syncTableCurrentOrders();
+  }
+
+  /**
+   * Seed cho PRODUCTION: chỉ tạo dữ liệu nền tối thiểu — tài khoản đăng nhập,
+   * menu (danh mục + món) và bàn. KHÔNG tạo đơn hàng, KHÔNG xoá dữ liệu.
+   * Idempotent: nếu DB đã có dữ liệu thì bỏ qua (an toàn kể cả khi lỡ để cờ bật).
+   */
+  private async seedEssentials() {
+    const existingUsers = await this.userRepo.count();
+    const existingProducts = await this.productRepo.count();
+    if (existingUsers > 0 || existingProducts > 0) {
+      this.logger.log(
+        'Skipping seed: dữ liệu đã tồn tại (seed production idempotent, không reset)',
+      );
+      return;
+    }
+
+    await this.seedUsers();
+    const categories = await this.seedCategoriesFromMenu();
+    await this.seedProductsFromMenu(categories);
+    await this.seedTables(30);
+    this.logger.log(
+      'Seed production hoàn tất: tài khoản + menu + bàn (không có đơn hàng). ' +
+        'Nhớ đổi mật khẩu mặc định và đặt SEED_ON_STARTUP=false.',
+    );
   }
 
   private async resetAllData() {
