@@ -39,9 +39,9 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       JWT_ACCESS_EXPIRES: ${JWT_ACCESS_EXPIRES:-15m}
       JWT_REFRESH_EXPIRES: ${JWT_REFRESH_EXPIRES:-7d}
-      APP_URL: https://${DOMAIN}
-      APP_FRONTEND_URL: https://${DOMAIN}
-      CORS_ORIGIN: https://${DOMAIN}
+      APP_URL: ${PUBLIC_URL}
+      APP_FRONTEND_URL: ${PUBLIC_URL}
+      CORS_ORIGIN: ${PUBLIC_URL}
       # Seed demo dùng tài khoản hardcode admin/admin, staff/staff (SEED_*_PASSWORD chưa được backend dùng)
       SEED_ON_STARTUP: ${SEED_ON_STARTUP:-false}
     volumes:
@@ -55,8 +55,8 @@ services:
       context: ./chalo-fe
       dockerfile: Dockerfile
       args:
-        # Nhúng vào bundle lúc build -> đổi domain thì phải build lại frontend.
-        NEXT_PUBLIC_API_BASE_URL: https://${DOMAIN}/api
+        # Nhúng vào bundle lúc build -> đổi PUBLIC_URL thì phải build lại frontend (--build).
+        NEXT_PUBLIC_API_BASE_URL: ${PUBLIC_URL}/api
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -74,8 +74,9 @@ services:
       - "443:443"
       - "443:443/udp"
     environment:
-      DOMAIN: ${DOMAIN}
-      ACME_EMAIL: ${ACME_EMAIL}
+      # SITE_ADDRESS: ":80" cho chế độ IP-HTTP; "chalocoffee.com" cho chế độ domain-HTTPS
+      SITE_ADDRESS: ${SITE_ADDRESS}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
     volumes:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

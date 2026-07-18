@@ -11,7 +11,10 @@
 	email {$ACME_EMAIL}
 }
 
-{$DOMAIN} {
+# SITE_ADDRESS quyết định chế độ:
+#   ":80"            -> phục vụ HTTP (dùng khi truy cập bằng IP, chưa có tên miền)
+#   "chalocoffee.com" -> Caddy tự xin SSL Let's Encrypt (HTTPS)
+{$SITE_ADDRESS} {
 	encode zstd gzip
 
 	# API của backend

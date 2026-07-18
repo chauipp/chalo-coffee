@@ -67,7 +67,9 @@ cp deploy/.env.example .env
 nano .env
 ```
 Điền các giá trị (xem chú thích trong file). **Bắt buộc:**
-- `DOMAIN=chalocoffee.com`, `ACME_EMAIL=email_that_cua_ban`
+- Chọn **chế độ phục vụ**:
+  - Chạy thử bằng IP (HTTP): `PUBLIC_URL=http://<IP_VPS>` và `SITE_ADDRESS=:80`
+  - Chính thức bằng tên miền (HTTPS): `PUBLIC_URL=https://<tên_miền>`, `SITE_ADDRESS=<tên_miền>`, `ACME_EMAIL=email_của_bạn`
 - `DB_PASSWORD` — mật khẩu DB mạnh:  `openssl rand -base64 24`
 - `JWT_SECRET` và `JWT_REFRESH_SECRET` — hai giá trị **khác nhau**:  `openssl rand -hex 32`
   (backend sẽ **từ chối khởi động** nếu để giá trị mặc định.)
@@ -83,7 +85,9 @@ Lần đầu build mất vài phút. Xem log:
 docker compose -f docker-compose.prod.yml logs -f
 ```
 - Migrations **tự chạy** khi backend khởi động (`NODE_ENV=production`), tạo sẵn schema DB.
-- Caddy tự xin SSL Let's Encrypt. Sau ~30–60s, mở `https://chalocoffee.com`.
+- Chế độ IP: mở `http://<IP_VPS>`. Chế độ tên miền: Caddy tự xin SSL Let's Encrypt (~30–60s), mở `https://<tên_miền>`.
+
+> 🔁 **Đổi từ chế độ IP sang tên miền sau này:** sửa `PUBLIC_URL` + `SITE_ADDRESS` trong `.env`, trỏ DNS tên miền về IP VPS, rồi chạy lại `docker compose -f docker-compose.prod.yml up -d --build` (phải có `--build` vì frontend nhúng cứng `PUBLIC_URL`).
 
 ---
 
