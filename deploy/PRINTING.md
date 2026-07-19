@@ -44,7 +44,9 @@ trên màn staff — nhân viên kiểm tra app ngân hàng rồi xác nhận ta
   (tự nối lại khi có mạng).
 - Trạm bị tắt đúng lúc khách trả tiền? Đơn vẫn được xác nhận bình thường.
   Mở lại trạm → mục **"Chưa in"** liệt kê các đơn đã thanh toán trong ngày
-  chưa in → bấm **In bù**.
+  chưa in → bấm **In bù**. Lưu ý: in bù ra **mỗi đơn một tờ** (không gộp cả
+  phiên vào một tờ như lúc in tự động), nhưng tổng từng đơn vẫn đúng — không
+  sót, không thu trùng.
 - Kẹt giấy/hết giấy: thay giấy rồi bấm **In lại** ở mục "Đã in phiên này".
 - Không dùng `--kiosk-printing` (mở tab thường) vẫn được — chỉ khác là hộp
   thoại in của Chrome sẽ hiện lên, bấm Print thủ công.
