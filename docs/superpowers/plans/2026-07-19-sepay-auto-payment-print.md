@@ -1494,7 +1494,7 @@ git commit -m "feat(fe): khách thanh toán 1 đơn qua checkout session + payCo
 
 ---
 
-### Task 7: FE — Trạm in `/staff/print-station` [ ]
+### Task 7: FE — Trạm in `/staff/print-station` [x]
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/staff/print-station/page.tsx`
@@ -1508,7 +1508,7 @@ git commit -m "feat(fe): khách thanh toán 1 đơn qua checkout session + payCo
 - Consumes: SSE `payment_completed` (staff stream, token từ `useAuthStore`), `getOrderById`, `getOrderPage` từ `@/services/order/order.api`, CSS `#receipt-print` sẵn có.
 - Produces: trang trạm in tự `window.print()` mỗi lần thanh toán hoàn tất; testids `payment-receipt-root`; nút "In lại"/"In bù"; heading "Trạm in hoá đơn" (e2e Task 9 bám các chuỗi này).
 
-- [ ] **Step 1: print-log.ts**
+- [x] **Step 1: print-log.ts**
 
 ```ts
 // src/app/(staff)/staff/print-station/_lib/print-log.ts
@@ -1540,7 +1540,7 @@ export function isPrinted(orderIds: string[]): boolean {
 }
 ```
 
-- [ ] **Step 2: PaymentReceipt.tsx**
+- [x] **Step 2: PaymentReceipt.tsx**
 
 ```tsx
 "use client";
@@ -1645,7 +1645,7 @@ export const PaymentReceipt = ({
 };
 ```
 
-- [ ] **Step 3: page.tsx trạm in**
+- [x] **Step 3: page.tsx trạm in**
 
 ```tsx
 "use client";
@@ -1867,7 +1867,7 @@ export default function PrintStationPage() {
 }
 ```
 
-- [ ] **Step 4: Icon + routes + nav**
+- [x] **Step 4: Icon + routes + nav**
 
 Tạo `chalo-fe/src/components/shared/icons/PrinterIcon.tsx`:
 
@@ -1900,14 +1900,14 @@ export const PrinterIcon = (props: SVGProps<SVGSVGElement>) => (
   { label: 'Trạm in', href: ROUTES.STAFF.PRINT_STATION, icon: PrinterIcon }
 ```
 
-- [ ] **Step 5: Lint + build + smoke tay**
+- [x] **Step 5: Lint + build + smoke tay**
 
 Run: `cd chalo-fe && pnpm lint && pnpm build`
 Expected: sạch.
 
 Smoke (BE + FE dev đang chạy): đăng nhập staff → `/staff/print-station` → tạo đơn từ màn khách, thanh toán bằng nút staff (modal đơn) → hộp thoại in của trình duyệt hiện ra (chưa kiosk), hoá đơn có món + tổng tiền.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add chalo-fe/src
