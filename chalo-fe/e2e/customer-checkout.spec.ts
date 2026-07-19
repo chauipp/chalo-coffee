@@ -63,30 +63,41 @@ test("checkout previews open orders and opens a pay-all session", async ({
   expect(Number(ctaDigits)).toBe(total);
 
   // --- open the pay-all session (real POST /order/checkout/start) ---
+  const startResPromise = page.waitForResponse(
+    (r) => r.url().includes("/order/checkout/start") && r.ok(),
+  );
   await payCta.click();
   await expect(page.getByText("Phiên thanh toán gộp")).toBeVisible({
     timeout: 15_000,
   });
+  const session = (await (await startResPromise).json()).data;
+  expect(session.payCode).toMatch(/^CK[A-HJKMNP-Z2-9]{6}$/);
+
   await expect(page.getByText(/Hết hạn sau \d+:\d{2}/)).toBeVisible();
 
-  // VietQR: with bank settings configured, the panel shows a scannable
-  // bank-transfer QR locked to this table's total, plus the account holder.
+  // VietQR khoá số tiền + nội dung CK = payCode do BE sinh
   await expect(page.getByTestId("vietqr-code")).toBeVisible();
   await expect(page.getByText("CHALO COFFEE")).toBeVisible();
+  await expect(page.getByText(session.payCode)).toBeVisible();
 
-  const confirmCta = page.getByRole("button", { name: "✓ Tôi đã thanh toán" });
-  await expect(confirmCta).toBeVisible();
+  // Không còn nút tự khai — thay bằng trạng thái chờ ngân hàng xác nhận
+  await expect(page.getByTestId("awaiting-bank")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "✓ Tôi đã thanh toán" }),
+  ).toHaveCount(0);
 
-  // --- settle everything (real POST /order/checkout/complete) ---
-  await confirmCta.click();
+  // --- thu ngân xác nhận (JWT) → SSE đẩy màn khách sang trạng thái xong ---
+  const completeRes = await request.post(
+    `${BE}/order/checkout/complete-staff`,
+    { headers: auth, data: { sessionId: session.sessionId } },
+  );
+  expect(completeRes.ok()).toBeTruthy();
+
   await expect(
     page.getByText("Đã thanh toán tất cả đơn của bàn"),
   ).toBeVisible({ timeout: 15_000 });
-  await expect(
-    page.getByRole("button", { name: "Xem đơn hàng" }),
-  ).toBeVisible();
 
-  // The orders are now really paid: a fresh preview has no open orders left.
+  // Các đơn đã thật sự được trả: preview mới không còn đơn mở nào
   const afterRes = await request.post(`${BE}/order/checkout/preview`, {
     data: { tableToken },
   });
