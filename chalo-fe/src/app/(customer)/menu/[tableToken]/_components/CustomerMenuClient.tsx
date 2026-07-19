@@ -1,6 +1,6 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/_components/CustomerMenuClient.tsx
-import { useTheme } from "@/providers/ThemeProvider";
+import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import { CategoryDto, ProductDto } from "@/services/menu";
 import { useCallStaff } from "@/services/order/order.queries";
 import { useCartStore } from "@/stores/cart.store";
@@ -18,12 +18,6 @@ interface CustomerMenuClientProps {
   isOccupied: boolean;
 }
 
-const themeOptions = [
-  { value: "light" as const, label: "Sáng" },
-  { value: "dark" as const, label: "Tối" },
-  { value: "system" as const, label: "Hệ thống" },
-];
-
 export const CustomerMenuClient = ({
   categories,
   initProducts,
@@ -32,7 +26,6 @@ export const CustomerMenuClient = ({
 }: CustomerMenuClientProps) => {
   const { tableToken } = useParams<{ tableToken: string }>();
   const router = useRouter();
-  const { theme, changeTheme } = useTheme();
   const [activeCateId, setActiveCateId] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
   // Cảnh báo bàn đang có khách — mỗi phiên chỉ hiện một lần, khoá theo token
@@ -174,21 +167,7 @@ export const CustomerMenuClient = ({
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                   </svg>
                 </button>
-                <div className="flex rounded-full border border-gray-200 bg-gray-50 p-0.5 dark:border-gray-800 dark:bg-gray-900">
-                  {themeOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => changeTheme(option.value)}
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors sm:px-3 ${
-                        theme === option.value
-                          ? "bg-white text-gray-950 shadow-sm dark:bg-gray-800 dark:text-gray-50"
-                          : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
+                <ThemeSwitch />
                 <button
                   onClick={() => router.push(`/menu/${tableToken}/orders`)}
                   className="rounded-full bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-200 dark:hover:bg-brand-900/50"

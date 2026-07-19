@@ -105,7 +105,10 @@ export const UserMenu = ({ collapsed }: { collapsed: boolean }) => {
             </>
           )}
 
-          <div className="flex justify-center py-2">
+          <div className="flex items-center justify-between gap-3 px-3 py-2">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              Chế độ tối
+            </span>
             <ThemeSwitch />
           </div>
 
