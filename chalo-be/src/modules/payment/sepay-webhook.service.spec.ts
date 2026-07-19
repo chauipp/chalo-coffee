@@ -1,4 +1,5 @@
 import {
+  Logger,
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -146,6 +147,33 @@ describe('SepayWebhookService', () => {
       expect.objectContaining({
         status: SepayTxStatus.MATCHED,
         matchedSessionId: 'sess-1',
+      }),
+    );
+  });
+
+  it('txRepo.save đụng unique 23505 (2 webhook song song) → DUPLICATE, không throw', async () => {
+    txRepo.save.mockRejectedValue({ code: '23505' });
+    const res = await service.handleWebhook(`Apikey ${KEY}`, dto());
+    expect(res.status).toBe(SepayTxStatus.DUPLICATE);
+  });
+
+  it('checkoutCompleteStaff thất bại → NEEDS_REVIEW + SSE cảnh báo đối soát', async () => {
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+    orderService.checkoutCompleteStaff.mockRejectedValue(new Error('db down'));
+    const res = await service.handleWebhook(`Apikey ${KEY}`, dto());
+    expect(res.status).toBe(SepayTxStatus.NEEDS_REVIEW);
+    expect(txRepo.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: SepayTxStatus.NEEDS_REVIEW,
+        matchedSessionId: 'sess-1',
+      }),
+    );
+    expect(sseService.emit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'payment_review_needed',
+        data: expect.objectContaining({
+          reason: 'Hoàn tất phiên thất bại, cần kiểm tra tay',
+        }),
       }),
     );
   });
