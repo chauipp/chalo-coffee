@@ -4,7 +4,6 @@ import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import {
   useCheckoutPreview,
   useCheckoutStart,
-  useCheckoutComplete,
 } from "@/services/order/order.queries";
 import { CheckoutSessionResult } from "@/services/order/order.types";
 import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
@@ -18,27 +17,24 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const { data: preview, isLoading, isError } = useCheckoutPreview(tableToken);
-  useCustomerOrderEvents(tableToken);
   const startMutation = useCheckoutStart();
-  const completeMutation = useCheckoutComplete(tableToken);
 
   const [session, setSession] = useState<CheckoutSessionResult | null>(null);
   const [done, setDone] = useState<boolean>(false);
 
+  useCustomerOrderEvents(tableToken, {
+    onPaymentCompleted: (data) => {
+      // Chỉ chuyển màn khi đúng phiên đang mở (tránh nhầm khi bàn có nguồn thanh toán khác)
+      if (session && data.sessionId === session.sessionId) {
+        setSession(null);
+        setDone(true);
+      }
+    },
+  });
+
   const handleStart = async () => {
     const s = await startMutation.mutateAsync({ tableToken });
     setSession(s);
-  };
-
-  const handleComplete = async () => {
-    if (!session) return;
-    await completeMutation.mutateAsync({
-      sessionId: session.sessionId,
-      tableToken: session.tableToken,
-      clientSecret: session.clientSecret,
-    });
-    setSession(null);
-    setDone(true);
   };
 
   const handleRestart = () => setSession(null);
@@ -97,11 +93,8 @@ export default function CheckoutPage() {
           <CheckoutSessionPanel
             totalAmount={session.totalAmount}
             expiresAt={session.expiresAt}
-            sessionId={session.sessionId}
-            tableName={preview?.tableName}
-            onConfirm={handleComplete}
+            payCode={session.payCode}
             onRestart={handleRestart}
-            isPending={completeMutation.isPending}
           />
         ) : (
           <CheckoutSummary

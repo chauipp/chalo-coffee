@@ -10,6 +10,7 @@ export const ALL_SSE_EVENTS = [
   "payment_request",
   "payment_request_batch",
   "payment_completed",
+  "payment_review_needed",
   "staff_call",
 ] as const;
 
@@ -52,6 +53,15 @@ export interface SSEPayload {
     tableToken: string;
     orderIds: string[];
     totalAmount: number;
+    source?: "sepay" | "staff";
+  };
+  payment_review_needed: {
+    sepayTxId: string;
+    content: string | null;
+    transferAmount: number;
+    sessionId: string;
+    tableId: string;
+    reason: string;
   };
   staff_call: {
     tableId: string;

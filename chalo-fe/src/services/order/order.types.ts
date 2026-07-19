@@ -137,12 +137,6 @@ export interface CheckoutStartPayload extends CheckoutPreviewPayload {
   ttlMinutes?: number; // 5–120, default 15
 }
 
-export interface CheckoutCompletePayload {
-  sessionId: string;
-  tableToken: string;
-  clientSecret: string;
-}
-
 export interface CheckoutPreviewResult {
   tableId: string;
   tableName: string;
@@ -155,18 +149,12 @@ export interface CheckoutPreviewResult {
 export interface CheckoutSessionResult {
   sessionId: string;
   clientSecret: string;
+  /** Nội dung chuyển khoản BE sinh sẵn — nhúng nguyên văn vào VietQR */
+  payCode: string;
   tableToken: string;
   tableId: string;
   orderIds: string[];
   totalAmount: number;
   expiresAt: string; // ISO
-  orders: OrderDto[];
-}
-
-export interface CheckoutCompleteResult {
-  idempotent: boolean;
-  sessionId: string;
-  orderIds: string[];
-  totalAmount: number;
   orders: OrderDto[];
 }

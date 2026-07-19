@@ -2,8 +2,6 @@
 import { request } from "@/lib/api-client";
 import {
   CallStaffPayload,
-  CheckoutCompletePayload,
-  CheckoutCompleteResult,
   CheckoutPreviewPayload,
   CheckoutPreviewResult,
   CheckoutSessionResult,
@@ -73,11 +71,6 @@ export const checkoutStart = (
   data: CheckoutStartPayload,
 ): Promise<CheckoutSessionResult> =>
   request.post(API.ORDER.CHECKOUT_START, data);
-
-export const checkoutComplete = (
-  data: CheckoutCompletePayload,
-): Promise<CheckoutCompleteResult> =>
-  request.post(API.ORDER.CHECKOUT_COMPLETE, data);
 
 export const getRevenueStats = (
   params: RevenueStatsParams = {},

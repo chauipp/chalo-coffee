@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-query";
 import {
   callStaff,
-  checkoutComplete,
   checkoutPreview,
   checkoutStart,
   createOrder,
@@ -27,7 +26,6 @@ import {
 } from "./order.api";
 import {
   CallStaffPayload,
-  CheckoutCompletePayload,
   CheckoutStartPayload,
   CreateOrderPayload,
   OrderDto,
@@ -202,24 +200,6 @@ export const useCheckoutStart = () =>
     mutationFn: (data: CheckoutStartPayload) => checkoutStart(data),
     onError: (e: Error) => toast.error(e.message),
   });
-
-export const useCheckoutComplete = (tableToken: string) => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data: CheckoutCompletePayload) => checkoutComplete(data),
-    onSuccess: () => {
-      qc.invalidateQueries({
-        queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
-      });
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
-      qc.invalidateQueries({
-        queryKey: QUERY_KEYS.ORDERS.CHECKOUT_PREVIEW(tableToken),
-      });
-      toast.success("Thanh toán gộp thành công!");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-};
 
 /**
  * Tick số ly đã pha. Cập nhật optimistic để barista thấy phản hồi tức thì;

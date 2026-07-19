@@ -58,7 +58,6 @@ export const API = {
     CALL_STAFF: "/order/call-staff",
     CHECKOUT_PREVIEW: "/order/checkout/preview",
     CHECKOUT_START: "/order/checkout/start",
-    CHECKOUT_COMPLETE: "/order/checkout/complete",
     STATS_REVENUE: "/order/stats/revenue",
     STATS_TOP_PRODUCTS: "/order/stats/top-products",
   },
