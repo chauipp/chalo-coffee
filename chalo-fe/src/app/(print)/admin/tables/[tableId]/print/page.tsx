@@ -10,11 +10,10 @@ import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { use, useSyncExternalStore } from "react";
 
-/* ── Copy giới thiệu quán (tĩnh — sau này có thể chuyển vào Settings) ── */
+/* ── Thông tin quán (tĩnh — sau này có thể chuyển vào Settings) ── */
 const SHOP_NAME = "Chalo Coffee";
-const SHOP_TAGLINE = "Chậm một nhịp, đậm một vị";
-const SHOP_INTRO =
-  "Cà phê rang xay mỗi sáng, trà trái cây tươi và bánh nhà làm. Gọi món tại bàn, đồ uống mang đến tận nơi.";
+const WIFI_NAME = "chalocoffee";
+const WIFI_PASS = "chalocoffee";
 
 /* Tách "Bàn 5" → prefix "Bàn" + số "05" để đánh số thật to, thật rõ */
 const splitTableName = (name: string) => {
@@ -37,6 +36,39 @@ const CoffeeCupIcon = ({ className }: { className?: string }) => (
       strokeWidth="1.6"
       strokeLinecap="round"
     />
+  </svg>
+);
+
+const WifiIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+    <path
+      d="M2.5 9.5a15 15 0 0 1 19 0M5.5 13a10 10 0 0 1 13 0M8.6 16.4a5.3 5.3 0 0 1 6.8 0"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <circle cx="12" cy="19.6" r="1.5" fill="currentColor" />
+  </svg>
+);
+
+const LockIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+    <rect
+      x="5"
+      y="10.5"
+      width="14"
+      height="9.5"
+      rx="2.5"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <path
+      d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <circle cx="12" cy="15.2" r="1.4" fill="currentColor" />
   </svg>
 );
 
@@ -82,13 +114,25 @@ const QrA6Sheet = ({ table, menuUrl }: { table: TableDto; menuUrl: string }) => 
           {table.area && <span className="area-chip">{table.area}</span>}
         </section>
 
-        {/* ── Ô 2: GIỚI THIỆU QUÁN ─────────────────────────── */}
+        {/* ── Ô 2: GIỚI THIỆU QUÁN + WIFI ──────────────────── */}
         <section className="cell cell-intro">
           <CoffeeCupIcon className="intro-icon text-brand-500" />
           <h2 className="intro-name text-coffee-dark">{SHOP_NAME}</h2>
-          <p className="intro-tagline text-brand-600">{SHOP_TAGLINE}</p>
           <div className="intro-divider bg-brand-300" />
-          <p className="intro-body">{SHOP_INTRO}</p>
+          <div className="wifi-row">
+            <WifiIcon className="wifi-row-icon text-brand-500" />
+            <div>
+              <p className="wifi-label">Wi-Fi</p>
+              <p className="wifi-value text-coffee-dark">{WIFI_NAME}</p>
+            </div>
+          </div>
+          <div className="wifi-row">
+            <LockIcon className="wifi-row-icon text-brand-500" />
+            <div>
+              <p className="wifi-label">Mật khẩu</p>
+              <p className="wifi-value text-coffee-dark">{WIFI_PASS}</p>
+            </div>
+          </div>
         </section>
         </div>
 
@@ -293,16 +337,35 @@ export default function TableQrPrintPage({
           border: 0.4mm solid #feecd0;
           padding: 5mm 4.5mm;
         }
-        .intro-icon { width: 7mm; height: 7mm; margin-bottom: 1.8mm; }
+        .cell-intro { justify-content: center; }
+        .intro-icon { width: 8mm; height: 8mm; margin-bottom: 2mm; }
         .intro-name {
           font-size: 4.8mm;
           font-weight: 700;
           line-height: 1.2;
           white-space: nowrap;
         }
-        .intro-tagline { font-size: 2.9mm; font-style: italic; margin-top: 0.8mm; }
-        .intro-divider { width: 8mm; height: 0.7mm; border-radius: 1mm; margin: 2.4mm 0; }
-        .intro-body { font-size: 3mm; line-height: 1.55; color: #57534e; }
+        .intro-divider { width: 8mm; height: 0.7mm; border-radius: 1mm; margin: 3mm 0 1.5mm; }
+        .wifi-row {
+          display: flex;
+          align-items: center;
+          gap: 2.2mm;
+          margin-top: 3mm;
+        }
+        .wifi-row-icon { width: 5.5mm; height: 5.5mm; flex-shrink: 0; }
+        .wifi-label {
+          font-size: 2.6mm;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #a8a29e;
+        }
+        .wifi-value {
+          font-size: 4mm;
+          font-weight: 700;
+          line-height: 1.25;
+          word-break: break-all;
+        }
 
         /* Ô 3 — CTA quét mã */
         .cell-cta {
