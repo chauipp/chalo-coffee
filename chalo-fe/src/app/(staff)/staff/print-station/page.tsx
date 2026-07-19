@@ -62,9 +62,10 @@ export default function PrintStationPage() {
   });
 
   // In bù: đơn hôm nay đã thanh toán nhưng chưa có trong nhật ký in
-  // (trạm bị tắt đúng lúc tiền về). Hiện danh sách, nhân viên bấm in tay.
-  useEffect(() => {
+  // (trạm bị tắt/rớt mạng đúng lúc tiền về). Hiện danh sách, nhân viên bấm in tay.
+  const refreshCatchUp = useCallback(() => {
     if (!accessToken) return;
+    // Ngày tính lại mỗi lần gọi → tự đổi khoá localStorage/danh sách khi qua nửa đêm
     const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
     getOrderPage({ pageNo: 1, pageSize: 100, date: today })
       .then((res) => {
@@ -82,6 +83,22 @@ export default function PrintStationPage() {
       })
       .catch(() => {});
   }, [accessToken]);
+
+  // Nạp lần đầu + quét lại định kỳ. SSE là Subject không replay/Last-Event-ID nên
+  // sự kiện payment_completed phát ra lúc tab đang rớt mạng sẽ mất; quét lại danh
+  // sách đơn đã thanh toán là lưới an toàn để không sót hoá đơn cần in.
+  useEffect(() => {
+    refreshCatchUp();
+    const id = setInterval(refreshCatchUp, 60_000);
+    return () => clearInterval(id);
+  }, [refreshCatchUp]);
+
+  // Vừa nghe SSE KẾT NỐI LẠI (mất→có) → đồng bộ ngay, không đợi hết chu kỳ 60s
+  const wasConnectedRef = useRef(false);
+  useEffect(() => {
+    if (connected && !wasConnectedRef.current) refreshCatchUp();
+    wasConnectedRef.current = connected;
+  }, [connected, refreshCatchUp]);
 
   // Xử lý hàng đợi TUẦN TỰ: fetch chi tiết → render → in → ghi nhật ký
   useEffect(() => {
