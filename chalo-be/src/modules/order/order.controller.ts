@@ -347,6 +347,7 @@ export class OrderController {
           orderIds: ['uuid'],
           totalAmount: 210000,
           expiresAt: '2026-05-05T12:15:00.000Z',
+          payCode: 'CK7F3K2M',
           orders: [],
         },
       },

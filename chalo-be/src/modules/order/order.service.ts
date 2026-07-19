@@ -36,6 +36,7 @@ import { ProductStatus } from '../../common/enums/product-status.enum';
 import { ESTIMATED_WAIT_BARISTAS } from '../../common/constants';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
+import { generatePayCode } from './pay-code';
 
 const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
   // Khách đặt -> kéo thẳng vào pha, bỏ bước xác nhận
@@ -866,6 +867,20 @@ export class OrderService {
       const clientSecret = randomBytes(24).toString('hex');
       const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
 
+      // Nội dung CK duy nhất — webhook SePay khớp phiên theo mã này
+      const sessRepo = manager.getRepository(CheckoutSession);
+      let payCode = generatePayCode();
+      let attempts = 0;
+      while (await sessRepo.findOne({ where: { payCode } })) {
+        attempts += 1;
+        if (attempts >= 5) {
+          throw new BadRequestException(
+            'Không sinh được mã thanh toán, vui lòng thử lại',
+          );
+        }
+        payCode = generatePayCode();
+      }
+
       const session = manager.create(CheckoutSession, {
         tableToken: dto.tableToken,
         tableId: table.id,
@@ -874,6 +889,7 @@ export class OrderService {
         status: CheckoutSessionStatus.PENDING,
         clientSecret,
         expiresAt,
+        payCode,
       });
       const saved = await manager.save(CheckoutSession, session);
 
@@ -885,6 +901,7 @@ export class OrderService {
         orderIds: saved.orderIds,
         totalAmount: saved.totalAmount,
         expiresAt: saved.expiresAt,
+        payCode: saved.payCode,
         orders: orders.map((o) => this.buildDto(o)),
       };
     });
