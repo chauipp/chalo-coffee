@@ -54,9 +54,9 @@ export const CheckoutSessionPanel = ({
     : null;
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-5 shadow-sm space-y-4">
+    <div className="rounded-2xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-5 shadow-sm space-y-4">
       <div className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        <p className="text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500">
           Phiên thanh toán gộp
         </p>
         <p className="mt-2 text-3xl font-extrabold text-brand-600 dark:text-brand-400">
@@ -66,7 +66,7 @@ export const CheckoutSessionPanel = ({
           className={`mt-2 text-sm font-medium ${
             expired
               ? "text-red-600 dark:text-red-400"
-              : "text-gray-500 dark:text-gray-400"
+              : "text-stone-500 dark:text-stone-400"
           }`}
         >
           {expired
@@ -80,18 +80,18 @@ export const CheckoutSessionPanel = ({
           {/* QR luôn nền trắng để app ngân hàng quét được ở cả dark mode */}
           <div
             data-testid="vietqr-code"
-            className="rounded-2xl border-2 border-gray-100 bg-white p-3 dark:border-gray-800"
+            className="rounded-2xl border-2 border-stone-100 bg-white p-3 dark:border-stone-800"
           >
             <QRCodeSVG value={qrPayload} size={208} marginSize={1} />
           </div>
           <div className="text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
               {settings!.bankAccountName}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+            <p className="text-xs text-stone-500 dark:text-stone-400 font-mono">
               {settings!.bankAccountNo}
             </p>
-            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
               Mở app ngân hàng bất kỳ, quét mã — số tiền và nội dung đã điền
               sẵn. Chuyển xong hãy bấm nút bên dưới.
             </p>

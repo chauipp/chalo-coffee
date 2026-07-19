@@ -26,12 +26,12 @@ export const TableCard = ({ table, onClick }: TableCardProps) => {
         </span>
       </div>
 
-      <p className="text-base font-bold text-gray-900 dark:text-gray-100">
+      <p className="text-base font-bold text-stone-900 dark:text-stone-100">
         {table.name}
       </p>
 
       {table.area && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+        <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
           {table.area}
         </p>
       )}

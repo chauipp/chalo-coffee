@@ -154,12 +154,12 @@ export default function StaffOrdersPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shrink-0">
         <div>
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-lg font-bold text-stone-900 dark:text-stone-100">
             Đơn hàng
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-stone-500 dark:text-stone-400">
             Real-time · {totalActive} đơn đang xử lý
           </p>
         </div>
@@ -169,19 +169,19 @@ export default function StaffOrdersPage() {
             value={tableSearch}
             onChange={(e) => setTableSearch(e.target.value)}
             placeholder="🔍 Tìm bàn..."
-            className="w-44 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-400"
+            className="w-44 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-3 py-1.5 text-sm text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-400"
           />
           <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
             <span
               className={`size-2 rounded-full ${
-                isSSEConnected ? "bg-green-500 animate-pulse" : "bg-gray-400"
+                isSSEConnected ? "bg-green-500 animate-pulse" : "bg-stone-400"
               }`}
             />
             {isSSEConnected ? "Live" : "Connecting..."}
           </div>
           <button
             onClick={() => refetch()}
-            className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="rounded-lg border border-stone-200 dark:border-stone-700 px-3 py-1.5 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
           >
             🔄 Làm mới
           </button>

@@ -36,7 +36,7 @@ export function DashboardControls({ value, onChange }: Props) {
         onChange={(e) => onChange({ ...value, from: e.target.value || undefined })}
         className="w-44"
       />
-      <span className="text-gray-400">→</span>
+      <span className="text-stone-400">→</span>
       <Input
         type="date"
         value={value.to ?? ""}
@@ -46,7 +46,7 @@ export function DashboardControls({ value, onChange }: Props) {
       {(value.from || value.to) && (
         <button
           onClick={() => onChange({ ...value, from: undefined, to: undefined })}
-          className="text-sm text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
+          className="text-sm text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-300"
         >
           Xoá khoảng ngày
         </button>

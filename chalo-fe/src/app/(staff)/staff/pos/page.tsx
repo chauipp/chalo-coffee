@@ -122,15 +122,15 @@ export default function StaffPOSPage() {
   return (
     <div className="h-full flex gap-0 overflow-hidden">
       {/* Left — Product Grid */}
-      <div className="flex-1 flex flex-col overflow-hidden border-r border-gray-200 dark:border-gray-800">
+      <div className="flex-1 flex flex-col overflow-hidden border-r border-stone-200 dark:border-stone-800">
         {/* Search + Category tabs */}
-        <div className="flex gap-2 p-3 border-b border-gray-200 dark:border-gray-800 overflow-x-auto shrink-0 bg-white dark:bg-gray-900">
+        <div className="flex gap-2 p-3 border-b border-stone-200 dark:border-stone-800 overflow-x-auto shrink-0 bg-white dark:bg-stone-900">
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm món..."
             aria-label="Tìm món"
-            className="w-44 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-gray-400"
+            className="w-44 shrink-0 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-3 py-1.5 text-sm text-stone-900 dark:text-stone-100 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-stone-400"
           />
           <button
             onClick={() => setSelectedCategoryId("")}
@@ -138,7 +138,7 @@ export default function StaffPOSPage() {
               ${
                 selectedCategoryId === ""
                   ? "bg-brand-400 text-white"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
               }`}
           >
             Tất cả
@@ -151,7 +151,7 @@ export default function StaffPOSPage() {
               ${
                 selectedCategoryId === cate.id
                   ? "bg-brand-400 text-white"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
               }`}
             >
               {cate.name}
@@ -166,7 +166,7 @@ export default function StaffPOSPage() {
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
             </div>
           ) : products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-40 gap-1 text-gray-400">
+            <div className="flex flex-col items-center justify-center h-40 gap-1 text-stone-400">
               <p className="text-sm">Không tìm thấy món phù hợp</p>
               <p className="text-xs">Thử đổi từ khoá hoặc danh mục khác</p>
             </div>
@@ -187,46 +187,46 @@ export default function StaffPOSPage() {
           )}
           <div ref={productPage.loadMoreRef} className="flex justify-center py-4">
             {productPage.isFetchingNextPage ? (
-              <span className="text-sm text-gray-400">Đang tải thêm...</span>
+              <span className="text-sm text-stone-400">Đang tải thêm...</span>
             ) : productPage.hasNextPage ? (
-              <span className="text-xs text-gray-400">Cuộn để tải thêm</span>
+              <span className="text-xs text-stone-400">Cuộn để tải thêm</span>
             ) : products.length > 0 ? (
-              <span className="text-xs text-gray-400">Đã hiển thị tất cả</span>
+              <span className="text-xs text-stone-400">Đã hiển thị tất cả</span>
             ) : null}
           </div>
         </div>
       </div>
 
       {/* Right — Order Panel */}
-      <div className="w-72 shrink-0 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+      <div className="w-72 shrink-0 flex flex-col bg-white dark:bg-stone-900 overflow-hidden">
         {/* header */}
-        <div className="px-4 py-3.5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+        <div className="px-4 py-3.5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
           <div>
-            <h2 className="font-bold text-gray-900 dark:text-gray-100">
+            <h2 className="font-bold text-stone-900 dark:text-stone-100">
               Đơn tại quầy
             </h2>
             {totalItems > 0 && (
-              <p className="text-xs text-gray-400">{totalItems} món</p>
+              <p className="text-xs text-stone-400">{totalItems} món</p>
             )}
           </div>
           <button
             onClick={() => setShowPagerBoard(true)}
-            className="rounded-lg border border-gray-200 dark:border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="rounded-lg border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 text-xs font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
           >
             🔔 Thẻ bàn
           </button>
         </div>
 
         {/* table & pager selector */}
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 space-y-2.5">
+        <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 space-y-2.5">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-1">
               Bàn *
             </label>
             <select
               value={selectedTableToken}
               onChange={(e) => setSelectedTableToken(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2 text-gray-900 dark:text-gray-100 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20"
+              className="w-full rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-sm px-3 py-2 text-stone-900 dark:text-stone-100 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20"
             >
               <option value="">- Chọn bàn -</option>
               {(tables ?? []).map((t) => (
@@ -240,7 +240,7 @@ export default function StaffPOSPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-1">
               Thẻ bàn (số)
             </label>
             <input
@@ -250,12 +250,12 @@ export default function StaffPOSPage() {
               value={pagerNumber}
               onChange={(e) => setPagerNumber(e.target.value)}
               placeholder="VD: 12"
-              className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2 text-gray-900 dark:text-gray-100 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-gray-400"
+              className="w-full rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-sm px-3 py-2 text-stone-900 dark:text-stone-100 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-stone-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-1">
               Ghi chú cho bàn
             </label>
             <textarea
@@ -263,7 +263,7 @@ export default function StaffPOSPage() {
               onChange={(e) => setNote(e.target.value)}
               placeholder="Ghi chú"
               rows={2}
-              className="w-full resize-none rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2 text-gray-900 dark:text-gray-100 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-gray-400"
+              className="w-full resize-none rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-sm px-3 py-2 text-stone-900 dark:text-stone-100 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 placeholder:text-stone-400"
             />
           </div>
         </div>
@@ -271,7 +271,7 @@ export default function StaffPOSPage() {
         {/* cart items */}
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
           {cart.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-32 gap-2 text-gray-400">
+            <div className="flex flex-col items-center justify-center h-32 gap-2 text-stone-400">
               <span className="text-3xl">🛒</span>
               <p className="text-sm">Chưa có món nào</p>
             </div>
@@ -289,10 +289,10 @@ export default function StaffPOSPage() {
         </div>
 
         {/* footer */}
-        <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
+        <div className="px-4 py-4 border-t border-stone-200 dark:border-stone-800 space-y-3">
           {cart.length > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Tổng cộng</span>
+              <span className="text-sm text-stone-500">Tổng cộng</span>
               <span className="text-base font-bold text-brand-600 dark:text-brand-400">
                 {totalAmount.toLocaleString("vi-VN")}đ
               </span>
@@ -303,7 +303,7 @@ export default function StaffPOSPage() {
             {cart.length > 0 && (
               <button
                 onClick={() => setShowConfirmRemoveCart(true)}
-                className="flex-1 rounded-xl border border-gray-200 dark:border-gray-700 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex-1 rounded-xl border border-stone-200 dark:border-stone-700 py-3 text-sm font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
               >
                 Xoá tất cả
               </button>

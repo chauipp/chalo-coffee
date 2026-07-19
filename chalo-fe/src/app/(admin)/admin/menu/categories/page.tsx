@@ -62,7 +62,7 @@ export default function CategoriesPage() {
       key: "description",
       header: "Mô tả",
       render: (cate: CategoryDto) => (
-        <span className="max-w-xs truncate text-gray-500 block">
+        <span className="max-w-xs truncate text-stone-500 block">
           {cate.description ?? "-"}
         </span>
       ),
@@ -117,10 +117,10 @@ export default function CategoriesPage() {
       {/* header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
             Danh mục
           </h1>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-stone-500">
             Quản lý danh mục thực đơn
           </p>
         </div>

@@ -14,14 +14,14 @@ export const STATUS_META: Record<
   CONFIRMED: {
     label: "Đã tiếp nhận",
     emoji: "✅",
-    bgColor: "bg-blue-100 dark:bg-blue-900/30",
-    textColor: "text-blue-700 dark:text-blue-400",
+    bgColor: "bg-sky-100 dark:bg-sky-900/30",
+    textColor: "text-sky-700 dark:text-sky-400",
   },
   PREPARING: {
     label: "Đang pha chế",
     emoji: "☕",
-    bgColor: "bg-orange-100 dark:bg-orange-900/30",
-    textColor: "text-orange-700 dark:text-orange-400",
+    bgColor: "bg-brand-100 dark:bg-brand-900/30",
+    textColor: "text-brand-700 dark:text-brand-400",
   },
   READY: {
     label: "Sẵn sàng phục vụ",
@@ -32,8 +32,8 @@ export const STATUS_META: Record<
   COMPLETED: {
     label: "Đã phục vụ",
     emoji: "🎁",
-    bgColor: "bg-gray-100 dark:bg-gray-800",
-    textColor: "text-gray-600 dark:text-gray-400",
+    bgColor: "bg-stone-100 dark:bg-stone-800",
+    textColor: "text-stone-600 dark:text-stone-400",
   },
   CANCELLED: {
     label: "Đã huỷ",

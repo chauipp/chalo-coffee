@@ -36,7 +36,7 @@ export const PrepStation = ({
 
   return (
     <div
-      className={`flex h-full flex-col rounded-xl border border-orange-200 dark:border-orange-800/50 bg-orange-50/40 dark:bg-orange-950/25 ${
+      className={`flex h-full flex-col rounded-xl border border-brand-200 dark:border-brand-800/50 bg-brand-50/40 dark:bg-brand-950/25 ${
         isDropTarget ? "ring-2 ring-inset ring-brand-400" : ""
       }`}
       onDragOver={(e) => {
@@ -57,7 +57,7 @@ export const PrepStation = ({
         if (orderId) onDropOrder?.(orderId);
       }}
     >
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-orange-200 dark:border-orange-800/50 shrink-0">
+      <div className="flex items-center justify-between px-3 py-2.5 border-b border-brand-200 dark:border-brand-800/50 shrink-0">
         <div className="flex items-center gap-2">
           <button
             onClick={onToggleExpand}
@@ -73,7 +73,7 @@ export const PrepStation = ({
                 ? "Thu lại · Esc"
                 : "Mở rộng khu pha chế · chuyển menu khác sẽ tự thu lại"
             }
-            className="rounded-lg p-1.5 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+            className="rounded-lg p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
           >
             {expanded ? (
               <CollapseIcon className="size-4" />
@@ -82,7 +82,7 @@ export const PrepStation = ({
             )}
           </button>
           <span className="text-base">☕</span>
-          <h2 className="text-sm font-bold text-orange-700 dark:text-orange-400">
+          <h2 className="text-sm font-bold text-brand-700 dark:text-brand-400">
             Đang pha chế
           </h2>
         </div>
@@ -90,7 +90,7 @@ export const PrepStation = ({
           <div
             role="group"
             aria-label="Chế độ hiển thị khu pha chế"
-            className="flex rounded-lg border border-orange-200 dark:border-orange-800/50 overflow-hidden text-xs font-medium"
+            className="flex rounded-lg border border-brand-200 dark:border-brand-800/50 overflow-hidden text-xs font-medium"
           >
             {(
               [
@@ -105,8 +105,8 @@ export const PrepStation = ({
                 data-testid={`prep-mode-${value}`}
                 className={`px-2.5 py-1 transition-colors ${
                   mode === value
-                    ? "bg-orange-500 text-white"
-                    : "bg-white dark:bg-gray-900 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                    ? "bg-brand-500 text-white"
+                    : "bg-white dark:bg-stone-900 text-brand-700 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/30"
                 }`}
               >
                 {label}
@@ -114,7 +114,7 @@ export const PrepStation = ({
             ))}
           </div>
           {orders.length > 0 && (
-            <span className="size-5 rounded-full text-xs font-bold flex items-center justify-center bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800/50">
+            <span className="size-5 rounded-full text-xs font-bold flex items-center justify-center bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50">
               {orders.length}
             </span>
           )}
@@ -123,7 +123,7 @@ export const PrepStation = ({
 
       <div className="flex-1 overflow-y-auto p-2">
         {groups.length === 0 ? (
-          <p className="text-xs text-gray-400 dark:text-gray-600 text-center py-10">
+          <p className="text-xs text-stone-400 dark:text-stone-600 text-center py-10">
             Chưa có món nào đang pha — chọn đơn ở cột &quot;Khách đặt&quot; và
             bấm &quot;Bắt đầu pha&quot;.
           </p>

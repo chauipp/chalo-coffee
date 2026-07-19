@@ -49,10 +49,10 @@ export default function StaffTablesPage() {
     <>
       <div className="h-full flex flex-col overflow-hidden">
         {/* header */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+        <div className="px-6 py-4 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shrink-0">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-lg font-bold text-stone-900 dark:text-stone-100">
                 Sơ đồ bàn
               </h1>
               <div className="flex items-center gap-4 mt-0.5">
@@ -77,7 +77,7 @@ export default function StaffTablesPage() {
                   ${
                     filterArea === ""
                       ? "bg-brand-400 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                      : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                   }`}
               >
                 Tất cả
@@ -90,7 +90,7 @@ export default function StaffTablesPage() {
                     ${
                       filterArea === a
                         ? "bg-brand-400 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                     }`}
                 >
                   {a}
@@ -107,7 +107,7 @@ export default function StaffTablesPage() {
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
             </div>
           ) : filteredTables.length === 0 ? (
-            <p className="text-center text-gray-400 py-20">Không có bàn nào</p>
+            <p className="text-center text-stone-400 py-20">Không có bàn nào</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
               {filteredTables.map((t) => (

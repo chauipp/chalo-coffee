@@ -163,9 +163,9 @@ export const ProductForm = ({
               {...register("description")}
               rows={2}
               placeholder="Mô tả ngắn về món..."
-              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-sm
-              bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-              placeholder:text-gray-400 outline-none transition-colors
+              className="w-full rounded-xl border border-stone-200 dark:border-stone-700 px-4 py-2.5 text-sm
+              bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100
+              placeholder:text-stone-400 outline-none transition-colors
               focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 resize-none"
             />
           </FormField>
@@ -185,7 +185,7 @@ export const ProductForm = ({
                 placeholder="https://... hoặc upload ảnh →"
                 className="flex-1"
               />
-              <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
                 {isUploading ? (
                   <SpinnerIcon className="size-4 animate-spin" />
                 ) : (
@@ -203,7 +203,7 @@ export const ProductForm = ({
               <img
                 src={imageUrl}
                 alt="Preview"
-                className="mt-2 h-24 w-24 rounded-xl object-cover border border-gray-200 dark:border-gray-700"
+                className="mt-2 h-24 w-24 rounded-xl object-cover border border-stone-200 dark:border-stone-700"
                 onError={(e) => (e.currentTarget.style.display = "none")}
               />
             )}
@@ -225,7 +225,7 @@ export const ProductForm = ({
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="rounded-xl border border-gray-200 dark:border-gray-700 px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+          className="rounded-xl border border-stone-200 dark:border-stone-700 px-5 py-2.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors disabled:opacity-50"
         >
           Hủy
         </button>

@@ -23,8 +23,8 @@ export default function AdminDashboardPage() {
     <div className="p-6 space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Tổng quan</h1>
-          <p className="mt-0.5 text-sm text-gray-500">Doanh thu &amp; sản phẩm bán chạy</p>
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">Tổng quan</h1>
+          <p className="mt-0.5 text-sm text-stone-500">Doanh thu &amp; sản phẩm bán chạy</p>
         </div>
         <DashboardControls value={filter} onChange={setFilter} />
       </div>

@@ -31,9 +31,9 @@ export const KANBAN_COLUMNS: {
     status: "COMPLETED",
     label: "Đã phục vụ",
     emoji: "🍽️",
-    bgColor: "bg-blue-50 dark:bg-blue-950/40",
-    textColor: "text-blue-700 dark:text-blue-400",
-    borderColor: "border-blue-200 dark:border-blue-800/50",
+    bgColor: "bg-sky-50 dark:bg-sky-950/40",
+    textColor: "text-sky-700 dark:text-sky-400",
+    borderColor: "border-sky-200 dark:border-sky-800/50",
   },
 ];
 

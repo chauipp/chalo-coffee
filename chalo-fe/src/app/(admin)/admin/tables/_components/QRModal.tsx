@@ -26,7 +26,7 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
     <Modal title={`Mã QR - ${table.name}`} onClose={onClose} open={!!table}>
       <div className="flex flex-col items-center gap-4">
         {/* QR Image */}
-        <div className="rounded-2xl border-2 border-gray-100 dark:border-gray-800 p-4 bg-white">
+        <div className="rounded-2xl border-2 border-stone-100 dark:border-stone-800 p-4 bg-white">
           <img
             src={table.qrCodeUrl}
             alt={`QR code - ${table.name}`}
@@ -36,11 +36,11 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
 
         {/* Table info */}
         <div className="text-center">
-          <p className="font-semibold text-gray-900 dark:text-gray-100">
+          <p className="font-semibold text-stone-900 dark:text-stone-100">
             {table.name}
           </p>
-          <p className="text-sm text-gray-500">{table.area}</p>
-          <p className="mt-1 text-xs text-gray-400 font-mono break-all">
+          <p className="text-sm text-stone-500">{table.area}</p>
+          <p className="mt-1 text-xs text-stone-400 font-mono break-all">
             {table.qrToken}
           </p>
         </div>
@@ -50,7 +50,7 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
           <button
             onClick={() => setShowRegenConfirm(true)}
             disabled={regenerateQrMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-stone-200 dark:border-stone-700 px-4 py-2.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors disabled:opacity-50"
           >
             {regenerateQrMutation.isPending && (
               <SpinnerIcon className="size-4 animate-spin" />

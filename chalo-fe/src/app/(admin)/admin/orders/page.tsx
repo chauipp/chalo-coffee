@@ -43,10 +43,10 @@ export default function AdminOrdersPage() {
       header: "Đơn",
       render: (r) => (
         <div>
-          <p className="font-medium text-gray-900 dark:text-gray-100">
+          <p className="font-medium text-stone-900 dark:text-stone-100">
             #{r.id.slice(0, 8)}
           </p>
-          <p className="text-xs text-gray-400">{r.tableName}</p>
+          <p className="text-xs text-stone-400">{r.tableName}</p>
         </div>
       ),
     },
@@ -86,7 +86,7 @@ export default function AdminOrdersPage() {
       key: "createdAt",
       header: "Thời gian",
       render: (r) => (
-        <span className="text-gray-500">
+        <span className="text-stone-500">
           {new Date(r.createdAt).toLocaleString("vi-VN")}
         </span>
       ),
@@ -96,10 +96,10 @@ export default function AdminOrdersPage() {
   return (
     <div className="p-6 space-y-5">
       <div>
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
           Đơn hàng
         </h1>
-        <p className="mt-0.5 text-sm text-gray-500">Toàn bộ đơn hàng của quán</p>
+        <p className="mt-0.5 text-sm text-stone-500">Toàn bộ đơn hàng của quán</p>
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
@@ -139,7 +139,7 @@ export default function AdminOrdersPage() {
               table.resetFilter();
               setDate("");
             }}
-            className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
           >
             Xoá bộ lọc
           </button>

@@ -22,19 +22,19 @@ export const CartItem = ({
   const showNoteInput = isEditingNote || (item.note && item.note.length > 0);
 
   return (
-    <div className="py-2 border-b border-gray-100 dark:border-gray-800 last:border-0 flex flex-col gap-1.5 transition-all">
+    <div className="py-2 border-b border-stone-100 dark:border-stone-800 last:border-0 flex flex-col gap-1.5 transition-all">
       {/* --- DÒNG 1: Tên món, Giá, Nút xoá, Tăng giảm số lượng --- */}
       <div className="flex items-start gap-2">
         <button
           onClick={() => onRemoveFromCart(item.productId)}
           title="Xoá món"
-          className="size-6 mt-0.5 shrink-0 rounded-full text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center transition-colors focus:outline-none"
+          className="size-6 mt-0.5 shrink-0 rounded-full text-stone-400 dark:text-stone-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center transition-colors focus:outline-none"
         >
           <span className="text-[10px] font-bold">✕</span>
         </button>
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+          <p className="text-sm font-medium text-stone-900 dark:text-stone-100 truncate">
             {item.productName}
           </p>
           <div className="flex items-center gap-2 mt-0.5">
@@ -46,7 +46,7 @@ export const CartItem = ({
             {!showNoteInput && (
               <button
                 onClick={() => setIsEditingNote(true)}
-                className="text-[10px] px-1.5 py-0.5 rounded text-gray-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors flex items-center gap-1"
+                className="text-[10px] px-1.5 py-0.5 rounded text-stone-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors flex items-center gap-1"
               >
                 <svg className="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -60,16 +60,16 @@ export const CartItem = ({
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => onUpdateQuantity(item.productId, -1)}
-            className="size-6 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
+            className="size-6 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 text-sm font-bold hover:bg-stone-200 dark:hover:bg-stone-700 flex items-center justify-center transition-colors"
           >
             -
           </button>
-          <span className="w-6 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
+          <span className="w-6 text-center text-sm font-bold text-stone-900 dark:text-stone-100">
             {item.quantity}
           </span>
           <button
             onClick={() => onUpdateQuantity(item.productId, 1)}
-            className="size-6 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
+            className="size-6 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 text-sm font-bold hover:bg-stone-200 dark:hover:bg-stone-700 flex items-center justify-center transition-colors"
           >
             +
           </button>
@@ -90,13 +90,13 @@ export const CartItem = ({
                 setIsEditingNote(false);
               }}
               placeholder="Ghi chú (ít đá, nhiều sữa, không hành...)"
-              className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-xs px-2.5 py-1.5 rounded-md outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all text-gray-700 dark:text-gray-300 placeholder:text-gray-400 pr-7"
+              className="w-full bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 text-xs px-2.5 py-1.5 rounded-md outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all text-stone-700 dark:text-stone-300 placeholder:text-stone-400 pr-7"
             />
             {/* Nút xoá nhanh ghi chú */}
             {item.note && (
               <button
                 onClick={() => onUpdateItemNote(item.productId, "")}
-                className="absolute right-1.5 p-1 text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="absolute right-1.5 p-1 text-stone-400 hover:text-red-500 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors"
               >
                 <span className="text-[9px] font-bold block">✕</span>
               </button>

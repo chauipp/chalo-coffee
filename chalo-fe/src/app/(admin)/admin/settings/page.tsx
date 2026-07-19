@@ -79,27 +79,27 @@ export default function SettingsPage() {
 
   if (isLoading)
     return (
-      <div className="p-6 text-sm text-gray-400">Đang tải cài đặt...</div>
+      <div className="p-6 text-sm text-stone-400">Đang tải cài đặt...</div>
     );
 
   return (
     <div className="p-6 space-y-6 max-w-xl">
       <div>
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
           Cài đặt
         </h1>
-        <p className="mt-0.5 text-sm text-gray-500">
+        <p className="mt-0.5 text-sm text-stone-500">
           Cấu hình vận hành và thanh toán
         </p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5">
+      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 space-y-5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-medium text-stone-900 dark:text-stone-100">
               Hiển thị thời gian chờ ước tính
             </p>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-stone-400">
               Hiện thời gian chờ dự kiến cho khách khi đặt món
             </p>
           </div>
@@ -125,12 +125,12 @@ export default function SettingsPage() {
         </FormField>
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5">
+      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 space-y-5">
         <div>
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <p className="text-sm font-medium text-stone-900 dark:text-stone-100">
             Thanh toán chuyển khoản (VietQR)
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-stone-400">
             Cấu hình đủ 3 mục thì màn thanh toán của khách sẽ hiện mã QR
             chuyển khoản đúng số tiền của bàn. Mọi app ngân hàng đều quét được.
           </p>

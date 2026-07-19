@@ -36,45 +36,47 @@ html.dark {
 
 body {
   margin: 0;
-  background: #f9fafb;
+  background: #fafaf9;
 }
 
 html.dark body {
-  background: #030712;
+  background: #0c0a09;
 }
 
 /* ── Chart tokens (recharts đọc CSS var trong SVG) ────────────── */
 :root {
-  --chart-grid: #e5e7eb;
-  --chart-text: #6b7280;
+  --chart-grid: #e7e5e4;
+  --chart-text: #78716c;
   --chart-tooltip-bg: #ffffff;
-  --chart-tooltip-text: #111827;
+  --chart-tooltip-text: #1c1917;
 }
 
 html.dark {
-  --chart-grid: #374151;
-  --chart-text: #9ca3af;
-  --chart-tooltip-bg: #1f2937;
-  --chart-tooltip-text: #f9fafb;
+  --chart-grid: #44403c;
+  --chart-text: #a8a29e;
+  --chart-tooltip-bg: #292524;
+  --chart-tooltip-text: #fafaf9;
 }
 
 @theme {
-  /* Brand colors */
-  --color-brand-50: #FFF8EE;
-  --color-brand-100: #FEECD0;
-  --color-brand-200: #FDD4A0;
-  --color-brand-300: #FBB060;
-  --color-brand-400: #F8921A;
-  --color-brand-500: #E67E0F;
-  --color-brand-600: #B85E09;
-  --color-brand-700: #8A4306;
-  --color-brand-800: #5C2C04;
-  --color-brand-900: #2E1602;
+  /* Brand colors — cà phê caramel sáng (hue ~30°), cặp với sky làm màu phụ.
+     Neutral toàn app là stone (xám ấm) để tôn tông cà phê. */
+  --color-brand-50: #FBF6EE;
+  --color-brand-100: #F6E9D4;
+  --color-brand-200: #EBD2A8;
+  --color-brand-300: #E0B379;
+  --color-brand-400: #D2954E;
+  --color-brand-500: #C17E39;
+  --color-brand-600: #A3652B;
+  --color-brand-700: #7E4D20;
+  --color-brand-800: #563415;
+  --color-brand-900: #2E1B0A;
+  --color-brand-950: #1F1206;
 
   /* Coffee tones */
-  --color-coffee-light: #D4A96A;
-  --color-coffee-default: #8B5E3C;
-  --color-coffee-dark: #4A2C17;
+  --color-coffee-light: #EBD2A8;
+  --color-coffee-default: #C17E39;
+  --color-coffee-dark: #563415;
 
   /* Font */
   --font-sans: var(--font-be-vietnam), system-ui, sans-serif;

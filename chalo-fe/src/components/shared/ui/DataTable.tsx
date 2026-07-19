@@ -49,28 +49,28 @@ export function DataTable<T>({
   return (
     <div className="flex flex-col gap-4">
       {/* table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <div className="overflow-x-auto rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <tr className="border-b border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
               {columns.map((col) => (
                 <th
                   key={col.key}
                   style={col.width ? { width: col.width } : undefined}
-                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400"
                 >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+          <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i}>
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3">
-                      <div className="h-4 rounded bg-gray-100 dark:bg-gray-800 animate-pulse"></div>
+                      <div className="h-4 rounded bg-stone-100 dark:bg-stone-800 animate-pulse"></div>
                     </td>
                   ))}
                 </tr>
@@ -79,7 +79,7 @@ export function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-12 text-center text-sm text-gray-400"
+                  className="px-4 py-12 text-center text-sm text-stone-400"
                 >
                   {emptyText}
                 </td>
@@ -88,12 +88,12 @@ export function DataTable<T>({
               data.map((row) => (
                 <tr
                   key={keyExtractor(row)}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors"
                 >
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className="px-4 py-3 text-gray-700 dark:text-gray-300"
+                      className="px-4 py-3 text-stone-700 dark:text-stone-300"
                     >
                       {col.render(row)}
                     </td>
@@ -108,9 +108,9 @@ export function DataTable<T>({
       {pagination && onPageChange && onPageSizeChange && (
         <div className="flex items-center justify-between px-1">
           <div className="flex flex-col gap-2">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-stone-500">
               Tổng:{" "}
-              <span className="font-medium text-gray-700 dark:text-gray-300">
+              <span className="font-medium text-stone-700 dark:text-stone-300">
                 {pagination.total} bản ghi
               </span>
             </p>
@@ -127,17 +127,17 @@ export function DataTable<T>({
             <button
               onClick={() => onPageChange(pagination.pageNo - 1)}
               disabled={!pagination.hasPrevPage}
-              className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg border border-stone-200 dark:border-stone-700 px-3 py-1.5 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               ← Trước
             </button>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-stone-600 dark:text-stone-400">
               {pagination.pageNo} / {pagination.totalPage}
             </span>
             <button
               onClick={() => onPageChange(pagination.pageNo + 1)}
               disabled={!pagination.hasNextPage}
-              className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg border border-stone-200 dark:border-stone-700 px-3 py-1.5 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Sau →
             </button>
@@ -146,13 +146,13 @@ export function DataTable<T>({
       )}
       {!pagination && typeof total === "number" && (
         <div className="flex items-center justify-between px-1">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-stone-500">
             Tổng:{" "}
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+            <span className="font-medium text-stone-700 dark:text-stone-300">
               {total} bản ghi
             </span>
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-stone-400">
             Đã hiển thị {data.length}/{total}
           </p>
         </div>
@@ -160,11 +160,11 @@ export function DataTable<T>({
       {loadMoreRef && (
         <div ref={loadMoreRef} className="flex justify-center py-2">
           {isLoadingMore ? (
-            <span className="text-sm text-gray-400">Đang tải thêm...</span>
+            <span className="text-sm text-stone-400">Đang tải thêm...</span>
           ) : hasMore ? (
-            <span className="text-xs text-gray-400">Cuộn để tải thêm</span>
+            <span className="text-xs text-stone-400">Cuộn để tải thêm</span>
           ) : data.length > 0 ? (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-stone-400">
               Đã hiển thị tất cả
             </span>
           ) : null}

@@ -160,7 +160,7 @@ const QrA6Sheet = ({ table, menuUrl }: { table: TableDto; menuUrl: string }) => 
               size={512}
               level="Q"
               marginSize={0}
-              fgColor="#2E1602"
+              fgColor="#2E1B0A"
               bgColor="#FFFFFF"
               className="qr-svg"
             />
@@ -191,21 +191,21 @@ export default function TableQrPrintPage({
   const menuUrl = table && origin ? `${origin}/menu/${table.qrToken}` : "";
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
+    <div className="min-h-screen bg-stone-100 dark:bg-stone-950">
       {/* Toolbar — chỉ hiện trên màn hình, ẩn khi in */}
-      <header className="qr-screen-only sticky top-0 z-10 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
+      <header className="qr-screen-only sticky top-0 z-10 border-b border-stone-200 bg-white/90 backdrop-blur dark:border-stone-800 dark:bg-stone-900/90">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
           <Link
             href={ROUTES.ADMIN.TABLES}
-            className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            className="text-sm font-medium text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
           >
             ← Quay lại
           </Link>
           <div className="text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
               In QR {table ? `— ${table.name}` : ""}
             </p>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-stone-400">
               Khổ A6 · 105×148mm · in màu, không lề
             </p>
           </div>
@@ -222,16 +222,16 @@ export default function TableQrPrintPage({
       {/* Vùng preview */}
       <main className="flex justify-center px-4 py-8">
         {isLoading ? (
-          <div className="qr-screen-only flex items-center gap-2 py-20 text-gray-500">
+          <div className="qr-screen-only flex items-center gap-2 py-20 text-stone-500">
             <SpinnerIcon className="size-5 animate-spin" />
             Đang tải thông tin bàn…
           </div>
         ) : !table ? (
           <div className="qr-screen-only py-20 text-center">
-            <p className="font-medium text-gray-900 dark:text-gray-100">
+            <p className="font-medium text-stone-900 dark:text-stone-100">
               Không tìm thấy bàn
             </p>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-stone-500">
               Bàn có thể đã bị xóa.{" "}
               <Link
                 href={ROUTES.ADMIN.TABLES}
@@ -285,7 +285,7 @@ export default function TableQrPrintPage({
 
         /* Ô 1 — số bàn */
         .cell-table {
-          background: linear-gradient(160deg, #f8921a 0%, #e67e0f 100%);
+          background: linear-gradient(160deg, #D2954E 0%, #C17E39 100%);
           padding: 5mm;
           align-items: center;
         }
@@ -333,8 +333,8 @@ export default function TableQrPrintPage({
 
         /* Ô 2 — giới thiệu quán */
         .cell-intro {
-          background: #fff8ee;
-          border: 0.4mm solid #feecd0;
+          background: #FBF6EE;
+          border: 0.4mm solid #F6E9D4;
           padding: 5mm 4.5mm;
         }
         .cell-intro { justify-content: center; }
@@ -370,7 +370,7 @@ export default function TableQrPrintPage({
         /* Ô 3 — CTA quét mã */
         .cell-cta {
           background: #ffffff;
-          border: 0.5mm dashed #fbb060;
+          border: 0.5mm dashed #E0B379;
           padding: 4mm 3.5mm;
         }
         .cta-title { font-size: 4mm; font-weight: 700; line-height: 1.3; }
@@ -386,7 +386,7 @@ export default function TableQrPrintPage({
 
         /* Ô 4 — QR */
         .cell-qr {
-          background: #4a2c17;
+          background: #563415;
           align-items: center;
           justify-content: center;
           padding: 4mm;

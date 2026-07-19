@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 const stepperButtonClass =
-  "flex size-8 items-center justify-center rounded-full border border-gray-200 text-base text-gray-600 transition-colors hover:bg-gray-50 disabled:opacity-30 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800";
+  "flex size-8 items-center justify-center rounded-full border border-stone-200 text-base text-stone-600 transition-colors hover:bg-stone-50 disabled:opacity-30 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800";
 
 export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const [quantity, setQuantity] = useState<number>(1);
@@ -37,7 +37,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
     <>
       <div
         data-testid={`product-card-${product.id}`}
-        className={`flex min-h-32 gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-opacity dark:border-gray-800 dark:bg-gray-900 sm:gap-4 sm:p-4 ${
+        className={`flex min-h-32 gap-3 rounded-2xl border border-stone-100 bg-white p-3 shadow-sm transition-opacity dark:border-stone-800 dark:bg-stone-900 sm:gap-4 sm:p-4 ${
           isUnavailable ? "opacity-50" : ""
         }`}
       >
@@ -46,7 +46,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             type="button"
             onClick={openDetail}
             aria-label={`Xem chi tiết ${product.name}`}
-            className="block rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+            className="block rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-stone-900"
           >
             {showImage ? (
               <img
@@ -63,8 +63,8 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             )}
           </button>
           {isUnavailable && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-white/70 dark:bg-gray-950/70">
-              <span className="rounded-full bg-white/95 px-2 py-0.5 text-xs font-semibold text-gray-600 shadow-sm dark:bg-gray-900/95 dark:text-gray-200">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-white/70 dark:bg-stone-950/70">
+              <span className="rounded-full bg-white/95 px-2 py-0.5 text-xs font-semibold text-stone-600 shadow-sm dark:bg-stone-900/95 dark:text-stone-200">
                 {product.status === "OUT_OF_STOCK" ? "Hết hàng" : "Tạm ngưng"}
               </span>
             </div>
@@ -74,7 +74,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         <div className="flex h-24 min-w-0 flex-1 items-stretch justify-between gap-3 sm:h-28">
           <div className="flex min-w-0 flex-1 flex-col justify-between">
             <div className="min-w-0">
-              <p className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 dark:text-gray-50 sm:text-base">
+              <p className="line-clamp-2 text-sm font-semibold leading-snug text-stone-900 dark:text-stone-50 sm:text-base">
                 {product.name}
               </p>
             </div>
@@ -96,7 +96,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
                 >
                   -
                 </button>
-                <span className="text-center text-sm font-semibold text-gray-900 dark:text-gray-50">
+                <span className="text-center text-sm font-semibold text-stone-900 dark:text-stone-50">
                   {quantity}
                 </span>
                 <button
@@ -152,7 +152,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto py-4">
-            <p className="text-sm leading-6 text-gray-600 dark:text-gray-300">
+            <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">
               {product.description || "Món này chưa có mô tả."}
             </p>
 
@@ -160,7 +160,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
               <div className="mt-4">
                 <label
                   htmlFor={`note-${product.id}`}
-                  className="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300"
+                  className="mb-1.5 block text-xs font-semibold text-stone-700 dark:text-stone-300"
                 >
                   Ghi chú cho món này
                 </label>
@@ -171,13 +171,13 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
                   maxLength={200}
                   rows={2}
                   placeholder="VD: Ít đường, không đá..."
-                  className="w-full resize-none rounded-xl border border-gray-200 bg-transparent px-3 py-2 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-600"
+                  className="w-full resize-none rounded-xl border border-stone-200 bg-transparent px-3 py-2 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-stone-700 dark:text-stone-100 dark:placeholder:text-stone-600"
                 />
               </div>
             )}
           </div>
 
-          <div className="border-t border-gray-100 pt-4 dark:border-gray-800">
+          <div className="border-t border-stone-100 pt-4 dark:border-stone-800">
             <div className="mb-3 flex items-center justify-between gap-3">
               <span className="text-base font-bold text-brand-700 dark:text-brand-300">
                 {product.price.toLocaleString("vi-VN")}đ
@@ -192,7 +192,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
                 >
                   -
                 </button>
-                <span className="text-center text-sm font-semibold text-gray-900 dark:text-gray-50">
+                <span className="text-center text-sm font-semibold text-stone-900 dark:text-stone-50">
                   {detailQuantity}
                 </span>
                 <button
@@ -211,7 +211,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
               <button
                 type="button"
                 disabled
-                className="w-full rounded-full bg-gray-200 px-4 py-3 text-sm font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                className="w-full rounded-full bg-stone-200 px-4 py-3 text-sm font-semibold text-stone-500 dark:bg-stone-800 dark:text-stone-400"
               >
                 {product.status === "OUT_OF_STOCK" ? "Hết hàng" : "Tạm ngưng"}
               </button>

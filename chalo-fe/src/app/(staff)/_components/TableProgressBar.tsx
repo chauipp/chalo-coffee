@@ -36,7 +36,7 @@ export const TableProgressBar = ({
     <>
       <div
         data-testid="table-progress-bar"
-        className="flex shrink-0 flex-wrap items-center gap-1.5 border-t border-orange-200 dark:border-orange-800/50 px-3 py-2"
+        className="flex shrink-0 flex-wrap items-center gap-1.5 border-t border-brand-200 dark:border-brand-800/50 px-3 py-2"
       >
         {tables.map((t) => {
           const done = t.total > 0 && t.done === t.total;
@@ -55,7 +55,7 @@ export const TableProgressBar = ({
                 ${
                   done
                     ? "border-green-400 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:border-brand-400"
+                    : "border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-400 hover:border-brand-400"
                 }`}
             >
               {t.tableName} {t.done}/{t.total}

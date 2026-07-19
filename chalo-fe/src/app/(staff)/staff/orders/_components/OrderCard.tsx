@@ -56,7 +56,7 @@ export const OrderCard = ({
           openDetail();
         }
       }}
-      className={`cursor-pointer rounded-xl border-2 bg-white dark:bg-gray-800 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
+      className={`cursor-pointer rounded-xl border-2 bg-white dark:bg-stone-800 shadow-sm p-3.5 space-y-3 hover:shadow-md transition-shadow
         ${
           order.paidStatus
             ? "border-green-400 dark:border-green-600"
@@ -66,16 +66,16 @@ export const OrderCard = ({
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-start gap-2 min-w-0">
           <div className="min-w-0">
-            <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-bold text-stone-900 dark:text-stone-100">
               {order.tableName}
             </p>
-            <p className="text-xs text-gray-400 font-mono">
+            <p className="text-xs text-stone-400 font-mono">
               #{order.id.slice(-6).toUpperCase()}
             </p>
           </div>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-xs text-gray-400">{formatAge(ageMs)}</p>
+          <p className="text-xs text-stone-400">{formatAge(ageMs)}</p>
           {order.paidStatus ? (
             <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded-full">
               Đã thanh toán
@@ -91,9 +91,9 @@ export const OrderCard = ({
       <div className="space-y-1">
         {order.items.map((item) => (
           <div key={item.id} className="flex justify-between text-xs">
-            <span className="text-gray-700 dark:text-gray-300 truncate pr-2">
+            <span className="text-stone-700 dark:text-stone-300 truncate pr-2">
               {item.productName}{" "}
-              <span className="text-gray-400 font-semibold">
+              <span className="text-stone-400 font-semibold">
                 ×{item.quantity}
               </span>
             </span>
@@ -107,12 +107,12 @@ export const OrderCard = ({
       </div>
 
       {order.note && (
-        <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-lg">
+        <p className="text-xs text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20 px-2 py-1 rounded-lg">
           📌 {order.note}
         </p>
       )}
 
-      <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-gray-800">
+      <div className="flex items-center justify-between pt-1 border-t border-stone-100 dark:border-stone-800">
         <span className="text-sm font-bold text-brand-600 dark:text-brand-400">
           {order.totalAmount.toLocaleString("vi-VN")}đ
         </span>

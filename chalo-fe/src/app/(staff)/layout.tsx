@@ -12,7 +12,7 @@ export default function StaffLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex h-screen bg-stone-50 dark:bg-stone-950">
       <Sidebar subtitle="Nhân viên" items={STAFF_HEADER_ITEMS} />
       {/* Khu pha chế nằm ở layout → luôn hiển thị ở mọi màn staff */}
       <SplitPane

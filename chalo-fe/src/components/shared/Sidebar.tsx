@@ -28,12 +28,12 @@ export const Sidebar = ({
 
   return (
     <aside
-      className={`flex flex-col border-r border-gray-200 bg-white transition-[width] duration-200 dark:border-gray-800 dark:bg-gray-900 ${
+      className={`flex flex-col border-r border-stone-200 bg-white transition-[width] duration-200 dark:border-stone-800 dark:bg-stone-900 ${
         collapsed ? "w-16" : "w-60"
       }`}
     >
       {/* Brand + collapse toggle */}
-      <div className="flex items-center border-b border-gray-100 px-3 py-5 dark:border-gray-800">
+      <div className="flex items-center border-b border-stone-100 px-3 py-5 dark:border-stone-800">
         {collapsed ? (
           <button
             onClick={toggle}
@@ -48,15 +48,15 @@ export const Sidebar = ({
               ☕
             </div>
             <div className="ml-3 min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-gray-900 dark:text-gray-100">
+              <p className="truncate text-sm font-bold text-stone-900 dark:text-stone-100">
                 Chalo Coffee
               </p>
-              <p className="text-xs text-gray-400">{subtitle}</p>
+              <p className="text-xs text-stone-400">{subtitle}</p>
             </div>
             <button
               onClick={toggle}
               title="Thu gọn menu"
-              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200"
             >
               <ChevronLeftIcon className="size-4" />
             </button>
@@ -78,7 +78,7 @@ export const Sidebar = ({
               } ${
                 isActive
                   ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+                  : "text-stone-600 hover:bg-stone-50 hover:text-stone-900 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-100"
               }`}
             >
               <Icon className="size-4 shrink-0" />
@@ -89,7 +89,7 @@ export const Sidebar = ({
       </nav>
 
       {/* Profile */}
-      <div className="border-t border-gray-100 p-3 dark:border-gray-700">
+      <div className="border-t border-stone-100 p-3 dark:border-stone-700">
         <UserMenu collapsed={collapsed} />
       </div>
     </aside>

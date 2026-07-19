@@ -111,7 +111,7 @@ export default function ProductsPage() {
             className="size-10 rounded-lg object-cover"
           />
         ) : (
-          <div className="size-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-lg">
+          <div className="size-10 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-lg">
             ☕
           </div>
         ),
@@ -121,10 +121,10 @@ export default function ProductsPage() {
       header: "Tên sản phẩm",
       render: (row: ProductDto) => (
         <div>
-          <p className="font-medium text-gray-900 dark:text-gray-100">
+          <p className="font-medium text-stone-900 dark:text-stone-100">
             {row.name}
           </p>
-          <p className="text-xs text-gray-400">{row.categoryName}</p>
+          <p className="text-xs text-stone-400">{row.categoryName}</p>
         </div>
       ),
     },
@@ -141,7 +141,7 @@ export default function ProductsPage() {
       key: "prepTime",
       header: "Thời gian pha chế",
       render: (row: ProductDto) => (
-        <span className="text-gray-500">{row.prepTime} phút</span>
+        <span className="text-stone-500">{row.prepTime} phút</span>
       ),
     },
     {
@@ -198,10 +198,10 @@ export default function ProductsPage() {
       {/* header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
             Sản phẩm
           </h1>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-stone-500">
             Quản lý sản phẩm trong thực đơn
           </p>
         </div>
@@ -253,7 +253,7 @@ export default function ProductsPage() {
           table.filter.categoryId) && (
           <button
             onClick={handleResetFilter}
-            className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
           >
             Xoá bộ lọc
           </button>

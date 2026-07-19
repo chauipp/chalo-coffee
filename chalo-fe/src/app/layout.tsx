@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9fafb" },
-    { media: "(prefers-color-scheme: dark)", color: "#030712" },
+    { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c0a09" },
   ],
 };
 
@@ -39,7 +39,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className="m-0 min-h-screen flex flex-col bg-gray-50 font-sans antialiased dark:bg-gray-950">
+      <body className="m-0 min-h-screen flex flex-col bg-stone-50 font-sans antialiased dark:bg-stone-950">
         <ThemeProvider>
           <QueryProvider>
             <Toaster

@@ -41,20 +41,20 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-200">
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-3">
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col transition-colors duration-200">
+        <header className="bg-white dark:bg-stone-900 border-b border-stone-100 dark:border-stone-800 px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
           >
             ← Quay lại
           </button>
-          <h1 className="text-base font-bold text-gray-900 dark:text-white">
+          <h1 className="text-base font-bold text-stone-900 dark:text-white">
             Giỏ hàng
           </h1>
         </header>
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-gray-400 dark:text-gray-500">
-          <div className="size-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-stone-400 dark:text-stone-500">
+          <div className="size-20 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
             <span className="text-4xl">🛒</span>
           </div>
           <p className="text-sm font-medium">Bàn của quý khách chưa có món</p>
@@ -70,19 +70,19 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-200">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col transition-colors duration-200">
       {/* header */}
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
+      <header className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-100 dark:border-stone-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
         <button
           onClick={() => router.back()}
-          className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
         >
           ← Quay lại
         </button>
-        <h1 className="text-base font-bold text-gray-900 dark:text-white flex-1">
+        <h1 className="text-base font-bold text-stone-900 dark:text-white flex-1">
           Giỏ hàng
         </h1>
-        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md">
+        <span className="text-sm font-medium text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
           {items.length} món
         </span>
       </header>
@@ -90,9 +90,9 @@ export default function CartPage() {
       <main className="p-4 space-y-4 pb-32">
         {/* Wait time */}
         {waitData && waitData.estimatedMinutes > 0 && (
-          <div className="rounded-2xl bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 p-3.5 flex items-center gap-3 shadow-sm">
+          <div className="rounded-2xl bg-brand-50 dark:bg-brand-500/10 border border-brand-100 dark:border-brand-500/20 p-3.5 flex items-center gap-3 shadow-sm">
             <span className="text-xl">⏱️</span>
-            <p className="text-sm text-orange-800 dark:text-orange-300">
+            <p className="text-sm text-brand-800 dark:text-brand-300">
               Thời gian chờ dự kiến:{" "}
               <strong className="font-semibold">
                 ~{waitData.estimatedMinutes} phút
@@ -106,11 +106,11 @@ export default function CartPage() {
           {items.map((item) => (
             <div
               key={item.productId}
-              className="rounded-2xl bg-white dark:bg-gray-900 p-3 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors"
+              className="rounded-2xl bg-white dark:bg-stone-900 p-3 shadow-sm border border-stone-100 dark:border-stone-800 transition-colors"
             >
               <div className="relative flex gap-3">
                 {/* Product Image */}
-                <div className="size-20 rounded-xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-3xl shrink-0 overflow-hidden border border-gray-100 dark:border-gray-700">
+                <div className="size-20 rounded-xl bg-stone-50 dark:bg-stone-800 flex items-center justify-center text-3xl shrink-0 overflow-hidden border border-stone-100 dark:border-stone-700">
                   {item.productImageUrl ? (
                     <img
                       src={item.productImageUrl}
@@ -126,7 +126,7 @@ export default function CartPage() {
                 {/* Product Info */}
                 <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate pr-8">
+                    <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 truncate pr-8">
                       {item.productName}
                     </p>
                     <p className="text-sm font-bold text-brand-600 dark:text-brand-400 mt-1">
@@ -141,11 +141,11 @@ export default function CartPage() {
                         updateQuantity(item.productId, item.quantity - 1)
                       }
                       aria-label="Giảm số lượng"
-                      className="flex size-8 items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-95 transition-all text-lg font-medium"
+                      className="flex size-8 items-center justify-center rounded-full border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 active:scale-95 transition-all text-lg font-medium"
                     >
                       -
                     </button>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white w-5 text-center">
+                    <span className="text-sm font-semibold text-stone-900 dark:text-white w-5 text-center">
                       {item.quantity}
                     </span>
                     <button
@@ -153,7 +153,7 @@ export default function CartPage() {
                         updateQuantity(item.productId, item.quantity + 1)
                       }
                       aria-label="Tăng số lượng"
-                      className="flex size-8 items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-95 transition-all text-lg font-medium disabled:opacity-30"
+                      className="flex size-8 items-center justify-center rounded-full border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 active:scale-95 transition-all text-lg font-medium disabled:opacity-30"
                     >
                       +
                     </button>
@@ -162,7 +162,7 @@ export default function CartPage() {
 
                 {/* Remove Button */}
                 <button
-                  className="absolute right-0 top-0 size-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-500/10"
+                  className="absolute right-0 top-0 size-7 flex items-center justify-center text-stone-400 dark:text-stone-500 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-500/10"
                   onClick={() => removeItem(item.productId)}
                   aria-label="Xoá món"
                 >
@@ -176,15 +176,15 @@ export default function CartPage() {
                 onChange={(e) => updateNote(item.productId, e.target.value)}
                 maxLength={200}
                 placeholder="Ghi chú cho món (VD: ít đường...)"
-                className="mt-3 w-full rounded-xl border border-dashed border-gray-200 dark:border-gray-700 bg-transparent px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 outline-none transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:border-brand-400 focus:border-solid"
+                className="mt-3 w-full rounded-xl border border-dashed border-stone-200 dark:border-stone-700 bg-transparent px-3 py-1.5 text-xs text-stone-700 dark:text-stone-300 outline-none transition-colors placeholder:text-stone-400 dark:placeholder:text-stone-600 focus:border-brand-400 focus:border-solid"
               />
             </div>
           ))}
         </div>
 
         {/* Note Textarea */}
-        <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-4 shadow-sm transition-colors">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <div className="rounded-2xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-4 shadow-sm transition-colors">
+          <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
             Ghi chú cho đơn hàng
           </label>
           <textarea
@@ -193,18 +193,18 @@ export default function CartPage() {
             maxLength={500}
             rows={3}
             placeholder="VD: Ít đường, không đá..."
-            className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent px-3 py-2 text-sm text-gray-900 dark:text-gray-100 outline-none focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 dark:focus:ring-brand-400/20 resize-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
+            className="w-full rounded-xl border border-stone-200 dark:border-stone-700 bg-transparent px-3 py-2 text-sm text-stone-900 dark:text-stone-100 outline-none focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 dark:focus:ring-brand-400/20 resize-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-600"
           ></textarea>
         </div>
       </main>
 
       {/* summary */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 px-4 py-4 space-y-3 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.2)]">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 px-4 py-4 space-y-3 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.2)]">
         <div className="flex items-center justify-between">
-          <span className="text-base font-medium text-gray-600 dark:text-gray-400">
+          <span className="text-base font-medium text-stone-600 dark:text-stone-400">
             Tổng cộng
           </span>
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
+          <span className="text-xl font-bold text-stone-900 dark:text-white">
             {totalAmount().toLocaleString("vi-VN")}đ
           </span>
         </div>

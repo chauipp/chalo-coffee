@@ -26,12 +26,12 @@ export const ConfirmDialog = ({
   variant = "danger",
 }: ConfirmDialogProps) => (
   <Modal open={open} onClose={onClose} size="sm" title={title}>
-    <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">{message}</p>
+    <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">{message}</p>
     <div className="flex justify-end gap-3">
       <button
         onClick={onClose}
         disabled={isLoading}
-        className="rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+        className="rounded-xl border border-stone-200 dark:border-stone-700 px-4 py-2 text-sm font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors disabled:opacity-50"
       >
         Huỷ
       </button>

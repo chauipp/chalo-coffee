@@ -15,25 +15,25 @@ export const OccupiedModal = ({
         role="dialog"
         aria-modal="true"
         aria-label={`${tableName} đang được sử dụng`}
-        className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]"
+        className="w-full sm:max-w-sm bg-white dark:bg-stone-900 rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]"
       >
         {/* Icon */}
         <div className="flex justify-center mb-4">
-          <div className="size-16 rounded-2xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-3xl">
+          <div className="size-16 rounded-2xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-3xl">
             ☕
           </div>
         </div>
 
-        <h2 className="text-center text-base font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-center text-base font-bold text-stone-900 dark:text-white mb-2">
           {tableName} đang được sử dụng
         </h2>
 
         {/* description */}
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-center text-sm text-stone-500 dark:text-stone-400 mb-6">
           Bàn này đang có đơn chưa được thanh toán.
           <br />
           Nếu quý khách chung nhóm, hãy chọn{" "}
-          <strong className="text-gray-700 dark:text-gray-200">
+          <strong className="text-stone-700 dark:text-stone-200">
             &quot;Ăn chung, tiếp tục đặt món&quot;
           </strong>
           .
@@ -49,7 +49,7 @@ export const OccupiedModal = ({
           </button>
           <button
             onClick={onGoBack}
-            className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 py-3.5 text-sm font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition-all"
+            className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 py-3.5 text-sm font-semibold text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 active:scale-[0.98] transition-all"
           >
             ← Quay lại
           </button>

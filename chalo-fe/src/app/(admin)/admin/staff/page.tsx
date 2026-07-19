@@ -85,10 +85,10 @@ export default function StaffPage() {
       header: "Nhân viên",
       render: (r) => (
         <div>
-          <p className="font-medium text-gray-900 dark:text-gray-100">
+          <p className="font-medium text-stone-900 dark:text-stone-100">
             {r.fullName}
           </p>
-          <p className="text-xs text-gray-400">@{r.username}</p>
+          <p className="text-xs text-stone-400">@{r.username}</p>
         </div>
       ),
     },
@@ -126,7 +126,7 @@ export default function StaffPage() {
           </button>
           <button
             onClick={() => setPwTarget(r)}
-            className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+            className="rounded-lg px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800 transition-colors"
           >
             Đổi MK
           </button>
@@ -145,10 +145,10 @@ export default function StaffPage() {
     <div className="p-6 space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
             Nhân viên
           </h1>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-stone-500">
             Quản lý tài khoản nhân viên & quản trị
           </p>
         </div>

@@ -59,16 +59,16 @@ export const Modal = ({
         aria-modal="true"
         aria-label={title}
         data-testid={panelTestId}
-        className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-gray-900 shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]`}
+        className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-stone-900 shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]`}
       >
         {/* header */}
-        <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-6 py-4">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+        <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 px-6 py-4">
+          <h2 className="text-base font-semibold text-stone-900 dark:text-stone-100">
             {title}
           </h2>
           <button
             aria-label="Đóng"
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 transition-colors"
+            className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 dark:hover:bg-stone-800 transition-colors"
             onClick={onClose}
           >
             <svg

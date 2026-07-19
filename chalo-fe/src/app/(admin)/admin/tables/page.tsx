@@ -67,10 +67,10 @@ export default function TablesPage() {
       header: "Bàn",
       render: (row: TableDto) => (
         <div>
-          <p className="font-medium text-gray-900 dark:text-gray-100">
+          <p className="font-medium text-stone-900 dark:text-stone-100">
             {row.name}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-stone-400">
             {row.area || "Không phân khu"}
           </p>
         </div>
@@ -125,10 +125,10 @@ export default function TablesPage() {
       {/* header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
             Bàn & QR
           </h1>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-stone-500">
             Quản lý bàn và mã QR đặt tại bàn
           </p>
         </div>
@@ -145,7 +145,7 @@ export default function TablesPage() {
           {
             label: "Tổng số bàn",
             value: tables.length,
-            color: "text-gray-900 dark:text-gray-100",
+            color: "text-stone-900 dark:text-stone-100",
           },
           {
             label: "Đang có khách",
@@ -159,10 +159,10 @@ export default function TablesPage() {
           },
         ].map((stat) => (
           <div
-            className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4"
+            className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4"
             key={stat.label}
           >
-            <p className="text-sm text-gray-500">{stat.label}</p>
+            <p className="text-sm text-stone-500">{stat.label}</p>
             <p className={`text-2xl font-bold mt-1 ${stat.color}`}>
               {stat.value}
             </p>

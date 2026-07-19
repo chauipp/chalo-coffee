@@ -16,23 +16,23 @@ export const PrepProductCard = ({
   return (
     <div
       data-testid={`prep-product-${group.productId}`}
-      className={`rounded-xl border bg-white dark:bg-gray-900 shadow-sm p-3.5 space-y-3
-        ${allDone ? "border-green-300 dark:border-green-700" : "border-orange-200 dark:border-orange-800/50"}`}
+      className={`rounded-xl border bg-white dark:bg-stone-900 shadow-sm p-3.5 space-y-3
+        ${allDone ? "border-green-300 dark:border-green-700" : "border-brand-200 dark:border-brand-800/50"}`}
     >
       <div>
         <div className="flex items-baseline justify-between gap-2">
-          <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">
+          <p className="text-sm font-bold text-stone-900 dark:text-stone-100 truncate">
             {group.productName}
           </p>
           <span
-            className={`text-xs shrink-0 ${allDone ? "text-green-600 dark:text-green-400 font-semibold" : "text-gray-400"}`}
+            className={`text-xs shrink-0 ${allDone ? "text-green-600 dark:text-green-400 font-semibold" : "text-stone-400"}`}
           >
             {group.done}/{group.total} ly
           </span>
         </div>
-        <div className="mt-1.5 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+        <div className="mt-1.5 h-1.5 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${allDone ? "bg-green-500" : "bg-orange-400"}`}
+            className={`h-full rounded-full transition-all ${allDone ? "bg-green-500" : "bg-brand-400"}`}
             style={{
               width: group.total ? `${(group.done / group.total) * 100}%` : "0%",
             }}
@@ -43,9 +43,9 @@ export const PrepProductCard = ({
       <div className="space-y-2.5">
         {group.batches.map((batch) => (
           <div key={batch.key}>
-            <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+            <p className="text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
               {batch.note ? `📝 ${batch.note}` : "Mẻ thường"}{" "}
-              <span className="text-gray-400">×{batch.units.length}</span>
+              <span className="text-stone-400">×{batch.units.length}</span>
             </p>
             <div className="flex flex-wrap gap-1.5">
               {batch.units.map((u) => (
@@ -63,12 +63,12 @@ export const PrepProductCard = ({
                     ${
                       u.ticked
                         ? "bg-green-500 border-green-500 text-white"
-                        : "bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-brand-400"
+                        : "bg-white dark:bg-stone-950 border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-400"
                     }`}
                 >
                   <span
                     className={`flex size-3.5 items-center justify-center rounded-sm border text-[9px] leading-none
-                      ${u.ticked ? "border-white/70 bg-white/20" : "border-gray-400 dark:border-gray-600"}`}
+                      ${u.ticked ? "border-white/70 bg-white/20" : "border-stone-400 dark:border-stone-600"}`}
                   >
                     {u.ticked ? "✓" : ""}
                   </span>

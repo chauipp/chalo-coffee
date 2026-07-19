@@ -75,15 +75,15 @@ export default function OrderDetailModal() {
 
       {/* modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div className="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-2xl pointer-events-auto">
+        <div className="relative w-full max-w-lg bg-white dark:bg-stone-900 rounded-2xl shadow-2xl pointer-events-auto">
           {/* header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 dark:border-stone-800">
+            <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">
               Chi tiết đơn hàng
             </h2>
             <button
               onClick={handleClose}
-              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
             >
               ✕
             </button>
@@ -100,10 +100,10 @@ export default function OrderDetailModal() {
                 {/* meta */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-gray-900 dark:text-gray-100">
+                    <p className="font-bold text-stone-900 dark:text-stone-100">
                       {order.tableName}
                     </p>
-                    <p className="text-xs text-gray-400 font-mono">
+                    <p className="text-xs text-stone-400 font-mono">
                       #{order.id.slice(-6).toUpperCase()}
                     </p>
                   </div>
@@ -120,14 +120,14 @@ export default function OrderDetailModal() {
                 </div>
 
                 {/* items */}
-                <div className="rounded-xl border border-gray-100 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800">
+                <div className="rounded-xl border border-stone-100 dark:border-stone-800 divide-y divide-stone-100 dark:divide-stone-800">
                   {order.items.map((item) => (
                     <div
                       key={item.id}
                       className="flex items-center gap-3 px-4 py-3"
                     >
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className="text-sm font-medium text-stone-900 dark:text-stone-100">
                           {item.productName}
                         </p>
                         {item.note && (
@@ -137,10 +137,10 @@ export default function OrderDetailModal() {
                         )}
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-stone-500">
                           ×{item.quantity}
                         </p>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                           {item.subtotal.toLocaleString("vi-VN")}đ
                         </p>
                       </div>
@@ -150,19 +150,19 @@ export default function OrderDetailModal() {
 
                 {/* notes */}
                 {order.note && (
-                  <div className="bg-amber-50 dark:bg-amber-900/10 rounded-xl px-4 py-3">
-                    <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1">
+                  <div className="bg-sky-50 dark:bg-sky-900/10 rounded-xl px-4 py-3">
+                    <p className="text-xs font-semibold text-sky-700 dark:text-sky-400 mb-1">
                       📌 Ghi chú
                     </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <p className="text-sm text-stone-700 dark:text-stone-300">
                       {order.note}
                     </p>
                   </div>
                 )}
 
                 {/* total */}
-                <div className="flex justify-between items-center pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-                  <span className="text-sm text-gray-500">Tổng cộng</span>
+                <div className="flex justify-between items-center pt-2 border-t border-dashed border-stone-200 dark:border-stone-700">
+                  <span className="text-sm text-stone-500">Tổng cộng</span>
                   <span className="text-lg font-bold text-brand-600 dark:text-brand-400">
                     {order.totalAmount.toLocaleString("vi-VN")}đ
                   </span>
@@ -173,18 +173,18 @@ export default function OrderDetailModal() {
 
           {/* footer */}
           {order && (
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-3">
+            <div className="px-6 py-4 border-t border-stone-100 dark:border-stone-800 flex flex-wrap gap-3">
               {!order.paidStatus && (
                 <button
                   onClick={() => printAs("draft")}
-                  className="flex-1 min-w-[8rem] rounded-xl border border-dashed border-gray-300 dark:border-gray-600 py-2.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-1 min-w-[8rem] rounded-xl border border-dashed border-stone-300 dark:border-stone-600 py-2.5 text-sm font-medium text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
                 >
                   🧾 In tạm tính
                 </button>
               )}
               <button
                 onClick={() => printAs("final")}
-                className="flex-1 min-w-[8rem] rounded-xl border border-gray-200 dark:border-gray-700 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex-1 min-w-[8rem] rounded-xl border border-stone-200 dark:border-stone-700 py-2.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
               >
                 🖨️ In hoá đơn
               </button>

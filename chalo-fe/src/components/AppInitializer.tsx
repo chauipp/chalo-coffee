@@ -9,14 +9,14 @@ import { useCallback, useEffect, useRef } from "react";
 
 const InitializingScreen = () => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-950">
+    <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-stone-950">
       <div className="flex flex-col items-center gap-4">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-brand-400 shadow-lg text-2xl">
           ☕
         </div>
         <div className="flex items-center gap-2">
           <div className="size-4 animate-spin rounded-full border-2 border-brand-400 border-t-transparent"></div>
-          <span className="text-sm font-medium text-gray-500">
+          <span className="text-sm font-medium text-stone-500">
             Đang tải ...
           </span>
         </div>

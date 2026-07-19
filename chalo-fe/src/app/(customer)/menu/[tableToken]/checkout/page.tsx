@@ -44,16 +44,16 @@ export default function CheckoutPage() {
   const handleRestart = () => setSession(null);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
       {/* header */}
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
+      <header className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-100 dark:border-stone-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
         <button
           onClick={() => router.push(`/menu/${tableToken}/orders`)}
-          className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
         >
           ← Quay lại
         </button>
-        <h1 className="text-base font-bold text-gray-900 dark:text-white">
+        <h1 className="text-base font-bold text-stone-900 dark:text-white">
           Thanh toán một lần
         </h1>
       </header>
@@ -64,7 +64,7 @@ export default function CheckoutPage() {
             <div className="size-20 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-4xl">
               🎉
             </div>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
+            <p className="text-lg font-bold text-stone-900 dark:text-white">
               Đã thanh toán tất cả đơn của bàn
             </p>
             <button
@@ -79,11 +79,11 @@ export default function CheckoutPage() {
             <SpinnerIcon className="size-8 animate-spin text-brand-400" />
           </div>
         ) : isError || !preview || preview.orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 dark:text-gray-500 text-center">
-            <div className="size-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-4xl">
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-stone-400 dark:text-stone-500 text-center">
+            <div className="size-20 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-4xl">
               ✅
             </div>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
               Không có đơn nào cần thanh toán
             </p>
             <button
@@ -113,7 +113,7 @@ export default function CheckoutPage() {
 
       {/* bottom CTA — only in review step */}
       {!done && !session && preview && preview.orders.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 px-4 py-4 z-30">
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 px-4 py-4 z-30">
           <button
             onClick={handleStart}
             disabled={startMutation.isPending}
