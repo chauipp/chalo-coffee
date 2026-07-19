@@ -42,7 +42,8 @@ export class CheckoutSession {
   clientSecret: string;
 
   /** Nội dung CK duy nhất trong VietQR (VD "CK7F3K2M") — webhook SePay khớp phiên theo mã này */
-  @Index({ unique: true })
+  // Đặt tên index rõ ràng khớp migration để migration:generate sau này không sinh lệnh rename thừa
+  @Index('IDX_checkout_sessions_payCode', { unique: true })
   @Column({ type: 'varchar', length: 16, nullable: true })
   payCode: string | null;
 

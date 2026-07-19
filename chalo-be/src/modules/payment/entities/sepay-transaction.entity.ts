@@ -24,7 +24,9 @@ export class SepayTransaction {
   id: string;
 
   /** id giao dịch phía SePay */
-  @Index({ unique: true })
+  // Unique index (khớp CREATE UNIQUE INDEX trong migration) — vừa chống trùng vừa để
+  // migration:generate sau này không thấy lệch giữa entity và schema thật
+  @Index('IDX_sepay_transactions_sepayTxId', { unique: true })
   @Column({ type: 'varchar', length: 64 })
   sepayTxId: string;
 
