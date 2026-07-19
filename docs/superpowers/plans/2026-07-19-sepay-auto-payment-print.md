@@ -1916,7 +1916,7 @@ git commit -m "feat(fe): trạm in hoá đơn /staff/print-station — tự in q
 
 ---
 
-### Task 8: FE — Admin settings SePay key + toast đối soát cho staff [ ]
+### Task 8: FE — Admin settings SePay key + toast đối soát cho staff [x]
 
 **Files:**
 - Modify: `chalo-fe/src/services/settings/settings.types.ts`
@@ -1927,7 +1927,7 @@ git commit -m "feat(fe): trạm in hoá đơn /staff/print-station — tự in q
 - Consumes: BE `GET/PUT /settings` với `sepayWebhookKeySet` / `sepayWebhookKey` (Task 1); SSE `payment_review_needed` + `payment_completed.source` (Task 3/4, FE types từ Task 5).
 - Produces: admin đặt/gỡ được key; staff thấy toast khi có giao dịch cần đối soát và khi CK tự động thành công.
 
-- [ ] **Step 1: Settings types**
+- [x] **Step 1: Settings types**
 
 `settings.types.ts`:
 
@@ -1955,7 +1955,7 @@ export interface UpdateSettingsPayload {
 }
 ```
 
-- [ ] **Step 2: Admin settings UI**
+- [x] **Step 2: Admin settings UI**
 
 `admin/settings/page.tsx`:
 - Thêm state: `const [sepayKeyInput, setSepayKeyInput] = useState("");`
@@ -2005,7 +2005,7 @@ export interface UpdateSettingsPayload {
       </div>
 ```
 
-- [ ] **Step 3: Staff toast**
+- [x] **Step 3: Staff toast**
 
 `staff/orders/page.tsx` — trong switch của `onEvent`: tách `payment_completed` ra khỏi nhóm invalidate chung và thêm case mới:
 
@@ -2036,7 +2036,7 @@ export interface UpdateSettingsPayload {
 
 (case nhóm cũ còn lại: `new_order`, `order_status_changed`, `order_prep_progress`.)
 
-- [ ] **Step 4: Lint + build + commit**
+- [x] **Step 4: Lint + build + commit**
 
 Run: `cd chalo-fe && pnpm lint && pnpm build`
 Expected: sạch.

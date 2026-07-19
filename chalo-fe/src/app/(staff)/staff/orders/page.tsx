@@ -66,7 +66,6 @@ export default function StaffOrdersPage() {
     onEvent: (type, data) => {
       switch (type) {
         case "new_order":
-        case "payment_completed":
         case "order_status_changed":
         case "order_prep_progress":
           qc.invalidateQueries({
@@ -74,6 +73,28 @@ export default function StaffOrdersPage() {
           });
           qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
           break;
+        case "payment_completed": {
+          const p = data as SSEPayload["payment_completed"];
+          if (p.source === "sepay") {
+            playBeep(880);
+            toast.success(
+              `💰 Đã nhận chuyển khoản ${p.totalAmount.toLocaleString("vi-VN")}đ — hoá đơn đang in`,
+              { duration: 8000 },
+            );
+          }
+          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
+          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
+          break;
+        }
+        case "payment_review_needed": {
+          const p = data as SSEPayload["payment_review_needed"];
+          playBeep(440);
+          toast.error(
+            `⚠️ Chuyển khoản cần đối soát tay: ${p.reason} — ${p.transferAmount.toLocaleString("vi-VN")}đ${p.content ? ` ("${p.content}")` : ""}`,
+            { duration: 15000 },
+          );
+          break;
+        }
         case "payment_request": {
           const p = data as SSEPayload["payment_request"];
           playBeep(660);
