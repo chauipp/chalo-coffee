@@ -37,6 +37,23 @@ export default function TablesPage() {
 
   const { data: tables = [], isLoading: isLoadingTables } = useGetTableList();
 
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const toggleId = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const allIds = tables.map((t) => t.id);
+  const allSelected =
+    allIds.length > 0 && allIds.every((id) => selectedIds.has(id));
+  const openPrintSheet = () => {
+    const ordered = allIds.filter((id) => selectedIds.has(id));
+    if (ordered.length === 0) return;
+    window.open(`/admin/tables/print-sheet?ids=${ordered.join(",")}`, "_blank");
+  };
+
   const handleCreateTable = (data: TableFormType) => {
     createTableMutation.mutate(data, {
       onSuccess: () => setCreateOpen(false),
@@ -62,6 +79,20 @@ export default function TablesPage() {
   };
 
   const columns: Array<Column<TableDto>> = [
+    {
+      key: "select",
+      header: "Chọn",
+      width: "56px",
+      render: (row: TableDto) => (
+        <input
+          type="checkbox"
+          aria-label={`Chọn ${row.name}`}
+          checked={selectedIds.has(row.id)}
+          onChange={() => toggleId(row.id)}
+          className="size-4 accent-brand-500"
+        />
+      ),
+    },
     {
       key: "name",
       header: "Bàn",
@@ -169,6 +200,31 @@ export default function TablesPage() {
           </div>
         ))}
       </div>
+
+      {/* Thanh thao tác khi chọn bàn để in hàng loạt */}
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 dark:border-brand-800 dark:bg-brand-900/20">
+          <p className="text-sm font-medium text-brand-800 dark:text-brand-200">
+            Đã chọn {selectedIds.size} bàn
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                setSelectedIds(allSelected ? new Set() : new Set(allIds))
+              }
+              className="rounded-lg border border-brand-300 px-3 py-1.5 text-sm font-medium text-brand-700 hover:bg-brand-100 dark:border-brand-700 dark:text-brand-300 dark:hover:bg-brand-900/40"
+            >
+              {allSelected ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+            </button>
+            <button
+              onClick={openPrintSheet}
+              className="rounded-lg bg-brand-400 px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-500"
+            >
+              🖨️ In QR (4 bàn/tờ)
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* table */}
       <DataTable
