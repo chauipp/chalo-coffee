@@ -22,9 +22,21 @@ jobs:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          # VPS_SSH_KEY lưu dạng base64 (1 dòng, tránh hỏng newline khi dán vào secret)
-          echo "$VPS_SSH_KEY" | base64 -d > ~/.ssh/deploy_key
+          # Chấp nhận cả 2 định dạng secret: khóa thô (chứa BEGIN) hoặc base64.
+          if printf '%s' "$VPS_SSH_KEY" | grep -q 'BEGIN'; then
+            KIND=raw
+            printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          else
+            KIND=base64
+            printf '%s' "$VPS_SSH_KEY" | tr -d '[:space:]' | base64 -d > ~/.ssh/deploy_key 2>/dev/null
+          fi
           chmod 600 ~/.ssh/deploy_key
+          # Kiểm tra khóa hợp lệ trước khi SSH; nếu sai in chẩn đoán (không lộ nội dung)
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null 2>&1; then
+            echo "::error::VPS_SSH_KEY khong hop le. Dinh dang nhan dien=$KIND, so byte sau giai ma=$(wc -c < ~/.ssh/deploy_key) (khoa ed25519 hop le khoang 387 byte)."
+            exit 1
+          fi
+          echo "Khoa SSH hop le (dinh dang: $KIND). Bat dau deploy..."
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
             "$VPS_USER@$VPS_HOST" '
               set -e
