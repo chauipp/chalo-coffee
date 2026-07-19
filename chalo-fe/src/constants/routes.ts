@@ -15,6 +15,7 @@ export const ROUTES = {
     ORDERS: "/staff/orders",
     POS: "/staff/pos",
     TABLES: "/staff/tables",
+    PRINT_STATION: "/staff/print-station",
   },
 
   //admin
