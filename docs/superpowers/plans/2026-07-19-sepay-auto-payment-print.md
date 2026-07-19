@@ -26,7 +26,7 @@
 
 ---
 
-### Task 1: BE — Schema + Settings (payCode, sepay_transactions, sepayWebhookKey) [ ]
+### Task 1: BE — Schema + Settings (payCode, sepay_transactions, sepayWebhookKey) [x]
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/entities/checkout-session.entity.ts`
@@ -239,7 +239,7 @@ git commit -m "feat(be): schema SePay — payCode phiên thanh toán, bảng sep
 
 ---
 
-### Task 2: BE — Sinh payCode trong checkoutStart [ ]
+### Task 2: BE — Sinh payCode trong checkoutStart [x]
 
 **Files:**
 - Create: `chalo-be/src/modules/order/pay-code.ts`
@@ -433,7 +433,7 @@ git commit -m "feat(be): checkout session sinh payCode duy nhất làm nội dun
 
 ---
 
-### Task 3: BE — SSE `source` + `payment_review_needed`; đóng đường tự khai [ ]
+### Task 3: BE — SSE `source` + `payment_review_needed`; đóng đường tự khai [x]
 
 **Files:**
 - Modify: `chalo-be/src/modules/sse/sse.service.ts:5-13`
@@ -446,7 +446,7 @@ git commit -m "feat(be): checkout session sinh payCode duy nhất làm nội dun
 - Produces: `SseEventType` có thêm `'payment_review_needed'`; `checkoutCompleteStaff(dto: CheckoutCompleteStaffDto, source: 'staff' | 'sepay' = 'staff')` (Task 4 gọi với `'sepay'`); mọi emit `payment_completed` mang `source`.
 - **Ghi chú spec (addendum):** spec ghi "pay-all giữ nguyên", nhưng để nhất quán mục tiêu đóng lỗ hổng tự khai, `/order/pay-all` cũng chuyển JWT-guarded (không còn caller nào phía khách — FE gỡ ở Task 6).
 
-- [ ] **Step 1: SseEventType thêm sự kiện mới**
+- [x] **Step 1: SseEventType thêm sự kiện mới**
 
 `sse.service.ts` — thêm vào union `SseEventType`:
 
@@ -454,7 +454,7 @@ git commit -m "feat(be): checkout session sinh payCode duy nhất làm nội dun
   | 'payment_review_needed'
 ```
 
-- [ ] **Step 2: Thêm `source` vào mọi emit payment_completed**
+- [x] **Step 2: Thêm `source` vào mọi emit payment_completed**
 
 Trong `paySingleOrder` (emit tại :789-797) thêm `source: 'staff',` vào `data`. Tương tự trong `payUnpaidOrdersByTable` (emit tại :833-843).
 
@@ -469,13 +469,13 @@ Trong `paySingleOrder` (emit tại :789-797) thêm `source: 'staff',` vào `data
 
 và trong emit `payment_completed` của nó thêm `source,` vào `data`.
 
-- [ ] **Step 3: Xóa đường tự khai của khách**
+- [x] **Step 3: Xóa đường tự khai của khách**
 
 - Xóa nguyên method `checkoutComplete` trong `order.service.ts` (:967-1031).
 - Xóa route `@Post('checkout/complete')` trong `order.controller.ts` (:359-381).
 - Xóa class `CheckoutCompleteDto` trong `dto/checkout.dto.ts` và mọi import của nó (service + controller).
 
-- [ ] **Step 4: Guard 2 endpoint thanh toán tay**
+- [x] **Step 4: Guard 2 endpoint thanh toán tay**
 
 Trong `order.controller.ts`, cả `@Post('pay')` và `@Post('pay-all')`: bỏ `@Public()`, thay bằng:
 
@@ -486,12 +486,12 @@ Trong `order.controller.ts`, cả `@Post('pay')` và `@Post('pay-all')`: bỏ `@
 
 (giữ `@HttpCode(200)` và swagger example như cũ).
 
-- [ ] **Step 5: Build + test**
+- [x] **Step 5: Build + test**
 
 Run: `cd chalo-be && pnpm build && pnpm test`
 Expected: build sạch, toàn bộ test PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add chalo-be/src
@@ -500,7 +500,7 @@ git commit -m "feat(be): payment_completed mang source, thêm payment_review_nee
 
 ---
 
-### Task 4: BE — PaymentModule: webhook SePay [ ]
+### Task 4: BE — PaymentModule: webhook SePay [x]
 
 **Files:**
 - Create: `chalo-be/src/modules/payment/dto/sepay-webhook.dto.ts`
@@ -515,7 +515,7 @@ git commit -m "feat(be): payment_completed mang source, thêm payment_review_nee
 - Consumes: `SepayTransaction`/`SepayTxStatus` (Task 1), `PAY_CODE_REGEX` (Task 2), `checkoutCompleteStaff(dto, 'sepay')` (Task 3), `SettingsService.get()`, `SseService.emit`.
 - Produces: `POST /payment/sepay/webhook` (public + api-key), response `{ status: SepayTxStatus, txId?: string }`.
 
-- [ ] **Step 1: Viết DTO**
+- [x] **Step 1: Viết DTO**
 
 Tạo `chalo-be/src/modules/payment/dto/sepay-webhook.dto.ts` (ValidationPipe toàn cục đã bật `transform` + `enableImplicitConversion` — xem `chalo-be/src/main.ts:54-57`; `whitelist: true` nên các field lạ của SePay bị strip, `rawPayload` chỉ còn field khai báo — chấp nhận được):
 
@@ -581,7 +581,7 @@ export class SepayWebhookDto {
 }
 ```
 
-- [ ] **Step 2: Viết test fail cho service**
+- [x] **Step 2: Viết test fail cho service**
 
 Tạo `chalo-be/src/modules/payment/sepay-webhook.service.spec.ts`:
 
@@ -743,7 +743,7 @@ describe('SepayWebhookService', () => {
 Run: `cd chalo-be && pnpm test -- sepay-webhook`
 Expected: FAIL — module chưa tồn tại.
 
-- [ ] **Step 3: Viết service**
+- [x] **Step 3: Viết service**
 
 Tạo `chalo-be/src/modules/payment/sepay-webhook.service.ts`:
 
@@ -908,12 +908,12 @@ export class SepayWebhookService {
 }
 ```
 
-- [ ] **Step 4: Chạy test pass**
+- [x] **Step 4: Chạy test pass**
 
 Run: `cd chalo-be && pnpm test -- sepay-webhook`
 Expected: PASS (10 tests).
 
-- [ ] **Step 5: Controller + module + wiring**
+- [x] **Step 5: Controller + module + wiring**
 
 Tạo `chalo-be/src/modules/payment/sepay-webhook.controller.ts`:
 
@@ -986,7 +986,7 @@ export class PaymentModule {}
 
 `app.module.ts` — thêm `import { PaymentModule } from './modules/payment/payment.module';` và `PaymentModule,` vào mảng `imports` (sau `SettingsModule`).
 
-- [ ] **Step 6: Build + full test + smoke thủ công**
+- [x] **Step 6: Build + full test + smoke thủ công (smoke thủ công SKIP — dev DB/port đang bận, xem ghi chú controller)**
 
 Run: `cd chalo-be && pnpm build && pnpm test`
 Expected: PASS.
@@ -1001,7 +1001,7 @@ curl -s -X POST http://localhost:8080/api/payment/sepay/webhook \
 
 Expected: HTTP 503 (`SePay webhook chưa được cấu hình`) — vì chưa đặt key. Sau khi PUT `/settings` với `sepayWebhookKey`, gọi lại không header → 401; đúng header + content không mã → `{"status":"NO_MATCH"}`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add chalo-be/src
@@ -1010,7 +1010,7 @@ git commit -m "feat(be): webhook SePay — khớp payCode + số tiền, tự co
 
 ---
 
-### Task 5: FE — Checkout cả bàn: chờ webhook thay vì tự khai [ ]
+### Task 5: FE — Checkout cả bàn: chờ webhook thay vì tự khai [x]
 
 **Files:**
 - Modify: `chalo-fe/src/services/order/order.types.ts` (CheckoutSessionResult + xóa types complete)
@@ -1315,7 +1315,7 @@ git commit -m "feat(fe): checkout cả bàn chờ webhook xác nhận — bỏ n
 
 ---
 
-### Task 6: FE — Thanh toán 1 đơn qua session + dọn code tự khai [ ]
+### Task 6: FE — Thanh toán 1 đơn qua session + dọn code tự khai [x]
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/PaySessionModal.tsx`
@@ -1328,7 +1328,7 @@ git commit -m "feat(fe): checkout cả bàn chờ webhook xác nhận — bỏ n
 - Consumes: `PaymentQRBox`, `useCheckoutStart` (`{ tableToken, orderIds: [id] }`), `useCustomerOrderEvents` opts (Task 5).
 - Produces: khách thanh toán 1 đơn qua checkout session; `usePayOrder` GIỮ NGUYÊN (staff modal `chalo-fe/src/app/(staff)/staff/orders/@modal/(.)orders/[orderId]/page.tsx` vẫn dùng — endpoint giờ JWT, staff luôn đăng nhập nên request client tự gắn Bearer).
 
-- [ ] **Step 1: PaySessionModal**
+- [x] **Step 1: PaySessionModal**
 
 Tạo `PaySessionModal.tsx`:
 
@@ -1375,7 +1375,7 @@ export const PaySessionModal = ({
 );
 ```
 
-- [ ] **Step 2: Rewire trang chi tiết đơn của khách**
+- [x] **Step 2: Rewire trang chi tiết đơn của khách**
 
 `orders/[orderId]/page.tsx` — các hunk sửa:
 
@@ -1473,19 +1473,19 @@ bằng:
 
 (giữ nguyên className, thêm ` disabled:opacity-60` vào cuối className).
 
-- [ ] **Step 3: Xóa dead code + API pay-all phía khách**
+- [x] **Step 3: Xóa dead code + API pay-all phía khách**
 
 - Xóa file `PayConfirmModal.tsx` và `PayAllConfirmModal.tsx`.
 - `order.api.ts`: xóa `payAllOrders`; `order.queries.ts`: xóa `usePayAllOrders`; `order.types.ts`: xóa `PayAllOrdersPayload`; `api-endpoints.ts`: xóa `PAY_ALL: "/order/pay-all",`.
 - MSW: xóa handler chết `http.post("*/api/order/pay-all", ...)` trong `chalo-fe/src/mocks/handlers/order.handlers.ts:333-351` (mock hardcode URL, không import constants — xóa để khỏi lệch hành vi BE mới).
 - `usePayOrder`, `PayOrderPayload`, `API.ORDER.PAY` GIỮ NGUYÊN (staff modal dùng).
 
-- [ ] **Step 4: Lint + build**
+- [x] **Step 4: Lint + build**
 
 Run: `cd chalo-fe && pnpm lint && pnpm build`
 Expected: sạch, không còn reference tới file đã xóa.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A chalo-fe/src
