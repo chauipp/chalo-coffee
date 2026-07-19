@@ -41,6 +41,11 @@ export class CheckoutSession {
   @Column({ type: 'varchar', length: 64 })
   clientSecret: string;
 
+  /** Nội dung CK duy nhất trong VietQR (VD "CK7F3K2M") — webhook SePay khớp phiên theo mã này */
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 16, nullable: true })
+  payCode: string | null;
+
   @Index()
   @Column({ type: 'timestamptz' })
   expiresAt: Date;

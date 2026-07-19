@@ -30,6 +30,10 @@ export class AppSettings {
   @Column({ type: 'varchar', length: 100, nullable: true })
   bankAccountName: string | null;
 
+  /** SePay: API key xác thực webhook (header `Authorization: Apikey <key>`). Null = webhook tắt. */
+  @Column({ type: 'varchar', length: 128, nullable: true })
+  sepayWebhookKey: string | null;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }
