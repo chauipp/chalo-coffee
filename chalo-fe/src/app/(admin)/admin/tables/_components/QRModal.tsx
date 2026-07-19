@@ -17,29 +17,9 @@ export const QRModal = ({ table, onClose }: QRModalProps) => {
 
   if (!table) return null;
 
+  // Mở trang in A6 thiết kế sẵn (route riêng, không dính layout admin)
   const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>QR ${table.name}</title>
-          <style>
-            body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px; }
-            img { width: 280px; height: 280px; }
-            h2 { margin-top: 16px; font-size: 20px; }
-            p { color: #666; font-size: 14px; margin-top: 4px; }
-          </style>
-        </head>
-        <body>
-          <img src="${table.qrCodeUrl}" />
-          <h2>${table.name}</h2>
-          ${table.area ? `<p>Khu vực: ${table.area}</p>` : ""}
-          <script>window.onload = () => { window.print(); window.close(); }</script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    window.open(`/admin/tables/${table.id}/print`, "_blank");
   };
 
   return (
