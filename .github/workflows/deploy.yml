@@ -1,0 +1,35 @@
+name: Deploy to production
+
+# Tự chạy khi push lên nhánh main; hoặc bấm chạy tay trong tab Actions (workflow_dispatch).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Không cho 2 lần deploy chạy chồng lên nhau.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy lên VPS qua SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+            "$VPS_USER@$VPS_HOST" '
+              set -e
+              cd ~/chalo-coffee
+              git fetch --all
+              git reset --hard origin/main
+              docker compose -f docker-compose.prod.yml up -d --build
+              docker image prune -f
+            '
