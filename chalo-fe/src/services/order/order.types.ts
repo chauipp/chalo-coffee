@@ -75,10 +75,6 @@ export interface CallStaffPayload {
   reason?: string;
 }
 
-export interface PayAllOrdersPayload {
-  tableToken: string;
-}
-
 // ============================================================================
 // 4. STATS & ANALYTICS (Dữ liệu trả về chuyên biệt cho phần Thống kê)
 // ============================================================================

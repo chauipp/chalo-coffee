@@ -3,13 +3,13 @@
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
 import {
+  useCheckoutStart,
   useGetOrderByToken,
-  usePayOrder,
 } from "@/services/order/order.queries";
-import { OrderStatus } from "@/services/order/order.types";
+import { CheckoutSessionResult, OrderStatus } from "@/services/order/order.types";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { PayConfirmModal } from "./_components/PayConfirmModal";
+import { PaySessionModal } from "./_components/PaySessionModal";
 
 // CONFIRMED là trạng thái di sản (BE không còn chuyển PENDING → CONFIRMED),
 // nên gộp chung một bước với PENDING — tránh 2 bước trùng nhãn trong stepper.
@@ -26,13 +26,26 @@ export default function OrderTrackingPage() {
     orderId: string;
   }>();
   const router = useRouter();
-  const [showPayConfirm, setShowPayConfirm] = useState<boolean>(false);
+  const [paySession, setPaySession] = useState<CheckoutSessionResult | null>(
+    null,
+  );
 
   const { data: orders, isLoading } = useGetOrderByToken(tableToken);
   const order = orders?.find((o) => o.id === orderId);
-  useCustomerOrderEvents(tableToken);
+  useCustomerOrderEvents(tableToken, {
+    onPaymentCompleted: (data) => {
+      // Đơn này (hoặc phiên của nó) vừa được xác nhận → đóng modal, badge header tự đổi
+      if (
+        paySession &&
+        (data.sessionId === paySession.sessionId ||
+          data.orderIds?.includes(orderId))
+      ) {
+        setPaySession(null);
+      }
+    },
+  });
 
-  const payOrderMutation = usePayOrder(tableToken);
+  const startMutation = useCheckoutStart();
 
   if (isLoading)
     return (
@@ -74,20 +87,21 @@ export default function OrderTrackingPage() {
 
   const canPay = !isPaid && !isCancelled;
 
-  const handlePay = async () => {
-    await payOrderMutation.mutateAsync({ orderId: order.id, tableToken });
-    setShowPayConfirm(false);
+  const handleOpenPay = async () => {
+    const s = await startMutation.mutateAsync({
+      tableToken,
+      orderIds: [order.id],
+    });
+    setPaySession(s);
   };
 
   return (
     <>
-      {showPayConfirm && (
-        <PayConfirmModal
-          isPending={payOrderMutation.isPending}
-          onCancel={() => setShowPayConfirm(false)}
-          onConfirm={handlePay}
-          total={order.totalAmount}
-          addInfo={`CHALO ${order.tableName ?? ""} DON ${order.id.slice(-6)}`}
+      {paySession && (
+        <PaySessionModal
+          session={paySession}
+          onClose={() => setPaySession(null)}
+          onRestart={handleOpenPay}
         />
       )}
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -300,8 +314,9 @@ export default function OrderTrackingPage() {
           {/* Nút Thanh toán (Nổi bật nhất) */}
           {canPay && (
             <button
-              onClick={() => setShowPayConfirm(true)}
-              className="w-full rounded-2xl bg-green-500 py-4 text-base font-bold text-white hover:bg-green-600 active:scale-[0.98] transition-all shadow-lg shadow-green-500/20"
+              onClick={handleOpenPay}
+              disabled={startMutation.isPending}
+              className="w-full rounded-2xl bg-green-500 py-4 text-base font-bold text-white hover:bg-green-600 active:scale-[0.98] transition-all shadow-lg shadow-green-500/20 disabled:opacity-60"
             >
               Thanh toán · {order.totalAmount.toLocaleString("vi-VN")}đ
             </button>

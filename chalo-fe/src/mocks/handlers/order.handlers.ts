@@ -6,7 +6,7 @@ const generateId = (prefix: string) =>
   `${prefix}_${Math.random().toString(36).substring(2, 9)}`;
 
 // Seed data — đầy đủ paidStatus
-let orders: OrderDto[] = [
+const orders: OrderDto[] = [
   {
     id: "ord_001",
     tableId: "tbl_01",
@@ -328,25 +328,5 @@ export const orderHandlers = [
   http.post("*/api/order/call-staff", async () => {
     await delay(300);
     return ok({ message: "Đã gọi nhân viên" });
-  }),
-
-  // POST /api/order/pay-all (Customer)
-  http.post("*/api/order/pay-all", async ({ request }) => {
-    await delay(500);
-    const body = (await request.json()) as { tableToken: string };
-    const updated: OrderDto[] = [];
-    orders = orders.map((o) => {
-      if (o.tableToken === body.tableToken && !o.paidStatus) {
-        const updatedOrder = {
-          ...o,
-          paidStatus: true,
-          updatedAt: new Date().toISOString(),
-        };
-        updated.push(updatedOrder);
-        return updatedOrder;
-      }
-      return o;
-    });
-    return ok(updated);
   }),
 ];

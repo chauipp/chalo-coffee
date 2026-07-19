@@ -10,7 +10,6 @@ import {
   OrderDto,
   OrderPageParams,
   OrderStatus,
-  PayAllOrdersPayload,
   PayOrderPayload,
   RevenueStatsParams,
   RevenueStatsResult,
@@ -58,9 +57,6 @@ export const callStaff = (data: CallStaffPayload): Promise<{ message: string }> 
 
 export const payOrder = (data: PayOrderPayload): Promise<OrderDto> =>
   request.post(API.ORDER.PAY, data);
-
-export const payAllOrders = (data: PayAllOrdersPayload): Promise<OrderDto[]> =>
-  request.post(API.ORDER.PAY_ALL, data);
 
 export const checkoutPreview = (
   data: CheckoutPreviewPayload,

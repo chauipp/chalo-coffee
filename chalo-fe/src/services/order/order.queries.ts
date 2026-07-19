@@ -19,7 +19,6 @@ import {
   getOrdersByTableToken,
   getRevenueStats,
   getTopProducts,
-  payAllOrders,
   payOrder,
   updateOrderStatus,
   setItemPrepared,
@@ -31,7 +30,6 @@ import {
   OrderDto,
   OrderPageParams,
   OrderStatus,
-  PayAllOrdersPayload,
   PayOrderPayload,
   RevenueStatsParams,
   TopProductsParams,
@@ -165,21 +163,6 @@ export const usePayOrder = (tableToken: string) => {
         queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
       });
       toast.success("Thanh toán thành công!");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-};
-
-export const usePayAllOrders = (tableToken: string) => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data: PayAllOrdersPayload) => payAllOrders(data),
-    onSuccess: () => {
-      qc.invalidateQueries({
-        queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
-      });
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
-      toast.success("Đã thanh toán tất cả đơn hàng!");
     },
     onError: (e: Error) => toast.error(e.message),
   });
