@@ -157,3 +157,10 @@ cat backup_YYYY-MM-DD.sql | docker compose -f docker-compose.prod.yml exec -T po
 | Backend restart liên tục | JWT secret còn giá trị mặc định, hoặc sai thông tin DB trong `.env` |
 | Frontend gọi API ra `localhost` | Đổi domain nhưng chưa build lại frontend (`--build`) |
 | Build frontend bị OOM (killed) | VPS thiếu RAM — nâng lên 2GB, hoặc thêm swap |
+
+---
+
+## 9. Thanh toán tự động + máy in hoá đơn
+
+Xem [deploy/PRINTING.md](./PRINTING.md): đăng ký webhook SePay (tự xác nhận
+chuyển khoản) và dựng trạm in hoá đơn bằng Chrome kiosk-printing trên PC quầy.
