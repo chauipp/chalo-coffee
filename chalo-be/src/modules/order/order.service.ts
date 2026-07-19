@@ -26,7 +26,6 @@ import {
 import {
   CheckoutPreviewDto,
   CheckoutStartDto,
-  CheckoutCompleteDto,
   CheckoutCompleteStaffDto,
   CheckoutRequestBatchPaymentDto,
 } from './dto/checkout.dto';
@@ -780,6 +779,7 @@ export class OrderService {
           tableId: order.tableId,
           tableToken: order.tableToken,
           totalAmount: order.totalAmount,
+          source: 'staff',
         },
       });
 
@@ -825,6 +825,7 @@ export class OrderService {
             tableId: table.id,
             tableToken: dto.tableToken,
             totalAmount: orders.reduce((s, o) => s + o.totalAmount, 0),
+            source: 'staff',
           },
         });
       }
@@ -967,73 +968,10 @@ export class OrderService {
     };
   }
 
-  async checkoutComplete(dto: CheckoutCompleteDto) {
-    return this.dataSource.transaction(async (manager) => {
-      const sessRepo = manager.getRepository(CheckoutSession);
-      const session = await sessRepo.findOne({
-        where: { id: dto.sessionId },
-        lock: { mode: 'pessimistic_write' },
-      });
-      if (!session) throw new NotFoundException('Phiên thanh toán không tồn tại');
-
-      if (session.status === CheckoutSessionStatus.COMPLETED) {
-        const orderRepo = manager.getRepository(Order);
-        const fullOrders = await orderRepo.find({
-          where: { id: In(session.orderIds) },
-          relations: ['items', 'table'],
-        });
-        const byId = new Map(fullOrders.map((o) => [o.id, o]));
-        const ordered = session.orderIds.map((id) => byId.get(id)!).filter(Boolean);
-        return {
-          idempotent: true as const,
-          sessionId: session.id,
-          orderIds: session.orderIds,
-          totalAmount: session.totalAmount,
-          orders: ordered.map((o) => this.buildDto(o)),
-        };
-      }
-
-      if (new Date() > session.expiresAt) {
-        throw new BadRequestException('Phiên thanh toán đã hết hạn');
-      }
-      if (
-        session.tableToken !== dto.tableToken ||
-        session.clientSecret !== dto.clientSecret
-      ) {
-        throw new BadRequestException('Thông tin phiên thanh toán không hợp lệ');
-      }
-
-      const result = await this.finalizeCheckoutSessionLocked(manager, session);
-
-      this.sseService.emit({
-        type: 'payment_completed',
-        data: {
-          sessionId: result.sessionId,
-          tableId: session.tableId,
-          tableToken: session.tableToken,
-          orderIds: result.orderIds,
-          totalAmount: result.totalAmount,
-        },
-      });
-
-      for (const o of result.orders) {
-        this.sseService.emit({
-          type: 'order_status_changed',
-          data: {
-            orderId: o.id,
-            status: o.status,
-            tableId: o.tableId,
-            tableName: o.tableName,
-            tableToken: o.tableToken,
-          },
-        });
-      }
-
-      return result;
-    });
-  }
-
-  async checkoutCompleteStaff(dto: CheckoutCompleteStaffDto) {
+  async checkoutCompleteStaff(
+    dto: CheckoutCompleteStaffDto,
+    source: 'staff' | 'sepay' = 'staff',
+  ) {
     return this.dataSource.transaction(async (manager) => {
       const sessRepo = manager.getRepository(CheckoutSession);
       const session = await sessRepo.findOne({
@@ -1073,6 +1011,7 @@ export class OrderService {
           tableToken: session.tableToken,
           orderIds: result.orderIds,
           totalAmount: result.totalAmount,
+          source,
         },
       });
 

@@ -40,20 +40,6 @@ export class CheckoutStartDto extends CheckoutPreviewDto {
   ttlMinutes?: number;
 }
 
-export class CheckoutCompleteDto {
-  @ApiProperty()
-  @IsUUID()
-  sessionId: string;
-
-  @ApiProperty()
-  @IsString()
-  tableToken: string;
-
-  @ApiProperty({ description: 'clientSecret trả về từ POST /order/checkout/start' })
-  @IsString()
-  clientSecret: string;
-}
-
 export class CheckoutCompleteStaffDto {
   @ApiProperty()
   @IsUUID()
