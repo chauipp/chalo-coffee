@@ -37,6 +37,8 @@ export const SplitPane = ({
   const [ratio, setRatio] = useState(defaultRatio);
   const [dragging, setDragging] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  // Trên mobile (<md) không chia đôi được → chuyển tab giữa màn chính và khu pha chế.
+  const [mobileTab, setMobileTab] = useState<"main" | "prep">("main");
   const ratioRef = useRef(ratio);
   ratioRef.current = ratio;
   const pathname = usePathname();
@@ -79,12 +81,37 @@ export const SplitPane = ({
   return (
     <div
       ref={containerRef}
-      className={`flex h-full min-h-0 min-w-0 ${className}`}
+      className={`flex flex-col md:flex-row h-full min-h-0 min-w-0 ${className}`}
     >
+      {/* Bộ chuyển tab (chỉ mobile) — desktop dùng chế độ chia đôi bên dưới */}
+      <div className="flex shrink-0 gap-1 border-b border-gray-200 p-1.5 md:hidden dark:border-gray-800">
+        {(
+          [
+            ["main", "Màn chính"],
+            ["prep", "☕ Khu pha chế"],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            onClick={() => setMobileTab(value)}
+            aria-pressed={mobileTab === value}
+            className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              mobileTab === value
+                ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
+                : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {/* Vùng trái vẫn mounted khi phóng to → thu lại không mất state của trang */}
       <div
         style={{ width: `${ratio * 100}%` }}
-        className={`h-full min-w-0 shrink-0 ${expanded ? "hidden" : ""}`}
+        className={`h-full min-w-0 shrink-0 max-md:h-auto max-md:min-h-0 max-md:w-full! max-md:flex-1 ${
+          expanded ? "md:hidden" : ""
+        } ${mobileTab === "main" ? "" : "max-md:hidden"}`}
       >
         {left}
       </div>
@@ -124,7 +151,7 @@ export const SplitPane = ({
             jumpTo(maxRatio);
           }
         }}
-        className={`relative z-10 mx-1 w-1.5 shrink-0 cursor-col-resize rounded-full transition-colors
+        className={`relative z-10 mx-1 w-1.5 shrink-0 cursor-col-resize rounded-full transition-colors max-md:hidden
           after:absolute after:inset-y-0 after:-inset-x-2 after:content-['']
           ${
             dragging
@@ -136,7 +163,11 @@ export const SplitPane = ({
 
       {/* Phóng to = vùng trái ẩn đi, vùng này flex-1 nên tự chiếm hết chỗ
           còn lại bên phải menu (sidebar vẫn hiển thị) */}
-      <div className={`h-full min-w-0 flex-1 py-3 pr-3 ${expanded ? "pl-3" : ""}`}>
+      <div
+        className={`h-full min-w-0 flex-1 py-3 pr-3 max-md:min-h-0 max-md:px-2 max-md:pt-2 ${
+          expanded ? "pl-3" : ""
+        } ${mobileTab === "prep" ? "" : "max-md:hidden"}`}
+      >
         {right({ expanded, toggleExpand })}
       </div>
     </div>

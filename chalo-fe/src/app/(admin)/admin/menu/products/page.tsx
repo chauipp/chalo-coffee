@@ -220,7 +220,7 @@ export default function ProductsPage() {
           onChange={(v) =>
             table.updateFilter({ name: v.target.value || undefined })
           }
-          className="w-56"
+          className="w-full sm:w-56"
         />
         <Select
           options={(categories ?? []).map((c) => ({
@@ -228,7 +228,7 @@ export default function ProductsPage() {
             value: c.id,
           }))}
           placeholder="Tất cả danh mục"
-          className="w-48"
+          className="w-full sm:w-48"
           value={table.filter.categoryId ?? ""}
           onChange={(v) =>
             table.updateFilter({ categoryId: v.target.value || undefined })
@@ -241,7 +241,7 @@ export default function ProductsPage() {
             { label: "Tạm ẩn", value: "UNAVAILABLE" },
           ]}
           placeholder="Tất cả trạng thái"
-          className="w-44"
+          className="w-full sm:w-44"
           onChange={(v) =>
             table.updateFilter({
               status: (v.target.value as ProductDto["status"]) || undefined,

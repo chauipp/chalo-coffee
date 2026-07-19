@@ -12,12 +12,12 @@ export default function StaffLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex h-screen flex-col bg-gray-50 md:flex-row dark:bg-gray-950">
       <Sidebar subtitle="Nhân viên" items={STAFF_HEADER_ITEMS} />
       {/* Khu pha chế nằm ở layout → luôn hiển thị ở mọi màn staff */}
       <SplitPane
         storageKey="staff-prep-split"
-        className="flex-1"
+        className="min-h-0 min-w-0 flex-1"
         left={<main className="h-full overflow-auto">{children}</main>}
         right={(ctl) => <PrepDock {...ctl} />}
       />

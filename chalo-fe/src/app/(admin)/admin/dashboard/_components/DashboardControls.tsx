@@ -28,20 +28,20 @@ export function DashboardControls({ value, onChange }: Props) {
         options={PERIOD_OPTIONS}
         value={value.period}
         onChange={(e) => onChange({ ...value, period: e.target.value as Period })}
-        className="w-40"
+        className="w-full sm:w-40"
       />
       <Input
         type="date"
         value={value.from ?? ""}
         onChange={(e) => onChange({ ...value, from: e.target.value || undefined })}
-        className="w-44"
+        className="flex-1 min-w-0 sm:w-44 sm:flex-none"
       />
       <span className="text-gray-400">→</span>
       <Input
         type="date"
         value={value.to ?? ""}
         onChange={(e) => onChange({ ...value, to: e.target.value || undefined })}
-        className="w-44"
+        className="flex-1 min-w-0 sm:w-44 sm:flex-none"
       />
       {(value.from || value.to) && (
         <button

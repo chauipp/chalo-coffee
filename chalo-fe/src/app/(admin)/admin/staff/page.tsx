@@ -163,13 +163,13 @@ export default function StaffPage() {
       <div className="flex items-center gap-3 flex-wrap">
         <Input
           placeholder="Tìm tên / tài khoản..."
-          className="w-56"
+          className="w-full sm:w-56"
           onChange={(e) =>
             table.updateFilter({ keyword: e.target.value || undefined })
           }
         />
         <Select
-          className="w-44"
+          className="w-full sm:w-44"
           placeholder="Tất cả vai trò"
           options={[
             { label: "Quản trị", value: "ADMIN" },
@@ -182,7 +182,7 @@ export default function StaffPage() {
           }
         />
         <Select
-          className="w-44"
+          className="w-full sm:w-44"
           placeholder="Tất cả trạng thái"
           options={[
             { label: "Đang hoạt động", value: "true" },

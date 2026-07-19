@@ -121,9 +121,9 @@ export default function TablesPage() {
     },
   ];
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       {/* header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Bàn & QR
@@ -140,7 +140,7 @@ export default function TablesPage() {
         </button>
       </div>
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {[
           {
             label: "Tổng số bàn",
@@ -159,11 +159,11 @@ export default function TablesPage() {
           },
         ].map((stat) => (
           <div
-            className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4"
+            className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 sm:p-4"
             key={stat.label}
           >
-            <p className="text-sm text-gray-500">{stat.label}</p>
-            <p className={`text-2xl font-bold mt-1 ${stat.color}`}>
+            <p className="text-xs sm:text-sm text-gray-500">{stat.label}</p>
+            <p className={`text-xl sm:text-2xl font-bold mt-1 ${stat.color}`}>
               {stat.value}
             </p>
           </div>

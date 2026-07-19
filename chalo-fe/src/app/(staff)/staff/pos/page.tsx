@@ -120,9 +120,9 @@ export default function StaffPOSPage() {
   };
 
   return (
-    <div className="h-full flex gap-0 overflow-hidden">
+    <div className="h-full flex flex-col md:flex-row gap-0 overflow-hidden">
       {/* Left — Product Grid */}
-      <div className="flex-1 flex flex-col overflow-hidden border-r border-gray-200 dark:border-gray-800">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0 border-b md:border-r md:border-b-0 border-gray-200 dark:border-gray-800">
         {/* Search + Category tabs */}
         <div className="flex gap-2 p-3 border-b border-gray-200 dark:border-gray-800 overflow-x-auto shrink-0 bg-white dark:bg-gray-900">
           <input
@@ -197,8 +197,8 @@ export default function StaffPOSPage() {
         </div>
       </div>
 
-      {/* Right — Order Panel */}
-      <div className="w-72 shrink-0 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+      {/* Right — Order Panel (mobile: xuống dưới, chiếm ~45% chiều cao) */}
+      <div className="w-72 shrink-0 flex flex-col bg-white dark:bg-gray-900 overflow-hidden max-md:w-full max-md:basis-[45%] max-md:min-h-0">
         {/* header */}
         <div className="px-4 py-3.5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
           <div>

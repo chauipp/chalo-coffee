@@ -104,7 +104,7 @@ export default function AdminOrdersPage() {
 
       <div className="flex items-center gap-3 flex-wrap">
         <Select
-          className="w-48"
+          className="w-full sm:w-48"
           placeholder="Tất cả trạng thái"
           options={ORDER_STATUS.map((s) => ({
             value: s,
@@ -117,7 +117,7 @@ export default function AdminOrdersPage() {
           }
         />
         <Select
-          className="w-48"
+          className="w-full sm:w-48"
           placeholder="Tất cả bàn"
           options={(tables ?? []).map((t) => ({ value: t.id, label: t.name }))}
           onChange={(e) =>
@@ -126,7 +126,7 @@ export default function AdminOrdersPage() {
         />
         <Input
           type="date"
-          className="w-44"
+          className="w-full sm:w-44"
           value={date}
           onChange={(e) => {
             setDate(e.target.value);

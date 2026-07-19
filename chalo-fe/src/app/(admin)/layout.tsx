@@ -10,9 +10,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex h-screen flex-col bg-gray-50 md:flex-row dark:bg-gray-950">
       <Sidebar subtitle="Admin Panel" items={ADMIN_NAV_ITEMS} />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="min-h-0 min-w-0 flex-1 overflow-auto">{children}</main>
     </div>
   );
 }

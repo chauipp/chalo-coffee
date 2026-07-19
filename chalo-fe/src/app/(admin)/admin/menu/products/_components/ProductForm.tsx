@@ -87,7 +87,7 @@ export const ProductForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* name */}
         <div className="col-span-2">
           <FormField label="Tên sản phẩm" error={errors.name?.message} required>
