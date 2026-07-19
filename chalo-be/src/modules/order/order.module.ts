@@ -19,5 +19,6 @@ import { SettingsModule } from '../settings/settings.module';
   ],
   providers: [OrderService],
   controllers: [OrderController],
+  exports: [OrderService],
 })
 export class OrderModule {}

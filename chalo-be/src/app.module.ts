@@ -20,6 +20,7 @@ import { PagerModule } from './modules/pager/pager.module';
 import { HealthModule } from './modules/health/health.module';
 import { SseModule } from './modules/sse/sse.module';
 import { SettingsModule } from './modules/settings/settings.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SettingsModule } from './modules/settings/settings.module';
     HealthModule,
     SseModule,
     SettingsModule,
+    PaymentModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
