@@ -106,6 +106,10 @@ export default function PrintStationPage() {
         );
       } catch {
         toast.error("In hoá đơn thất bại — thử lại từ danh sách bên dưới");
+        // Job lỗi không được biến mất — đưa vào danh sách "Chưa in" để bấm in lại
+        setCatchUp((l) =>
+          l.some((x) => x.jobId === job.jobId) ? l : [job, ...l],
+        );
       } finally {
         setQueue((q) => q.slice(1));
         busyRef.current = false;
@@ -146,7 +150,7 @@ export default function PrintStationPage() {
         {catchUp.length > 0 && (
           <section>
             <h2 className="text-sm font-bold text-amber-700 dark:text-amber-400 mb-2">
-              ⚠️ Chưa in ({catchUp.length}) — đơn đã thanh toán khi trạm tắt
+              ⚠️ Chưa in ({catchUp.length}) — đơn đã thanh toán nhưng chưa in
             </h2>
             <ul className="space-y-2">
               {catchUp.map((job) => (
@@ -155,8 +159,10 @@ export default function PrintStationPage() {
                   className="flex items-center justify-between rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50 dark:bg-amber-900/10 px-4 py-2.5 text-sm"
                 >
                   <span>
-                    Đơn #{job.orderIds[0].slice(-6).toUpperCase()} ·{" "}
-                    {money(job.totalAmount)}
+                    {job.orderIds.length > 1
+                      ? `Gộp ${job.orderIds.length} đơn`
+                      : `Đơn #${job.orderIds[0].slice(-6).toUpperCase()}`}{" "}
+                    · {money(job.totalAmount)}
                   </span>
                   <button
                     onClick={() => enqueue({ ...job, force: true })}
