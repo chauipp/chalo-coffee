@@ -55,3 +55,9 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+.playwright-mcp/
+
+# Ảnh chụp màn / debug ở GỐC repo (Playwright MCP hay ghi ra đây).
+# Chỉ áp cho file .png ngay tại gốc; ảnh trong thư mục con (vd chalo-fe/public) không bị ảnh hưởng.
+# Muốn commit 1 ảnh gốc cụ thể thì dùng: git add -f <tên>.png
+/*.png
