@@ -14,6 +14,11 @@ interface ModalProps {
 }
 
 const sizeClass = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
+const sheetSizeClass = {
+  sm: "sm:max-w-sm",
+  md: "sm:max-w-lg",
+  lg: "sm:max-w-2xl",
+} as const;
 
 export const Modal = ({
   children,
@@ -72,8 +77,8 @@ export const Modal = ({
         className={[
           "relative w-full bg-white shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)] dark:bg-gray-900",
           isBottomSheet
-            ? "max-w-none rounded-t-3xl sm:max-w-lg sm:rounded-2xl"
-            : sizeClass[size] + " rounded-2xl",
+            ? `max-w-none rounded-t-3xl sm:rounded-2xl ${sheetSizeClass[size]}`
+            : `${sizeClass[size]} rounded-2xl`,
         ].join(" ")}
       >
         {/* header */}

@@ -543,6 +543,7 @@ export default function ProductsPage() {
         open={createOpen}
         title="Thêm sản phẩm mới"
         size="lg"
+        presentation="bottom-sheet"
       >
         <ProductForm
           onSubmit={handleCreateProd}
@@ -556,6 +557,7 @@ export default function ProductsPage() {
         open={!!editTarget}
         title="Chỉnh sửa sản phẩm"
         size="lg"
+        presentation="bottom-sheet"
       >
         {editTarget && (
           <ProductForm
