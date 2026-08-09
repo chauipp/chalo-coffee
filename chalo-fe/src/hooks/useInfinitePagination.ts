@@ -38,10 +38,13 @@ export function useInfinitePagination<T, F extends BaseInfiniteFilter>({
   staleTime = 30_000,
 }: UseInfinitePaginationProps<T, F>): UseInfinitePaginationReturn<T, F> {
   const [filter, setFilter] = useState<F>(initialFilter);
+  const initialFilterRef = useRef(initialFilter);
   const qc = useQueryClient();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (initialFilterRef.current === initialFilter) return;
+    initialFilterRef.current = initialFilter;
     setFilter(initialFilter);
   }, [initialFilter]);
 

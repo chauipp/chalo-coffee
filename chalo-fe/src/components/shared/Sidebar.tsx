@@ -3,7 +3,13 @@
 // Desktop (md+): thanh bên cố định, thu gọn w-60 ↔ w-16.
 // Mobile (<md): thanh bên trở thành drawer trượt từ trái + top bar có nút ☰.
 
-import { useEffect, useState, type ComponentType, type SVGProps } from "react";
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ComponentType,
+  type SVGProps,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeftIcon } from "./icons/ChevronLeftIcon";
@@ -14,8 +20,30 @@ import { UserMenu } from "./UserMenu";
 type NavItem = {
   label: string;
   href: string;
+  activePrefixes?: readonly string[];
   icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
+
+const SIDEBAR_STORAGE_KEY = "chalo-sidebar-collapsed:v1";
+const SIDEBAR_EVENT = "chalo-sidebar-collapsed-change";
+
+function readCollapsed(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function subscribeToCollapsed(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(SIDEBAR_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(SIDEBAR_EVENT, callback);
+  };
+}
 
 export const Sidebar = ({
   subtitle,
@@ -26,10 +54,19 @@ export const Sidebar = ({
 }) => {
   const pathname = usePathname();
 
-  // ponytail: in-memory — persists across navigation (layout stays mounted), resets on hard reload
-  // collapsed chỉ có ý nghĩa ở desktop (md+); mobile luôn hiển thị drawer đầy đủ.
-  const [collapsed, setCollapsed] = useState(false);
-  const toggle = () => setCollapsed((c) => !c);
+  const collapsed = useSyncExternalStore(
+    subscribeToCollapsed,
+    readCollapsed,
+    () => false,
+  );
+  const toggle = () => {
+    try {
+      window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(!collapsed));
+      window.dispatchEvent(new Event(SIDEBAR_EVENT));
+    } catch {
+      // Sidebar persistence is best-effort.
+    }
+  };
 
   // Trạng thái mở drawer trên mobile — đóng lại mỗi khi điều hướng sang trang khác.
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -116,8 +153,10 @@ export const Sidebar = ({
 
         {/* Navigation */}
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-          {items.map(({ label, href, icon: Icon }) => {
-            const isActive = pathname === href || pathname.startsWith(href + "/");
+          {items.map(({ label, href, activePrefixes, icon: Icon }) => {
+            const isActive = [href, ...(activePrefixes ?? [])].some(
+              (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
+            );
             return (
               <Link
                 key={href}
