@@ -118,8 +118,8 @@ export const ProductForm = ({
             Thông tin món
           </h3>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="col-span-2">
             <FormField label="Tên sản phẩm" error={errors.name?.message} required>
               <Input
                 {...register("name")}
@@ -164,7 +164,7 @@ export const ProductForm = ({
             Giá &amp; vận hành
           </h3>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <FormField label="Giá (VNĐ)" required error={errors.price?.message}>
             <Input
               {...register("price")}
@@ -232,8 +232,8 @@ export const ProductForm = ({
           error={errors.imageUrl?.message}
           hint="Upload ảnh hoặc nhập URL trực tiếp"
         >
-          <div className="grid gap-3 sm:grid-cols-[6rem_minmax(0,1fr)] sm:items-start">
-            <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white text-center text-xs text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500">
+          <div className="grid grid-cols-[5rem_minmax(0,1fr)] items-start gap-3">
+            <div className="flex size-20 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white text-center text-xs text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500">
               {imageUrl ? (
                 <img
                   src={imageUrl}
