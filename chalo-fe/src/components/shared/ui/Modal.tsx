@@ -10,6 +10,7 @@ interface ModalProps {
   children: React.ReactNode;
   size?: "sm" | "md" | "lg";
   panelTestId?: string;
+  presentation?: "dialog" | "bottom-sheet";
 }
 
 const sizeClass = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
@@ -19,10 +20,12 @@ export const Modal = ({
   onClose,
   open,
   panelTestId,
+  presentation = "dialog",
   size = "md",
   title,
 }: ModalProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
+  const isBottomSheet = presentation === "bottom-sheet";
 
   useEffect(() => {
     if (!open) return;
@@ -45,7 +48,14 @@ export const Modal = ({
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+    <div
+      className={[
+        "fixed inset-0 z-50 flex justify-center",
+        isBottomSheet
+          ? "items-end p-0 sm:items-center sm:p-4"
+          : "items-center p-3 sm:p-4",
+      ].join(" ")}
+    >
       {/* backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm motion-safe:animate-[modal-fade_0.15s_ease-out]"
@@ -59,7 +69,12 @@ export const Modal = ({
         aria-modal="true"
         aria-label={title}
         data-testid={panelTestId}
-        className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-gray-900 shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]`}
+        className={[
+          "relative w-full bg-white shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)] dark:bg-gray-900",
+          isBottomSheet
+            ? "max-w-none rounded-t-3xl sm:max-w-lg sm:rounded-2xl"
+            : sizeClass[size] + " rounded-2xl",
+        ].join(" ")}
       >
         {/* header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800 sm:px-6 sm:py-4">
