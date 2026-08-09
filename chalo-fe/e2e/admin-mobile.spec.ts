@@ -111,6 +111,17 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
 
   const actions = dialog.getByTestId("product-edit-actions");
   await expect(actions).toBeVisible();
+  await expect(actions.locator("div").first()).toHaveCSS(
+    "flex-direction",
+    "row",
+  );
+  const cancelButton = actions.getByRole("button", { name: "Hủy" });
+  const updateButton = actions.getByRole("button", { name: "Cập nhật" });
+  const cancelBox = await cancelButton.boundingBox();
+  const updateBox = await updateButton.boundingBox();
+  expect(cancelBox).not.toBeNull();
+  expect(updateBox).not.toBeNull();
+  expect(Math.abs(cancelBox!.y - updateBox!.y)).toBeLessThanOrEqual(1);
   const actionsBox = await actions.boundingBox();
   const dialogBox = await dialog.boundingBox();
   expect(actionsBox).not.toBeNull();
