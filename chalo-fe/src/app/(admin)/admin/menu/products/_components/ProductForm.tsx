@@ -178,7 +178,7 @@ export const ProductForm = ({
 
           <FormField
             required
-            label="Thời gian pha chế (phút)"
+            label="Thời gian (phút)"
             error={errors.prepTime?.message}
           >
             <Input

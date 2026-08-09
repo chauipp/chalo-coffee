@@ -104,6 +104,14 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
     ).toBeVisible();
   }
 
+  const prepTimeLabel = dialog.locator("label").filter({
+    hasText: "Thời gian (phút)",
+  });
+  await expect(prepTimeLabel).toBeVisible();
+  const prepTimeLabelBox = await prepTimeLabel.boundingBox();
+  expect(prepTimeLabelBox).not.toBeNull();
+  expect(prepTimeLabelBox!.height).toBeLessThanOrEqual(24);
+
   const hasHorizontalOverflow = await dialog.evaluate(
     (node) => node.scrollWidth > node.clientWidth,
   );
