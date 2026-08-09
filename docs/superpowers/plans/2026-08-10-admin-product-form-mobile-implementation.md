@@ -190,8 +190,8 @@ Use this wrapper pattern (repeat it for the five sections):
       Thông tin món
     </h3>
   </div>
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    {/* name spans both columns; category and status share the next row */}
+  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+    {/* name spans both columns; category and status share the next row even at 390px */}
   </div>
 </section>
 ```
@@ -210,7 +210,7 @@ product-edit-section-image
 product-edit-section-visibility
 ```
 
-Operations contains price and preparation time in `grid grid-cols-1 gap-4 sm:grid-cols-2`. Description uses a `min-h-24` textarea and keeps the existing hint. Image uses a preview placeholder/thumbnail beside the URL input on `sm` and stacks naturally on narrow screens; the upload label is a full-width, 44px secondary control with visible text “Tải ảnh từ thiết bị” and the existing spinner/file input. Visibility is a `min-h-11` row with explanatory copy on the left and the existing `Toggle` on the right.
+Operations contains price and preparation time in `grid grid-cols-2 gap-3 sm:gap-4`, which keeps the approved 390px layout compact while allowing labels to wrap. Description uses a `min-h-24` textarea and keeps the existing hint. Image uses a `grid-cols-[5rem_minmax(0,1fr)]` preview/URL arrangement at phone width as well as desktop; the upload label is a full-width, 44px secondary control with visible text “Tải ảnh từ thiết bị” and the existing spinner/file input. Visibility is a `min-h-11` row with explanatory copy on the left and the existing `Toggle` on the right.
 
 The image control must keep the existing upload behavior:
 
