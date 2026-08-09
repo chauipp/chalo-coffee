@@ -46,7 +46,7 @@ export function MobileAdminNav() {
               key={href}
               href={href}
               aria-current={isActive ? "page" : undefined}
-              className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-medium transition-colors ${
+              className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-0 text-[10px] font-medium transition-colors ${
                 isActive
                   ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-300"
                   : "text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800"
@@ -63,7 +63,7 @@ export function MobileAdminNav() {
           aria-current={overflowActive ? "page" : undefined}
           aria-haspopup="dialog"
           onClick={() => setOverflowOpen(true)}
-          className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-medium transition-colors ${
+          className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-0 text-[10px] font-medium transition-colors ${
             overflowActive
               ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-300"
               : "text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800"

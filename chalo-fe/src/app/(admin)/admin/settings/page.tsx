@@ -177,7 +177,7 @@ export default function SettingsPage() {
 
       <div
         data-testid="admin-mobile-settings-save"
-        className="sticky bottom-0 -mx-4 border-t border-gray-200 bg-gray-50/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0"
+        className="sticky bottom-[calc(6rem+env(safe-area-inset-bottom))] -mx-4 border-t border-gray-200 bg-gray-50/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0"
       >
         <button
           onClick={save}

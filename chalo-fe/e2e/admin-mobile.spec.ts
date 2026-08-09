@@ -102,11 +102,30 @@ test("mobile dashboard and settings keep primary controls reachable", async ({ p
   await expect(dashboardControls).toBeVisible();
   await expect(dashboardControls).toHaveCSS("flex-direction", "column");
 
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/admin/settings");
   const settingsSave = page.getByTestId("admin-mobile-settings-save");
   await expect(settingsSave).toBeVisible();
   await expect(settingsSave).toHaveCSS("position", "sticky");
+  await settingsSave.scrollIntoViewIfNeeded();
+  const saveBox = await settingsSave.boundingBox();
+  const mobileNavBox = await page.locator("nav.fixed").boundingBox();
+  expect(saveBox).not.toBeNull();
+  expect(mobileNavBox).not.toBeNull();
+  expect(saveBox!.y + saveBox!.height).toBeLessThanOrEqual(mobileNavBox!.y);
   await expect(
     settingsSave.getByRole("button", { name: "Lưu thay đổi" }),
   ).toBeVisible();
+});
+
+test("mobile tab labels do not clip at phone width", async ({ page }) => {
+  await loginAsAdmin(page);
+  const hasClippedLabel = await page
+    .getByRole("navigation", { name: "Điều hướng admin trên điện thoại" })
+    .locator("span.max-w-full")
+    .evaluateAll((labels) =>
+      labels.some((label) => label.scrollWidth > label.clientWidth),
+    );
+
+  expect(hasClippedLabel).toBe(false);
 });
