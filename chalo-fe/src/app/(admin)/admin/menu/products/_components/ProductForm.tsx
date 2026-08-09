@@ -204,7 +204,7 @@ export const ProductForm = ({
           </h3>
         </div>
         <FormField
-          label="Mô tả"
+          label="Nội dung"
           error={errors.description?.message}
           hint="Dùng để tính thời gian chờ"
         >
