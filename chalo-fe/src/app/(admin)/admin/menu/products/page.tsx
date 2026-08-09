@@ -93,13 +93,15 @@ export default function ProductsPage() {
       : null;
     if (!saved) return;
 
-    if (saved.filter) {
+    const savedFilter =
+      saved.filter && typeof saved.filter === "object" ? saved.filter : null;
+    if (savedFilter) {
       table.updateFilter({
-        ...saved.filter,
-        categoryId: categoryIdParam ?? saved.filter.categoryId,
+        ...savedFilter,
+        categoryId: categoryIdParam ?? savedFilter.categoryId,
       });
     }
-    if (saved.editTarget) {
+    if (saved.editTarget && typeof saved.editTarget === "object" && saved.editTarget.id) {
       startTransition(() => setEditTarget(saved.editTarget!));
     }
   }, [categoryIdParam, isAuthHydrated, startTransition, table, userId]);

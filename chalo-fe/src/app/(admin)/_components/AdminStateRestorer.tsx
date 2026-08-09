@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/stores/auth.store";
+import { ROUTES } from "@/constants";
 import {
   clearAdminRoute,
   readAdminRoute,
@@ -35,18 +36,18 @@ export function AdminStateRestorer() {
     const searchValue = searchParams.toString();
     const search = searchValue ? `?${searchValue}` : "";
 
-    if (initializedUserRef.current !== userId) {
-      initializedUserRef.current = userId;
-      if (pathname === "/admin") {
-        const saved = shouldRestoreAdminRoute(
-          pathname,
-          readAdminRoute(storage, userId),
-        );
-        if (saved) {
-          router.replace(`${saved.pathname}${saved.search}`);
-          return;
-        }
+    initializedUserRef.current = userId;
+    if (pathname === "/admin") {
+      const saved = shouldRestoreAdminRoute(
+        pathname,
+        readAdminRoute(storage, userId),
+      );
+      if (saved) {
+        router.replace(`${saved.pathname}${saved.search}`);
+        return;
       }
+      router.replace(ROUTES.ADMIN.DASHBOARD);
+      return;
     }
 
     saveAdminRoute(storage, userId, pathname, search);

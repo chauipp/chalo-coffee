@@ -10,6 +10,12 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: /admin-mobile\.spec\.ts/,
+    },
+    {
+      name: "admin-mobile",
+      testMatch: /admin-mobile\.spec\.ts/,
+      use: { ...devices["iPhone 13"] },
     },
   ],
 });
