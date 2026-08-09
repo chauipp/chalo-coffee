@@ -67,7 +67,7 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
   await expect(card).toBeVisible({ timeout: 15_000 });
   await card.getByRole("button", { name: /M.*ch.*nh s.*a/i }).click();
 
-  const dialog = page.getByRole("dialog").first();
+  const dialog = page.getByRole("dialog", { name: "Chỉnh sửa sản phẩm" });
   await expect(dialog).toBeVisible({ timeout: 15_000 });
 
   const sections = dialog.locator("[data-testid^='product-edit-section-']");
@@ -92,7 +92,17 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
     "data-testid",
     "product-edit-section-visibility",
   );
-  await expect(dialog.locator("h3")).toHaveCount(5);
+  for (const heading of [
+    "Thông tin món",
+    "Giá & vận hành",
+    "Mô tả",
+    "Hình ảnh",
+    "Hiển thị",
+  ]) {
+    await expect(
+      dialog.getByRole("heading", { name: heading, exact: true }),
+    ).toBeVisible();
+  }
 
   const hasHorizontalOverflow = await dialog.evaluate(
     (node) => node.scrollWidth > node.clientWidth,
@@ -115,7 +125,7 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
   await page.waitForTimeout(350);
   await page.reload();
 
-  const restoredDialog = page.getByRole("dialog").first();
+  const restoredDialog = page.getByRole("dialog", { name: "Chỉnh sửa sản phẩm" });
   await expect(restoredDialog).toBeVisible({ timeout: 15_000 });
   await expect(restoredDialog.locator('input[name="name"]')).toHaveValue(draftName);
 
