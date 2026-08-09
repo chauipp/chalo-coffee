@@ -13,17 +13,28 @@ async function loginAsAdmin(page: Page) {
 test("mobile admin restores product work after reload", async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto("/admin/menu/products");
+  const mobileList = page.getByTestId("product-mobile-list");
+  await expect(mobileList).toBeVisible();
 
   await expect(
     page.getByRole("navigation", { name: "Điều hướng admin trên điện thoại" }),
   ).toBeVisible();
   await expect(page.locator("aside")).toBeHidden();
 
-  const statusFilter = page.locator("select").nth(1);
+  await page.getByRole("button", { name: "Bộ lọc sản phẩm" }).click();
+  const filterSheet = page.getByRole("dialog", { name: "Lọc sản phẩm" });
+  const statusFilter = filterSheet.getByLabel("Trạng thái sản phẩm");
   await statusFilter.selectOption("AVAILABLE");
   await expect(statusFilter).toHaveValue("AVAILABLE");
+  await page.getByRole("button", { name: "Áp dụng bộ lọc" }).click();
+  await expect(page.getByTestId("active-product-filter")).toContainText(
+    "Còn hàng",
+  );
 
-  const productName = page.locator("tbody tr button").first();
+  const productName = mobileList
+    .getByTestId("product-mobile-card")
+    .first()
+    .getByRole("button", { name: /Mở chỉnh sửa/ });
   await expect(productName).toBeVisible({ timeout: 15_000 });
   await productName.click();
 
@@ -35,7 +46,9 @@ test("mobile admin restores product work after reload", async ({ page }) => {
   await page.waitForTimeout(350);
 
   await page.reload();
-  await expect(page.locator("select").nth(1)).toHaveValue("AVAILABLE");
+  await expect(page.getByTestId("active-product-filter")).toContainText(
+    "Còn hàng",
+  );
   await expect(dialog).toBeVisible({ timeout: 15_000 });
   await expect(dialog.locator("input").first()).toHaveValue(draftName);
 
@@ -59,7 +72,8 @@ test("mobile admin uses product cards and keeps overflow navigation reachable", 
   await expect(page.getByRole("dialog", { name: "Lọc sản phẩm" })).toBeVisible();
   await page.getByRole("button", { name: "Đóng" }).click();
 
-  await page.getByRole("button", { name: "Khác" }).click();
+  // Next.js Dev Tools overlays the lower-right mobile slot in local dev only.
+  await page.getByRole("button", { name: "Khác" }).press("Enter");
   await expect(
     page.getByRole("dialog", { name: "Mục quản trị khác" }),
   ).toBeVisible();
