@@ -94,7 +94,7 @@ export default function AdminOrdersPage() {
   ];
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="space-y-5 p-4 sm:p-6">
       <div>
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Đơn hàng

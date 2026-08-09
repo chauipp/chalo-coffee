@@ -45,7 +45,7 @@ export const Modal = ({
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       {/* backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm motion-safe:animate-[modal-fade_0.15s_ease-out]"
@@ -62,7 +62,7 @@ export const Modal = ({
         className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white dark:bg-gray-900 shadow-2xl outline-none motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]`}
       >
         {/* header */}
-        <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800 sm:px-6 sm:py-4">
           <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
             {title}
           </h2>
@@ -87,7 +87,9 @@ export const Modal = ({
           </button>
         </div>
         {/* content */}
-        <div className="px-6 py-5">{children}</div>
+        <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
+          {children}
+        </div>
       </div>
     </div>,
     document.body,

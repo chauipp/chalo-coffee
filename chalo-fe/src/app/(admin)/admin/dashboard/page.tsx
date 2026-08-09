@@ -20,8 +20,8 @@ export default function AdminDashboardPage() {
   const bestSeller = topProducts[0];
 
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-5 p-4 sm:p-6">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Tổng quan</h1>
           <p className="mt-0.5 text-sm text-gray-500">Doanh thu &amp; sản phẩm bán chạy</p>

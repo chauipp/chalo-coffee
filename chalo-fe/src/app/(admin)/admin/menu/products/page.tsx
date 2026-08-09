@@ -21,7 +21,7 @@ import {
   ProductPageParam,
   ProductStatus,
 } from "@/services/menu/menu.types";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { ProductForm } from "./_components/ProductForm";
 import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
 import { QUERY_KEYS, ROUTES } from "@/constants";
@@ -68,6 +68,7 @@ export default function ProductsPage() {
   const [createOpen, setCreateOpen] = useState<boolean>(false);
   const [editTarget, setEditTarget] = useState<ProductDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProductDto | null>(null);
+  const [, startTransition] = useTransition();
   const restoredStateRef = useRef(false);
   const skipFirstPersistRef = useRef(true);
 
@@ -98,8 +99,10 @@ export default function ProductsPage() {
         categoryId: categoryIdParam ?? saved.filter.categoryId,
       });
     }
-    if (saved.editTarget) setEditTarget(saved.editTarget);
-  }, [categoryIdParam, isAuthHydrated, table, userId]);
+    if (saved.editTarget) {
+      startTransition(() => setEditTarget(saved.editTarget!));
+    }
+  }, [categoryIdParam, isAuthHydrated, startTransition, table, userId]);
 
   useEffect(() => {
     if (!isAuthHydrated || !userId) return;
@@ -251,7 +254,7 @@ export default function ProductsPage() {
       key: "actions",
       header: "Hành động",
       render: (row: ProductDto) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 [&>button]:min-h-11">
           <button
             onClick={() => setEditTarget(row)}
             className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/20 transition-colors"

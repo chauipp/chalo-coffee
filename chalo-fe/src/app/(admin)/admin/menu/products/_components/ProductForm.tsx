@@ -12,7 +12,7 @@ import { uploadImage } from "@/services/upload/upload.api";
 import { useAuthStore } from "@/stores/auth.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { type Resolver, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useProductDraft } from "@/hooks/useProductDraft";
 
@@ -68,7 +68,7 @@ export const ProductForm = ({
     watch,
     formState: { errors },
   } = useForm<ProductFormType>({
-    resolver: zodResolver(ProductSchema) as any,
+    resolver: zodResolver(ProductSchema) as Resolver<ProductFormType>,
     defaultValues,
   });
 

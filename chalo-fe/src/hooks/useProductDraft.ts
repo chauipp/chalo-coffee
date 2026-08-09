@@ -39,18 +39,31 @@ export function useProductDraft<T extends object>(
     return mergeProductDraft(defaults, draft);
   });
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingValuesRef = useRef<T | null>(null);
+
+  const flushDraft = useCallback(() => {
+    if (!userId || !productId || !pendingValuesRef.current) return;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+
+    const storage = getStorage();
+    if (storage) {
+      saveProductDraft(storage, userId, productId, pendingValuesRef.current);
+    }
+    pendingValuesRef.current = null;
+  }, [productId, userId]);
 
   const saveDraft = useCallback(
     (values: T) => {
       if (!userId || !productId) return;
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      pendingValuesRef.current = values;
 
       timeoutRef.current = setTimeout(() => {
-        const storage = getStorage();
-        if (storage) saveProductDraft(storage, userId, productId, values);
+        flushDraft();
       }, DRAFT_WRITE_DELAY_MS);
     },
-    [productId, userId],
+    [flushDraft, productId, userId],
   );
 
   const clearDraft = useCallback(() => {
@@ -65,6 +78,19 @@ export function useProductDraft<T extends object>(
     },
     [],
   );
+
+  useEffect(() => {
+    const flushWhenHidden = () => {
+      if (document.visibilityState === "hidden") flushDraft();
+    };
+
+    document.addEventListener("visibilitychange", flushWhenHidden);
+    window.addEventListener("pagehide", flushDraft);
+    return () => {
+      document.removeEventListener("visibilitychange", flushWhenHidden);
+      window.removeEventListener("pagehide", flushDraft);
+    };
+  }, [flushDraft]);
 
   return { defaultValues, saveDraft, clearDraft };
 }

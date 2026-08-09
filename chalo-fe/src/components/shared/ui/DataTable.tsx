@@ -49,8 +49,8 @@ export function DataTable<T>({
   return (
     <div className="flex flex-col gap-4">
       {/* table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <table className="w-full text-sm">
+      <div className="-mx-4 overflow-x-auto rounded-none border-y border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 sm:mx-0 sm:rounded-xl sm:border">
+        <table className="min-w-[640px] w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
               {columns.map((col) => (

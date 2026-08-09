@@ -94,7 +94,7 @@ export default function CategoriesPage() {
       key: "actions",
       header: "Thao tác",
       render: (cate: CategoryDto) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 [&>button]:min-h-11">
           <button
             onClick={() => setEditTarget(cate)}
             className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/20 transition-colors"
@@ -113,9 +113,9 @@ export default function CategoriesPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Danh mục

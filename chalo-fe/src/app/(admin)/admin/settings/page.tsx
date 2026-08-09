@@ -79,11 +79,11 @@ export default function SettingsPage() {
 
   if (isLoading)
     return (
-      <div className="p-6 text-sm text-gray-400">Đang tải cài đặt...</div>
+      <div className="p-4 text-sm text-gray-400 sm:p-6">Đang tải cài đặt...</div>
     );
 
   return (
-    <div className="p-6 space-y-6 max-w-xl">
+    <div className="max-w-xl space-y-6 p-4 sm:p-6">
       <div>
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Cài đặt
@@ -93,8 +93,8 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5">
-        <div className="flex items-center justify-between">
+      <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-5">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
               Hiển thị thời gian chờ ước tính
@@ -125,7 +125,7 @@ export default function SettingsPage() {
         </FormField>
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5">
+      <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-5">
         <div>
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
             Thanh toán chuyển khoản (VietQR)
