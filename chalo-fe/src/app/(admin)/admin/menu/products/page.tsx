@@ -69,8 +69,8 @@ export default function ProductsPage() {
   const [editTarget, setEditTarget] = useState<ProductDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProductDto | null>(null);
   const [, startTransition] = useTransition();
+  const restoreStartedRef = useRef(false);
   const restoredStateRef = useRef(false);
-  const skipFirstPersistRef = useRef(true);
 
   const initialFilter = useMemo<ProductPageParam>(
     () => ({ pageNo: 1, pageSize: 20, categoryId: categoryIdParam }),
@@ -84,34 +84,38 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
-    if (!isAuthHydrated || !userId || restoredStateRef.current) return;
-    restoredStateRef.current = true;
+    if (!isAuthHydrated || !userId || restoreStartedRef.current) return;
+    restoreStartedRef.current = true;
 
     const storage = getStorage();
     const saved = storage
       ? readProductListState<ProductListState>(storage, userId)
       : null;
-    if (!saved) return;
-
-    const savedFilter =
-      saved.filter && typeof saved.filter === "object" ? saved.filter : null;
-    if (savedFilter) {
-      table.updateFilter({
-        ...savedFilter,
-        categoryId: categoryIdParam ?? savedFilter.categoryId,
-      });
+    if (saved) {
+      const savedFilter =
+        saved.filter && typeof saved.filter === "object" ? saved.filter : null;
+      if (savedFilter) {
+        table.updateFilter({
+          ...savedFilter,
+          categoryId: categoryIdParam ?? savedFilter.categoryId,
+        });
+      }
+      if (
+        saved.editTarget &&
+        typeof saved.editTarget === "object" &&
+        saved.editTarget.id
+      ) {
+        startTransition(() => setEditTarget(saved.editTarget!));
+      }
     }
-    if (saved.editTarget && typeof saved.editTarget === "object" && saved.editTarget.id) {
-      startTransition(() => setEditTarget(saved.editTarget!));
-    }
+    queueMicrotask(() => {
+      restoredStateRef.current = true;
+    });
   }, [categoryIdParam, isAuthHydrated, startTransition, table, userId]);
 
   useEffect(() => {
     if (!isAuthHydrated || !userId) return;
-    if (skipFirstPersistRef.current) {
-      skipFirstPersistRef.current = false;
-      return;
-    }
+    if (!restoredStateRef.current) return;
 
     const storage = getStorage();
     if (!storage) return;

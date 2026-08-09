@@ -3,7 +3,9 @@ import { expect, Page, test } from "@playwright/test";
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
   await page.locator("#username").fill("admin");
-  await page.locator("#password").fill("admin");
+  await page
+    .locator("#password")
+    .fill(process.env.PLAYWRIGHT_ADMIN_PASSWORD ?? "admin");
   await page.locator('button[type="submit"]').click();
   await page.waitForURL("**/admin/dashboard");
 }
