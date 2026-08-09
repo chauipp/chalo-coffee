@@ -1,7 +1,11 @@
 "use client";
 // src/components/shared/Sidebar.tsx — collapsible sidebar shared by admin & staff
 
-import { useEffect, useState, type ComponentType, type SVGProps } from "react";
+import {
+  useSyncExternalStore,
+  type ComponentType,
+  type SVGProps,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeftIcon } from "./icons/ChevronLeftIcon";
@@ -14,6 +18,27 @@ type NavItem = {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
+const SIDEBAR_STORAGE_KEY = "chalo-sidebar-collapsed:v1";
+const SIDEBAR_EVENT = "chalo-sidebar-collapsed-change";
+
+function readCollapsed(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function subscribeToCollapsed(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(SIDEBAR_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(SIDEBAR_EVENT, callback);
+  };
+}
+
 export const Sidebar = ({
   subtitle,
   items,
@@ -23,24 +48,19 @@ export const Sidebar = ({
 }) => {
   const pathname = usePathname();
 
-  // ponytail: in-memory — persists across navigation (layout stays mounted), resets on hard reload
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === "undefined") return false;
+  const collapsed = useSyncExternalStore(
+    subscribeToCollapsed,
+    readCollapsed,
+    () => false,
+  );
+  const toggle = () => {
     try {
-      return window.localStorage.getItem("chalo-sidebar-collapsed:v1") === "true";
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem("chalo-sidebar-collapsed:v1", String(collapsed));
+      window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(!collapsed));
+      window.dispatchEvent(new Event(SIDEBAR_EVENT));
     } catch {
       // Sidebar persistence is best-effort.
     }
-  }, [collapsed]);
-  const toggle = () => setCollapsed((c) => !c);
+  };
 
   return (
     <aside
