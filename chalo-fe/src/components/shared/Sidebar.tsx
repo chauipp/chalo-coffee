@@ -1,7 +1,7 @@
 "use client";
 // src/components/shared/Sidebar.tsx — collapsible sidebar shared by admin & staff
 
-import { useState, type ComponentType, type SVGProps } from "react";
+import { useEffect, useState, type ComponentType, type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeftIcon } from "./icons/ChevronLeftIcon";
@@ -10,6 +10,7 @@ import { UserMenu } from "./UserMenu";
 type NavItem = {
   label: string;
   href: string;
+  activePrefixes?: readonly string[];
   icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
@@ -23,7 +24,22 @@ export const Sidebar = ({
   const pathname = usePathname();
 
   // ponytail: in-memory — persists across navigation (layout stays mounted), resets on hard reload
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem("chalo-sidebar-collapsed:v1") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("chalo-sidebar-collapsed:v1", String(collapsed));
+    } catch {
+      // Sidebar persistence is best-effort.
+    }
+  }, [collapsed]);
   const toggle = () => setCollapsed((c) => !c);
 
   return (
@@ -66,8 +82,10 @@ export const Sidebar = ({
 
       {/* Navigation */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-        {items.map(({ label, href, icon: Icon }) => {
-          const isActive = pathname === href || pathname.startsWith(href + "/");
+        {items.map(({ label, href, activePrefixes, icon: Icon }) => {
+          const isActive = [href, ...(activePrefixes ?? [])].some(
+            (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
+          );
           return (
             <Link
               key={href}
