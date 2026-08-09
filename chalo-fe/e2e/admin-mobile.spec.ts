@@ -45,3 +45,24 @@ test("mobile admin restores product work after reload", async ({ page }) => {
   await page.goto("/admin");
   await page.waitForURL("**/admin/menu/products");
 });
+
+test("mobile admin uses product cards and keeps overflow navigation reachable", async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto("/admin/menu/products");
+
+  const mobileList = page.getByTestId("product-mobile-list");
+  await expect(mobileList).toBeVisible();
+  await expect(mobileList.getByTestId("product-mobile-card").first()).toBeVisible();
+  await expect(page.locator("table")).toBeHidden();
+
+  await page.getByRole("button", { name: "Bộ lọc sản phẩm" }).click();
+  await expect(page.getByRole("dialog", { name: "Lọc sản phẩm" })).toBeVisible();
+  await page.getByRole("button", { name: "Đóng" }).click();
+
+  await page.getByRole("button", { name: "Khác" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Mục quản trị khác" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Nhân viên" }).click();
+  await page.waitForURL("**/admin/staff");
+});
