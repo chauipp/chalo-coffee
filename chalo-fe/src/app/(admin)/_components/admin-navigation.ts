@@ -21,6 +21,17 @@ export function getActiveAdminNavHref(
   );
 }
 
+export function isAdminOverflowActive(
+  pathname: string,
+  primaryItems: readonly AdminNavMatch[],
+  overflowItems: readonly AdminNavMatch[],
+): boolean {
+  return (
+    getActiveAdminNavHref(pathname, primaryItems) === null &&
+    getActiveAdminNavHref(pathname, overflowItems) !== null
+  );
+}
+
 export function shouldRestoreAdminRoute(
   pathname: string,
   saved: AdminRouteState | null,

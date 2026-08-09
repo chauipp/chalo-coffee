@@ -30,7 +30,9 @@ export default function AdminLayout({
               <p className="text-[11px] text-gray-400">Admin Panel</p>
             </div>
           </header>
-          <main className="min-w-0 flex-1 overflow-auto pb-20 md:pb-0">{children}</main>
+          <main className="min-w-0 flex-1 overflow-auto pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
+            {children}
+          </main>
         </div>
       </div>
       <MobileAdminNav />

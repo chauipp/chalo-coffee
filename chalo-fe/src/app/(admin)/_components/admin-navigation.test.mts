@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   getActiveAdminNavHref,
+  isAdminOverflowActive,
   shouldRestoreAdminRoute,
 } from "./admin-navigation.ts";
 
@@ -25,4 +26,24 @@ test("only restores a saved route from the admin landing page", () => {
   assert.deepEqual(shouldRestoreAdminRoute("/admin", saved), saved);
   assert.equal(shouldRestoreAdminRoute("/admin/orders", saved), null);
   assert.equal(shouldRestoreAdminRoute("/login", saved), null);
+});
+
+test("marks the overflow destination active for staff and settings routes", () => {
+  const primary = [
+    { href: "/admin/dashboard" },
+    {
+      href: "/admin/menu/categories",
+      activePrefixes: ["/admin/menu/categories", "/admin/menu/products"],
+    },
+    { href: "/admin/orders" },
+    { href: "/admin/tables" },
+  ];
+  const overflow = [{ href: "/admin/staff" }, { href: "/admin/settings" }];
+
+  assert.equal(isAdminOverflowActive("/admin/staff", primary, overflow), true);
+  assert.equal(
+    isAdminOverflowActive("/admin/settings", primary, overflow),
+    true,
+  );
+  assert.equal(isAdminOverflowActive("/admin/orders", primary, overflow), false);
 });

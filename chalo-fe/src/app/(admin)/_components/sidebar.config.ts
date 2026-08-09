@@ -19,3 +19,23 @@ export const ADMIN_NAV_ITEMS = [
   { label: "Nhân viên", href: ROUTES.ADMIN.STAFF, icon: UsersIcon },
   { label: "Cài đặt", href: ROUTES.ADMIN.SETTINGS, icon: SettingsIcon },
 ];
+
+const ADMIN_MOBILE_PRIMARY_HREFS: readonly string[] = [
+  ROUTES.ADMIN.DASHBOARD,
+  ROUTES.ADMIN.MENU_CATEGORIES,
+  ROUTES.ADMIN.ORDERS,
+  ROUTES.ADMIN.TABLES,
+];
+
+const ADMIN_MOBILE_OVERFLOW_HREFS: readonly string[] = [
+  ROUTES.ADMIN.STAFF,
+  ROUTES.ADMIN.SETTINGS,
+];
+
+export const ADMIN_MOBILE_PRIMARY_NAV_ITEMS = ADMIN_NAV_ITEMS.filter((item) =>
+  ADMIN_MOBILE_PRIMARY_HREFS.includes(item.href),
+);
+
+export const ADMIN_MOBILE_OVERFLOW_NAV_ITEMS = ADMIN_NAV_ITEMS.filter((item) =>
+  ADMIN_MOBILE_OVERFLOW_HREFS.includes(item.href),
+);
