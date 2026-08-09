@@ -213,6 +213,27 @@ test("mobile dashboard and settings keep primary controls reachable", async ({ p
 
 test("mobile tab labels do not clip at phone width", async ({ page }) => {
   await loginAsAdmin(page);
+  const mobileNav = page.getByTestId("admin-mobile-nav");
+  await expect(mobileNav).toBeVisible();
+  await expect(mobileNav).toHaveCSS("border-top-left-radius", "16px");
+
+  const navItems = mobileNav
+    .getByTestId("admin-mobile-nav-items")
+    .locator(":scope > a, :scope > button");
+  await expect(navItems).toHaveCount(5);
+
+  const navBox = await mobileNav.boundingBox();
+  const firstItemBox = await navItems.first().boundingBox();
+  const lastItemBox = await navItems.last().boundingBox();
+  expect(navBox).not.toBeNull();
+  expect(firstItemBox).not.toBeNull();
+  expect(lastItemBox).not.toBeNull();
+
+  const leftInset = firstItemBox!.x - navBox!.x;
+  const rightInset =
+    navBox!.x + navBox!.width - (lastItemBox!.x + lastItemBox!.width);
+  expect(Math.abs(leftInset - rightInset)).toBeLessThanOrEqual(2);
+
   const hasClippedLabel = await page
     .getByRole("navigation", { name: "Điều hướng admin trên điện thoại" })
     .locator("span.max-w-full")
