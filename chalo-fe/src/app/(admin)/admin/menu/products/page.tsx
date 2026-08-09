@@ -21,10 +21,16 @@ import {
   ProductPageParam,
   ProductStatus,
 } from "@/services/menu/menu.types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ProductForm } from "./_components/ProductForm";
 import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
 import { QUERY_KEYS, ROUTES } from "@/constants";
+import { useAuthStore } from "@/stores/auth.store";
+import {
+  clearProductDraft,
+  readProductListState,
+  saveProductListState,
+} from "@/utils/admin-persistence";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const STATUS_BADGE: Record<
@@ -39,13 +45,31 @@ const STATUS_BADGE: Record<
   UNAVAILABLE: { label: "Tạm ẩn", variant: "gray" },
 };
 
+interface ProductListState {
+  filter?: Pick<ProductPageParam, "name" | "status" | "categoryId">;
+  editTarget?: ProductDto | null;
+}
+
+function getStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export default function ProductsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryIdParam = searchParams.get("categoryId") || undefined;
+  const userId = useAuthStore((state) => state.user?.id ?? null);
+  const isAuthHydrated = useAuthStore((state) => state.isHydrated);
   const [createOpen, setCreateOpen] = useState<boolean>(false);
   const [editTarget, setEditTarget] = useState<ProductDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProductDto | null>(null);
+  const restoredStateRef = useRef(false);
+  const skipFirstPersistRef = useRef(true);
 
   const initialFilter = useMemo<ProductPageParam>(
     () => ({ pageNo: 1, pageSize: 20, categoryId: categoryIdParam }),
@@ -57,6 +81,44 @@ export default function ProductsPage() {
     queryFn: getProductPage,
     queryKey: QUERY_KEYS.MENU.PRODUCTS,
   });
+
+  useEffect(() => {
+    if (!isAuthHydrated || !userId || restoredStateRef.current) return;
+    restoredStateRef.current = true;
+
+    const storage = getStorage();
+    const saved = storage
+      ? readProductListState<ProductListState>(storage, userId)
+      : null;
+    if (!saved) return;
+
+    if (saved.filter) {
+      table.updateFilter({
+        ...saved.filter,
+        categoryId: categoryIdParam ?? saved.filter.categoryId,
+      });
+    }
+    if (saved.editTarget) setEditTarget(saved.editTarget);
+  }, [categoryIdParam, isAuthHydrated, table, userId]);
+
+  useEffect(() => {
+    if (!isAuthHydrated || !userId) return;
+    if (skipFirstPersistRef.current) {
+      skipFirstPersistRef.current = false;
+      return;
+    }
+
+    const storage = getStorage();
+    if (!storage) return;
+    saveProductListState<ProductListState>(storage, userId, {
+      filter: {
+        name: table.filter.name,
+        status: table.filter.status,
+        categoryId: table.filter.categoryId,
+      },
+      editTarget,
+    });
+  }, [editTarget, isAuthHydrated, table.filter, userId]);
 
   const createProdMutation = useCreateProduct();
   const updateProdMutation = useUpdateProduct();
@@ -84,9 +146,19 @@ export default function ProductsPage() {
     if (!editTarget) return;
     try {
       await updateProdMutation.mutateAsync({ ...data, id: editTarget.id });
+      const storage = getStorage();
+      if (storage && userId) clearProductDraft(storage, userId, editTarget.id);
       setEditTarget(null);
       table.refresh();
     } catch {}
+  };
+
+  const handleCancelEdit = () => {
+    if (editTarget) {
+      const storage = getStorage();
+      if (storage && userId) clearProductDraft(storage, userId, editTarget.id);
+    }
+    setEditTarget(null);
   };
 
   const handleDeleteProd = async () => {
@@ -121,9 +193,13 @@ export default function ProductsPage() {
       header: "Tên sản phẩm",
       render: (row: ProductDto) => (
         <div>
-          <p className="font-medium text-gray-900 dark:text-gray-100">
+          <button
+            type="button"
+            onClick={() => setEditTarget(row)}
+            className="text-left font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-400"
+          >
             {row.name}
-          </p>
+          </button>
           <p className="text-xs text-gray-400">{row.categoryName}</p>
         </div>
       ),
@@ -194,9 +270,9 @@ export default function ProductsPage() {
   ];
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="space-y-5 p-4 sm:p-6">
       {/* header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Sản phẩm
@@ -217,6 +293,7 @@ export default function ProductsPage() {
       <div className="flex items-center gap-3 flex-wrap">
         <Input
           placeholder="Tìm tên sản phẩm ..."
+          value={table.filter.name ?? ""}
           onChange={(v) =>
             table.updateFilter({ name: v.target.value || undefined })
           }
@@ -242,6 +319,7 @@ export default function ProductsPage() {
           ]}
           placeholder="Tất cả trạng thái"
           className="w-44"
+          value={table.filter.status ?? ""}
           onChange={(v) =>
             table.updateFilter({
               status: (v.target.value as ProductDto["status"]) || undefined,
@@ -286,7 +364,7 @@ export default function ProductsPage() {
       </Modal>
 
       <Modal
-        onClose={() => setEditTarget(null)}
+        onClose={handleCancelEdit}
         open={!!editTarget}
         title="Chỉnh sửa sản phẩm"
         size="lg"
@@ -295,7 +373,7 @@ export default function ProductsPage() {
           <ProductForm
             defaultValue={editTarget}
             onSubmit={handleUpdateProd}
-            onCancel={() => setEditTarget(null)}
+            onCancel={handleCancelEdit}
             isLoading={updateProdMutation.isPending}
           />
         )}

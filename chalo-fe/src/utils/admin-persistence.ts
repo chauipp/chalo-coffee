@@ -2,6 +2,7 @@ export const DRAFT_TTL_MS = 7 * 24 * 60 * 60 * 1_000;
 
 const ROUTE_PREFIX = "chalo-admin-route:v1";
 const DRAFT_PREFIX = "chalo-admin-product-draft:v1";
+const PRODUCT_LIST_PREFIX = "chalo-admin-product-list:v1";
 
 export interface AdminRouteState {
   pathname: string;
@@ -19,6 +20,10 @@ export function adminRouteKey(userId: string): string {
 
 export function productDraftKey(userId: string, productId: string): string {
   return `${DRAFT_PREFIX}:${encodeURIComponent(userId)}:${encodeURIComponent(productId)}`;
+}
+
+export function productListStateKey(userId: string): string {
+  return `${PRODUCT_LIST_PREFIX}:${encodeURIComponent(userId)}`;
 }
 
 function remove(storage: Storage, key: string): void {
@@ -140,4 +145,39 @@ export function clearProductDraft(
   productId: string,
 ): void {
   if (userId && productId) remove(storage, productDraftKey(userId, productId));
+}
+
+export function saveProductListState<T>(
+  storage: Storage,
+  userId: string,
+  state: T,
+): void {
+  if (!userId) return;
+
+  try {
+    storage.setItem(productListStateKey(userId), JSON.stringify(state));
+  } catch {
+    // List restoration is best-effort.
+  }
+}
+
+export function readProductListState<T>(
+  storage: Storage,
+  userId: string,
+): T | null {
+  if (!userId) return null;
+
+  const key = productListStateKey(userId);
+  try {
+    const raw = storage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    remove(storage, key);
+    return null;
+  }
+}
+
+export function clearProductListState(storage: Storage, userId: string): void {
+  if (userId) remove(storage, productListStateKey(userId));
 }

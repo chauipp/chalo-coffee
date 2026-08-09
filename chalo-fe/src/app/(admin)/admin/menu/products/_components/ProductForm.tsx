@@ -9,10 +9,12 @@ import { ProductFormType, ProductSchema } from "@/schemas/menu.schema";
 import { useGetCategorySimpleList } from "@/services/lookup/lookup.queries";
 import { ProductDto } from "@/services/menu/menu.types";
 import { uploadImage } from "@/services/upload/upload.api";
+import { useAuthStore } from "@/stores/auth.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
+import { useProductDraft } from "@/hooks/useProductDraft";
 
 interface ProductFormProps {
   defaultValue?: ProductDto;
@@ -29,8 +31,37 @@ export const ProductForm = ({
 }: ProductFormProps) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const { data: categories } = useGetCategorySimpleList();
+  const userId = useAuthStore((state) => state.user?.id ?? null);
+  const productId = defaultValue?.id ?? null;
+
+  const serverDefaults = useMemo<Partial<ProductFormType>>(
+    () =>
+      defaultValue
+        ? {
+            name: defaultValue.name,
+            categoryId: defaultValue.categoryId,
+            description: defaultValue.description ?? undefined,
+            imageUrl: defaultValue.imageUrl ?? undefined,
+            isActive: defaultValue.isActive,
+            prepTime: defaultValue.prepTime,
+            price: defaultValue.price,
+            sortOrder: defaultValue.sortOrder,
+            status: defaultValue.status,
+          }
+        : {
+            isActive: true,
+            status: "AVAILABLE",
+          },
+    [defaultValue],
+  );
+  const { defaultValues, saveDraft } = useProductDraft<Partial<ProductFormType>>(
+    userId,
+    productId,
+    serverDefaults,
+  );
 
   const {
+    control,
     register,
     setValue,
     handleSubmit,
@@ -38,23 +69,13 @@ export const ProductForm = ({
     formState: { errors },
   } = useForm<ProductFormType>({
     resolver: zodResolver(ProductSchema) as any,
-    defaultValues: defaultValue
-      ? {
-          name: defaultValue?.name,
-          categoryId: defaultValue?.categoryId,
-          description: defaultValue?.description ?? undefined,
-          imageUrl: defaultValue?.imageUrl ?? undefined,
-          isActive: defaultValue?.isActive,
-          prepTime: defaultValue?.prepTime,
-          price: defaultValue?.price,
-          sortOrder: defaultValue?.sortOrder,
-          status: defaultValue?.status,
-        }
-      : {
-          isActive: true,
-          status: "AVAILABLE",
-        },
+    defaultValues,
   });
+
+  const formValues = useWatch({ control });
+  useEffect(() => {
+    if (productId) saveDraft(formValues);
+  }, [formValues, productId, saveDraft]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -87,7 +108,7 @@ export const ProductForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* name */}
         <div className="col-span-2">
           <FormField label="Tên sản phẩm" error={errors.name?.message} required>
@@ -178,7 +199,7 @@ export const ProductForm = ({
             error={errors.imageUrl?.message}
             hint="Upload ảnh hoặc nhập URL trực tiếp"
           >
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Input
                 {...register("imageUrl")}
                 error={!!errors.imageUrl}
@@ -220,7 +241,7 @@ export const ProductForm = ({
         </FormField>
       </div>
 
-      <div className="flex justify-end gap-3 pt-2">
+      <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
