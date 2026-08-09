@@ -59,6 +59,70 @@ test("mobile admin restores product work after reload", async ({ page }) => {
   await page.waitForURL("**/admin/menu/products");
 });
 
+test("mobile product editor groups fields and keeps actions reachable", async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto("/admin/menu/products");
+
+  const card = page.getByTestId("product-mobile-card").first();
+  await expect(card).toBeVisible({ timeout: 15_000 });
+  await card.getByRole("button", { name: /M.*ch.*nh s.*a/i }).click();
+
+  const dialog = page.getByRole("dialog").first();
+  await expect(dialog).toBeVisible({ timeout: 15_000 });
+
+  const sections = dialog.locator("[data-testid^='product-edit-section-']");
+  await expect(sections).toHaveCount(5);
+  await expect(sections.nth(0)).toHaveAttribute(
+    "data-testid",
+    "product-edit-section-info",
+  );
+  await expect(sections.nth(1)).toHaveAttribute(
+    "data-testid",
+    "product-edit-section-operations",
+  );
+  await expect(sections.nth(2)).toHaveAttribute(
+    "data-testid",
+    "product-edit-section-description",
+  );
+  await expect(sections.nth(3)).toHaveAttribute(
+    "data-testid",
+    "product-edit-section-image",
+  );
+  await expect(sections.nth(4)).toHaveAttribute(
+    "data-testid",
+    "product-edit-section-visibility",
+  );
+  await expect(dialog.locator("h3")).toHaveCount(5);
+
+  const hasHorizontalOverflow = await dialog.evaluate(
+    (node) => node.scrollWidth > node.clientWidth,
+  );
+  expect(hasHorizontalOverflow).toBe(false);
+
+  const actions = dialog.getByTestId("product-edit-actions");
+  await expect(actions).toBeVisible();
+  const actionsBox = await actions.boundingBox();
+  const dialogBox = await dialog.boundingBox();
+  expect(actionsBox).not.toBeNull();
+  expect(dialogBox).not.toBeNull();
+  expect(actionsBox!.y + actionsBox!.height).toBeLessThanOrEqual(
+    dialogBox!.y + dialogBox!.height + 1,
+  );
+
+  const nameInput = dialog.locator('input[name="name"]');
+  const draftName = `${await nameInput.inputValue()} grouped draft`;
+  await nameInput.fill(draftName);
+  await page.waitForTimeout(350);
+  await page.reload();
+
+  const restoredDialog = page.getByRole("dialog").first();
+  await expect(restoredDialog).toBeVisible({ timeout: 15_000 });
+  await expect(restoredDialog.locator('input[name="name"]')).toHaveValue(draftName);
+
+  await restoredDialog.getByRole("button", { name: /H.*y/i }).click();
+  await expect(restoredDialog).toBeHidden();
+});
+
 test("mobile admin uses product cards and keeps overflow navigation reachable", async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto("/admin/menu/products");
