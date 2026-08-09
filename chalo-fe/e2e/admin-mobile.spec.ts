@@ -72,11 +72,24 @@ test("mobile admin uses product cards and keeps overflow navigation reachable", 
   await expect(page.getByRole("dialog", { name: "Lọc sản phẩm" })).toBeVisible();
   await page.getByRole("button", { name: "Đóng" }).click();
 
-  // Next.js Dev Tools overlays the lower-right mobile slot in local dev only.
-  await page.getByRole("button", { name: "Khác" }).press("Enter");
+  await page.getByRole("button", { name: "Khác" }).click();
   await expect(
     page.getByRole("dialog", { name: "Mục quản trị khác" }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Nhân viên" }).click();
   await page.waitForURL("**/admin/staff");
+});
+
+test("mobile admin presents every data collection as readable cards", async ({ page }) => {
+  await loginAsAdmin(page);
+  for (const [path, testId] of [
+    ["/admin/menu/categories", "admin-mobile-category-card"],
+    ["/admin/tables", "admin-mobile-table-card"],
+    ["/admin/orders", "admin-mobile-order-card"],
+    ["/admin/staff", "admin-mobile-staff-card"],
+  ]) {
+    await page.goto(path);
+    await expect(page.getByTestId(testId).first()).toBeVisible();
+    await expect(page.locator("table")).toBeHidden();
+  }
 });

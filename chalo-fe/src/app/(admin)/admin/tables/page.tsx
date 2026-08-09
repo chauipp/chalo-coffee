@@ -16,6 +16,7 @@ import { useState } from "react";
 import { TableForm } from "./_components/TableForm";
 import { QRModal } from "./_components/QRModal";
 import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
+import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 
 const TABLE_BADGE: Record<
   TableStatus,
@@ -123,22 +124,19 @@ export default function TablesPage() {
   return (
     <div className="space-y-6 p-4 sm:p-6">
       {/* header */}
-      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-            Bàn & QR
-          </h1>
-          <p className="mt-0.5 text-sm text-gray-500">
-            Quản lý bàn và mã QR đặt tại bàn
-          </p>
-        </div>
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="rounded-xl bg-brand-400 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-500 transition-colors"
-        >
-          + Thêm bàn
-        </button>
-      </div>
+      <AdminMobilePageHeader
+        title="Bàn & QR"
+        description="Quản lý bàn và mã QR đặt tại bàn"
+        summary={`${tables.length} bàn`}
+        action={
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="w-full rounded-xl bg-brand-400 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-500 sm:w-auto"
+          >
+            + Thêm bàn
+          </button>
+        }
+      />
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {[
@@ -178,6 +176,53 @@ export default function TablesPage() {
         isLoading={isLoadingTables}
         total={tables.length}
         emptyText="Chưa có bàn nào. Hãy thêm bàn đầu tiên!"
+        mobileCard={(row) => {
+          const status = TABLE_BADGE[row.status];
+          return (
+            <article
+              data-testid="admin-mobile-table-card"
+              className="rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {row.name}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {row.area || "Không phân khu"}
+                  </p>
+                </div>
+                <Badge label={status.label} variant={status.variant} />
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-2 dark:border-gray-800">
+                <button
+                  type="button"
+                  onClick={() => setQrTarget(row)}
+                  className="min-h-11 rounded-lg px-3 text-xs font-semibold text-brand-600"
+                >
+                  Xem QR
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditTarget(row)}
+                    className="min-h-11 rounded-lg px-3 text-xs font-semibold text-brand-600"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(row)}
+                    disabled={row.status === "OCCUPIED"}
+                    className="min-h-11 rounded-lg px-3 text-xs font-semibold text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            </article>
+          );
+        }}
       />
 
       {/* create */}

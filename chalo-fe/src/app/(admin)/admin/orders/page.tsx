@@ -15,6 +15,8 @@ import {
 } from "@/services/order/order.types";
 import { useGetTableList } from "@/services/table";
 import { useState } from "react";
+import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
+import { MobileFilterSheet } from "../../_components/MobileFilterSheet";
 
 const STATUS_BADGE: Record<OrderStatus, { label: string; variant: BadgeVariant }> =
   {
@@ -36,6 +38,7 @@ export default function AdminOrdersPage() {
     queryKey: QUERY_KEYS.ORDERS.PAGE({}),
   });
   const [date, setDate] = useState("");
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
   const columns: Array<Column<OrderDto>> = [
     {
@@ -95,14 +98,13 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-5 p-4 sm:p-6">
-      <div>
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Đơn hàng
-        </h1>
-        <p className="mt-0.5 text-sm text-gray-500">Toàn bộ đơn hàng của quán</p>
-      </div>
+      <AdminMobilePageHeader
+        title="Đơn hàng"
+        description="Toàn bộ đơn hàng của quán"
+        summary={`${table.pagination.total} đơn`}
+      />
 
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="hidden flex-wrap items-center gap-3 md:flex">
         <Select
           className="w-48"
           placeholder="Tất cả trạng thái"
@@ -146,6 +148,84 @@ export default function AdminOrdersPage() {
         )}
       </div>
 
+      <div className="md:hidden">
+        <button
+          type="button"
+          aria-label="Bộ lọc đơn hàng"
+          onClick={() => setFilterSheetOpen(true)}
+          className="flex min-h-11 w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+        >
+          Lọc đơn hàng
+        </button>
+      </div>
+      <MobileFilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        title="Lọc đơn hàng"
+      >
+        <Select
+          aria-label="Trạng thái đơn hàng"
+          className="w-full"
+          placeholder="Tất cả trạng thái"
+          options={ORDER_STATUS.map((status) => ({
+            value: status,
+            label: STATUS_BADGE[status].label,
+          }))}
+          value={table.filter.status ?? ""}
+          onChange={(event) =>
+            table.updateFilter({
+              status: (event.target.value as OrderStatus) || undefined,
+            })
+          }
+        />
+        <Select
+          aria-label="Bàn"
+          className="w-full"
+          placeholder="Tất cả bàn"
+          options={(tables ?? []).map((tableItem) => ({
+            value: tableItem.id,
+            label: tableItem.name,
+          }))}
+          value={table.filter.tableId ?? ""}
+          onChange={(event) =>
+            table.updateFilter({ tableId: event.target.value || undefined })
+          }
+        />
+        <Input
+          aria-label="Ngày đặt hàng"
+          type="date"
+          className="w-full"
+          value={date}
+          onChange={(event) => {
+            setDate(event.target.value);
+            table.updateFilter({ date: event.target.value || undefined });
+          }}
+        />
+        <div className="flex items-center justify-between gap-3">
+          {(table.filter.status || table.filter.tableId || table.filter.date) ? (
+            <button
+              type="button"
+              onClick={() => {
+                table.resetFilter();
+                setDate("");
+              }}
+              className="min-h-11 px-2 text-sm font-semibold text-gray-500"
+            >
+              Xóa bộ lọc
+            </button>
+          ) : (
+            <span />
+          )}
+          <button
+            type="button"
+            onClick={() => setFilterSheetOpen(false)}
+            className="min-h-11 rounded-xl bg-brand-400 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-500"
+          >
+            Áp dụng bộ lọc
+          </button>
+        </div>
+      </MobileFilterSheet>
+
       <DataTable
         columns={columns}
         data={table.data}
@@ -155,6 +235,41 @@ export default function AdminOrdersPage() {
         onPageChange={table.changePage}
         onPageSizeChange={table.changePageSize}
         emptyText="Không có đơn hàng nào."
+        mobileCard={(row) => {
+          const status = STATUS_BADGE[row.status];
+          return (
+            <article
+              data-testid="admin-mobile-order-card"
+              className="rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    #{row.id.slice(0, 8)}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-gray-400">
+                    {row.tableName} · {row.items?.length ?? 0} món
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1.5">
+                  <Badge label={status.label} variant={status.variant} />
+                  <Badge
+                    label={row.paidStatus ? "Đã trả" : "Chưa trả"}
+                    variant={row.paidStatus ? "green" : "gray"}
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex items-end justify-between gap-3 border-t border-gray-100 pt-2 dark:border-gray-800">
+                <p className="text-xs text-gray-400">
+                  {new Date(row.createdAt).toLocaleString("vi-VN")}
+                </p>
+                <p className="shrink-0 text-sm font-bold text-gray-900 dark:text-gray-100">
+                  {row.totalAmount.toLocaleString("vi-VN")}đ
+                </p>
+              </div>
+            </article>
+          );
+        }}
       />
     </div>
   );

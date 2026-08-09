@@ -25,6 +25,9 @@ export function MobileAdminNav() {
     ADMIN_MOBILE_PRIMARY_NAV_ITEMS,
     ADMIN_MOBILE_OVERFLOW_NAV_ITEMS,
   );
+  // The Next.js dev indicator occupies the lower-right corner on local builds.
+  const mobileNavAlignment =
+    process.env.NODE_ENV === "development" ? "ml-0 mr-14" : "mx-auto";
 
   return (
     <nav
@@ -32,7 +35,9 @@ export function MobileAdminNav() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 px-1 pt-1 shadow-[0_-4px_20px_rgba(15,23,42,0.08)] backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
+      <div
+        className={`grid max-w-lg grid-cols-5 gap-1 ${mobileNavAlignment}`}
+      >
         {ADMIN_MOBILE_PRIMARY_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = activeHref === href;
 
