@@ -23,25 +23,28 @@ const PERIOD_OPTIONS = [
 
 export function DashboardControls({ value, onChange }: Props) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div
+      data-testid="admin-mobile-dashboard-controls"
+      className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
+    >
       <Select
         options={PERIOD_OPTIONS}
         value={value.period}
         onChange={(e) => onChange({ ...value, period: e.target.value as Period })}
-        className="w-40"
+        className="w-full sm:w-40"
       />
       <Input
         type="date"
         value={value.from ?? ""}
         onChange={(e) => onChange({ ...value, from: e.target.value || undefined })}
-        className="w-44"
+        className="w-full sm:w-44"
       />
-      <span className="text-gray-400">→</span>
+      <span className="hidden text-gray-400 sm:inline">→</span>
       <Input
         type="date"
         value={value.to ?? ""}
         onChange={(e) => onChange({ ...value, to: e.target.value || undefined })}
-        className="w-44"
+        className="w-full sm:w-44"
       />
       {(value.from || value.to) && (
         <button

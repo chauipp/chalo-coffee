@@ -8,6 +8,7 @@ import { StatCard } from "./_components/StatCard";
 import { DashboardControls, DashboardFilter } from "./_components/DashboardControls";
 import { RevenueChart } from "./_components/RevenueChart";
 import { TopProductsChart } from "./_components/TopProductsChart";
+import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 
 export default function AdminDashboardPage() {
   const [filter, setFilter] = useState<DashboardFilter>({ period: Period.DAY });
@@ -21,15 +22,13 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-5 p-4 sm:p-6">
-      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Tổng quan</h1>
-          <p className="mt-0.5 text-sm text-gray-500">Doanh thu &amp; sản phẩm bán chạy</p>
-        </div>
-        <DashboardControls value={filter} onChange={setFilter} />
-      </div>
+      <AdminMobilePageHeader
+        title="Tổng quan"
+        description="Doanh thu & sản phẩm bán chạy"
+        action={<DashboardControls value={filter} onChange={setFilter} />}
+      />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard
           label="Tổng doanh thu"
           value={formatVnd(revenue?.totalRevenue ?? 0)}
@@ -42,13 +41,17 @@ export default function AdminDashboardPage() {
           icon="🧾"
           isLoading={revenueQuery.isLoading}
         />
-        <StatCard
-          label="Bán chạy nhất"
-          value={bestSeller?.productName ?? "—"}
-          hint={bestSeller ? `${bestSeller.totalQuantity} ly đã bán` : undefined}
-          icon="⭐"
-          isLoading={topProductsQuery.isLoading}
-        />
+        <div className="col-span-2 sm:col-span-1">
+          <StatCard
+            label="Bán chạy nhất"
+            value={bestSeller?.productName ?? "—"}
+            hint={
+              bestSeller ? `${bestSeller.totalQuantity} ly đã bán` : undefined
+            }
+            icon="⭐"
+            isLoading={topProductsQuery.isLoading}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

@@ -93,3 +93,20 @@ test("mobile admin presents every data collection as readable cards", async ({ p
     await expect(page.locator("table")).toBeHidden();
   }
 });
+
+test("mobile dashboard and settings keep primary controls reachable", async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto("/admin/dashboard");
+
+  const dashboardControls = page.getByTestId("admin-mobile-dashboard-controls");
+  await expect(dashboardControls).toBeVisible();
+  await expect(dashboardControls).toHaveCSS("flex-direction", "column");
+
+  await page.goto("/admin/settings");
+  const settingsSave = page.getByTestId("admin-mobile-settings-save");
+  await expect(settingsSave).toBeVisible();
+  await expect(settingsSave).toHaveCSS("position", "sticky");
+  await expect(
+    settingsSave.getByRole("button", { name: "Lưu thay đổi" }),
+  ).toBeVisible();
+});

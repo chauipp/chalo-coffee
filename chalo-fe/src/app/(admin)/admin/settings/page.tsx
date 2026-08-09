@@ -6,6 +6,7 @@ import { Select } from "@/components/shared/ui/Select";
 import { Toggle } from "@/components/shared/ui/Toggle";
 import { SettingsDto, useGetSettings, useUpdateSettings } from "@/services/settings";
 import { useState } from "react";
+import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 
 /** Các ngân hàng VN phổ biến — value là mã BIN Napas dùng cho VietQR. */
 const VN_BANKS = [
@@ -84,14 +85,10 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-xl space-y-6 p-4 sm:p-6">
-      <div>
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Cài đặt
-        </h1>
-        <p className="mt-0.5 text-sm text-gray-500">
-          Cấu hình vận hành và thanh toán
-        </p>
-      </div>
+      <AdminMobilePageHeader
+        title="Cài đặt"
+        description="Cấu hình vận hành và thanh toán"
+      />
 
       <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-5">
         <div className="flex items-center justify-between gap-4">
@@ -178,13 +175,18 @@ export default function SettingsPage() {
         )}
       </div>
 
-      <button
-        onClick={save}
-        disabled={!dirty || updateM.isPending}
-        className="rounded-xl bg-brand-400 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-500 transition-colors disabled:opacity-50"
+      <div
+        data-testid="admin-mobile-settings-save"
+        className="sticky bottom-0 -mx-4 border-t border-gray-200 bg-gray-50/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0"
       >
-        {updateM.isPending ? "Đang lưu..." : "Lưu thay đổi"}
-      </button>
+        <button
+          onClick={save}
+          disabled={!dirty || updateM.isPending}
+          className="w-full rounded-xl bg-brand-400 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-500 disabled:opacity-50 sm:w-auto"
+        >
+          {updateM.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+        </button>
+      </div>
     </div>
   );
 }
