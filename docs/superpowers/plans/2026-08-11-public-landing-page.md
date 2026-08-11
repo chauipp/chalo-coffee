@@ -122,7 +122,7 @@
   - [ ] Chạy full gate: `pnpm test:unit && pnpm exec tsc --noEmit && pnpm build && pnpm exec playwright test e2e/public-landing.spec.ts --project=chromium`.
   - [ ] Commit: `git add chalo-fe/e2e/public-landing.spec.ts && git commit -m "test: verify public landing interactions"`.
 
-- [ ] Task 5: Viết summary và chuẩn bị bàn giao
+- [x] Task 5: Viết summary và chuẩn bị bàn giao
 
   **Files:**
   - Create: `docs/superpowers/summaries/2026-08-11-public-landing-page-summary.md`
