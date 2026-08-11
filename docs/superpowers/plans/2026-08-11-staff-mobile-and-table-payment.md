@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Hoàn thiện trải nghiệm staff trên mobile cho Đơn hàng, POS, Bàn và bổ sung thanh toán gộp tại bàn với lựa chọn QR hoặc tiền mặt trên cả PC/mobile.
+**Goal:** Hoàn thiện trải nghiệm staff trên mobile cho Đơn hàng, POS, Bàn và đưa thanh toán QR/tiền mặt vào modal chi tiết đơn với lựa chọn thanh toán đơn hoặc cả bàn.
 
-**Architecture:** Giữ API thanh toán gộp hiện có, thêm một component thanh toán dùng chung cho chi tiết bàn. Mobile dùng shell riêng với bottom navigation; các trang staff giữ state/query hiện tại nhưng đổi layout theo breakpoint và dùng sheet cho giỏ/chi tiết. Khu pha chế chỉ giữ trên desktop.
+**Architecture:** Giữ các API thanh toán một đơn và gộp hiện có, thêm bước thanh toán ngay trong modal chi tiết đơn với toggle phạm vi. Mobile dùng shell riêng với bottom navigation; các trang staff giữ state/query hiện tại nhưng đổi layout theo breakpoint và dùng sheet cho giỏ/chi tiết. Khu pha chế chỉ giữ trên desktop.
 
 **Tech Stack:** Next.js App Router, React, TypeScript, Tailwind CSS, TanStack Query, qrcode.react, Vitest/Jest hiện có, Playwright.
 
@@ -19,44 +19,43 @@
 
 ---
 
-- [x] Task 1: Tách logic thanh toán và tạo component popup dùng chung
+- [ ] Task 1: Tạo bước thanh toán QR/tiền mặt trong modal chi tiết đơn
 
 **Files:**
-- Create: `chalo-fe/src/app/(staff)/staff/tables/_components/payment.utils.ts`
-- Create: `chalo-fe/src/app/(staff)/staff/tables/_components/TablePaymentModal.tsx`
-- Modify: `chalo-fe/src/services/order/order.queries.ts` (chỉ nếu cần expose invalidate/query key hiện có)
-- Test: `chalo-fe/src/app/(staff)/staff/tables/_components/payment.utils.test.ts`
+- Create: `chalo-fe/src/app/(staff)/staff/orders/_components/OrderPaymentPanel.tsx`
+- Create: `chalo-fe/src/app/(staff)/staff/orders/_components/payment.utils.ts`
+- Create: `chalo-fe/src/app/(staff)/staff/orders/_components/payment.utils.test.mts`
+- Modify: `chalo-fe/src/services/order/order.queries.ts`
+- Delete after migration: `chalo-fe/src/app/(staff)/staff/tables/_components/TablePaymentModal.tsx`
+- Delete after migration: `chalo-fe/src/app/(staff)/staff/tables/_components/payment.utils.ts`
 
 **Interfaces:**
-- `calculateCashChange(total: number, received: number): { valid: boolean; change: number }` trả `valid=false` cho input không hợp lệ hoặc thiếu tiền.
-- `TablePaymentModal` nhận `table: TableDto`, `totalUnpaid: number`, `onClose: () => void`, `onSuccess: () => void` và gọi `usePayAllOrders(table.qrToken)` khi xác nhận.
+- `calculateCashChange(total: number, received: number | string): { valid: boolean; change: number }` trả `valid=false` cho input không hợp lệ hoặc thiếu tiền.
+- `OrderPaymentPanel` nhận `order: OrderDto`, `tableOrders: OrderDto[]`, `onCancel: () => void`, `onSuccess: () => void`; mặc định scope `order`, có scope `table`, và gọi `usePayOrder` hoặc `usePayAllOrders` tương ứng.
 
-- [ ] Step 1: Viết test đỏ cho tiền thiếu, vừa đủ, tiền thừa, chuỗi rỗng và số âm.
-- [ ] Step 2: Chạy test helper để xác nhận fail vì chưa có hàm.
-- [ ] Step 3: Viết `calculateCashChange` thuần, chuẩn hoá số nhập và không dùng giá trị floating-point.
-- [ ] Step 4: Chạy test helper và xác nhận pass.
-- [ ] Step 5: Đọc `buildVietQR`, `useGetSettings`/query cấu hình ngân hàng và `usePayAllOrders`; dựng modal có hai lựa chọn `QR chuyển khoản`/`Tiền mặt`, loading, đóng bằng nền/Escape và lỗi giữ modal mở.
-- [ ] Step 6: Với QR, tạo payload bằng tổng tiền và thông tin ngân hàng; nếu thiếu cấu hình hiển thị hướng dẫn cấu hình. Với tiền mặt, render input số, tiền thừa và disable xác nhận khi thiếu.
-- [ ] Step 7: Chạy typecheck và test liên quan.
-- [ ] Step 8: Commit `feat: add staff table payment method modal`.
+- [ ] Step 1: Viết test đỏ cho helper tiền mặt: thiếu, vừa đủ, thừa, chuỗi rỗng và số âm.
+- [ ] Step 2: Viết `OrderPaymentPanel` có toggle `Đơn này`/`Cả bàn`, hai phương thức QR/tiền mặt, loading và xác nhận theo mutation tương ứng.
+- [ ] Step 3: Tạo VietQR theo tổng scope hiện tại; thiếu cấu hình ngân hàng phải hiện hướng dẫn thay vì QR rỗng.
+- [ ] Step 4: Chạy helper test, typecheck và commit `feat: add order payment step`.
 
-- [x] Task 2: Gắn thanh toán vào chi tiết bàn trên PC và mobile
+- [ ] Task 2: Tích hợp bước thanh toán vào modal chi tiết đơn và bỏ in tạm tính
 
 **Files:**
+- Modify: `chalo-fe/src/app/(staff)/staff/orders/@modal/(.)orders/[orderId]/page.tsx`
 - Modify: `chalo-fe/src/app/(staff)/staff/tables/_components/TableDrawer.tsx`
-- Modify: `chalo-fe/src/app/(staff)/staff/tables/page.tsx`
-- Modify: `chalo-fe/src/app/(staff)/staff/tables/_components/TableDrawer.tsx` responsive classes
-- Test: `chalo-fe/src/app/(staff)/staff/tables/_components/TableDrawer.test.tsx` (nếu test harness hiện có hỗ trợ component)
+- Modify: `chalo-fe/e2e/staff-table-payment.spec.ts`
+- Delete: `chalo-fe/src/app/(staff)/staff/tables/_components/TablePaymentModal.tsx`
 
 **Interfaces:**
-- `TableDrawer` quản lý `showPayment`; khi `totalUnpaid > 0` render `TablePaymentModal` với table hiện tại.
-- Sau `onSuccess`, đóng modal/drawer và invalidate `QUERY_KEYS.TABLES` cùng order queries đang dùng.
+- `OrderDetailModal` quản lý `paymentOpen`; khi bấm `Thanh toán`, thay body bằng `OrderPaymentPanel`.
+- `useGetOrderByToken(order.tableToken)` cung cấp các đơn của bàn cho scope `Cả bàn`.
+- `TableDrawer` không còn nút/popup thanh toán; vẫn hiển thị tổng chưa trả và responsive sheet.
 
-- [ ] Step 1: Viết test/fixture cho bàn OCCUPIED có nhiều đơn chưa thanh toán và kiểm tra tổng được gộp.
-- [ ] Step 2: Thêm nút `Thanh toán` vào footer drawer khi có tổng chưa thanh toán; không render khi bàn trống hoặc đã trả hết.
-- [ ] Step 3: Render modal dùng chung, truyền `table.qrToken` gián tiếp qua `table` và làm mới dữ liệu sau success.
-- [ ] Step 4: Đổi drawer mobile thành `inset-x-0 bottom-0 max-h-[92dvh] rounded-t-2xl`, desktop giữ panel bên phải; đảm bảo danh sách đơn cuộn riêng.
-- [ ] Step 5: Chạy test/typecheck và commit `feat: enable table payment from staff drawer`.
+- [ ] Step 1: Thêm `paymentOpen` và query đơn theo bàn; khi scope thanh toán thành công đóng modal và quay lại danh sách.
+- [ ] Step 2: Xoá nút `In tạm tính`, đổi nút `Đã thanh toán` thành `Thanh toán` mở bước mới; nút in hoá đơn chính thức giữ nguyên.
+- [ ] Step 3: Xoá tích hợp payment khỏi `TableDrawer`, giữ layout drawer và tổng chưa thanh toán không có nút thanh toán.
+- [ ] Step 4: E2E kiểm tra mặc định Đơn này, chuyển Cả bàn, QR, tiền mặt và payload `/order/pay`/`/order/pay-all`.
+- [ ] Step 5: Chạy typecheck/unit/E2E và commit `feat: integrate payment into order detail`.
 
 - [x] Task 3: Tạo shell điều hướng mobile staff và ẩn khu pha chế trên mobile
 
