@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     template: "%s | Chalo",
   },
   description: "Chalo Coffee — thực đơn cà phê, trà và những khoảng chậm dành cho bạn.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {

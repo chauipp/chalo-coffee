@@ -103,7 +103,7 @@
   - [ ] Chạy `pnpm lint`, `pnpm test:unit`, `pnpm exec tsc --noEmit`; expected 0 lỗi.
   - [ ] Commit: `git add chalo-fe/src/app/layout.tsx chalo-fe/src/app/globals.css chalo-fe/src/app/_components/PublicLanding.tsx && git commit -m "refactor: polish public landing accessibility"`.
 
-- [ ] Task 4: E2E và kiểm tra trực quan desktop/mobile
+- [x] Task 4: E2E và kiểm tra trực quan desktop/mobile
 
   **Files:**
   - Create: `chalo-fe/e2e/public-landing.spec.ts`
