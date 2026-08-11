@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Modal } from "@/components/shared/ui/Modal";
+import { LogoutIcon } from "@/components/shared/icons/LogoutIcon";
+import { useLogout } from "@/hooks/useLogout";
 import {
   getActiveAdminNavHref,
   isAdminOverflowActive,
@@ -15,6 +17,7 @@ import {
 
 export function MobileAdminNav() {
   const pathname = usePathname();
+  const logout = useLogout();
   const [overflowOpen, setOverflowOpen] = useState(false);
   const activeHref = getActiveAdminNavHref(
     pathname,
@@ -93,6 +96,16 @@ export function MobileAdminNav() {
               {label}
             </Link>
           ))}
+          <div className="border-t border-gray-100 pt-2 dark:border-gray-800">
+            <button
+              type="button"
+              onClick={() => void logout()}
+              className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+            >
+              <LogoutIcon className="size-5" aria-hidden="true" />
+              Đăng xuất
+            </button>
+          </div>
         </div>
       </Modal>
     </nav>
