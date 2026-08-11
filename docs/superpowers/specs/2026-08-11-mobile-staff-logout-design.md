@@ -15,3 +15,7 @@ Khi bấm, tab gọi `useLogout` hiện có. Hook này gửi yêu cầu logout t
 - Không thay đổi thanh sidebar/desktop, quyền staff hay route.
 - Kiểm thử component/luồng ở viewport 375×667: thấy nút, bấm đăng xuất và được chuyển về `/login`.
 - Kiểm tra không có overflow ngang, lỗi console hay request 4xx/5xx ngoài logout dự kiến.
+
+## Plan thực thi
+
+Xem [plan triển khai](../plans/2026-08-11-mobile-staff-logout.md).
