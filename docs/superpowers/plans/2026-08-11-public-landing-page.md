@@ -62,7 +62,7 @@
   - [ ] Chạy lại cùng test; expected toàn bộ pass.
   - [ ] Commit: `git add chalo-fe/src/app/_components/landing-data.ts chalo-fe/src/app/_components/landing-data.test.mts && git commit -m "feat: prepare public landing menu data"`.
 
-- [ ] Task 2: Đổi route `/` và dựng UI landing tối giản responsive
+- [x] Task 2: Đổi route `/` và dựng UI landing tối giản responsive
 
   **Files:**
   - Create: `chalo-fe/src/app/_components/PublicLanding.tsx`
