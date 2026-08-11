@@ -52,6 +52,7 @@ export default function StaffOrdersPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [isSSEConnected, setIsSSEConnected] = useState<boolean>(false);
   const [tableSearch, setTableSearch] = useState("");
+  const [mobileStatus, setMobileStatus] = useState<OrderStatus>("PENDING");
 
   const accessToken = useAuthStore((s) => s.accessToken);
 
@@ -154,34 +155,34 @@ export default function StaffOrdersPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
         <div>
-          <h1 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
             Đơn hàng
           </h1>
-          <p className="text-sm text-stone-500 dark:text-stone-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Real-time · {totalActive} đơn đang xử lý
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full items-center gap-2 sm:w-auto sm:gap-3">
           <input
             type="search"
             value={tableSearch}
             onChange={(e) => setTableSearch(e.target.value)}
             placeholder="🔍 Tìm bàn..."
-            className="w-44 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-3 py-1.5 text-sm text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-400"
+            className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 sm:w-44 sm:flex-none"
           />
           <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
             <span
               className={`size-2 rounded-full ${
-                isSSEConnected ? "bg-green-500 animate-pulse" : "bg-stone-400"
+                isSSEConnected ? "bg-green-500 animate-pulse" : "bg-gray-400"
               }`}
             />
             {isSSEConnected ? "Live" : "Connecting..."}
           </div>
           <button
             onClick={() => refetch()}
-            className="rounded-lg border border-stone-200 dark:border-stone-700 px-3 py-1.5 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
+            className="min-h-10 shrink-0 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
           >
             🔄 Làm mới
           </button>
@@ -193,8 +194,42 @@ export default function StaffOrdersPage() {
           <SpinnerIcon className="size-8 animate-spin text-brand-400" />
         </div>
       ) : (
-        // Khu pha chế (cột "Đang pha chế") nằm ở layout staff — luôn hiển thị
-        <div className="relative flex-1 min-h-0 overflow-x-auto p-4">
+        <>
+          <div className="flex shrink-0 gap-1 overflow-x-auto border-b border-gray-200 bg-white p-2 dark:border-gray-800 dark:bg-gray-900 md:hidden">
+            {leftColumns.map((column) => {
+              const count = ordersForColumn(column.status).length;
+              const active = mobileStatus === column.status;
+              return (
+                <button
+                  key={column.status}
+                  type="button"
+                  onClick={() => setMobileStatus(column.status)}
+                  className={`min-h-11 shrink-0 rounded-xl px-3 text-sm font-semibold transition-colors ${
+                    active
+                      ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300"
+                      : "text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {column.emoji} {column.label} {count > 0 ? `(${count})` : ""}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex-1 min-h-0 p-3 md:hidden">
+            {leftColumns
+              .filter((column) => column.status === mobileStatus)
+              .map((column) => (
+                <KanbanColumn
+                  config={column}
+                  onStatusChange={handleStatusChange}
+                  updatingId={updatingId}
+                  orders={ordersForColumn(column.status)}
+                  key={column.status}
+                />
+              ))}
+          </div>
+          {/* Khu pha chế (cột "Đang pha chế") nằm ở layout staff desktop */}
+          <div className="relative hidden min-h-0 flex-1 overflow-x-auto p-4 md:block">
           <div className="flex gap-3 h-full min-w-[680px]">
             {leftColumns.map((col) => (
               <KanbanColumn
@@ -206,7 +241,8 @@ export default function StaffOrdersPage() {
               />
             ))}
           </div>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

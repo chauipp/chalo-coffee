@@ -17,6 +17,7 @@ import { Badge } from "@/components/shared/ui/Badge";
 import { Toggle } from "@/components/shared/ui/Toggle";
 import { ROUTES } from "@/constants";
 import Link from "next/link";
+import { AdminMobilePageHeader } from "../../../_components/AdminMobilePageHeader";
 
 export default function CategoriesPage() {
   const [createOpen, setCreateOpen] = useState<boolean>(false);
@@ -62,7 +63,7 @@ export default function CategoriesPage() {
       key: "description",
       header: "Mô tả",
       render: (cate: CategoryDto) => (
-        <span className="max-w-xs truncate text-stone-500 block">
+        <span className="max-w-xs truncate text-gray-500 block">
           {cate.description ?? "-"}
         </span>
       ),
@@ -94,7 +95,7 @@ export default function CategoriesPage() {
       key: "actions",
       header: "Thao tác",
       render: (cate: CategoryDto) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 [&>button]:min-h-11">
           <button
             onClick={() => setEditTarget(cate)}
             className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/20 transition-colors"
@@ -113,24 +114,21 @@ export default function CategoriesPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-            Danh mục
-          </h1>
-          <p className="mt-0.5 text-sm text-stone-500">
-            Quản lý danh mục thực đơn
-          </p>
-        </div>
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-brand-400 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-500 transition-colors"
-        >
-          + Thêm danh mục
-        </button>
-      </div>
+      <AdminMobilePageHeader
+        title="Danh mục"
+        description="Quản lý danh mục thực đơn"
+        summary={`${categories?.length ?? 0} danh mục`}
+        action={
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="w-full rounded-xl bg-brand-400 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-500 sm:w-auto"
+          >
+            + Thêm danh mục
+          </button>
+        }
+      />
 
       {/* table */}
       <div>
@@ -139,6 +137,58 @@ export default function CategoriesPage() {
           data={categories ?? []}
           isLoading={isLoading}
           keyExtractor={(row) => row.id}
+          mobileCard={(cate) => (
+            <article
+              data-testid="admin-mobile-category-card"
+              className="rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <Link
+                    href={`${ROUTES.ADMIN.MENU_PRODUCTS}?categoryId=${cate.id}`}
+                    className="block truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  >
+                    {cate.name}
+                  </Link>
+                  <p className="mt-1 line-clamp-2 text-xs text-gray-400">
+                    {cate.description ?? "Không có mô tả"}
+                  </p>
+                </div>
+                <Badge label={`${cate.productCount} món`} variant="blue" />
+              </div>
+              <div className="mt-3 flex min-h-11 items-center justify-between border-t border-gray-100 pt-2 dark:border-gray-800">
+                <Toggle
+                  checked={cate.isActive}
+                  onChange={() =>
+                    updateCateMutation.mutate({
+                      ...cate,
+                      isActive: !cate.isActive,
+                    })
+                  }
+                  disabled={
+                    updateCateMutation.isPending &&
+                    updateCateMutation.variables.id === cate.id
+                  }
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditTarget(cate)}
+                    className="min-h-11 px-3 text-xs font-semibold text-brand-600"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(cate)}
+                    className="min-h-11 px-3 text-xs font-semibold text-red-600"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            </article>
+          )}
         />
       </div>
 

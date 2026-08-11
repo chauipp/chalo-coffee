@@ -1,6 +1,6 @@
 // src/app/(staff)/staff/tables/_components/TableCard.tsx
 import { TableDto } from "@/services/table";
-import { STATUS_CONFIG } from "../page";
+import { STATUS_CONFIG } from "../tables.config";
 
 interface TableCardProps {
   table: TableDto;
@@ -14,7 +14,7 @@ export const TableCard = ({ table, onClick }: TableCardProps) => {
   return (
     <button
       onClick={() => onClick(table)}
-      className={`rounded-2xl border-2 p-4 text-left transition-all hover:shadow-md active:scale-[0.97] ${cfg.bgColor} ${cfg.borderColor}`}
+      className={`min-h-36 rounded-2xl border-2 p-4 text-left transition-all hover:shadow-md active:scale-[0.97] ${cfg.bgColor} ${cfg.borderColor}`}
     >
       {/* status dot */}
       <div className="flex items-center justify-between mb-3">

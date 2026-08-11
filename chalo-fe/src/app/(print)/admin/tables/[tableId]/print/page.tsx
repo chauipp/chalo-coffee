@@ -5,173 +5,10 @@
 // bắt đăng nhập ADMIN như thường.
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { ROUTES } from "@/constants";
-import { TableDto, useGetTableList } from "@/services/table";
+import { useGetTableList } from "@/services/table";
 import Link from "next/link";
-import { QRCodeSVG } from "qrcode.react";
 import { use, useSyncExternalStore } from "react";
-
-/* ── Thông tin quán (tĩnh — sau này có thể chuyển vào Settings) ── */
-const SHOP_NAME = "Chalo Coffee";
-const WIFI_NAME = "chalocoffee";
-const WIFI_PASS = "chalocoffee";
-
-/* Tách "Bàn 5" → prefix "Bàn" + số "05" để đánh số thật to, thật rõ */
-const splitTableName = (name: string) => {
-  const m = name.trim().match(/^(.*?)(\d+)$/);
-  if (!m) return { prefix: null as string | null, num: null as string | null };
-  return { prefix: m[1].trim() || null, num: m[2].padStart(2, "0") };
-};
-
-const CoffeeCupIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-    <path
-      d="M4 9h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Z"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5c-.8.9-.8 1.9 0 2.8M12 3.5c-.8.9-.8 1.9 0 2.8"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const WifiIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-    <path
-      d="M2.5 9.5a15 15 0 0 1 19 0M5.5 13a10 10 0 0 1 13 0M8.6 16.4a5.3 5.3 0 0 1 6.8 0"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
-    <circle cx="12" cy="19.6" r="1.5" fill="currentColor" />
-  </svg>
-);
-
-const LockIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-    <rect
-      x="5"
-      y="10.5"
-      width="14"
-      height="9.5"
-      rx="2.5"
-      stroke="currentColor"
-      strokeWidth="1.8"
-    />
-    <path
-      d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
-    <circle cx="12" cy="15.2" r="1.4" fill="currentColor" />
-  </svg>
-);
-
-const ScanArrow = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 48 24" fill="none" className={className} aria-hidden>
-    <path
-      d="M2 12h40m0 0-7-7m7 7-7 7"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-/* ── Tấm A6 — mọi kích thước dùng mm để in ra đúng tỉ lệ tuyệt đối ── */
-const QrA6Sheet = ({ table, menuUrl }: { table: TableDto; menuUrl: string }) => {
-  const { prefix, num } = splitTableName(table.name);
-  const showPrefix = prefix && prefix.toLowerCase() !== "bàn";
-
-  return (
-    <div className="qr-sheet bg-white" id="qr-a6-sheet">
-      <div className="qr-grid">
-        <div className="qr-row qr-row-top">
-        {/* ── Ô 1: SỐ BÀN ───────────────────────────────────── */}
-        <section className="cell cell-table relative overflow-hidden text-white">
-          {/* vòng tròn trang trí chìm */}
-          <div className="deco-ring deco-ring-1" />
-          <div className="deco-ring deco-ring-2" />
-          <p className="cell-label text-white/85">Số bàn</p>
-          <div className="flex-1 flex flex-col items-center justify-center leading-none">
-            {num ? (
-              <>
-                {showPrefix && (
-                  <span className="table-prefix">{prefix}</span>
-                )}
-                <span className="table-num">{num}</span>
-              </>
-            ) : (
-              <span className="table-name-full">{table.name}</span>
-            )}
-          </div>
-          {table.area && <span className="area-chip">{table.area}</span>}
-        </section>
-
-        {/* ── Ô 2: GIỚI THIỆU QUÁN + WIFI ──────────────────── */}
-        <section className="cell cell-intro">
-          <CoffeeCupIcon className="intro-icon text-brand-500" />
-          <h2 className="intro-name text-coffee-dark">{SHOP_NAME}</h2>
-          <div className="intro-divider bg-brand-300" />
-          <div className="wifi-row">
-            <WifiIcon className="wifi-row-icon text-brand-500" />
-            <div>
-              <p className="wifi-label">Wi-Fi</p>
-              <p className="wifi-value text-coffee-dark">{WIFI_NAME}</p>
-            </div>
-          </div>
-          <div className="wifi-row">
-            <LockIcon className="wifi-row-icon text-brand-500" />
-            <div>
-              <p className="wifi-label">Mật khẩu</p>
-              <p className="wifi-value text-coffee-dark">{WIFI_PASS}</p>
-            </div>
-          </div>
-        </section>
-        </div>
-
-        <div className="qr-row qr-row-bottom">
-        {/* ── Ô 3: QUÉT MÃ Ở ĐÂY ĐỂ GỌI MÓN ────────────────── */}
-        <section className="cell cell-cta">
-          <h3 className="cta-title text-coffee-dark">
-            Quét mã ở đây
-            <br />
-            <span className="text-brand-500">để gọi món</span>
-          </h3>
-          <ol className="cta-steps">
-            <li>Mở camera</li>
-            <li>Quét mã QR</li>
-            <li>Chọn món &amp; gọi</li>
-          </ol>
-          <ScanArrow className="cta-arrow text-brand-400" />
-        </section>
-
-        {/* ── Ô 4: MÃ QR ───────────────────────────────────── */}
-        <section className="cell cell-qr text-white">
-          <div className="qr-card">
-            <QRCodeSVG
-              value={menuUrl}
-              size={512}
-              level="Q"
-              marginSize={0}
-              fgColor="#2E1B0A"
-              bgColor="#FFFFFF"
-              className="qr-svg"
-            />
-          </div>
-          <p className="qr-caption">CHALO COFFEE · MENU</p>
-        </section>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { A6_PRINT_CSS, QrA6Sheet } from "./QrA6Sheet";
 
 export default function TableQrPrintPage({
   params,
@@ -191,21 +28,21 @@ export default function TableQrPrintPage({
   const menuUrl = table && origin ? `${origin}/menu/${table.qrToken}` : "";
 
   return (
-    <div className="min-h-screen bg-stone-100 dark:bg-stone-950">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       {/* Toolbar — chỉ hiện trên màn hình, ẩn khi in */}
-      <header className="qr-screen-only sticky top-0 z-10 border-b border-stone-200 bg-white/90 backdrop-blur dark:border-stone-800 dark:bg-stone-900/90">
+      <header className="qr-screen-only sticky top-0 z-10 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
           <Link
             href={ROUTES.ADMIN.TABLES}
-            className="text-sm font-medium text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+            className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             ← Quay lại
           </Link>
           <div className="text-center">
-            <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               In QR {table ? `— ${table.name}` : ""}
             </p>
-            <p className="text-xs text-stone-400">
+            <p className="text-xs text-gray-400">
               Khổ A6 · 105×148mm · in màu, không lề
             </p>
           </div>
@@ -222,16 +59,16 @@ export default function TableQrPrintPage({
       {/* Vùng preview */}
       <main className="flex justify-center px-4 py-8">
         {isLoading ? (
-          <div className="qr-screen-only flex items-center gap-2 py-20 text-stone-500">
+          <div className="qr-screen-only flex items-center gap-2 py-20 text-gray-500">
             <SpinnerIcon className="size-5 animate-spin" />
             Đang tải thông tin bàn…
           </div>
         ) : !table ? (
           <div className="qr-screen-only py-20 text-center">
-            <p className="font-medium text-stone-900 dark:text-stone-100">
+            <p className="font-medium text-gray-900 dark:text-gray-100">
               Không tìm thấy bàn
             </p>
-            <p className="mt-1 text-sm text-stone-500">
+            <p className="mt-1 text-sm text-gray-500">
               Bàn có thể đã bị xóa.{" "}
               <Link
                 href={ROUTES.ADMIN.TABLES}
@@ -248,165 +85,12 @@ export default function TableQrPrintPage({
         )}
       </main>
 
-      {/* CSS in ấn — style cục bộ của route này */}
+      {/* CSS thẻ A6 (dùng chung) */}
+      <style>{A6_PRINT_CSS}</style>
+
+      {/* CSS riêng của trang: phóng to preview + neo tấm khi in */}
       <style>{`
         @page { size: 105mm 148mm; margin: 0; }
-
-        /* Tấm A6: kích thước vật lý cố định */
-        .qr-sheet {
-          width: 105mm;
-          height: 148mm;
-          padding: 6mm;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-        /* 2 hàng flex ĐỘC LẬP — mỗi hàng chia cột khác nhau (bố cục so le
-           như mẫu), grid 1 bộ cột chung không làm được */
-        .qr-grid {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          height: 100%;
-          gap: 3mm;
-        }
-        .qr-row { display: flex; gap: 3mm; min-height: 0; }
-        .qr-row-top { height: 69mm; }
-        .qr-row-bottom { flex: 1; }
-        .qr-row-top .cell-table { width: 46mm; }
-        .qr-row-top .cell-intro { flex: 1; min-width: 0; }
-        .qr-row-bottom .cell-cta { width: 37mm; }
-        .qr-row-bottom .cell-qr { flex: 1; min-width: 0; }
-        .cell {
-          border-radius: 4mm;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-        }
-
-        /* Ô 1 — số bàn */
-        .cell-table {
-          background: linear-gradient(160deg, #D2954E 0%, #C17E39 100%);
-          padding: 5mm;
-          align-items: center;
-        }
-        .cell-label {
-          font-size: 3.2mm;
-          font-weight: 600;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          align-self: flex-start;
-        }
-        .table-prefix {
-          font-size: 6.5mm;
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          margin-bottom: 1.5mm;
-        }
-        .table-num { font-size: 24mm; font-weight: 700; letter-spacing: -0.02em; }
-        .table-name-full {
-          font-size: 10mm;
-          font-weight: 700;
-          text-align: center;
-          line-height: 1.15;
-          word-break: break-word;
-        }
-        .area-chip {
-          background: rgba(255, 255, 255, 0.22);
-          border-radius: 10mm;
-          padding: 1.2mm 4mm;
-          font-size: 3.2mm;
-          font-weight: 500;
-          max-width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .deco-ring {
-          position: absolute;
-          border: 0.8mm solid rgba(255, 255, 255, 0.14);
-          border-radius: 50%;
-          pointer-events: none;
-        }
-        .deco-ring-1 { width: 34mm; height: 34mm; top: -12mm; right: -12mm; }
-        .deco-ring-2 { width: 22mm; height: 22mm; bottom: -8mm; left: -8mm; }
-
-        /* Ô 2 — giới thiệu quán */
-        .cell-intro {
-          background: #FBF6EE;
-          border: 0.4mm solid #F6E9D4;
-          padding: 5mm 4.5mm;
-        }
-        .cell-intro { justify-content: center; }
-        .intro-icon { width: 8mm; height: 8mm; margin-bottom: 2mm; }
-        .intro-name {
-          font-size: 4.8mm;
-          font-weight: 700;
-          line-height: 1.2;
-          white-space: nowrap;
-        }
-        .intro-divider { width: 8mm; height: 0.7mm; border-radius: 1mm; margin: 3mm 0 1.5mm; }
-        .wifi-row {
-          display: flex;
-          align-items: center;
-          gap: 2.2mm;
-          margin-top: 3mm;
-        }
-        .wifi-row-icon { width: 5.5mm; height: 5.5mm; flex-shrink: 0; }
-        .wifi-label {
-          font-size: 2.6mm;
-          font-weight: 600;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #a8a29e;
-        }
-        .wifi-value {
-          font-size: 4mm;
-          font-weight: 700;
-          line-height: 1.25;
-          word-break: break-all;
-        }
-
-        /* Ô 3 — CTA quét mã */
-        .cell-cta {
-          background: #ffffff;
-          border: 0.5mm dashed #E0B379;
-          padding: 4mm 3.5mm;
-        }
-        .cta-title { font-size: 4mm; font-weight: 700; line-height: 1.3; }
-        .cta-steps {
-          margin-top: 3mm;
-          padding-left: 4mm;
-          list-style: decimal;
-          font-size: 2.85mm;
-          line-height: 1.85;
-          color: #57534e;
-        }
-        .cta-arrow { width: 13mm; margin-top: auto; align-self: flex-end; }
-
-        /* Ô 4 — QR */
-        .cell-qr {
-          background: #563415;
-          align-items: center;
-          justify-content: center;
-          padding: 4mm;
-          gap: 3mm;
-        }
-        .qr-card {
-          background: #ffffff;
-          border-radius: 3mm;
-          padding: 3mm;
-          line-height: 0;
-        }
-        .qr-svg { width: 36mm; height: 36mm; }
-        .qr-caption {
-          font-size: 2.7mm;
-          font-weight: 600;
-          letter-spacing: 0.2em;
-          color: rgba(255, 255, 255, 0.85);
-          text-align: center;
-          white-space: nowrap;
-        }
 
         /* Preview trên màn hình: phóng to cho dễ xem */
         @media screen {

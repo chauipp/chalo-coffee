@@ -1,6 +1,6 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/_components/CustomerMenuClient.tsx
-import { useTheme } from "@/providers/ThemeProvider";
+import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import { CategoryDto, ProductDto } from "@/services/menu";
 import { useCallStaff } from "@/services/order/order.queries";
 import { useCartStore } from "@/stores/cart.store";
@@ -18,12 +18,6 @@ interface CustomerMenuClientProps {
   isOccupied: boolean;
 }
 
-const themeOptions = [
-  { value: "light" as const, label: "Sáng" },
-  { value: "dark" as const, label: "Tối" },
-  { value: "system" as const, label: "Hệ thống" },
-];
-
 export const CustomerMenuClient = ({
   categories,
   initProducts,
@@ -32,7 +26,6 @@ export const CustomerMenuClient = ({
 }: CustomerMenuClientProps) => {
   const { tableToken } = useParams<{ tableToken: string }>();
   const router = useRouter();
-  const { theme, changeTheme } = useTheme();
   const [activeCateId, setActiveCateId] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
   // Cảnh báo bàn đang có khách — mỗi phiên chỉ hiện một lần, khoá theo token
@@ -130,8 +123,8 @@ export const CustomerMenuClient = ({
         />
       )}
 
-      <div className="min-h-screen bg-stone-50 text-stone-950 dark:bg-stone-950 dark:text-stone-50">
-        <header className="sticky top-0 z-30 border-b border-stone-100/80 bg-white/90 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-stone-800/80 dark:bg-stone-950/90 dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+      <div className="min-h-screen bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-gray-50">
+        <header className="sticky top-0 z-30 border-b border-gray-100/80 bg-white/90 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-gray-800/80 dark:bg-gray-950/90 dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
           <div className="mx-auto flex flex-col gap-3 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
@@ -139,10 +132,10 @@ export const CustomerMenuClient = ({
                   CH
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold leading-none text-stone-950 dark:text-stone-50 sm:text-base">
+                  <p className="truncate text-sm font-bold leading-none text-gray-950 dark:text-gray-50 sm:text-base">
                     Chalo Coffee
                   </p>
-                  <p className="mt-1 truncate text-xs text-stone-500 dark:text-stone-400">
+                  <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
                     {tableName}
                   </p>
                 </div>
@@ -158,7 +151,7 @@ export const CustomerMenuClient = ({
                       ? "Đã gọi, nhân viên đang đến"
                       : "Gọi nhân viên đến bàn"
                   }
-                  className="flex size-8 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-stone-600 transition-colors hover:bg-brand-50 hover:text-brand-600 disabled:opacity-40 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-300 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+                  className="flex size-8 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:bg-brand-50 hover:text-brand-600 disabled:opacity-40 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
                 >
                   <svg
                     aria-hidden="true"
@@ -174,21 +167,7 @@ export const CustomerMenuClient = ({
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                   </svg>
                 </button>
-                <div className="flex rounded-full border border-stone-200 bg-stone-50 p-0.5 dark:border-stone-800 dark:bg-stone-900">
-                  {themeOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => changeTheme(option.value)}
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors sm:px-3 ${
-                        theme === option.value
-                          ? "bg-white text-stone-950 shadow-sm dark:bg-stone-800 dark:text-stone-50"
-                          : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
+                <ThemeSwitch />
                 <button
                   onClick={() => router.push(`/menu/${tableToken}/orders`)}
                   className="rounded-full bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-200 dark:hover:bg-brand-900/50"
@@ -203,7 +182,7 @@ export const CustomerMenuClient = ({
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 24 24"
-                  className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-stone-400"
+                  className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -217,20 +196,20 @@ export const CustomerMenuClient = ({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Tìm món..."
-                  className="w-full rounded-full border border-stone-200 bg-stone-50 py-2 pl-10 pr-4 text-sm text-stone-950 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-50 dark:placeholder:text-stone-500"
+                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-950 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-50 dark:placeholder:text-gray-500"
                 />
               </div>
 
               <div className="relative min-w-0">
-                <div className="pointer-events-none absolute inset-y-1 left-0 z-10 w-6 bg-linear-to-r from-white/90 to-transparent dark:from-stone-950/90 md:hidden" />
-                <div className="pointer-events-none absolute inset-y-1 right-0 z-10 w-6 bg-linear-to-l from-white/90 to-transparent dark:from-stone-950/90 md:hidden" />
-                <div className="flex gap-2 overflow-x-auto rounded-full border border-stone-200 bg-stone-100/80 p-1 shadow-inner dark:border-stone-800 dark:bg-stone-900/80 md:justify-end">
+                <div className="pointer-events-none absolute inset-y-1 left-0 z-10 w-6 bg-linear-to-r from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
+                <div className="pointer-events-none absolute inset-y-1 right-0 z-10 w-6 bg-linear-to-l from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
+                <div className="flex gap-2 overflow-x-auto rounded-full border border-gray-200 bg-gray-100/80 p-1 shadow-inner dark:border-gray-800 dark:bg-gray-900/80 md:justify-end">
                   <button
                     onClick={() => setActiveCateId(null)}
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                       !activeCateId
-                        ? "bg-white text-brand-700 shadow-sm ring-1 ring-brand-200 dark:bg-stone-800 dark:text-brand-200 dark:ring-brand-800"
-                        : "text-stone-600 hover:bg-white/70 hover:text-stone-950 dark:text-stone-400 dark:hover:bg-stone-800/80 dark:hover:text-stone-100"
+                        ? "bg-white text-brand-700 shadow-sm ring-1 ring-brand-200 dark:bg-gray-800 dark:text-brand-200 dark:ring-brand-800"
+                        : "text-gray-600 hover:bg-white/70 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800/80 dark:hover:text-gray-100"
                     }`}
                   >
                     Tất cả
@@ -243,8 +222,8 @@ export const CustomerMenuClient = ({
                       }
                       className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                         activeCateId === c.id
-                          ? "bg-white text-brand-700 shadow-sm ring-1 ring-brand-200 dark:bg-stone-800 dark:text-brand-200 dark:ring-brand-800"
-                          : "text-stone-600 hover:bg-white/70 hover:text-stone-950 dark:text-stone-400 dark:hover:bg-stone-800/80 dark:hover:text-stone-100"
+                          ? "bg-white text-brand-700 shadow-sm ring-1 ring-brand-200 dark:bg-gray-800 dark:text-brand-200 dark:ring-brand-800"
+                          : "text-gray-600 hover:bg-white/70 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800/80 dark:hover:text-gray-100"
                       }`}
                     >
                       {c.name}
@@ -258,18 +237,18 @@ export const CustomerMenuClient = ({
 
         <main className="mx-auto px-4 pb-28 pt-4">
           {initProducts.length === 0 ? (
-            <div className="py-24 text-center text-stone-500 dark:text-stone-400">
+            <div className="py-24 text-center text-gray-500 dark:text-gray-400">
               <p className="text-sm font-medium">
                 Thực đơn đang được cập nhật
               </p>
-              <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
                 Vui lòng quay lại sau hoặc gọi nhân viên để được hỗ trợ.
               </p>
             </div>
           ) : activeCateId || search ? (
             <>
               {filterProduct.length === 0 ? (
-                <div className="py-20 text-center text-stone-500 dark:text-stone-400">
+                <div className="py-20 text-center text-gray-500 dark:text-gray-400">
                   <p className="text-sm">Không tìm thấy món phù hợp</p>
                 </div>
               ) : (
@@ -290,7 +269,7 @@ export const CustomerMenuClient = ({
             <div className="space-y-8">
               {grouped?.map(({ category, products }) => (
                 <section key={category.id}>
-                  <h2 className="mb-3 text-base font-bold text-stone-950 dark:text-stone-50 sm:text-lg">
+                  <h2 className="mb-3 text-base font-bold text-gray-950 dark:text-gray-50 sm:text-lg">
                     {category.name}
                   </h2>
                   <div className="grid gap-3">
@@ -314,7 +293,7 @@ export const CustomerMenuClient = ({
           onClick={() => router.push(`/menu/${tableToken}/cart`)}
           disabled={itemCount === 0}
           aria-label="Xem giỏ hàng"
-          className="fixed bottom-5 right-4 z-30 flex size-16 items-center justify-center rounded-full bg-brand-500 text-white shadow-[0_18px_38px_rgba(248,146,26,0.38)] ring-4 ring-white/90 transition hover:bg-brand-600 active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500 disabled:shadow-lg disabled:ring-white/80 dark:ring-stone-950/90 dark:disabled:bg-stone-800 dark:disabled:text-stone-500 sm:bottom-7 sm:right-7"
+          className="fixed bottom-5 right-4 z-30 flex size-16 items-center justify-center rounded-full bg-brand-500 text-white shadow-[0_18px_38px_rgba(248,146,26,0.38)] ring-4 ring-white/90 transition hover:bg-brand-600 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-lg disabled:ring-white/80 dark:ring-gray-950/90 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 sm:bottom-7 sm:right-7"
         >
           <svg
             aria-hidden="true"
@@ -332,7 +311,7 @@ export const CustomerMenuClient = ({
           </svg>
           <span
             key={itemCount}
-            className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-stone-950 px-1.5 py-0.5 text-xs font-bold text-white shadow-sm ring-2 ring-white motion-safe:animate-[badge-pop_0.25s_cubic-bezier(0.16,1,0.3,1)] dark:bg-white dark:text-stone-950 dark:ring-stone-950"
+            className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-gray-950 px-1.5 py-0.5 text-xs font-bold text-white shadow-sm ring-2 ring-white motion-safe:animate-[badge-pop_0.25s_cubic-bezier(0.16,1,0.3,1)] dark:bg-white dark:text-gray-950 dark:ring-gray-950"
           >
             {itemCount}
           </span>

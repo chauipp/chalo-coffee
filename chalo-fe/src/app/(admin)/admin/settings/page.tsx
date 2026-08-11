@@ -6,6 +6,7 @@ import { Select } from "@/components/shared/ui/Select";
 import { Toggle } from "@/components/shared/ui/Toggle";
 import { SettingsDto, useGetSettings, useUpdateSettings } from "@/services/settings";
 import { useState } from "react";
+import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 
 /** Các ngân hàng VN phổ biến — value là mã BIN Napas dùng cho VietQR. */
 const VN_BANKS = [
@@ -79,27 +80,23 @@ export default function SettingsPage() {
 
   if (isLoading)
     return (
-      <div className="p-6 text-sm text-stone-400">Đang tải cài đặt...</div>
+      <div className="p-4 text-sm text-gray-400 sm:p-6">Đang tải cài đặt...</div>
     );
 
   return (
-    <div className="p-6 space-y-6 max-w-xl">
-      <div>
-        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-          Cài đặt
-        </h1>
-        <p className="mt-0.5 text-sm text-stone-500">
-          Cấu hình vận hành và thanh toán
-        </p>
-      </div>
+    <div className="max-w-xl space-y-6 p-4 sm:p-6">
+      <AdminMobilePageHeader
+        title="Cài đặt"
+        description="Cấu hình vận hành và thanh toán"
+      />
 
-      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 space-y-5">
-        <div className="flex items-center justify-between">
+      <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-5">
+        <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-stone-900 dark:text-stone-100">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
               Hiển thị thời gian chờ ước tính
             </p>
-            <p className="text-xs text-stone-400">
+            <p className="text-xs text-gray-400">
               Hiện thời gian chờ dự kiến cho khách khi đặt món
             </p>
           </div>
@@ -125,12 +122,12 @@ export default function SettingsPage() {
         </FormField>
       </div>
 
-      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 space-y-5">
+      <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-5">
         <div>
-          <p className="text-sm font-medium text-stone-900 dark:text-stone-100">
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
             Thanh toán chuyển khoản (VietQR)
           </p>
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-gray-400">
             Cấu hình đủ 3 mục thì màn thanh toán của khách sẽ hiện mã QR
             chuyển khoản đúng số tiền của bàn. Mọi app ngân hàng đều quét được.
           </p>
@@ -178,13 +175,18 @@ export default function SettingsPage() {
         )}
       </div>
 
-      <button
-        onClick={save}
-        disabled={!dirty || updateM.isPending}
-        className="rounded-xl bg-brand-400 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-500 transition-colors disabled:opacity-50"
+      <div
+        data-testid="admin-mobile-settings-save"
+        className="sticky bottom-[calc(6.5rem+env(safe-area-inset-bottom))] -mx-4 border-t border-gray-200 bg-gray-50/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0"
       >
-        {updateM.isPending ? "Đang lưu..." : "Lưu thay đổi"}
-      </button>
+        <button
+          onClick={save}
+          disabled={!dirty || updateM.isPending}
+          className="w-full rounded-xl bg-brand-400 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-500 disabled:opacity-50 sm:w-auto"
+        >
+          {updateM.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+        </button>
+      </div>
     </div>
   );
 }

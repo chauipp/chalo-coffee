@@ -128,7 +128,7 @@ export const PrepStation = ({
             bấm &quot;Bắt đầu pha&quot;.
           </p>
         ) : (
-          <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
+          <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(min(100%,240px),1fr))]">
             {mode === "product"
               ? groups.map((g) => (
                   <PrepProductCard

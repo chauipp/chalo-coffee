@@ -16,6 +16,7 @@ import { useState } from "react";
 import { TableForm } from "./_components/TableForm";
 import { QRModal } from "./_components/QRModal";
 import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
+import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 
 const TABLE_BADGE: Record<
   TableStatus,
@@ -36,6 +37,23 @@ export default function TablesPage() {
   const deleteTableMutation = useDeleteTable();
 
   const { data: tables = [], isLoading: isLoadingTables } = useGetTableList();
+
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const toggleId = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const allIds = tables.map((t) => t.id);
+  const allSelected =
+    allIds.length > 0 && allIds.every((id) => selectedIds.has(id));
+  const openPrintSheet = () => {
+    const ordered = allIds.filter((id) => selectedIds.has(id));
+    if (ordered.length === 0) return;
+    window.open(`/admin/tables/print-sheet?ids=${ordered.join(",")}`, "_blank");
+  };
 
   const handleCreateTable = (data: TableFormType) => {
     createTableMutation.mutate(data, {
@@ -63,14 +81,28 @@ export default function TablesPage() {
 
   const columns: Array<Column<TableDto>> = [
     {
+      key: "select",
+      header: "Chọn",
+      width: "56px",
+      render: (row: TableDto) => (
+        <input
+          type="checkbox"
+          aria-label={`Chọn ${row.name}`}
+          checked={selectedIds.has(row.id)}
+          onChange={() => toggleId(row.id)}
+          className="size-4 accent-brand-500"
+        />
+      ),
+    },
+    {
       key: "name",
       header: "Bàn",
       render: (row: TableDto) => (
         <div>
-          <p className="font-medium text-stone-900 dark:text-stone-100">
+          <p className="font-medium text-gray-900 dark:text-gray-100">
             {row.name}
           </p>
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-gray-400">
             {row.area || "Không phân khu"}
           </p>
         </div>
@@ -102,7 +134,7 @@ export default function TablesPage() {
       key: "actions",
       header: "Thao tác",
       render: (row: TableDto) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 [&>button]:min-h-11">
           <button
             onClick={() => setEditTarget(row)}
             className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/20 transition-colors"
@@ -121,31 +153,28 @@ export default function TablesPage() {
     },
   ];
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-            Bàn & QR
-          </h1>
-          <p className="mt-0.5 text-sm text-stone-500">
-            Quản lý bàn và mã QR đặt tại bàn
-          </p>
-        </div>
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="rounded-xl bg-brand-400 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-500 transition-colors"
-        >
-          + Thêm bàn
-        </button>
-      </div>
+      <AdminMobilePageHeader
+        title="Bàn & QR"
+        description="Quản lý bàn và mã QR đặt tại bàn"
+        summary={`${tables.length} bàn`}
+        action={
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="w-full rounded-xl bg-brand-400 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-500 sm:w-auto"
+          >
+            + Thêm bàn
+          </button>
+        }
+      />
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {[
           {
             label: "Tổng số bàn",
             value: tables.length,
-            color: "text-stone-900 dark:text-stone-100",
+            color: "text-gray-900 dark:text-gray-100",
           },
           {
             label: "Đang có khách",
@@ -159,16 +188,41 @@ export default function TablesPage() {
           },
         ].map((stat) => (
           <div
-            className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4"
+            className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 sm:p-4"
             key={stat.label}
           >
-            <p className="text-sm text-stone-500">{stat.label}</p>
-            <p className={`text-2xl font-bold mt-1 ${stat.color}`}>
+            <p className="text-xs sm:text-sm text-gray-500">{stat.label}</p>
+            <p className={`text-xl sm:text-2xl font-bold mt-1 ${stat.color}`}>
               {stat.value}
             </p>
           </div>
         ))}
       </div>
+
+      {/* Thanh thao tác khi chọn bàn để in hàng loạt */}
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 dark:border-brand-800 dark:bg-brand-900/20">
+          <p className="text-sm font-medium text-brand-800 dark:text-brand-200">
+            Đã chọn {selectedIds.size} bàn
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                setSelectedIds(allSelected ? new Set() : new Set(allIds))
+              }
+              className="rounded-lg border border-brand-300 px-3 py-1.5 text-sm font-medium text-brand-700 hover:bg-brand-100 dark:border-brand-700 dark:text-brand-300 dark:hover:bg-brand-900/40"
+            >
+              {allSelected ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+            </button>
+            <button
+              onClick={openPrintSheet}
+              className="rounded-lg bg-brand-400 px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-500"
+            >
+              🖨️ In QR (4 bàn/tờ)
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* table */}
       <DataTable
@@ -178,6 +232,53 @@ export default function TablesPage() {
         isLoading={isLoadingTables}
         total={tables.length}
         emptyText="Chưa có bàn nào. Hãy thêm bàn đầu tiên!"
+        mobileCard={(row) => {
+          const status = TABLE_BADGE[row.status];
+          return (
+            <article
+              data-testid="admin-mobile-table-card"
+              className="rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {row.name}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {row.area || "Không phân khu"}
+                  </p>
+                </div>
+                <Badge label={status.label} variant={status.variant} />
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-2 dark:border-gray-800">
+                <button
+                  type="button"
+                  onClick={() => setQrTarget(row)}
+                  className="min-h-11 rounded-lg px-3 text-xs font-semibold text-brand-600"
+                >
+                  Xem QR
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditTarget(row)}
+                    className="min-h-11 rounded-lg px-3 text-xs font-semibold text-brand-600"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(row)}
+                    disabled={row.status === "OCCUPIED"}
+                    className="min-h-11 rounded-lg px-3 text-xs font-semibold text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            </article>
+          );
+        }}
       />
 
       {/* create */}

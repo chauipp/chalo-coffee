@@ -79,12 +79,14 @@ export const SplitPane = ({
   return (
     <div
       ref={containerRef}
-      className={`flex h-full min-h-0 min-w-0 ${className}`}
+      className={`flex flex-col md:flex-row h-full min-h-0 min-w-0 ${className}`}
     >
       {/* Vùng trái vẫn mounted khi phóng to → thu lại không mất state của trang */}
       <div
         style={{ width: `${ratio * 100}%` }}
-        className={`h-full min-w-0 shrink-0 ${expanded ? "hidden" : ""}`}
+        className={`h-full min-w-0 shrink-0 max-md:h-auto max-md:min-h-0 max-md:w-full! max-md:flex-1 ${
+          expanded ? "md:hidden" : ""
+        }`}
       >
         {left}
       </div>
@@ -124,7 +126,7 @@ export const SplitPane = ({
             jumpTo(maxRatio);
           }
         }}
-        className={`relative z-10 mx-1 w-1.5 shrink-0 cursor-col-resize rounded-full transition-colors
+        className={`relative z-10 mx-1 w-1.5 shrink-0 cursor-col-resize rounded-full transition-colors max-md:hidden
           after:absolute after:inset-y-0 after:-inset-x-2 after:content-['']
           ${
             dragging
@@ -136,7 +138,11 @@ export const SplitPane = ({
 
       {/* Phóng to = vùng trái ẩn đi, vùng này flex-1 nên tự chiếm hết chỗ
           còn lại bên phải menu (sidebar vẫn hiển thị) */}
-      <div className={`h-full min-w-0 flex-1 py-3 pr-3 ${expanded ? "pl-3" : ""}`}>
+      <div
+        className={`h-full min-w-0 flex-1 py-3 pr-3 max-md:min-h-0 max-md:px-2 max-md:pt-2 ${
+          expanded ? "pl-3" : ""
+        } max-md:hidden`}
+      >
         {right({ expanded, toggleExpand })}
       </div>
     </div>
