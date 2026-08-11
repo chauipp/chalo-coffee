@@ -16,7 +16,7 @@
 
 ---
 
-- [ ] Task 1: Thêm action đăng xuất cho staff mobile
+- [x] Task 1: Thêm action đăng xuất cho staff mobile
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/_components/MobileStaffNav.tsx`
@@ -26,7 +26,7 @@
 - Consumes: `useLogout(): () => Promise<void>` từ `@/hooks/useLogout` và `LogoutIcon` từ `@/components/shared/icons/LogoutIcon`.
 - Produces: button `Đăng xuất` gọi `void logout()` từ thanh điều hướng mobile staff.
 
-- [ ] **Step 1: Viết test Playwright thất bại**
+- [x] **Step 1: Viết test Playwright thất bại**
 
 ```ts
 test("staff mobile đăng xuất từ thanh đáy", async ({ page }) => {
@@ -37,13 +37,13 @@ test("staff mobile đăng xuất từ thanh đáy", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 2: Chạy test để xác nhận thất bại**
+- [x] **Step 2: Chạy test để xác nhận thất bại**
 
 Run: `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm exec playwright test e2e/staff-mobile-logout.spec.ts --project=chromium`
 
 Expected: FAIL vì thanh staff mobile chưa có button tên `Đăng xuất`.
 
-- [ ] **Step 3: Chỉnh component tối thiểu**
+- [x] **Step 3: Chỉnh component tối thiểu**
 
 ```tsx
 const logout = useLogout();
@@ -56,13 +56,13 @@ const logout = useLogout();
 
 Đổi grid mobile từ ba thành bốn cột; dùng style đỏ tương ứng menu admin mobile.
 
-- [ ] **Step 4: Chạy kiểm chứng**
+- [x] **Step 4: Chạy kiểm chứng**
 
 Run: `pnpm test:unit && pnpm exec tsc --noEmit`
 
 Expected: pass. Mở browser Playwright ở 375×667, đăng nhập staff, kiểm nút thấy được, bấm về `/login`, không overflow ngang, console và network không lỗi.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-fe/src/app/'(staff)'/_components/MobileStaffNav.tsx chalo-fe/e2e/staff-mobile-logout.spec.ts docs/superpowers/

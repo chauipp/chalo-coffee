@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoutIcon } from "@/components/shared/icons/LogoutIcon";
+import { useLogout } from "@/hooks/useLogout";
 import { STAFF_HEADER_ITEMS } from "../staff/_components/header.config";
 
 export function MobileStaffNav() {
   const pathname = usePathname();
+  const logout = useLogout();
 
   return (
     <nav
@@ -14,7 +17,7 @@ export function MobileStaffNav() {
       className="fixed inset-x-2 bottom-2 z-40 overflow-hidden rounded-2xl border border-gray-200 bg-white/95 px-1.5 pt-1.5 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.25rem)" }}
     >
-      <div className="grid w-full grid-cols-3 gap-0.5">
+      <div className="grid w-full grid-cols-4 gap-0.5">
         {STAFF_HEADER_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
           return (
@@ -33,6 +36,14 @@ export function MobileStaffNav() {
             </Link>
           );
         })}
+        <button
+          type="button"
+          onClick={() => void logout()}
+          className="flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 text-[10px] font-medium leading-3 text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+        >
+          <LogoutIcon className="size-5 shrink-0" aria-hidden="true" />
+          <span className="max-w-full truncate">Đăng xuất</span>
+        </button>
       </div>
     </nav>
   );
