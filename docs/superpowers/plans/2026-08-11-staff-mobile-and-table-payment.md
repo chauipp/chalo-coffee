@@ -19,7 +19,7 @@
 
 ---
 
-- [ ] Task 1: Tách logic thanh toán và tạo component popup dùng chung
+- [x] Task 1: Tách logic thanh toán và tạo component popup dùng chung
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/staff/tables/_components/payment.utils.ts`
@@ -40,7 +40,7 @@
 - [ ] Step 7: Chạy typecheck và test liên quan.
 - [ ] Step 8: Commit `feat: add staff table payment method modal`.
 
-### Task 2: Gắn thanh toán vào chi tiết bàn trên PC và mobile
+- [x] Task 2: Gắn thanh toán vào chi tiết bàn trên PC và mobile
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/tables/_components/TableDrawer.tsx`
@@ -58,7 +58,7 @@
 - [ ] Step 4: Đổi drawer mobile thành `inset-x-0 bottom-0 max-h-[92dvh] rounded-t-2xl`, desktop giữ panel bên phải; đảm bảo danh sách đơn cuộn riêng.
 - [ ] Step 5: Chạy test/typecheck và commit `feat: enable table payment from staff drawer`.
 
-### Task 3: Tạo shell điều hướng mobile staff và ẩn khu pha chế trên mobile
+- [ ] Task 3: Tạo shell điều hướng mobile staff và ẩn khu pha chế trên mobile
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/_components/MobileStaffNav.tsx`
@@ -77,7 +77,7 @@
 - [ ] Step 4: Chạy typecheck và kiểm tra route switching bằng test mock.
 - [ ] Step 5: Commit `feat: add mobile staff navigation shell`.
 
-### Task 4: Tối ưu màn Đơn hàng cho mobile
+- [ ] Task 4: Tối ưu màn Đơn hàng cho mobile
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/orders/page.tsx`
@@ -91,7 +91,7 @@
 - [ ] Step 4: Kiểm tra Playwright mobile: đổi tab, tìm bàn, mở chi tiết và đóng modal.
 - [ ] Step 5: Chạy test/typecheck và commit `feat: optimize staff orders for mobile`.
 
-### Task 5: Đổi POS mobile sang giỏ hàng bottom sheet
+- [ ] Task 5: Đổi POS mobile sang giỏ hàng bottom sheet
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/pos/page.tsx`
@@ -105,7 +105,7 @@
 - [ ] Step 4: Desktop giữ hai cột hiện tại; mobile test thêm món, mở sheet và tạo đơn với API mock.
 - [ ] Step 5: Chạy typecheck/test và commit `feat: use bottom sheet cart on mobile pos`.
 
-### Task 6: Tối ưu màn Bàn và hoàn thiện kiểm thử giao diện
+- [ ] Task 6: Tối ưu màn Bàn và hoàn thiện kiểm thử giao diện
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/tables/page.tsx`

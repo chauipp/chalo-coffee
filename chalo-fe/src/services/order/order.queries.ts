@@ -176,13 +176,14 @@ export const usePayAllOrders = (tableToken: string) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: PayAllOrdersPayload) => payAllOrders(data),
-    onSuccess: () => {
-      qc.invalidateQueries({
-        queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
-      });
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
-      toast.success("Đã thanh toán tất cả đơn hàng!");
-    },
+  onSuccess: () => {
+    qc.invalidateQueries({
+      queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
+    });
+    qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
+    qc.invalidateQueries({ queryKey: QUERY_KEYS.TABLES.LIST });
+    toast.success("Đã thanh toán tất cả đơn hàng!");
+  },
     onError: (e: Error) => toast.error(e.message),
   });
 };
