@@ -173,6 +173,21 @@ test("mobile admin uses product cards and keeps overflow navigation reachable", 
   await page.waitForURL("**/admin/staff");
 });
 
+test("mobile admin logs out from overflow navigation", async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await page.getByRole("button", { name: "Khác" }).click();
+  const overflowSheet = page.getByRole("dialog", {
+    name: "Mục quản trị khác",
+  });
+  await expect(overflowSheet).toBeVisible();
+
+  await overflowSheet.getByRole("button", { name: "Đăng xuất" }).click();
+
+  await page.waitForURL("**/login");
+  await expect(page.getByRole("button", { name: "Đăng nhập" })).toBeVisible();
+});
+
 test("mobile admin presents every data collection as readable cards", async ({ page }) => {
   await loginAsAdmin(page);
   for (const [path, testId] of [
