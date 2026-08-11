@@ -34,6 +34,7 @@ export default function StaffPOSPage() {
   const [showConfirmRemoveCart, setShowConfirmRemoveCart] =
     useState<boolean>(false);
   const [showPagerBoard, setShowPagerBoard] = useState(false);
+  const [showMobileCart, setShowMobileCart] = useState(false);
 
   const { data: categories } = useGetCategorySimpleList();
 
@@ -114,10 +115,20 @@ export default function StaffPOSPage() {
       setSelectedTableToken("");
       setPagerNumber("");
       setNote("");
+      setShowMobileCart(false);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!showMobileCart) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setShowMobileCart(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showMobileCart]);
 
   return (
     <div className="h-full flex flex-col md:flex-row gap-0 overflow-hidden">
@@ -197,8 +208,23 @@ export default function StaffPOSPage() {
         </div>
       </div>
 
-      {/* Right — Order Panel (mobile: xuống dưới, chiếm ~45% chiều cao) */}
-      <div className="w-72 shrink-0 flex flex-col bg-white dark:bg-gray-900 overflow-hidden max-md:w-full max-md:basis-[45%] max-md:min-h-0">
+      {showMobileCart && (
+        <button
+          type="button"
+          aria-label="Đóng giỏ hàng"
+          onClick={() => setShowMobileCart(false)}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+        />
+      )}
+
+      {/* Right — desktop panel / mobile bottom sheet */}
+      <div
+        className={`w-72 shrink-0 flex-col overflow-hidden bg-white dark:bg-gray-900 md:flex ${
+          showMobileCart
+            ? "fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[calc(100dvh-9rem)] w-full rounded-t-3xl border-t border-gray-200 shadow-2xl dark:border-gray-800 md:static md:w-72 md:rounded-none md:border-0 md:shadow-none"
+            : "hidden"
+        }`}
+      >
         {/* header */}
         <div className="px-4 py-3.5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
           <div>
@@ -211,7 +237,7 @@ export default function StaffPOSPage() {
           </div>
           <button
             onClick={() => setShowPagerBoard(true)}
-            className="rounded-lg border border-gray-200 dark:border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="min-h-10 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
           >
             🔔 Thẻ bàn
           </button>
@@ -318,6 +344,17 @@ export default function StaffPOSPage() {
           </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowMobileCart(true)}
+        className={`fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 min-h-12 items-center justify-between rounded-2xl bg-brand-500 px-4 text-sm font-bold text-white shadow-lg transition-colors hover:bg-brand-600 md:hidden ${
+          showMobileCart ? "hidden" : "flex"
+        }`}
+      >
+        <span>🛒 Giỏ hàng{totalItems > 0 ? ` · ${totalItems} món` : ""}</span>
+        <span>{totalAmount.toLocaleString("vi-VN")}đ</span>
+      </button>
 
       {/* confirm create order */}
       <ConfirmDialog

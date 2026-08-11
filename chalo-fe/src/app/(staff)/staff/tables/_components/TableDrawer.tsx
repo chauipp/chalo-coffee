@@ -4,7 +4,7 @@
 
 import { TableDto } from "@/services/table";
 import { useState } from "react";
-import { STATUS_CONFIG } from "../page";
+import { STATUS_CONFIG } from "../tables.config";
 import { OrderRow } from "./OrderRow";
 import { TablePaymentModal } from "./TablePaymentModal";
 
@@ -28,7 +28,7 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
       <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
 
       {/* drawer */}
-      <div className="fixed inset-x-0 bottom-0 z-50 flex max-h-[92dvh] w-full flex-col rounded-t-3xl border-t border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900 md:inset-y-0 md:left-auto md:right-0 md:top-0 md:max-h-none md:w-80 md:rounded-none md:rounded-l-2xl md:border-l md:border-t-0">
+      <div className="fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] w-full flex-col rounded-t-3xl border-t border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900 md:inset-y-0 md:left-auto md:right-0 md:top-0 md:max-h-none md:w-80 md:rounded-none md:rounded-l-2xl md:border-l md:border-t-0">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
           <div>
