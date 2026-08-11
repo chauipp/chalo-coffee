@@ -83,7 +83,7 @@
   - [ ] Chạy `pnpm exec tsc --noEmit`; expected exit 0.
   - [ ] Commit: `git add chalo-fe/src/app/page.tsx chalo-fe/src/app/_components/PublicLanding.tsx && git commit -m "feat: add public coffee landing page"`.
 
-- [ ] Task 3: Hoàn thiện metadata, focus, scroll và trạng thái lỗi
+- [x] Task 3: Hoàn thiện metadata, focus, scroll và trạng thái lỗi
 
   **Files:**
   - Modify: `chalo-fe/src/app/layout.tsx`

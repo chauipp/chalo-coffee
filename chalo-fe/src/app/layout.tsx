@@ -16,10 +16,10 @@ const beVietnam = Be_Vietnam_Pro({
 
 export const metadata: Metadata = {
   title: {
-    default: "Chalo",
+    default: "Chalo Coffee",
     template: "%s | Chalo",
   },
-  description: "Gọi món tại bàn, theo dõi đơn và quản lý quán Chalo.",
+  description: "Chalo Coffee — thực đơn cà phê, trà và những khoảng chậm dành cho bạn.",
 };
 
 export const viewport: Viewport = {

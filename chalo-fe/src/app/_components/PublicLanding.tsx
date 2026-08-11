@@ -73,9 +73,9 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
     <div className="min-h-screen overflow-x-clip bg-brand-50 text-stone-900">
       <header className="sticky top-0 z-30 border-b border-brand-100/80 bg-brand-50/90 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-          <a href="/" aria-label="Chalo Coffee về trang chủ" className="shrink-0 font-serif text-lg font-bold tracking-[0.14em] text-brand-800 transition hover:text-brand-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
+          <Link href="/" aria-label="Chalo Coffee về trang chủ" className="shrink-0 font-serif text-lg font-bold tracking-[0.14em] text-brand-800 transition hover:text-brand-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
             CHALO<span className="text-brand-500">.</span>
-          </a>
+          </Link>
           <nav aria-label="Điều hướng trang chủ" className="flex items-center gap-1 text-sm font-medium sm:gap-3">
             <a href="#menu" className="rounded-full px-3 py-2 text-stone-600 transition hover:bg-brand-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Thực đơn</a>
             <a href={MAPS_URL} target="_blank" rel="noreferrer" className="hidden rounded-full px-3 py-2 text-stone-600 transition hover:bg-brand-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 sm:inline-flex">Tìm đường</a>
