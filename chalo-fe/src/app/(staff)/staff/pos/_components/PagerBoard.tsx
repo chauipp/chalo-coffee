@@ -28,19 +28,19 @@ export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
-      <div className="fixed right-0 top-0 bottom-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl border-l border-gray-200 dark:border-gray-800 flex flex-col">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+      <div className="fixed right-0 top-0 bottom-0 z-50 w-80 bg-white dark:bg-stone-900 shadow-2xl border-l border-stone-200 dark:border-stone-800 flex flex-col">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 dark:border-stone-800 shrink-0">
           <div>
-            <h3 className="font-bold text-gray-900 dark:text-gray-100">
+            <h3 className="font-bold text-stone-900 dark:text-stone-100">
               Thẻ bàn
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
               {active.length} thẻ đang hoạt động
             </p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
           >
             ✕
           </button>
@@ -52,7 +52,7 @@ export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
             </div>
           ) : active.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-32 text-center text-gray-400">
+            <div className="flex flex-col items-center justify-center h-32 text-center text-stone-400">
               <span className="text-3xl mb-2">🔔</span>
               <p className="text-sm">Chưa có thẻ nào đang dùng</p>
             </div>
@@ -68,7 +68,7 @@ export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
                   className={`rounded-xl border px-3 py-2.5 space-y-2 ${
                     isWaiting
                       ? "border-brand-300 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-900/20"
-                      : "border-gray-100 dark:border-gray-800"
+                      : "border-stone-100 dark:border-stone-800"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -76,10 +76,10 @@ export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
                       {p.number}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="truncate text-sm font-medium text-stone-900 dark:text-stone-100">
                         {order?.tableName ?? "—"}
                       </p>
-                      <p className="text-xs text-gray-400 truncate">
+                      <p className="text-xs text-stone-400 truncate">
                         {order
                           ? `${order.totalAmount.toLocaleString("vi-VN")}đ · `
                           : ""}
@@ -92,7 +92,7 @@ export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                         isWaiting
                           ? "bg-brand-400 text-white"
-                          : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                          : "bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400"
                       }`}
                     >
                       {isWaiting ? "Sẵn sàng" : "Đang pha"}
@@ -112,7 +112,7 @@ export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
                     <button
                       onClick={() => releaseMutation.mutate({ id: p.id })}
                       disabled={releaseMutation.isPending}
-                      className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                      className="flex-1 rounded-lg border border-stone-200 dark:border-stone-700 px-3 py-1.5 text-xs font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors disabled:opacity-50"
                     >
                       Thu thẻ
                     </button>

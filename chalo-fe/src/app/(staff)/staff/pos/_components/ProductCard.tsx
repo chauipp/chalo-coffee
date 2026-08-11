@@ -15,10 +15,10 @@ export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) 
     className={`relative rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[0.97]
     ${
       product.status !== "AVAILABLE"
-        ? "opacity-40 cursor-not-allowed border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800"
+        ? "opacity-40 cursor-not-allowed border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-800"
         : inCart
           ? "border-brand-300 dark:border-brand-700 bg-brand-50 dark:bg-brand-900/20"
-          : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-brand-300"
+          : "border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-brand-300"
     }`}
   >
     {inCart && (
@@ -26,7 +26,7 @@ export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) 
         {inCart.quantity}
       </span>
     )}
-    <div className="size-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xl mb-2">
+    <div className="size-10 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-xl mb-2">
       {product.imageUrl ? (
         <img
           src={product.imageUrl}
@@ -37,7 +37,7 @@ export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) 
         "☕"
       )}
     </div>
-    <p className="text-xs font-semibold text-gray-900 dark:text-gray-100 leading-tight mb-1 line-clamp-2">
+    <p className="text-xs font-semibold text-stone-900 dark:text-stone-100 leading-tight mb-1 line-clamp-2">
       {product.name}
     </p>
     <p className="text-xs font-bold text-brand-600 dark:text-brand-400">

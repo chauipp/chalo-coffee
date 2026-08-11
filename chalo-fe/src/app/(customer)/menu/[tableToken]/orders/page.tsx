@@ -26,21 +26,21 @@ export default function OrdersPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
         {/* header */}
-        <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
+        <header className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-100 dark:border-stone-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
           <button
             onClick={() => router.push(`/menu/${tableToken}`)}
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
           >
             ← Quay lại
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-bold text-gray-900 dark:text-white">
+            <h1 className="text-base font-bold text-stone-900 dark:text-white">
               Đơn hàng của bàn
             </h1>
             {orders && orders.length > 1 && (
-              <p className="text-xs text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-stone-400 dark:text-stone-500">
                 {orders.length} lần đặt · {totalAllItems} món
               </p>
             )}
@@ -54,8 +54,8 @@ export default function OrdersPage() {
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
             </div>
           ) : isError ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 dark:text-gray-500">
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <div className="flex flex-col items-center justify-center py-20 gap-4 text-stone-400 dark:text-stone-500">
+              <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
                 Không tải được danh sách đơn
               </p>
               <button
@@ -66,15 +66,15 @@ export default function OrdersPage() {
               </button>
             </div>
           ) : !orders || orders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 dark:text-gray-500">
-              <div className="size-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center py-20 gap-4 text-stone-400 dark:text-stone-500">
+              <div className="size-20 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
                 <span className="text-4xl">📋</span>
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
                   Chưa có đơn hàng nào
                 </p>
-                <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
+                <p className="text-xs text-stone-400 dark:text-stone-600 mt-1">
                   Hãy chọn món từ thực đơn để bắt đầu
                 </p>
               </div>
@@ -100,16 +100,16 @@ export default function OrdersPage() {
               </div>
 
               {orders.length > 1 && (
-                <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-4 shadow-sm space-y-2">
-                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <div className="rounded-2xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-4 shadow-sm space-y-2">
+                  <p className="text-sm font-semibold text-stone-700 dark:text-stone-300">
                     Tổng kết
                   </p>
                   {/* Tổng tất cả */}
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="text-stone-500 dark:text-stone-400">
                       Tổng tất cả ({orders.length} đơn)
                     </span>
-                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                    <span className="font-medium text-stone-900 dark:text-stone-100">
                       {orders
                         .reduce((s, o) => s + o.totalAmount, 0)
                         .toLocaleString("vi-VN")}
@@ -136,8 +136,8 @@ export default function OrdersPage() {
                   )}
 
                   {/* Còn lại cần trả */}
-                  <div className="flex justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <div className="flex justify-between pt-2 border-t border-stone-100 dark:border-stone-800">
+                    <span className="text-sm font-semibold text-stone-900 dark:text-white">
                       Còn cần thanh toán
                     </span>
                     <span className="text-base font-bold text-brand-600 dark:text-brand-400">
@@ -152,7 +152,7 @@ export default function OrdersPage() {
         </main>
 
         {/* bottom CTA */}
-        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-gray-100 bg-white px-4 py-4 dark:border-gray-800 dark:bg-gray-900">
+        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-stone-100 bg-white px-4 py-4 dark:border-stone-800 dark:bg-stone-900">
           {unpaidOrders.length > 0 && (
             <button
               onClick={() => router.push(`/menu/${tableToken}/checkout`)}

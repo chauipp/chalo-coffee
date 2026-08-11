@@ -36,22 +36,22 @@ export default function OrderTrackingPage() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex items-center justify-center">
         <SpinnerIcon className="size-8 animate-spin text-brand-400" />
       </div>
     );
 
   if (!order)
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4 text-center">
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex items-center justify-center p-4 text-center">
         <div>
           <div className="size-20 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-4xl mx-auto mb-4">
             ✅
           </div>
-          <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+          <p className="text-lg font-bold text-stone-900 dark:text-white mb-2">
             Đơn không còn hoạt động
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+          <p className="text-sm text-stone-500 dark:text-stone-400 mb-8">
             Đơn này có thể đã được phục vụ và thanh toán xong.
           </p>
           <button
@@ -90,20 +90,20 @@ export default function OrderTrackingPage() {
           addInfo={`CHALO ${order.tableName ?? ""} DON ${order.id.slice(-6)}`}
         />
       )}
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
         {/* Header (Sticky) */}
-        <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
+        <header className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-100 dark:border-stone-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
           <button
             onClick={() => router.push(`/menu/${tableToken}/orders`)}
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors shrink-0"
+            className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors shrink-0"
           >
             ← Quay lại
           </button>
           <div className="flex-1 overflow-hidden">
-            <h1 className="text-base font-bold text-gray-900 dark:text-white truncate">
+            <h1 className="text-base font-bold text-stone-900 dark:text-white truncate">
               Chi tiết đơn
             </h1>
-            <p className="text-xs text-gray-400 dark:text-gray-500 font-mono">
+            <p className="text-xs text-stone-400 dark:text-stone-500 font-mono">
               #{order.id.slice(-6).toUpperCase()} · {order.tableName}
             </p>
           </div>
@@ -157,15 +157,15 @@ export default function OrderTrackingPage() {
             order.estimateWaitMinutes > 0 &&
             !isServed &&
             !isCancelled && (
-              <div className="rounded-2xl bg-linear-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border border-orange-100 dark:border-orange-900/30 p-4 flex items-center gap-3 shadow-sm">
-                <div className="size-10 rounded-full bg-white dark:bg-orange-900/50 flex items-center justify-center text-lg shadow-sm shrink-0">
+              <div className="rounded-2xl bg-linear-to-r from-brand-50 to-sky-50 dark:from-brand-950/30 dark:to-sky-950/30 border border-brand-100 dark:border-brand-900/30 p-4 flex items-center gap-3 shadow-sm">
+                <div className="size-10 rounded-full bg-white dark:bg-brand-900/50 flex items-center justify-center text-lg shadow-sm shrink-0">
                   ⏱️
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-orange-600 dark:text-orange-500 uppercase tracking-wider">
+                  <p className="text-xs font-semibold text-brand-600 dark:text-brand-500 uppercase tracking-wider">
                     Thời gian chờ dự kiến
                   </p>
-                  <p className="text-lg font-bold text-orange-800 dark:text-orange-400">
+                  <p className="text-lg font-bold text-brand-800 dark:text-brand-400">
                     Khoảng {order.estimateWaitMinutes} phút
                   </p>
                 </div>
@@ -173,12 +173,12 @@ export default function OrderTrackingPage() {
             )}
           {/* Stepper Phục vụ */}
           {!isCancelled && (
-            <div className="rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
-              <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-5">
+            <div className="rounded-3xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-5 shadow-sm">
+              <h2 className="text-sm font-bold text-stone-900 dark:text-white mb-5">
                 Tiến trình phục vụ
               </h2>
               <div className="relative pl-2">
-                <div className="absolute left-[1.35rem] top-4 bottom-4 w-0.5 bg-gray-100 dark:bg-gray-800" />
+                <div className="absolute left-[1.35rem] top-4 bottom-4 w-0.5 bg-stone-100 dark:bg-stone-800" />
                 <div className="space-y-6">
                   {SERVICE_STEPS.map((step, stepIdx) => {
                     const isDone = currentStepIndex > stepIdx;
@@ -196,7 +196,7 @@ export default function OrderTrackingPage() {
                                 ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30"
                                 : isCurrent
                                   ? "bg-brand-500 text-white shadow-md shadow-brand-500/40 ring-4 ring-brand-100 dark:ring-brand-900/30"
-                                  : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
+                                  : "bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500"
                             }`}
                         >
                           {isDone ? "✓" : step.emoji}
@@ -208,8 +208,8 @@ export default function OrderTrackingPage() {
                                 isCurrent
                                   ? "text-brand-600 dark:text-brand-400"
                                   : isDone
-                                    ? "text-gray-900 dark:text-gray-200"
-                                    : "text-gray-400 dark:text-gray-600"
+                                    ? "text-stone-900 dark:text-stone-200"
+                                    : "text-stone-400 dark:text-stone-600"
                               }`}
                           >
                             {step.label}
@@ -228,15 +228,15 @@ export default function OrderTrackingPage() {
             </div>
           )}
           {/* Chi tiết đơn hàng */}
-          <div className="rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
-            <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">
+          <div className="rounded-3xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-5 shadow-sm">
+            <h2 className="text-sm font-bold text-stone-900 dark:text-white mb-4">
               Chi tiết món ({order.items.reduce((s, i) => s + i.quantity, 0)}{" "}
               món)
             </h2>
             <div className="space-y-4">
               {order.items.map((item) => (
                 <div key={item.id} className="flex gap-3">
-                  <div className="size-14 rounded-2xl bg-gray-50 dark:bg-gray-800 shrink-0 flex items-center justify-center text-2xl overflow-hidden border border-gray-100 dark:border-gray-700/50">
+                  <div className="size-14 rounded-2xl bg-stone-50 dark:bg-stone-800 shrink-0 flex items-center justify-center text-2xl overflow-hidden border border-stone-100 dark:border-stone-700/50">
                     {item.productImageUrl ? (
                       <img
                         src={item.productImageUrl}
@@ -249,10 +249,10 @@ export default function OrderTrackingPage() {
                   </div>
                   <div className="flex-1 min-w-0 flex justify-between">
                     <div className="pr-2">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                      <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 truncate">
                         {item.productName}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                         {item.price.toLocaleString("vi-VN")}đ{" "}
                         <span className="mx-1">×</span> {item.quantity}
                       </p>
@@ -262,7 +262,7 @@ export default function OrderTrackingPage() {
                         </p>
                       )}
                     </div>
-                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100 shrink-0">
+                    <p className="text-sm font-bold text-stone-900 dark:text-stone-100 shrink-0">
                       {item.subtotal.toLocaleString("vi-VN")}đ
                     </p>
                   </div>
@@ -270,8 +270,8 @@ export default function OrderTrackingPage() {
               ))}
             </div>
 
-            <div className="mt-5 pt-4 border-t border-dashed border-gray-200 dark:border-gray-800 flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+            <div className="mt-5 pt-4 border-t border-dashed border-stone-200 dark:border-stone-800 flex items-center justify-between">
+              <span className="text-sm font-semibold text-stone-500 dark:text-stone-400">
                 Tổng cộng
               </span>
               <span className="text-xl font-black text-brand-600 dark:text-brand-400">
@@ -281,14 +281,14 @@ export default function OrderTrackingPage() {
           </div>
           {/* Ghi chú chung */}
           {order.note && (
-            <div className="rounded-2xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100/50 dark:border-amber-900/30 p-4 shadow-sm">
+            <div className="rounded-2xl bg-sky-50/50 dark:bg-sky-900/10 border border-sky-100/50 dark:border-sky-900/30 p-4 shadow-sm">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-base">📌</span>
-                <p className="text-xs font-bold text-amber-800 dark:text-amber-500 uppercase tracking-wider">
+                <p className="text-xs font-bold text-sky-800 dark:text-sky-500 uppercase tracking-wider">
                   Ghi chú cho quán
                 </p>
               </div>
-              <p className="text-sm text-gray-700 dark:text-gray-300 pl-6">
+              <p className="text-sm text-stone-700 dark:text-stone-300 pl-6">
                 {order.note}
               </p>
             </div>
@@ -296,7 +296,7 @@ export default function OrderTrackingPage() {
         </main>
 
         {/* Cụm Action Bottom (Sticky Dock) */}
-        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-gray-100 bg-white/90 px-4 py-4 shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.1)] backdrop-blur-lg dark:border-gray-800 dark:bg-gray-900/90">
+        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-stone-100 bg-white/90 px-4 py-4 shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.1)] backdrop-blur-lg dark:border-stone-800 dark:bg-stone-900/90">
           {/* Nút Thanh toán (Nổi bật nhất) */}
           {canPay && (
             <button
@@ -311,7 +311,7 @@ export default function OrderTrackingPage() {
           <div className="flex gap-3">
             <button
               onClick={() => router.push(`/menu/${tableToken}/orders`)}
-              className="flex-1 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 py-3.5 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98] transition-colors"
+              className="flex-1 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 py-3.5 text-sm font-semibold text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 active:scale-[0.98] transition-colors"
             >
               Tất cả đơn
             </button>

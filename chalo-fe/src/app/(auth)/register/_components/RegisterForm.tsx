@@ -8,12 +8,12 @@ import { useState } from "react";
 
 const inputClass = (hasError: boolean) =>
   `w-full rounded-xl border px-4 py-2.5 text-sm
-   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-   placeholder:text-gray-400 dark:placeholder:text-gray-500
+   bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100
+   placeholder:text-stone-400 dark:placeholder:text-stone-500
    outline-none transition-colors
    focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20
    disabled:cursor-not-allowed disabled:opacity-50
-   ${hasError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : "border-gray-200 dark:border-gray-700"}`;
+   ${hasError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : "border-stone-200 dark:border-stone-700"}`;
 
 export default function RegisterForm() {
   const { form, handleRegister, isLoading } = useRegister();
@@ -34,7 +34,7 @@ export default function RegisterForm() {
 
       {/* fullName */}
       <div className="space-y-1.5">
-        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="fullName" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
           Họ và tên
         </label>
         <input
@@ -52,7 +52,7 @@ export default function RegisterForm() {
 
       {/* username */}
       <div className="space-y-1.5">
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="username" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
           Tên đăng nhập
         </label>
         <input
@@ -69,7 +69,7 @@ export default function RegisterForm() {
 
       {/* password */}
       <div className="space-y-1.5">
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="password" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
           Mật khẩu
         </label>
         <div className="relative">
@@ -85,7 +85,7 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowPassword((p) => !p)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
             tabIndex={-1}
             aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
           >
@@ -97,7 +97,7 @@ export default function RegisterForm() {
 
       {/* confirmPassword */}
       <div className="space-y-1.5">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
           Nhập lại mật khẩu
         </label>
         <input

@@ -37,7 +37,7 @@ export const PayConfirmModal = ({
         role="dialog"
         aria-modal="true"
         aria-label="Xác nhận thanh toán"
-        className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]"
+        className="w-full sm:max-w-sm bg-white dark:bg-stone-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-6 pb-8 sm:pb-6 motion-safe:animate-[modal-pop_0.18s_cubic-bezier(0.16,1,0.3,1)]"
       >
         
         {/* 1. Icon Section (Đã sửa lỗi nằm chèn) */}
@@ -49,10 +49,10 @@ export const PayConfirmModal = ({
 
         {/* 2. Content Section */}
         <div className="text-center mb-8">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-lg font-bold text-stone-900 dark:text-white mb-2">
             Xác nhận thanh toán
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">
             Số tiền cần thanh toán cho đơn này
           </p>
           
@@ -69,17 +69,17 @@ export const PayConfirmModal = ({
               {/* QR luôn nền trắng để app ngân hàng quét được ở cả dark mode */}
               <div
                 data-testid="vietqr-code"
-                className="rounded-2xl border-2 border-gray-100 bg-white p-3 dark:border-gray-800"
+                className="rounded-2xl border-2 border-stone-100 bg-white p-3 dark:border-stone-800"
               >
                 <QRCodeSVG value={qrPayload} size={180} marginSize={1} />
               </div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                 {settings!.bankAccountName}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+              <p className="text-xs text-stone-500 dark:text-stone-400 font-mono">
                 {settings!.bankAccountNo}
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-stone-400 dark:text-stone-500">
                 Quét bằng app ngân hàng bất kỳ, chuyển xong bấm xác nhận.
               </p>
             </div>
@@ -105,7 +105,7 @@ export const PayConfirmModal = ({
           <button
             onClick={onCancel}
             disabled={isPending}
-            className="w-full rounded-2xl bg-gray-50 dark:bg-gray-800 py-4 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98] transition-all disabled:opacity-60"
+            className="w-full rounded-2xl bg-stone-50 dark:bg-stone-800 py-4 text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 active:scale-[0.98] transition-all disabled:opacity-60"
           >
             Huỷ bỏ
           </button>

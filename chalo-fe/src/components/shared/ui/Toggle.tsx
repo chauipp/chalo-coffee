@@ -12,7 +12,7 @@ export const Toggle = ({ checked, onChange, disabled, label }: ToggleProps) => (
     <div
       onClick={() => !disabled && onChange(!checked)}
       className={`relative h-6 w-11 rounded-full transition-colors
-        ${checked ? "bg-brand-400" : "bg-gray-200 dark:bg-gray-700"}
+        ${checked ? "bg-brand-400" : "bg-stone-200 dark:bg-stone-700"}
         ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
     >
       <span
@@ -21,7 +21,7 @@ export const Toggle = ({ checked, onChange, disabled, label }: ToggleProps) => (
       />
     </div>
     {label && (
-      <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
+      <span className="text-sm text-stone-700 dark:text-stone-300">{label}</span>
     )}
   </label>
 );

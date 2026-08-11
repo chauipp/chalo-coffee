@@ -22,18 +22,18 @@ export function RevenueChart({
   isLoading?: boolean;
 }) {
   if (isLoading) {
-    return <div className="h-72 w-full animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />;
+    return <div className="h-72 w-full animate-pulse rounded-2xl bg-stone-100 dark:bg-stone-800" />;
   }
   if (!data.length) {
     return (
-      <div className="flex h-72 items-center justify-center rounded-2xl border border-gray-200 text-sm text-gray-400 dark:border-gray-700">
+      <div className="flex h-72 items-center justify-center rounded-2xl border border-stone-200 text-sm text-stone-400 dark:border-stone-700">
         Chưa có dữ liệu doanh thu
       </div>
     );
   }
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">Doanh thu</h3>
+    <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-700 dark:bg-stone-800">
+      <h3 className="mb-3 text-sm font-semibold text-stone-700 dark:text-stone-200">Doanh thu</h3>
       <ResponsiveContainer width="100%" height={300}>
         <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 8, left: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
@@ -70,7 +70,7 @@ export function RevenueChart({
             fill="var(--color-brand-400)"
             radius={[6, 6, 0, 0]}
           />
-          <Line yAxisId="right" dataKey="orderCount" name="Số đơn" stroke="#2563eb" strokeWidth={2} dot={false} />
+          <Line yAxisId="right" dataKey="orderCount" name="Số đơn" stroke="#0ea5e9" strokeWidth={2} dot={false} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

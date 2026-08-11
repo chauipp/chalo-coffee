@@ -61,12 +61,12 @@ export const KanbanColumn = ({
       </div>
 
       <div
-        className={`flex-1 min-h-[120px] border-x border-b ${config.borderColor} dark:bg-gray-900 rounded-b-xl p-2 space-y-2 overflow-y-auto ${
+        className={`flex-1 min-h-[120px] border-x border-b ${config.borderColor} dark:bg-stone-900 rounded-b-xl p-2 space-y-2 overflow-y-auto ${
           isDropTarget ? "ring-2 ring-inset ring-brand-400" : ""
         }`}
       >
         {orders.length === 0 ? (
-          <p className="text-xs text-gray-400 dark:text-gray-600 text-center py-6">
+          <p className="text-xs text-stone-400 dark:text-stone-600 text-center py-6">
             Không có đơn
           </p>
         ) : (

@@ -46,13 +46,13 @@ export const TablePopover = ({
       ref={ref}
       popover="auto"
       data-testid="table-popover"
-      className="fixed m-0 rounded-xl border border-orange-200 dark:border-orange-800/50 bg-white dark:bg-gray-900 shadow-xl p-3 space-y-2 w-60"
+      className="fixed m-0 rounded-xl border border-brand-200 dark:border-brand-800/50 bg-white dark:bg-stone-900 shadow-xl p-3 space-y-2 w-60"
     >
-      <div className="flex items-baseline justify-between gap-2 border-b border-gray-100 dark:border-gray-800 pb-1.5">
-        <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">
+      <div className="flex items-baseline justify-between gap-2 border-b border-stone-100 dark:border-stone-800 pb-1.5">
+        <p className="text-sm font-bold text-stone-900 dark:text-stone-100 truncate">
           {table.tableName}
         </p>
-        <span className="text-xs text-gray-400 shrink-0">
+        <span className="text-xs text-stone-400 shrink-0">
           {table.done}/{table.total} ly
         </span>
       </div>
@@ -76,18 +76,18 @@ export const TablePopover = ({
                   })
                 }
                 aria-pressed={ticked}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
               >
                 <span
                   className={`flex size-3.5 shrink-0 items-center justify-center rounded-sm border text-[9px] leading-none
-                    ${ticked ? "border-green-500 bg-green-500 text-white" : "border-gray-400 dark:border-gray-600"}`}
+                    ${ticked ? "border-green-500 bg-green-500 text-white" : "border-stone-400 dark:border-stone-600"}`}
                 >
                   {ticked ? "✓" : ""}
                 </span>
-                <span className="truncate text-gray-700 dark:text-gray-300">
+                <span className="truncate text-stone-700 dark:text-stone-300">
                   {it.productName}
                   {it.quantity > 1 && (
-                    <span className="text-gray-400"> ({u + 1})</span>
+                    <span className="text-stone-400"> ({u + 1})</span>
                   )}
                 </span>
                 {it.note && (

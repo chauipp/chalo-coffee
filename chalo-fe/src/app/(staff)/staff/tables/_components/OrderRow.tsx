@@ -14,13 +14,13 @@ const ORDER_STATUS_CONFIG: Record<
   },
   CONFIRMED: {
     label: "Khách đặt",
-    bg: "bg-blue-100 dark:bg-blue-900/30",
-    text: "text-blue-700 dark:text-blue-400",
+    bg: "bg-sky-100 dark:bg-sky-900/30",
+    text: "text-sky-700 dark:text-sky-400",
   },
   PREPARING: {
     label: "Đang pha chế",
-    bg: "bg-orange-100 dark:bg-orange-900/30",
-    text: "text-orange-700 dark:text-orange-400",
+    bg: "bg-brand-100 dark:bg-brand-900/30",
+    text: "text-brand-700 dark:text-brand-400",
   },
   READY: {
     label: "Sẵn sàng phục vụ",
@@ -29,8 +29,8 @@ const ORDER_STATUS_CONFIG: Record<
   },
   COMPLETED: {
     label: "Đã phục vụ",
-    bg: "bg-gray-100 dark:bg-gray-800",
-    text: "text-gray-600 dark:text-gray-400",
+    bg: "bg-stone-100 dark:bg-stone-800",
+    text: "text-stone-600 dark:text-stone-400",
   },
   CANCELLED: {
     label: "Đã huỷ",
@@ -49,13 +49,13 @@ export const OrderRow = ({ order }: OrderRowProps) => {
   const ageMin = Math.floor(ageMs / 60_000);
 
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
+    <div className="flex items-center gap-3 py-3 border-b border-stone-100 dark:border-stone-800 last:border-0">
       {/* id + time */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-mono font-semibold text-gray-900 dark:text-gray-100">
+        <p className="text-sm font-mono font-semibold text-stone-900 dark:text-stone-100">
           #{order.id.slice(-6).toUpperCase()}
         </p>
-        <p className="text-xs text-gray-400 mt-0.5">{ageMin} phút trước</p>
+        <p className="text-xs text-stone-400 mt-0.5">{ageMin} phút trước</p>
       </div>
 
       {/* badge */}

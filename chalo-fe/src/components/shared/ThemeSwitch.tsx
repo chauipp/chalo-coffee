@@ -17,7 +17,7 @@ export const ThemeSwitch = () => {
       onClick={() => changeTheme(isDark ? "light" : "dark")}
       className={`relative h-8 w-16 shrink-0 overflow-hidden rounded-full ring-1 ring-inset motion-safe:transition-colors motion-safe:duration-300 ${
         isDark
-          ? "ring-gray-700 bg-gradient-to-b from-gray-800 to-gray-950"
+          ? "ring-stone-700 bg-gradient-to-b from-stone-800 to-stone-950"
           : "ring-sky-300 bg-gradient-to-b from-sky-300 to-sky-500"
       }`}
     >
@@ -50,7 +50,7 @@ export const ThemeSwitch = () => {
         aria-hidden="true"
         className={`absolute left-1 top-1 size-6 rounded-full motion-safe:transition-transform motion-safe:duration-300 ${
           isDark
-            ? "translate-x-8 bg-gray-300 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.35)]"
+            ? "translate-x-8 bg-stone-300 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.35)]"
             : "translate-x-0 bg-amber-400 shadow-[0_0_10px_3px_rgba(251,191,36,0.65)]"
         }`}
       >
@@ -60,9 +60,9 @@ export const ThemeSwitch = () => {
             isDark ? "opacity-100" : "opacity-0"
           }`}
         >
-          <span className="absolute left-1 top-1.5 size-1.5 rounded-full bg-gray-400/70" />
-          <span className="absolute right-1.5 top-3 size-1 rounded-full bg-gray-400/60" />
-          <span className="absolute bottom-1 left-2.5 size-1 rounded-full bg-gray-400/50" />
+          <span className="absolute left-1 top-1.5 size-1.5 rounded-full bg-stone-400/70" />
+          <span className="absolute right-1.5 top-3 size-1 rounded-full bg-stone-400/60" />
+          <span className="absolute bottom-1 left-2.5 size-1 rounded-full bg-stone-400/50" />
         </span>
       </span>
     </button>

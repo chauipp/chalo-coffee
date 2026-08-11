@@ -5,7 +5,7 @@ export default function CustomerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto min-h-screen w-full max-w-md bg-gray-50 dark:bg-gray-950">
+    <div className="mx-auto min-h-screen w-full max-w-md bg-stone-50 dark:bg-stone-950">
       {children}
     </div>
   );

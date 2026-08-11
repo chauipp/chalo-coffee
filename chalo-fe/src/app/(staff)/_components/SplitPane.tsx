@@ -131,7 +131,7 @@ export const SplitPane = ({
           ${
             dragging
               ? "bg-brand-400"
-              : "bg-gray-200 dark:bg-gray-800 hover:bg-brand-300 dark:hover:bg-brand-500/60"
+              : "bg-stone-200 dark:bg-stone-800 hover:bg-brand-300 dark:hover:bg-brand-500/60"
           }
           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400`}
       />
