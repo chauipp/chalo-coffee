@@ -349,4 +349,26 @@ export const orderHandlers = [
     });
     return ok(updated);
   }),
+
+  // POST /api/order/checkout/preview — toàn bộ đơn chưa trả của một bàn,
+  // gồm cả COMPLETED để staff thanh toán gộp đúng số tiền.
+  http.post("*/api/order/checkout/preview", async ({ request }) => {
+    const body = (await request.json()) as { tableToken: string };
+    const tableOrders = orders.filter(
+      (order) =>
+        order.tableToken === body.tableToken &&
+        !order.paidStatus &&
+        order.status !== "CANCELLED",
+    );
+    if (tableOrders.length === 0) return notFound("Không có đơn cần thanh toán");
+    const first = tableOrders[0];
+    return ok({
+      tableId: first.tableId,
+      tableName: first.tableName,
+      tableToken: body.tableToken,
+      orderIds: tableOrders.map((order) => order.id),
+      totalAmount: tableOrders.reduce((sum, order) => sum + order.totalAmount, 0),
+      orders: tableOrders,
+    });
+  }),
 ];

@@ -6,25 +6,6 @@ import { useState } from "react";
 import { TableCard } from "./_components/TableCard";
 import { TableDrawer } from "./_components/TableDrawer";
 
-export const STATUS_CONFIG = {
-  AVAILABLE: {
-    label: "Trống",
-    bgColor: "bg-green-50 dark:bg-green-950/20",
-    borderColor: "border-green-200 dark:border-green-800/50",
-    textColor: "text-green-700 dark:text-green-400",
-    badgeBg: "bg-green-100 dark:bg-green-900/30",
-    dot: "bg-green-500",
-  },
-  OCCUPIED: {
-    label: "Có khách",
-    bgColor: "bg-red-50 dark:bg-red-950/20",
-    borderColor: "border-red-200 dark:border-red-800/50",
-    textColor: "text-red-700 dark:text-red-400",
-    badgeBg: "bg-red-100 dark:bg-red-900/30",
-    dot: "bg-red-500",
-  },
-};
-
 export default function StaffTablesPage() {
   const { data: tables, isLoading: isLoadingTables } = useGetTableList();
   const [selectedTable, setSelectedTable] = useState<TableDto | null>(null);
@@ -49,7 +30,7 @@ export default function StaffTablesPage() {
     <>
       <div className="h-full flex flex-col overflow-hidden">
         {/* header */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+        <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900 md:px-6 md:py-4">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -101,7 +82,7 @@ export default function StaffTablesPage() {
         </div>
 
         {/* table grid */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-3 md:p-4">
           {isLoadingTables ? (
             <div className="flex items-center justify-center h-40">
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
@@ -109,7 +90,7 @@ export default function StaffTablesPage() {
           ) : filteredTables.length === 0 ? (
             <p className="text-center text-gray-400 py-20">Không có bàn nào</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {filteredTables.map((t) => (
                 <TableCard key={t.id} table={t} onClick={setSelectedTable} />
               ))}

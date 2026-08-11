@@ -3,10 +3,12 @@ import { authHandlers } from "./auth.handlers";
 import { menuHandlers } from "./menu.handlers";
 import { tableHandlers } from "./tables.handlers";
 import { orderHandlers } from "./order.handlers";
+import { settingsHandlers } from "./settings.handlers";
 
 export const handlers = [
   ...authHandlers,
   ...menuHandlers,
   ...tableHandlers,
   ...orderHandlers,
+  ...settingsHandlers,
 ];
