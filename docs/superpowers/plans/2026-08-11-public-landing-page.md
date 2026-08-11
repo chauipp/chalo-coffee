@@ -35,7 +35,7 @@
 
 ## Task breakdown
 
-- [ ] Task 1: Xây adapter menu động và kiểm thử dữ liệu
+- [x] Task 1: Xây adapter menu động và kiểm thử dữ liệu
 
   **Files:**
   - Create: `chalo-fe/src/app/_components/landing-data.ts`
