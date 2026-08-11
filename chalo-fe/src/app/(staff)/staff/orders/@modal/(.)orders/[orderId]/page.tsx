@@ -4,7 +4,7 @@ import { Receipt, ReceiptVariant } from "@/components/shared/Receipt";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import {
   useGetOrderById,
-  usePayOrder,
+  useCheckoutPreview,
   useUpdateOrderStatus,
 } from "@/services/order/order.queries";
 import { OrderStatus } from "@/services/order/order.types";
@@ -12,6 +12,7 @@ import { useGetActivePagers } from "@/services/pager";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { NEXT_STATUS, NEXT_STATUS_LABEL } from "../../../orders.config";
+import { OrderPaymentPanel } from "../../../_components/OrderPaymentPanel";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: "Khách đặt",
@@ -28,8 +29,8 @@ export default function OrderDetailModal() {
 
   const { data: order, isLoading } = useGetOrderById(orderId);
   const updateStatusMutation = useUpdateOrderStatus();
-  // tableToken chỉ dùng để invalidate query của bàn; order chưa load → ""
-  const payOrderMutation = usePayOrder(order?.tableToken ?? "");
+  const { data: checkoutPreview } = useCheckoutPreview(order?.tableToken ?? "");
+  const [paymentOpen, setPaymentOpen] = useState(false);
 
   // Prefer order.pagerNumber (from 04); fall back to matching the active-pager
   // list by orderId so a released pager shows no badge.
@@ -56,15 +57,6 @@ export default function OrderDetailModal() {
     handleClose();
   };
 
-  const handlePay = async () => {
-    if (!order) return;
-    await payOrderMutation.mutateAsync({
-      orderId: order.id,
-      tableToken: order.tableToken,
-    });
-    handleClose();
-  };
-
   return (
     <>
       {/* backdrop */}
@@ -79,7 +71,7 @@ export default function OrderDetailModal() {
           {/* header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
-              Chi tiết đơn hàng
+              {paymentOpen ? "Thanh toán" : "Chi tiết đơn hàng"}
             </h2>
             <button
               onClick={handleClose}
@@ -95,6 +87,13 @@ export default function OrderDetailModal() {
               <div className="flex justify-center py-10">
                 <SpinnerIcon className="size-8 animate-spin text-brand-400" />
               </div>
+            ) : paymentOpen ? (
+              <OrderPaymentPanel
+                order={order}
+                tableOrders={checkoutPreview?.orders ?? [order]}
+                onCancel={() => setPaymentOpen(false)}
+                onSuccess={handleClose}
+              />
             ) : (
               <div className="space-y-4">
                 {/* meta */}
@@ -172,16 +171,8 @@ export default function OrderDetailModal() {
           </div>
 
           {/* footer */}
-          {order && (
+          {order && !paymentOpen && (
             <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-3">
-              {!order.paidStatus && (
-                <button
-                  onClick={() => printAs("draft")}
-                  className="flex-1 min-w-[8rem] rounded-xl border border-dashed border-gray-300 dark:border-gray-600 py-2.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  🧾 In tạm tính
-                </button>
-              )}
               <button
                 onClick={() => printAs("final")}
                 className="flex-1 min-w-[8rem] rounded-xl border border-gray-200 dark:border-gray-700 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
@@ -190,14 +181,10 @@ export default function OrderDetailModal() {
               </button>
               {!order.paidStatus && (
                 <button
-                  onClick={handlePay}
-                  disabled={payOrderMutation.isPending}
+                  onClick={() => setPaymentOpen(true)}
                   className="flex-1 min-w-[8rem] flex items-center justify-center gap-2 rounded-xl bg-green-500 hover:bg-green-600 py-2.5 text-sm font-bold text-white transition-colors disabled:opacity-50"
                 >
-                  {payOrderMutation.isPending && (
-                    <SpinnerIcon className="size-4 animate-spin" />
-                  )}
-                  💵 Đã thanh toán
+                  💵 Thanh toán
                 </button>
               )}
               {NEXT_STATUS[order.status] && (

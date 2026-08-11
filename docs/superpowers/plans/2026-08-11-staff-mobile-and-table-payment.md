@@ -19,7 +19,7 @@
 
 ---
 
-- [ ] Task 1: Tạo bước thanh toán QR/tiền mặt trong modal chi tiết đơn
+- [x] Task 1: Tạo bước thanh toán QR/tiền mặt trong modal chi tiết đơn
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/staff/orders/_components/OrderPaymentPanel.tsx`
@@ -38,7 +38,7 @@
 - [ ] Step 3: Tạo VietQR theo tổng scope hiện tại; thiếu cấu hình ngân hàng phải hiện hướng dẫn thay vì QR rỗng.
 - [ ] Step 4: Chạy helper test, typecheck và commit `feat: add order payment step`.
 
-- [ ] Task 2: Tích hợp bước thanh toán vào modal chi tiết đơn và bỏ in tạm tính
+- [x] Task 2: Tích hợp bước thanh toán vào modal chi tiết đơn và bỏ in tạm tính
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/orders/@modal/(.)orders/[orderId]/page.tsx`

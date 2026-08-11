@@ -3,10 +3,8 @@
 // src/app/(staff)/staff/tables/_components/TableDrawer.tsx
 
 import { TableDto } from "@/services/table";
-import { useState } from "react";
 import { STATUS_CONFIG } from "../tables.config";
 import { OrderRow } from "./OrderRow";
-import { TablePaymentModal } from "./TablePaymentModal";
 
 interface TableDrawerProps {
   table: TableDto | null;
@@ -14,8 +12,6 @@ interface TableDrawerProps {
 }
 
 export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
-  const [showPayment, setShowPayment] = useState(false);
-
   if (!table) return null;
   const cfg = STATUS_CONFIG[table.status];
   const totalUnpaid = table.activeOrders
@@ -94,13 +90,6 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
                   {totalUnpaid.toLocaleString("vi-VN")}đ
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowPayment(true)}
-                className="mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-green-500 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-green-600"
-              >
-                Thanh toán
-              </button>
             </div>
           )}
 
@@ -112,17 +101,6 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
         </div>
       </div>
 
-      {showPayment && (
-        <TablePaymentModal
-          table={table}
-          totalUnpaid={totalUnpaid}
-          onClose={() => setShowPayment(false)}
-          onSuccess={() => {
-            setShowPayment(false);
-            onClose();
-          }}
-        />
-      )}
     </>
   );
 };

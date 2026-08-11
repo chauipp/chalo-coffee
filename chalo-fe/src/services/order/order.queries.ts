@@ -54,6 +54,7 @@ export const useGetOrderByToken = (tableToken: string) => {
   return useQuery({
     queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
     queryFn: () => getOrdersByTableToken(tableToken),
+    enabled: !!tableToken,
     staleTime: 30_000,
     refetchInterval: 30_000,
   });
@@ -163,6 +164,7 @@ export const usePayOrder = (tableToken: string) => {
     mutationFn: (data: PayOrderPayload) => payOrder(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.TABLES.LIST });
       qc.invalidateQueries({
         queryKey: QUERY_KEYS.ORDERS.BY_TABLE_TOKEN(tableToken),
       });

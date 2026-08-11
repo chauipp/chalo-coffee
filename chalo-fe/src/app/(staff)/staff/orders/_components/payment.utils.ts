@@ -3,10 +3,6 @@ export interface CashChangeResult {
   change: number;
 }
 
-/**
- * Calculate cash change using integer VND amounts.
- * Invalid/insufficient input never produces a negative change.
- */
 export function calculateCashChange(
   total: number,
   received: number | string,
@@ -23,8 +19,5 @@ export function calculateCashChange(
     return { valid: false, change: 0 };
   }
 
-  return {
-    valid: true,
-    change: Math.round(parsedReceived - total),
-  };
+  return { valid: true, change: Math.round(parsedReceived - total) };
 }
