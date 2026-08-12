@@ -403,7 +403,7 @@ git add chalo-fe/src/app/'(auth)' chalo-fe/src/components/auth chalo-fe/src/serv
 git commit -m "feat: add Google sign-in for customers"
 ```
 
-- [ ] Task 7: Customer account, scan bàn và loyalty view mobile-first
+- [x] Task 7: Customer account, scan bàn và loyalty view mobile-first
 
 **Files:**
 - Create: `chalo-fe/src/services/customer/customer.api.ts`
@@ -420,7 +420,7 @@ git commit -m "feat: add Google sign-in for customers"
 - `useCustomerProfile`, `useCustomerShortcut`, `useScanTable`, `useLeaveTable`, `useCustomerLoyalty`, `useCustomerOrders`.
 - Account page renders current point balance, recent orders, scanning/manual QR entry, logout and server-confirmed “Tiếp tục gọi món”.
 
-- [ ] **Step 1: Write failing mobile E2E scenarios**
+- [x] **Step 1: Write failing mobile E2E scenarios**
 
 ```ts
 test('customer sees points and can continue only their active shortcut', async ({ page }) => {
@@ -437,23 +437,23 @@ test('manual QR token opens menu without asking whether the group is old or new'
 });
 ```
 
-- [ ] **Step 2: Run E2E to verify RED**
+- [x] **Step 2: Run E2E to verify RED**
 
 Run: `PLAYWRIGHT_BASE_URL=http://localhost:<port> pnpm exec playwright test e2e/customer-account.spec.ts --project=chromium`
 
 Expected: FAIL because account route/components do not exist.
 
-- [ ] **Step 3: Implement API layer and page**
+- [x] **Step 3: Implement API layer and page**
 
 Build scan UI using `BarcodeDetector` only when supported, with typed manual link/token fallback. Parse a same-origin `/menu/<token>` URL or a plain token; reject foreign/invalid URLs before API. Make “Quét mã bàn” the primary full-width action, show balance prominently, then shortcut/orders. Use explicit empty/error/loading states. `Leave table` removes only caller’s shortcut and `logout` uses existing auth flow.
 
-- [ ] **Step 4: Verify mobile UI manually in browser and with Playwright**
+- [x] **Step 4: Verify mobile UI manually in browser and with Playwright**
 
 Run: `PLAYWRIGHT_BASE_URL=http://localhost:<port> pnpm exec playwright test e2e/customer-account.spec.ts --project=chromium`
 
 Expected: 390×844 has no horizontal scroll, every primary target is visible/tappable, scan fallback works, and no client console errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-fe/src/services/customer chalo-fe/src/app/'(customer)'/account chalo-fe/src/constants/routes.ts chalo-fe/e2e/customer-account.spec.ts
