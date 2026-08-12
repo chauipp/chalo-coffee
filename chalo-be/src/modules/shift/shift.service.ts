@@ -64,7 +64,11 @@ export class ShiftService {
       else if (row.source === PaymentSource.CUSTOMER_CONFIRMATION) summary.customerConfirmation += row.totalAmount;
       else summary.legacy += row.totalAmount;
     }
-    summary.paidOrders = await this.allocationRepo.count({ where: rows.length ? rows.map((row) => ({ paymentTransactionId: row.id })) : { paymentTransactionId: '__none__' } });
+    summary.paidOrders = rows.length
+      ? await this.allocationRepo.count({
+          where: rows.map((row) => ({ paymentTransactionId: row.id })),
+        })
+      : 0;
     const unpaidOrders = await this.orderRepo.count({ where: { paidStatus: false } });
     const cancelledOrders = await this.orderRepo.count({ where: { status: 'CANCELLED' as never, createdAt: Between(from, to) } });
     return { from, to, shift: this.dto(shift), summary: { ...summary, averageOrderValue: summary.paidOrders ? Math.round(summary.paidRevenue / summary.paidOrders) : 0, unpaidOrders, cancelledOrders }, transactions: rows };

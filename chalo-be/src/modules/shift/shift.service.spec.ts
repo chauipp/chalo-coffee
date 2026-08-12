@@ -17,4 +17,16 @@ describe('ShiftService operations', () => {
     const service = new ShiftService(repo as any, {} as any, {} as any, {} as any, { transaction: async (fn: any) => fn(manager) } as any);
     await expect(service.close(2, 1)).rejects.toThrow(BadRequestException);
   });
+
+  it('returns a zero paid-order count without querying UUID allocations when the period has no payments', async () => {
+    const transactionRepo = { find: jest.fn().mockResolvedValue([]) };
+    const allocationRepo = { count: jest.fn() };
+    const orderRepo = { count: jest.fn().mockResolvedValue(0) };
+    const service = new ShiftService(repo as any, transactionRepo as any, allocationRepo as any, orderRepo as any, {} as any);
+
+    const result = await service.report({});
+
+    expect(result.summary.paidOrders).toBe(0);
+    expect(allocationRepo.count).not.toHaveBeenCalled();
+  });
 });
