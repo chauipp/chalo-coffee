@@ -78,7 +78,7 @@
 - [ ] Step 4: Run backend tests and TypeScript build.
 - [ ] Step 5: Commit `feat: price orders from selected modifiers`.
 
-- [ ] Task 3: Add dynamic modifier editor to the admin product form
+- [x] Task 3: Add dynamic modifier editor to the admin product form
 
 **Files:**
 - Create: `chalo-fe/src/components/menu/ProductModifierFields.tsx`
