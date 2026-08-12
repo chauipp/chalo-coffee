@@ -17,7 +17,7 @@ export function MobileStaffNav() {
       className="fixed inset-x-2 bottom-2 z-40 overflow-hidden rounded-2xl border border-gray-200 bg-white/95 px-1.5 pt-1.5 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.25rem)" }}
     >
-      <div className="grid w-full grid-cols-4 gap-0.5">
+      <div className="grid w-full grid-cols-5 gap-0.5">
         {STAFF_HEADER_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
           return (

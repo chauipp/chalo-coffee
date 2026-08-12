@@ -23,6 +23,11 @@ test("staff mobile đăng xuất từ thanh đáy", async ({ page }, testInfo) =
 
   const logout = page.getByRole("button", { name: "Đăng xuất" });
   await expect(logout).toBeVisible();
+  await expect(page.locator('[data-testid="staff-mobile-nav"] > div > *')).toHaveCount(5);
+  await expect(page.locator('[data-testid="staff-mobile-nav"] > div')).toHaveCSS(
+    "grid-template-columns",
+    /repeat\(5, /,
+  );
   await expect(
     page.locator("body").evaluate((element) => element.scrollWidth > element.clientWidth),
   ).resolves.toBe(false);
