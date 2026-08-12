@@ -58,7 +58,7 @@
 - [ ] Chạy backend unit suite và build.
 - [ ] Commit: `feat: record payment method and cashier`.
 
-- [ ] Task 3: Tạo domain ca, API báo cáo và kiểm thử
+- [x] Task 3: Tạo domain ca, API báo cáo và kiểm thử
 
 **Files:**
 - Create: `chalo-be/src/modules/shift/entities/cash-shift.entity.ts`, `shift.service.ts`, `shift.controller.ts`, `shift.module.ts`, `dto/*.ts`
