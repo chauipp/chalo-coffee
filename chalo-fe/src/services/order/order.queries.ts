@@ -13,6 +13,7 @@ import {
   checkoutPreview,
   checkoutStart,
   createOrder,
+  deleteOrder,
   getActiveOrders,
   getEstimatedWait,
   getOrderById,
@@ -144,6 +145,24 @@ export const useUpdateOrderStatus = () => {
         queryKey: QUERY_KEYS.ORDERS.DETAIL(updatedOrder.id),
       });
       toast.success("Cập nhật trạng thái đơn hàng thành công");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
+export const useDeleteOrder = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteOrder(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.TABLES.ALL });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.PAGERS.ALL });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.REVENUE.STATS({}) });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.REVENUE.TOP_PRODUCTS({}) });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.SHIFT.CURRENT });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.SHIFT.REPORT() });
+      toast.success("Đã xóa đơn hàng");
     },
     onError: (e: Error) => toast.error(e.message),
   });

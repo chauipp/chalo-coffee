@@ -52,6 +52,9 @@ export const updateOrderStatus = (
 ): Promise<OrderDto> =>
   request.put(API.ORDER.UPDATE_STATUS, { id: orderId, status });
 
+export const deleteOrder = (id: string): Promise<{ id: string }> =>
+  request.delete(API.ORDER.DELETE(id));
+
 export const requestPayment = (orderId: string): Promise<void> =>
   request.post(API.ORDER.REQUEST_PAYMENT, { orderId });
 

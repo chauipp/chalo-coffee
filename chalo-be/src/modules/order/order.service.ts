@@ -39,6 +39,9 @@ import { SettingsService } from '../settings/settings.service';
 import { CustomerService } from '../customer/customer.service';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { PaymentMethod, PaymentSource } from '../payment/entities/payment-transaction.entity';
+import { PaymentTransaction } from '../payment/entities/payment-transaction.entity';
+import { PaymentAllocation } from '../payment/entities/payment-allocation.entity';
+import { LoyaltyPointTransaction } from '../customer/entities/loyalty-point-transaction.entity';
 import { PaymentService } from '../payment/payment.service';
 import { Optional } from '@nestjs/common';
 
@@ -540,6 +543,73 @@ export class OrderService {
     });
     if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
     return this.buildDto(order, true);
+  }
+
+  /**
+   * Dọn đơn test từ màn Admin. Xóa thật theo yêu cầu: loyalty, payment
+   * allocation, item và order. Với thanh toán gộp, transaction được giữ lại
+   * cho những order còn lại và giảm đúng phần tiền allocation vừa xóa.
+   */
+  async deleteByAdmin(id: string): Promise<{ id: string }> {
+    return this.dataSource.transaction(async (manager) => {
+      const order = await manager.findOne(Order, {
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
+
+      const allocations = await manager.find(PaymentAllocation, {
+        where: { orderId: id },
+        relations: ['paymentTransaction'],
+      });
+
+      await manager.delete(LoyaltyPointTransaction, { orderId: id });
+
+      for (const allocation of allocations) {
+        const transaction = allocation.paymentTransaction;
+        await manager.delete(PaymentAllocation, { id: allocation.id });
+        if (!transaction) continue;
+
+        const remainingAllocations = await manager.count(PaymentAllocation, {
+          where: { paymentTransactionId: transaction.id },
+        });
+        if (remainingAllocations === 0) {
+          await manager.delete(PaymentTransaction, { id: transaction.id });
+          continue;
+        }
+
+        transaction.totalAmount = Math.max(0, transaction.totalAmount - allocation.amount);
+        if (transaction.receivedAmount !== null) {
+          transaction.changeAmount = Math.max(
+            0,
+            transaction.receivedAmount - transaction.totalAmount,
+          );
+        }
+        await manager.save(PaymentTransaction, transaction);
+      }
+
+      if (order.pagerId) {
+        const pager = await manager.findOne(PagerToken, {
+          where: { id: order.pagerId },
+          lock: { mode: 'pessimistic_write' },
+        });
+        if (pager) {
+          pager.status = PagerStatus.COMPLETED;
+          pager.orderId = null;
+          await manager.save(PagerToken, pager);
+        }
+      }
+
+      await manager.delete(OrderItem, { orderId: id });
+      await manager.delete(Order, { id });
+      await this.syncTableOccupancyAfterOrderChange(manager, order.tableId);
+
+      this.sseService.emit({
+        type: 'order_deleted',
+        data: { orderId: id, tableId: order.tableId, tableToken: order.tableToken },
+      });
+      return { id };
+    });
   }
 
   async byToken(token: string) {
