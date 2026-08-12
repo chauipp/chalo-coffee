@@ -30,6 +30,15 @@ function PinIcon({ className = "" }: { className?: string }) {
   );
 }
 
+function ZaloIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+      <path d="M5.2 5.7C7 4.1 9.2 3.3 12 3.3c4.7 0 8.5 3.1 8.5 7.1 0 3.9-3.8 7.1-8.5 7.1-.9 0-1.8-.1-2.6-.4L5 20.2l1.1-3.8C4.5 15.1 3.5 13.2 3.5 10.9c0-2 .6-3.7 1.7-5.2Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <path d="M8 9.1h2.4L8.3 13h2.5M13.1 9.1h2.6l-2.3 3.9h2.7" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function CoffeeIllustration() {
   return (
     <div aria-hidden="true" className="relative mx-auto h-64 w-64 sm:h-80 sm:w-80">
@@ -193,6 +202,17 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
           </div>
         </nav>
       ) : null}
+
+      <nav aria-label="Liên hệ nhanh" className={`fixed right-4 z-40 flex flex-col gap-3 transition-[bottom] duration-200 ${showMobileDock ? "bottom-20" : "bottom-4 sm:bottom-6"}`} style={!showMobileDock ? { bottom: "max(1rem, env(safe-area-inset-bottom))" } : undefined}>
+        <a href={ZALO_URL} target="_blank" rel="noreferrer" aria-label="Nhắn Zalo" className="group relative inline-flex size-12 items-center justify-center rounded-full bg-[#0068ff] text-white shadow-lg shadow-blue-950/25 transition hover:-translate-y-0.5 hover:bg-[#005de6] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-500">
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg bg-brand-900 px-3 py-1.5 text-xs font-bold text-white opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">Nhắn Zalo</span>
+          <ZaloIcon className="size-6" />
+        </a>
+        <a href={MAPS_URL} target="_blank" rel="noreferrer" aria-label="Chỉ đường" className="group relative inline-flex size-12 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg shadow-brand-900/25 transition hover:-translate-y-0.5 hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-500">
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg bg-brand-900 px-3 py-1.5 text-xs font-bold text-white opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">Chỉ đường</span>
+          <PinIcon className="size-5" />
+        </a>
+      </nav>
     </div>
   );
 }
