@@ -142,7 +142,7 @@
 - [ ] Step 4: Run Playwright staff POS flow at desktop and 375×667: select options, see updated price, alter two variants independently, submit, and inspect prep display.
 - [ ] Step 5: Commit `feat: support modifiers in staff POS and prep`.
 
-- [ ] Task 6: Full regression, documentation, and integration checkpoint
+- [x] Task 6: Full regression, documentation, and integration checkpoint
 
 **Files:**
 - Modify: `docs/superpowers/specs/2026-08-12-product-modifiers-design.md`
