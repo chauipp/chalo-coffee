@@ -19,9 +19,13 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
   const { data: tableOrders = [], isLoading: isLoadingTableOrders } = useGetOrderByToken(table?.qrToken ?? "");
   if (!table) return null;
   const cfg = STATUS_CONFIG[table.status];
-  const totalUnpaid = table.activeOrders
-    .filter((o) => !o.paidStatus)
-    .reduce((sum, o) => sum + o.totalAmount, 0);
+  // `activeOrders` thuộc payload sơ đồ bàn có thể trễ một nhịp sau thanh toán
+  // hoặc đổi trạng thái. Drawer đã tải danh sách chi tiết theo QR nên dùng nó
+  // làm nguồn sự thật cho CTA thanh toán; chỉ fallback khi query còn tải.
+  const ordersForPayment = tableOrders.length > 0 ? tableOrders : table.activeOrders;
+  const unpaidOrders = ordersForPayment
+    .filter((o) => !o.paidStatus);
+  const totalUnpaid = unpaidOrders.reduce((sum, o) => sum + o.totalAmount, 0);
 
   return (
     <>
@@ -101,8 +105,7 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
           )}
         </div>
 
-          {!paymentOpen && table.status === "OCCUPIED" &&
-          table.activeOrders.length > 0 &&
+          {!paymentOpen && unpaidOrders.length > 0 &&
           totalUnpaid > 0 && (
             <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800 shrink-0">
               <div className="flex justify-between items-center">
