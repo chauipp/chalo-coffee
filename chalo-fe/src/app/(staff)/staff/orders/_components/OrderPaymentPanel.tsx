@@ -54,9 +54,9 @@ export function OrderPaymentPanel({
   const confirmPayment = async () => {
     if (!canConfirm || isPending) return;
     if (scope === "order") {
-      await payOrderMutation.mutateAsync({ orderId: order.id, tableToken: order.tableToken });
+      await payOrderMutation.mutateAsync({ orderId: order.id, tableToken: order.tableToken, method: method === "cash" ? "CASH" : "BANK_TRANSFER", ...(method === "cash" && cash.received !== null ? { receivedAmount: cash.received } : {}) });
     } else {
-      await payAllMutation.mutateAsync({ tableToken: order.tableToken });
+      await payAllMutation.mutateAsync({ tableToken: order.tableToken, method: method === "cash" ? "CASH" : "BANK_TRANSFER", ...(method === "cash" && cash.received !== null ? { receivedAmount: cash.received } : {}) });
     }
     onSuccess();
   };

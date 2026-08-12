@@ -70,6 +70,8 @@ export interface OrderPageParams extends PageParam {
 export interface PayOrderPayload {
   orderId: string;
   tableToken: string;
+  method?: "CASH" | "BANK_TRANSFER";
+  receivedAmount?: number;
 }
 
 export interface CallStaffPayload {
@@ -79,6 +81,8 @@ export interface CallStaffPayload {
 
 export interface PayAllOrdersPayload {
   tableToken: string;
+  method?: "CASH" | "BANK_TRANSFER";
+  receivedAmount?: number;
 }
 
 // ============================================================================

@@ -1,6 +1,7 @@
 export interface CashChangeResult {
   valid: boolean;
   change: number;
+  received: number | null;
 }
 
 export function calculateCashChange(
@@ -16,8 +17,8 @@ export function calculateCashChange(
     !Number.isFinite(parsedReceived) ||
     parsedReceived < total
   ) {
-    return { valid: false, change: 0 };
+    return { valid: false, change: 0, received: null };
   }
 
-  return { valid: true, change: Math.round(parsedReceived - total) };
+  return { valid: true, change: Math.round(parsedReceived - total), received: Math.round(parsedReceived) };
 }
