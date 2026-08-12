@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { OrderStatus } from '../../common/enums/order-status.enum';
 import { Order } from '../order/entities/order.entity';
 import { Table } from '../table/entities/table.entity';
 import { User } from '../user/entities/user.entity';
@@ -9,7 +10,10 @@ import {
   CustomerTableSession,
   CustomerTableSessionStatus,
 } from './entities/customer-table-session.entity';
-import { LoyaltyPointTransaction } from './entities/loyalty-point-transaction.entity';
+import {
+  LoyaltyPointTransaction,
+  LoyaltyPointTransactionType,
+} from './entities/loyalty-point-transaction.entity';
 
 const VIETNAM_UTC_OFFSET_MS = 7 * 60 * 60 * 1_000;
 const PAID_SHORTCUT_IDLE_MS = 30 * 60 * 1_000;
@@ -168,6 +172,67 @@ export class CustomerService {
     });
 
     return { list: orders, total, pageNo, pageSize };
+  }
+
+  async awardPointsForOrder(
+    manager: EntityManager,
+    order: Order,
+    paidAt = new Date(),
+  ): Promise<number> {
+    if (
+      !order.customerId ||
+      !order.paidStatus ||
+      order.status === OrderStatus.CANCELLED
+    ) {
+      return 0;
+    }
+
+    const points = Math.floor(order.totalAmount / 1_000);
+    if (points > 0) {
+      await manager.getRepository(LoyaltyPointTransaction).upsert(
+        {
+          customerId: order.customerId,
+          orderId: order.id,
+          points,
+          type: LoyaltyPointTransactionType.EARN,
+        },
+        ['orderId'],
+      );
+    }
+
+    const remainingUnpaidOrders = await manager
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .where('order.customerId = :customerId', {
+        customerId: order.customerId,
+      })
+      .andWhere('order.tableToken = :tableToken', {
+        tableToken: order.tableToken,
+      })
+      .andWhere('order.status != :cancelledStatus', {
+        cancelledStatus: OrderStatus.CANCELLED,
+      })
+      .andWhere('order.paidStatus = :isUnpaid', { isUnpaid: false })
+      .getCount();
+
+    if (remainingUnpaidOrders === 0) {
+      const sessionRepo = manager.getRepository(CustomerTableSession);
+      const session = await sessionRepo.findOne({
+        where: {
+          customerId: order.customerId,
+          tableToken: order.tableToken,
+          status: CustomerTableSessionStatus.ACTIVE,
+        },
+        order: { updatedAt: 'DESC' },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (session) {
+        session.paidAt = paidAt;
+        await sessionRepo.save(session);
+      }
+    }
+
+    return points;
   }
 
   private businessDateVN(now: Date): string {

@@ -793,6 +793,7 @@ export class OrderService {
       order.paidStatus = true;
       order.paymentRequested = false;
       await manager.save(Order, order);
+      await this.customerService.awardPointsForOrder(manager, order);
       await this.syncTableOccupancyAfterOrderChange(manager, order.tableId);
 
       this.sseService.emit({
@@ -835,6 +836,9 @@ export class OrderService {
       }
       if (orders.length) {
         await manager.save(Order, orders);
+        for (const order of orders) {
+          await this.customerService.awardPointsForOrder(manager, order);
+        }
       }
 
       await this.syncTableOccupancyAfterOrderChange(manager, table.id);
@@ -950,6 +954,7 @@ export class OrderService {
       order.paidStatus = true;
       order.paymentRequested = false;
       await manager.save(Order, order);
+      await this.customerService.awardPointsForOrder(manager, order);
     }
 
     session.status = CheckoutSessionStatus.COMPLETED;
