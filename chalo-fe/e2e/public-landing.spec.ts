@@ -23,6 +23,12 @@ test("landing công khai dẫn khách tới menu, bản đồ và đăng nhập"
   await expect(maps).toHaveAttribute("href", MAPS_URL);
   await expect(maps).toHaveAttribute("target", "_blank");
   await expect(page.getByRole("link", { name: "Nhắn Zalo" })).toHaveAttribute("href", ZALO_URL);
+  await expect(page.getByRole("button", { name: "Cần tỉnh táo" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Muốn nhẹ nhàng" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Muốn ngọt một chút" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Cần tỉnh táo" }).click();
+  await expect(page.locator("#menu")).toBeInViewport();
 
   await page.getByRole("link", { name: "Xem thực đơn" }).click();
   await expect(page.locator("#menu")).toBeInViewport();
@@ -30,6 +36,10 @@ test("landing công khai dẫn khách tới menu, bản đồ và đăng nhập"
 
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator("body").evaluate((element) => element.scrollWidth <= element.clientWidth)).resolves.toBe(true);
+  await page.evaluate(() => window.scrollTo({ top: window.innerHeight + 400, behavior: "instant" }));
+  await expect(page.getByRole("navigation", { name: "Thao tác nhanh" })).toBeVisible();
+  await page.getByRole("link", { name: "Thực đơn", exact: true }).last().click();
+  await expect(page.locator("#menu")).toBeInViewport();
   await page.screenshot({ path: testInfo.outputPath("public-landing-mobile.png"), fullPage: true });
 
   await page.getByRole("link", { name: "Đăng nhập" }).first().click();

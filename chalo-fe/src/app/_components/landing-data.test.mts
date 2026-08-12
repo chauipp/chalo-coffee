@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildLandingMenu, formatVnd } from "./landing-data.ts";
+import { buildLandingMenu, findLandingCategoryByKeywords, formatVnd } from "./landing-data.ts";
 import type { CategoryDto, ProductDto } from "@/services/menu/menu.types";
 
 const categories: CategoryDto[] = [
@@ -123,4 +123,12 @@ test("buildLandingMenu chỉ nhóm món active, available theo sort order", () =
 test("buildLandingMenu và formatVnd xử lý dữ liệu rỗng", () => {
   assert.deepEqual(buildLandingMenu([], []), []);
   assert.equal(formatVnd(25000), "25.000đ");
+});
+
+test("findLandingCategoryByKeywords chọn danh mục theo mood và có fallback", () => {
+  const menu = buildLandingMenu(categories, products);
+
+  assert.equal(findLandingCategoryByKeywords(menu, ["cà phê", "coffee"]), "coffee");
+  assert.equal(findLandingCategoryByKeywords(menu, ["trà", "tea"]), "all");
+  assert.equal(findLandingCategoryByKeywords(menu, ["bánh", "ngọt"]), "all");
 });

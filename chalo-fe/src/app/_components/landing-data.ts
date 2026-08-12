@@ -12,6 +12,18 @@ export type LandingCategory = Pick<
   products: LandingProduct[];
 };
 
+export function findLandingCategoryByKeywords(
+  menu: LandingCategory[],
+  keywords: readonly string[],
+): string | "all" {
+  const category = menu.find((item) => {
+    const normalizedName = item.name.toLocaleLowerCase("vi-VN");
+    return keywords.some((keyword) => normalizedName.includes(keyword));
+  });
+
+  return category?.id ?? "all";
+}
+
 export function buildLandingMenu(
   categories: CategoryDto[],
   products: ProductDto[],
