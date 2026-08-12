@@ -40,7 +40,7 @@
 
 ## Phase 1 — Backend identity, schema và an toàn OAuth
 
-- [ ] Task 1: Migration và entity cho khách hàng/điểm/shortcut
+- [x] Task 1: Migration và entity cho khách hàng/điểm/shortcut
 
 **Files:**
 - Create: `chalo-be/src/migrations/<timestamp>-CustomerGoogleLoyalty.ts`
