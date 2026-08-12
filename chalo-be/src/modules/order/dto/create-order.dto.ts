@@ -12,6 +12,7 @@ import {
   Min,
   Max,
   MaxLength,
+  ArrayUnique,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -31,6 +32,13 @@ export class CreateOrderItemDto {
   @IsString()
   @MaxLength(200)
   note?: string | null;
+
+  @ApiPropertyOptional({ example: ['uuid'], description: 'Các lựa chọn tùy chọn của món' })
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsUUID('4', { each: true })
+  modifierOptionIds?: string[];
 }
 
 export class CreateOrderDto {

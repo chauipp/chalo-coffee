@@ -59,7 +59,7 @@
 - [ ] Step 4: Run backend typecheck and focused test.
 - [ ] Step 5: Commit `feat: add product modifier persistence`.
 
-- [ ] Task 2: Make product CRUD and order pricing modifier-aware
+- [x] Task 2: Make product CRUD and order pricing modifier-aware
 
 **Files:**
 - Modify: `chalo-be/src/modules/product/product.service.ts`

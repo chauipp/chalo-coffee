@@ -7,6 +7,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto, UpdateProductStatusDto } from './dto/update-product.dto';
 import { CategoryService } from '../category/category.service';
 import { ProductStatus } from '../../common/enums/product-status.enum';
+import { ProductModifierGroup } from './entities/product-modifier-group.entity';
 
 @Injectable()
 export class ProductService {
@@ -31,6 +32,16 @@ export class ProductService {
       isActive: product.isActive,
       sortOrder: product.sortOrder,
       prepTime: product.prepTime,
+      modifierGroups: (product.modifierGroups ?? []).map((group) => ({
+        id: group.id,
+        name: group.name,
+        selectionType: group.selectionType,
+        isRequired: group.isRequired,
+        sortOrder: group.sortOrder,
+        options: (group.options ?? []).map((option) => ({
+          id: option.id, name: option.name, priceAdjustment: option.priceAdjustment, sortOrder: option.sortOrder,
+        })),
+      })),
       createdAt: product.createdAt,
     };
   }
@@ -39,10 +50,14 @@ export class ProductService {
     const products = await this.productRepo
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.category', 'c')
+      .leftJoinAndSelect('p.modifierGroups', 'modifierGroups')
+      .leftJoinAndSelect('modifierGroups.options', 'modifierOptions')
       .where('p.isActive = true')
       .andWhere('p.status = :status', { status: ProductStatus.AVAILABLE })
       .orderBy('p.sortOrder', 'ASC')
       .addOrderBy('p.createdAt', 'ASC')
+      .addOrderBy('modifierGroups.sortOrder', 'ASC')
+      .addOrderBy('modifierOptions.sortOrder', 'ASC')
       .getMany();
     return products.map((p) => this.buildDto(p));
   }
@@ -61,13 +76,15 @@ export class ProductService {
     const qb = this.productRepo
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.category', 'c');
+    qb.leftJoinAndSelect('p.modifierGroups', 'modifierGroups')
+      .leftJoinAndSelect('modifierGroups.options', 'modifierOptions');
 
     if (name) qb.andWhere('p.name ILIKE :name', { name: `%${name}%` });
     if (categoryId) qb.andWhere('p.categoryId = :categoryId', { categoryId });
     if (status) qb.andWhere('p.status = :status', { status });
     if (isActive !== undefined) qb.andWhere('p.isActive = :isActive', { isActive });
 
-    qb.orderBy('p.createdAt', 'DESC').skip(skip).take(pageSize);
+    qb.orderBy('p.createdAt', 'DESC').addOrderBy('modifierGroups.sortOrder', 'ASC').addOrderBy('modifierOptions.sortOrder', 'ASC').skip(skip).take(pageSize);
     const [products, total] = await qb.getManyAndCount();
     return { list: products.map((p) => this.buildDto(p)), total };
   }
@@ -76,7 +93,11 @@ export class ProductService {
     const product = await this.productRepo
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.category', 'c')
+      .leftJoinAndSelect('p.modifierGroups', 'modifierGroups')
+      .leftJoinAndSelect('modifierGroups.options', 'modifierOptions')
       .where('p.id = :id', { id })
+      .addOrderBy('modifierGroups.sortOrder', 'ASC')
+      .addOrderBy('modifierOptions.sortOrder', 'ASC')
       .getOne();
     if (!product) throw new NotFoundException('Sản phẩm không tồn tại');
     return this.buildDto(product);
@@ -92,7 +113,10 @@ export class ProductService {
 
   async create(dto: CreateProductDto) {
     await this.categoryService.detail(dto.categoryId);
-    const product = this.productRepo.create(dto);
+    const product = this.productRepo.create({
+      ...dto,
+      modifierGroups: (dto.modifierGroups ?? []).map((group) => ({ ...group, options: group.options.map((option) => ({ ...option })) })),
+    });
     const saved = await this.productRepo.save(product);
     return this.detail(saved.id);
   }
@@ -100,16 +124,20 @@ export class ProductService {
   async update(dto: UpdateProductDto) {
     await this.detail(dto.id);
     await this.categoryService.detail(dto.categoryId);
-    await this.productRepo.update(dto.id, {
-      name: dto.name,
-      categoryId: dto.categoryId,
-      description: dto.description,
-      imageUrl: dto.imageUrl,
-      price: dto.price,
-      prepTime: dto.prepTime,
-      sortOrder: dto.sortOrder,
-      status: dto.status,
-      isActive: dto.isActive,
+    await this.productRepo.manager.transaction(async (manager) => {
+      await manager.update(Product, dto.id, {
+        name: dto.name, categoryId: dto.categoryId, description: dto.description,
+        imageUrl: dto.imageUrl, price: dto.price, prepTime: dto.prepTime,
+        sortOrder: dto.sortOrder, status: dto.status, isActive: dto.isActive,
+      });
+      if (dto.modifierGroups !== undefined) {
+        await manager.delete(ProductModifierGroup, { productId: dto.id });
+        if (dto.modifierGroups.length) {
+          await manager.save(ProductModifierGroup, dto.modifierGroups.map((group) => manager.create(ProductModifierGroup, {
+            ...group, productId: dto.id, options: group.options.map((option) => ({ ...option })),
+          })));
+        }
+      }
     });
     return this.detail(dto.id);
   }
