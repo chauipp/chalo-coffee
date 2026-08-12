@@ -9,6 +9,7 @@ import { Table } from '../table/entities/table.entity';
 import { Product } from '../product/entities/product.entity';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
+import { CustomerService } from '../customer/customer.service';
 
 describe('OrderService STATUS_TRANSITIONS', () => {
   let service: OrderService;
@@ -46,6 +47,7 @@ describe('OrderService STATUS_TRANSITIONS', () => {
         },
         { provide: SseService, useValue: sse },
         { provide: SettingsService, useValue: { get: jest.fn() } },
+        { provide: CustomerService, useValue: {} },
       ],
     }).compile();
 

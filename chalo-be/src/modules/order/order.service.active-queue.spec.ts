@@ -8,6 +8,7 @@ import { Table } from '../table/entities/table.entity';
 import { Product } from '../product/entities/product.entity';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
+import { CustomerService } from '../customer/customer.service';
 import { OrderStatus } from '../../common/enums/order-status.enum';
 
 describe('OrderService.getActiveQueue — mốc 0h00 giờ VN', () => {
@@ -36,6 +37,7 @@ describe('OrderService.getActiveQueue — mốc 0h00 giờ VN', () => {
         { provide: DataSource, useValue: {} },
         { provide: SseService, useValue: { emit: jest.fn() } },
         { provide: SettingsService, useValue: { get: jest.fn() } },
+        { provide: CustomerService, useValue: {} },
       ],
     }).compile();
 
@@ -98,6 +100,7 @@ describe('OrderService.getActiveQueue — cột "Đã phục vụ" phải gồm 
         { provide: DataSource, useValue: {} },
         { provide: SseService, useValue: { emit: jest.fn() } },
         { provide: SettingsService, useValue: { get: jest.fn() } },
+        { provide: CustomerService, useValue: {} },
       ],
     }).compile();
 

@@ -239,7 +239,7 @@ git commit -m "feat: add customer table shortcut APIs"
 
 ## Phase 2 — Đơn thuộc khách và ledger tích điểm
 
-- [ ] Task 4: Gắn đơn đăng nhập với shortcut đúng bàn
+- [x] Task 4: Gắn đơn đăng nhập với shortcut đúng bàn
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/order.controller.ts`

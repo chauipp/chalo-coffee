@@ -10,14 +10,17 @@ import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { SseModule } from '../sse/sse.module';
 import { SettingsModule } from '../settings/settings.module';
+import { CustomerModule } from '../customer/customer.module';
+import { OptionalJwtAuthGuard } from './optional-jwt-auth.guard';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem, CheckoutSession, Table, Product, PagerToken]),
     SseModule,
     SettingsModule,
+    CustomerModule,
   ],
-  providers: [OrderService],
+  providers: [OrderService, OptionalJwtAuthGuard],
   controllers: [OrderController],
 })
 export class OrderModule {}

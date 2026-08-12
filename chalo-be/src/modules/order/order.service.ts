@@ -36,6 +36,14 @@ import { ProductStatus } from '../../common/enums/product-status.enum';
 import { ESTIMATED_WAIT_BARISTAS } from '../../common/constants';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
+import { CustomerService } from '../customer/customer.service';
+import { UserRole } from '../../common/enums/user-role.enum';
+
+export type OptionalOrderCustomer = {
+  id: number;
+  username: string;
+  role: UserRole;
+};
 
 const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
   // Khách đặt -> kéo thẳng vào pha, bỏ bước xác nhận
@@ -65,6 +73,7 @@ export class OrderService {
     private readonly dataSource: DataSource,
     private readonly sseService: SseService,
     private readonly settingsService: SettingsService,
+    private readonly customerService: CustomerService,
   ) {}
 
   private buildDto(order: Order) {
@@ -73,6 +82,7 @@ export class OrderService {
       tableId: order.tableId,
       tableName: order.table?.name ?? null,
       tableToken: order.tableToken,
+      customerId: order.customerId ?? null,
       status: order.status,
       paidStatus: order.paidStatus,
       items: (order.items || []).map((item) => ({
@@ -319,7 +329,10 @@ export class OrderService {
     };
   }
 
-  async create(dto: CreateOrderDto) {
+  async create(
+    dto: CreateOrderDto,
+    authenticatedUser: OptionalOrderCustomer | null = null,
+  ) {
     return this.dataSource.transaction(async (manager) => {
       const table = await manager.findOne(Table, {
         where: { qrToken: dto.tableToken },
@@ -358,9 +371,24 @@ export class OrderService {
       // đến đơn đang được tạo. Hoạt động đúng với PostgreSQL Read Committed (mặc định).
       const estimatedWaitMinutes = await this.computeEstimatedWait();
 
+      let customerId: number | null = null;
+      if (authenticatedUser?.role === UserRole.CUSTOMER) {
+        const shortcut = await this.customerService.getActiveShortcut(
+          authenticatedUser.id,
+        );
+        if (shortcut?.tableToken === dto.tableToken) {
+          customerId = authenticatedUser.id;
+          await this.customerService.touchShortcut(
+            authenticatedUser.id,
+            dto.tableToken,
+          );
+        }
+      }
+
       const order = manager.create(Order, {
         tableId: table.id,
         tableToken: dto.tableToken,
+        customerId,
         status: OrderStatus.PENDING,
         totalAmount,
         estimatedWaitMinutes,

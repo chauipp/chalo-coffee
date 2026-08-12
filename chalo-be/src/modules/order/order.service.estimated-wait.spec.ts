@@ -8,6 +8,7 @@ import { Table } from '../table/entities/table.entity';
 import { Product } from '../product/entities/product.entity';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
+import { CustomerService } from '../customer/customer.service';
 
 describe('OrderService estimated-wait wiring', () => {
   let service: OrderService;
@@ -35,6 +36,7 @@ describe('OrderService estimated-wait wiring', () => {
         { provide: DataSource, useValue: {} },
         { provide: SseService, useValue: { emit: jest.fn() } },
         { provide: SettingsService, useValue: settings },
+        { provide: CustomerService, useValue: {} },
       ],
     }).compile();
 
