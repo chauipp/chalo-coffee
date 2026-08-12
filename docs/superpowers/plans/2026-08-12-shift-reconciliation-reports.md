@@ -31,7 +31,7 @@
 | `chalo-fe/src/app/(admin)/admin/shift/*` | Màn report/admin tái sử dụng UI report. |
 | `chalo-fe/src/app/(staff)/staff/orders/_components/OrderPaymentPanel.tsx` | Gửi method, tiền khách đưa tới API. |
 
-- [ ] Task 1: Tạo schema ledger thanh toán và migration backfill
+- [x] Task 1: Tạo schema ledger thanh toán và migration backfill
 
 **Files:**
 - Create: `chalo-be/src/modules/payment/entities/payment-transaction.entity.ts`

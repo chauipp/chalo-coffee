@@ -21,6 +21,7 @@ import { HealthModule } from './modules/health/health.module';
 import { SseModule } from './modules/sse/sse.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { CustomerModule } from './modules/customer/customer.module';
+import { ShiftModule } from './modules/shift/shift.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CustomerModule } from './modules/customer/customer.module';
     AuthModule,
     UserModule,
     CustomerModule,
+    ShiftModule,
     CategoryModule,
     ProductModule,
     TableModule,
