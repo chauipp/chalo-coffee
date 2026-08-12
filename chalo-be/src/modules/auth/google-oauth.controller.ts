@@ -5,8 +5,9 @@ import {
   HttpCode,
   Post,
   Query,
-  Redirect,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator';
 import {
@@ -23,20 +24,27 @@ export class GoogleOAuthController {
 
   @Get('start')
   @Public()
-  @Redirect(undefined, 302)
-  start(@Query() query: GoogleOAuthStartQueryDto) {
-    return {
-      url: this.googleOAuthService.createAuthorizationUrl(query.returnTo),
-    };
+  start(
+    @Query() query: GoogleOAuthStartQueryDto,
+    @Res() response: Response,
+  ): void {
+    response.redirect(
+      302,
+      this.googleOAuthService.createAuthorizationUrl(query.returnTo),
+    );
   }
 
   @Get('callback')
   @Public()
-  @Redirect(undefined, 302)
-  callback(@Query() query: GoogleOAuthCallbackQueryDto) {
-    return this.googleOAuthService
-      .handleCallback(query.code, query.state)
-      .then(({ redirectUrl }) => ({ url: redirectUrl }));
+  async callback(
+    @Query() query: GoogleOAuthCallbackQueryDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const { redirectUrl } = await this.googleOAuthService.handleCallback(
+      query.code,
+      query.state,
+    );
+    response.redirect(302, redirectUrl);
   }
 
   @Post('exchange')
