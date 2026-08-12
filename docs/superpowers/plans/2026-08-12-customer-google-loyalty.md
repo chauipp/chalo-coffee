@@ -289,7 +289,7 @@ git add chalo-be/src/modules/order
 git commit -m "feat: link authenticated customer orders"
 ```
 
-- [ ] Task 5: Idempotent point ledger on payment
+- [x] Task 5: Idempotent point ledger on payment
 
 **Files:**
 - Modify: `chalo-be/src/modules/customer/customer.service.ts`
@@ -300,7 +300,7 @@ git commit -m "feat: link authenticated customer orders"
 - `CustomerService.awardPointsForOrder(manager, order)` computes `Math.floor(order.totalAmount / 1000)` and uses unique `orderId` to be idempotent.
 - Payment paths `paySingleOrder`, `payUnpaidOrdersByTable`, checkout complete/staff complete all invoke this method in their existing transaction.
 
-- [ ] **Step 1: Write failing payment tests**
+- [x] **Step 1: Write failing payment tests**
 
 ```ts
 it('awards 100 points for a paid 100,999 VND customer order', async () => {
@@ -315,13 +315,13 @@ it('does not double-award when the same paid order is retried', async () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run: `npm test -- order.service.loyalty.spec.ts --runInBand`
 
 Expected: FAIL because no ledger write exists.
 
-- [ ] **Step 3: Implement ledger write within payment transactions**
+- [x] **Step 3: Implement ledger write within payment transactions**
 
 ```ts
 const points = Math.floor(order.totalAmount / 1_000);
@@ -334,13 +334,13 @@ await manager.getRepository(LoyaltyPointTransaction).upsert(
 
 Set `paidAt` only for the corresponding customer shortcut after that customer’s latest pending order is paid; never close all customers’ shortcuts because a table became available. Do not alter the stable QR behavior in `syncTableOccupancyAfterOrderChange`.
 
-- [ ] **Step 4: Run payment suite**
+- [x] **Step 4: Run payment suite**
 
 Run: `npm test -- order.service.loyalty.spec.ts order.service.status-transitions.spec.ts --runInBand && npm run build`
 
 Expected: PASS for cash/QR/single/bulk/retry and no point on guest/cancelled/unpaid order.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-be/src/modules/customer/customer.service.ts chalo-be/src/modules/order/order.service.ts chalo-be/src/modules/order/*.spec.ts
