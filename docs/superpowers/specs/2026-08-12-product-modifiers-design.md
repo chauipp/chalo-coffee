@@ -91,4 +91,4 @@ Chỉ cho phụ thu không âm trong phase này để tránh mô hình giảm gi
 
 ## Plan thực thi
 
-Plan sẽ được bổ sung sau khi bản thiết kế này được duyệt: `../plans/2026-08-12-product-modifiers.md`.
+Xem kế hoạch chi tiết: `../plans/2026-08-12-product-modifiers.md`.
