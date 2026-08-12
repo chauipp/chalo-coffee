@@ -22,6 +22,28 @@ export const envValidationSchema = Joi.object({
   APP_FRONTEND_URL: Joi.string().uri().default('http://localhost:3000'),
   CORS_ORIGIN: Joi.string().default('http://localhost:3000'),
 
+  GOOGLE_OAUTH_ENABLED: Joi.string().valid('true', 'false').default('false'),
+  GOOGLE_CLIENT_ID: Joi.when('GOOGLE_OAUTH_ENABLED', {
+    is: 'true',
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional(),
+  }),
+  GOOGLE_CLIENT_SECRET: Joi.when('GOOGLE_OAUTH_ENABLED', {
+    is: 'true',
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional(),
+  }),
+  GOOGLE_CALLBACK_URL: Joi.when('GOOGLE_OAUTH_ENABLED', {
+    is: 'true',
+    then: Joi.string().uri().required(),
+    otherwise: Joi.string().uri().optional(),
+  }),
+  FRONTEND_URL: Joi.when('GOOGLE_OAUTH_ENABLED', {
+    is: 'true',
+    then: Joi.string().uri().required(),
+    otherwise: Joi.string().uri().optional(),
+  }),
+
   SEED_ADMIN_PASSWORD: Joi.string().optional(),
   SEED_STAFF_PASSWORD: Joi.string().optional(),
   SEED_ON_STARTUP: Joi.string().valid('true', 'false').default('false'),

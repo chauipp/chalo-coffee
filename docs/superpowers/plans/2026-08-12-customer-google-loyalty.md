@@ -102,7 +102,7 @@ git add chalo-be/src/migrations chalo-be/src/modules/customer/entities chalo-be/
 git commit -m "feat: add customer loyalty data model"
 ```
 
-- [ ] Task 2: Google OAuth backend with one-time exchange code
+- [x] Task 2: Google OAuth backend with one-time exchange code
 
 **Files:**
 - Create: `chalo-be/src/modules/auth/google-oauth.service.ts`

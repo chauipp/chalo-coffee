@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
@@ -26,7 +27,10 @@ describe('AuthService.register', () => {
       providers: [
         AuthService,
         { provide: UserService, useValue: userService },
-        { provide: JwtService, useValue: { sign: jest.fn(() => 'signed.jwt.token') } },
+        {
+          provide: JwtService,
+          useValue: { sign: jest.fn(() => 'signed.jwt.token') },
+        },
         { provide: ConfigService, useValue: { get: jest.fn(() => 'secret') } },
       ],
     }).compile();
@@ -54,7 +58,10 @@ describe('AuthService.register', () => {
       isActive: true,
     });
     // persists a refresh-token hash for user 5
-    expect(userService.setRefreshTokenHash).toHaveBeenCalledWith(5, expect.any(String));
+    expect(userService.setRefreshTokenHash).toHaveBeenCalledWith(
+      5,
+      expect.any(String),
+    );
     expect(result).toEqual({
       accessToken: 'signed.jwt.token',
       refreshToken: 'signed.jwt.token',
@@ -73,7 +80,46 @@ describe('AuthService.register', () => {
     userService.create.mockRejectedValue(
       new BadRequestException('Tên đăng nhập đã tồn tại'),
     );
-    await expect(service.register(dto)).rejects.toBeInstanceOf(BadRequestException);
+    await expect(service.register(dto)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
     expect(userService.setRefreshTokenHash).not.toHaveBeenCalled();
+  });
+});
+
+describe('AuthService.refresh', () => {
+  it('signs replacement tokens with the current database role after promotion', async () => {
+    const refreshToken = 'valid-refresh-token';
+    const userService = {
+      findById: jest.fn().mockResolvedValue({
+        id: 5,
+        username: 'promoted-google-user',
+        role: UserRole.ADMIN,
+        isActive: true,
+        currentRefreshTokenHash: await bcrypt.hash(refreshToken, 4),
+      }),
+      setRefreshTokenHash: jest.fn().mockResolvedValue(undefined),
+    };
+    const jwtService = {
+      verify: jest.fn().mockReturnValue({
+        sub: 5,
+        username: 'promoted-google-user',
+        role: UserRole.CUSTOMER,
+      }),
+      sign: jest.fn().mockReturnValue('replacement-token'),
+    };
+    const config = { get: jest.fn(() => 'a-secure-test-secret') };
+    const service = new AuthService(
+      userService as unknown as UserService,
+      jwtService as unknown as JwtService,
+      config as unknown as ConfigService,
+    );
+
+    await service.refresh(refreshToken);
+
+    expect(jwtService.sign).toHaveBeenCalledWith(
+      expect.objectContaining({ sub: 5, role: UserRole.ADMIN }),
+      expect.any(Object),
+    );
   });
 });

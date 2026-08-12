@@ -7,11 +7,25 @@ import { UserService } from '../user/user.service';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { BCRYPT_SALT_ROUNDS } from '../../common/constants';
 import { RegisterDto } from './dto/register.dto';
+import type { VerifiedGoogleProfile } from './google-oauth.types';
 
 const PERMISSIONS: Record<UserRole, string[]> = {
   [UserRole.ADMIN]: ['menu:write', 'table:write', 'order:write', 'staff:write'],
   [UserRole.MODERATOR]: ['order:write', 'order:read'],
   [UserRole.CUSTOMER]: [],
+};
+
+export type LoginResponse = {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: number;
+    username: string;
+    fullName: string;
+    avatar: string | null;
+    role: UserRole;
+    permission: string[];
+  };
 };
 
 @Injectable()
@@ -26,11 +40,13 @@ export class AuthService {
     const payload = { sub: userId, username, role };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_SECRET') as string,
-      expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRES') ?? '15m') as StringValue,
+      expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRES') ??
+        '15m') as StringValue,
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET') as string,
-      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES') ?? '7d') as StringValue,
+      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES') ??
+        '7d') as StringValue,
     });
     return { accessToken, refreshToken };
   }
@@ -46,7 +62,10 @@ export class AuthService {
 
     const tokens = this.buildTokens(user.id, user.username, user.role);
 
-    const tokenHash = await bcrypt.hash(tokens.refreshToken, BCRYPT_SALT_ROUNDS);
+    const tokenHash = await bcrypt.hash(
+      tokens.refreshToken,
+      BCRYPT_SALT_ROUNDS,
+    );
     await this.userService.setRefreshTokenHash(user.id, tokenHash);
 
     return {
@@ -74,7 +93,55 @@ export class AuthService {
     });
 
     const tokens = this.buildTokens(user.id, user.username, user.role);
-    const tokenHash = await bcrypt.hash(tokens.refreshToken, BCRYPT_SALT_ROUNDS);
+    const tokenHash = await bcrypt.hash(
+      tokens.refreshToken,
+      BCRYPT_SALT_ROUNDS,
+    );
+    await this.userService.setRefreshTokenHash(user.id, tokenHash);
+
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        username: user.username,
+        fullName: user.fullName,
+        avatar: user.avatar,
+        role: user.role,
+        permission: PERMISSIONS[user.role],
+      },
+    };
+  }
+
+  async loginWithGoogle(
+    profile: VerifiedGoogleProfile,
+  ): Promise<LoginResponse> {
+    const trustedProfile: VerifiedGoogleProfile = {
+      subject: profile.subject,
+      email: profile.email,
+      emailVerified: true,
+      fullName: profile.fullName,
+      avatar: profile.avatar,
+    };
+    const user =
+      await this.userService.findOrCreateGoogleCustomer(trustedProfile);
+    if (!user.isActive) {
+      throw new UnauthorizedException('Tài khoản đã bị khóa');
+    }
+    return this.issueLoginResponse(user);
+  }
+
+  async issueLoginResponse(user: {
+    id: number;
+    username: string;
+    fullName: string;
+    avatar: string | null;
+    role: UserRole;
+  }): Promise<LoginResponse> {
+    const tokens = this.buildTokens(user.id, user.username, user.role);
+    const tokenHash = await bcrypt.hash(
+      tokens.refreshToken,
+      BCRYPT_SALT_ROUNDS,
+    );
     await this.userService.setRefreshTokenHash(user.id, tokenHash);
 
     return {
@@ -105,7 +172,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const isMatch = await bcrypt.compare(refreshToken, user.currentRefreshTokenHash);
+    const isMatch = await bcrypt.compare(
+      refreshToken,
+      user.currentRefreshTokenHash,
+    );
     if (!isMatch) throw new UnauthorizedException('Invalid refresh token');
 
     const tokens = this.buildTokens(user.id, user.username, user.role);
