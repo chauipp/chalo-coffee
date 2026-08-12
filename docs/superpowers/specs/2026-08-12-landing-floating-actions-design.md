@@ -18,4 +18,4 @@ Kiểm Chromium desktop và 375×667: hai action nhìn thấy được, không t
 
 ## Plan thực thi
 
-Sẽ trỏ tới [2026-08-12-landing-floating-actions.md](../plans/2026-08-12-landing-floating-actions.md) khi plan được tạo.
+[2026-08-12-landing-floating-actions.md](../plans/2026-08-12-landing-floating-actions.md)
