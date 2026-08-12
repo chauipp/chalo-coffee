@@ -1,6 +1,7 @@
 "use client";
 // src/app/(admin)/admin/orders/page.tsx
 import { Badge, BadgeVariant } from "@/components/shared/ui/Badge";
+import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
 import { Column, DataTable } from "@/components/shared/ui/DataTable";
 import { Input } from "@/components/shared/ui/Input";
 import { Select } from "@/components/shared/ui/Select";
@@ -14,6 +15,7 @@ import {
   ORDER_STATUS,
 } from "@/services/order/order.types";
 import { useGetTableList } from "@/services/table";
+import { useDeleteOrder } from "@/services/order/order.queries";
 import { useState } from "react";
 import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 import { MobileFilterSheet } from "../../_components/MobileFilterSheet";
@@ -39,6 +41,15 @@ export default function AdminOrdersPage() {
   });
   const [date, setDate] = useState("");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<OrderDto | null>(null);
+  const deleteOrderMutation = useDeleteOrder();
+
+  const handleDeleteOrder = () => {
+    if (!deleteTarget) return;
+    deleteOrderMutation.mutate(deleteTarget.id, {
+      onSuccess: () => setDeleteTarget(null),
+    });
+  };
 
   const columns: Array<Column<OrderDto>> = [
     {
@@ -101,6 +112,19 @@ export default function AdminOrdersPage() {
         <span className="text-gray-500">
           {new Date(r.createdAt).toLocaleString("vi-VN")}
         </span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Thao tác",
+      render: (r) => (
+        <button
+          type="button"
+          onClick={() => setDeleteTarget(r)}
+          className="min-h-10 rounded-lg px-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+        >
+          Xóa
+        </button>
       ),
     },
   ];
@@ -290,9 +314,25 @@ export default function AdminOrdersPage() {
                   {row.totalAmount.toLocaleString("vi-VN")}đ
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(row)}
+                className="mt-3 min-h-11 w-full rounded-xl border border-red-200 px-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-red-900/70 dark:text-red-400 dark:hover:bg-red-950/30"
+              >
+                Xóa đơn
+              </button>
             </article>
           );
         }}
+      />
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteOrder}
+        title="Xóa vĩnh viễn đơn hàng"
+        message={`Xóa đơn #${deleteTarget?.id.slice(0, 8) ?? ""}? Món, điểm tích lũy và khoản thanh toán của đơn sẽ bị xóa. Không thể khôi phục.`}
+        confirmLabel="Xóa đơn"
+        isLoading={deleteOrderMutation.isPending}
       />
     </div>
   );

@@ -36,7 +36,7 @@
 - [ ] Step 5: Chạy lại test riêng và toàn bộ `npm test -- --runInBand`, sau đó `npm run build` trong `chalo-be`.
 - [ ] Step 6: Commit `feat: let admins permanently delete orders`.
 
-- [ ] Task 2: Action xóa ở Admin Orders
+- [x] Task 2: Action xóa ở Admin Orders
 
 **Files:**
 - Modify: `chalo-fe/src/constants/api-endpoints.ts`
@@ -52,7 +52,7 @@
 - [ ] Step 2: Chạy test đó và xác nhận fail vì mutation chưa tồn tại.
 - [ ] Step 3: Bổ sung API endpoint, mutation và các invalidation.
 - [ ] Step 4: Bổ sung nút Xóa trong bảng/thẻ mobile cùng hộp xác nhận bắt buộc.
-- [ ] Step 5: Chạy `npm run test:unit` và `npm run build` trong `chalo-fe`; thử Playwright admin UI nếu server khởi động được.
+- [x] Step 5: Chạy `npm run test:unit` và `npm run build` trong `chalo-fe`; thử Playwright admin UI nếu server khởi động được. Unit test (20/20) và build đã pass; Playwright bị chặn vì Next dev server mới không giữ được cổng trong môi trường đang quá nhiều watcher/server.
 - [ ] Step 6: Commit `feat: add admin order delete action`.
 
 ## Kết quả
