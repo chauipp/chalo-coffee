@@ -83,6 +83,19 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "chalo-cart",
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as Partial<CartState>;
+        return {
+          ...state,
+          items: (state.items ?? []).map((item) => ({
+            ...item,
+            modifierOptionIds: item.modifierOptionIds ?? [],
+            selectedModifiers: item.selectedModifiers ?? [],
+            cartKey: item.cartKey ?? `${item.productId}::${item.note ?? ""}`,
+          })),
+        } as CartState;
+      },
       storage: createJSONStorage(() => {
         if (typeof window === "undefined") {
           return {
