@@ -349,7 +349,7 @@ git commit -m "feat: award loyalty points after payment"
 
 ## Phase 3 — Frontend login, mobile customer experience và shortcut landing
 
-- [ ] Task 6: Google sign-in UI and secure callback exchange
+- [x] Task 6: Google sign-in UI and secure callback exchange
 
 **Files:**
 - Create: `chalo-fe/src/app/(auth)/oauth/google/callback/page.tsx`
@@ -365,7 +365,7 @@ git commit -m "feat: award loyalty points after payment"
 - `startGoogleLogin(returnTo: string): void` navigates to backend start URL with only a safe internal path.
 - `exchangeGoogleCode(code: string): Promise<LoginResponse>` returns the same data consumed by `useAuthStore.setTokens/setUser`.
 
-- [ ] **Step 1: Write failing frontend/API tests**
+- [x] **Step 1: Write failing frontend/API tests**
 
 ```ts
 test('only permits internal return paths for Google start', () => {
@@ -380,23 +380,23 @@ test('Google callback exchanges a code then stores the normal login response', a
 });
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run: `pnpm test:unit && pnpm exec playwright test e2e/google-login.spec.ts --project=chromium`
 
 Expected: callback test fails because route/button/API are absent.
 
-- [ ] **Step 3: Implement button and callback**
+- [x] **Step 3: Implement button and callback**
 
 Use a recognizable Google mark rendered inline (no remote icon dependency), accessible label “Tiếp tục với Google”, loading/disabled state and a concise configuration error. Callback consumes code once, updates auth store through existing setters, removes code from browser history and routes CUSTOMER to `/account`; staff/admin role returned by the backend uses existing safe role routing.
 
-- [ ] **Step 4: Run test and browser verification**
+- [x] **Step 4: Run test and browser verification**
 
 Run: `pnpm test:unit && pnpm exec tsc --noEmit && PLAYWRIGHT_BASE_URL=http://localhost:<port> pnpm exec playwright test e2e/google-login.spec.ts --project=chromium`
 
 Expected: callback exchange works with mock backend, invalid/missing code has a recovery link, no token appears in URL or console.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-fe/src/app/'(auth)' chalo-fe/src/components/auth chalo-fe/src/services/auth chalo-fe/src/constants/api-endpoints.ts chalo-fe/e2e/google-login.spec.ts

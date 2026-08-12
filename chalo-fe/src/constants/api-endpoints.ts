@@ -3,6 +3,7 @@
 export const API = {
   AUTH: {
     LOGIN: "/auth/login",
+    GOOGLE_EXCHANGE: "/auth/google/exchange",
     REGISTER: "/auth/register",
     REFRESH: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
