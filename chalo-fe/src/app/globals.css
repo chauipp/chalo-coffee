@@ -138,6 +138,41 @@ html.dark {
   }
 }
 
+/* Hơi nước của ly cà phê ở landing: rất nhẹ để tạo cảm giác sống động,
+   nhưng vẫn tắt hoàn toàn khi người dùng yêu cầu giảm chuyển động. */
+@keyframes landing-steam {
+  0%, 100% {
+    opacity: 0.12;
+    transform: translate3d(0, 7px, 0) scaleX(0.82);
+  }
+  45% {
+    opacity: 0.78;
+  }
+  75% {
+    opacity: 0;
+    transform: translate3d(5px, -13px, 0) scaleX(1.32);
+  }
+}
+
+.landing-steam {
+  animation: landing-steam 4.8s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.landing-steam--two {
+  animation-delay: -1.6s;
+}
+
+.landing-steam--three {
+  animation-delay: -3.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-steam {
+    animation: none;
+  }
+}
+
 /* ── Receipt printing ─────────────────────────────────────────── */
 /* On screen the receipt is hidden; only #receipt-print is visible
    when printing so no surrounding UI (modal, POS panels) leaks in. */

@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingCategory } from "./landing-data";
-import { formatVnd } from "./landing-data";
+import { findLandingCategoryByKeywords, formatVnd } from "./landing-data";
 
 const MAPS_URL = "https://maps.app.goo.gl/miDX5WUrMF9vxkia8?g_st=ac";
 const ZALO_URL = "https://zalo.me/0913017988";
+const MOODS = [
+  { label: "Cần tỉnh táo", keywords: ["cà phê", "coffee"] },
+  { label: "Muốn nhẹ nhàng", keywords: ["trà", "tea"] },
+  { label: "Muốn ngọt một chút", keywords: ["bánh", "ngọt", "cake"] },
+] as const;
 
 function ArrowUpRightIcon({ className = "" }: { className?: string }) {
   return (
@@ -37,8 +42,9 @@ function CoffeeIllustration() {
         <div className="absolute -right-9 top-9 h-16 w-12 rounded-r-full border-[13px] border-l-0 border-brand-600" />
         <div className="absolute left-4 right-4 top-5 h-3 rounded-full bg-brand-200/90" />
       </div>
-      <div className="absolute left-[42%] top-[12%] h-12 w-1 rounded-full bg-brand-300/80 blur-[1px]" />
-      <div className="absolute left-[53%] top-[8%] h-14 w-1 rounded-full bg-brand-300/60 blur-[1px]" />
+      <div className="landing-steam landing-steam--one absolute left-[42%] top-[12%] h-12 w-1 rounded-full bg-brand-300/80 blur-[1px]" />
+      <div className="landing-steam landing-steam--two absolute left-[53%] top-[8%] h-14 w-1 rounded-full bg-brand-300/60 blur-[1px]" />
+      <div className="landing-steam landing-steam--three absolute left-[47%] top-[5%] h-10 w-1 rounded-full bg-brand-200/60 blur-[1px]" />
     </div>
   );
 }
@@ -64,13 +70,32 @@ function ProductImage({ name, imageUrl }: { name: string; imageUrl: string | nul
 
 export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
   const [activeCategoryId, setActiveCategoryId] = useState<string | "all">("all");
+  const [showMobileDock, setShowMobileDock] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
   const visibleGroups = useMemo(
     () => menu.filter((group) => activeCategoryId === "all" || group.id === activeCategoryId),
     [activeCategoryId, menu],
   );
 
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowMobileDock(!entry.isIntersecting),
+      { threshold: 0.15 },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  function selectCategoryFromMood(keywords: readonly string[]) {
+    setActiveCategoryId(findLandingCategoryByKeywords(menu, keywords));
+    document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
-    <div className="min-h-screen overflow-x-clip bg-brand-50 text-stone-900">
+    <div className="min-h-screen overflow-x-clip bg-brand-50 pb-24 text-stone-900 sm:pb-0">
       <header className="sticky top-0 z-30 border-b border-brand-100/80 bg-brand-50/90 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link href="/" aria-label="Chalo Coffee về trang chủ" className="shrink-0 font-serif text-lg font-bold tracking-[0.14em] text-brand-800 transition hover:text-brand-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
@@ -85,7 +110,7 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
       </header>
 
       <main>
-        <section className="relative isolate overflow-hidden">
+        <section ref={heroRef} className="relative isolate overflow-hidden">
           <div aria-hidden="true" className="absolute -left-24 top-8 -z-10 size-64 rounded-full bg-brand-200/45 blur-3xl" />
           <div aria-hidden="true" className="absolute -right-24 bottom-0 -z-10 size-72 rounded-full bg-brand-100 blur-3xl" />
           <div className="mx-auto grid max-w-6xl items-center gap-6 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:py-24">
@@ -96,6 +121,16 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a href="#menu" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-brand-700/20 transition hover:-translate-y-0.5 hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-500">Xem thực đơn <ArrowUpRightIcon className="size-4" /></a>
                 <a href={MAPS_URL} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-brand-300 bg-white/65 px-5 py-3 text-sm font-bold text-brand-800 transition hover:-translate-y-0.5 hover:border-brand-500 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-500"><PinIcon className="size-4" />Tìm đường tới quán</a>
+              </div>
+              <div className="mt-8">
+                <p className="text-sm font-semibold text-brand-900">Hôm nay bạn cần gì?</p>
+                <div className="mt-3 flex flex-wrap gap-2" aria-label="Chọn mood để xem thực đơn">
+                  {MOODS.map((mood) => (
+                    <button key={mood.label} type="button" onClick={() => selectCategoryFromMood(mood.keywords)} className="rounded-full border border-brand-200 bg-white/70 px-3.5 py-2 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:border-brand-400 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-500">
+                      {mood.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             <CoffeeIllustration />
@@ -149,6 +184,15 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
       </main>
 
       <footer className="border-t border-brand-100 bg-white/55"><div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between sm:px-6"><p className="font-serif font-bold tracking-[0.08em] text-brand-800">CHALO COFFEE</p><div className="flex gap-4"><a href={MAPS_URL} target="_blank" rel="noreferrer" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Bản đồ</a><a href={ZALO_URL} target="_blank" rel="noreferrer" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Zalo</a><Link href="/login" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Đăng nhập</Link></div></div></footer>
+
+      {showMobileDock ? (
+        <nav aria-label="Thao tác nhanh" className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-200/90 bg-brand-50/95 px-4 pt-2 shadow-[0_-8px_24px_rgba(86,52,21,.1)] backdrop-blur-lg sm:hidden" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
+          <div className="mx-auto flex max-w-md gap-2">
+            <a href="#menu" className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-brand-700 px-3 py-2 text-sm font-bold text-white transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Thực đơn</a>
+            <a href={MAPS_URL} target="_blank" rel="noreferrer" className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-brand-300 bg-white px-3 py-2 text-sm font-bold text-brand-800 transition hover:border-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"><PinIcon className="size-4" />Chỉ đường</a>
+          </div>
+        </nav>
+      ) : null}
     </div>
   );
 }
