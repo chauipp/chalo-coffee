@@ -18,7 +18,7 @@ Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Go
 2. Khách đăng nhập Google mới tích điểm; điểm không hết hạn trong phase này.
 3. Giá trị điểm của đơn đã thanh toán là `floor(totalAmount / 1.000)`. Ví dụ 100.000đ cộng 100 điểm.
 4. Một phiên bàn là dữ liệu phía server, gắn với tài khoản khách và bàn; không tin trạng thái localStorage để xác nhận đang ngồi bàn.
-5. Phiên bàn kết thúc khi mọi đơn của phiên đã thanh toán, khi khách chủ động rời bàn, hoặc chậm nhất vào 00:00 theo giờ Việt Nam. Mở ứng dụng vào ngày khác luôn buộc quét QR mới.
+5. Sau khi mọi đơn của phiên đã thanh toán, phiên giữ thêm tối đa 30 phút để khách có thể gọi thêm. Mọi hoạt động của khách tại đúng phiên sẽ gia hạn mốc này. Phiên kết thúc khi khách chủ động rời bàn, quá 30 phút không hoạt động sau lần thanh toán cuối, hoặc chậm nhất vào 00:00 theo giờ Việt Nam. Mở ứng dụng vào ngày khác luôn buộc quét QR mới.
 6. Mỗi khách chỉ có tối đa một phiên bàn đang hoạt động. Quét bàn mới sẽ đóng phiên bàn trước và chuyển sang bàn mới sau một bước xác nhận rõ ràng.
 7. Landing page chỉ hiện icon giỏ hàng/tiếp tục gọi món khi API xác nhận có phiên bàn còn hiệu lực. Icon dẫn về menu bàn đó và có badge số món đang nằm trong giỏ cục bộ của đúng bàn đó.
 
@@ -28,7 +28,7 @@ Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Go
 
 - Bổ sung định danh đăng nhập ngoài mật khẩu cho `users`: `googleSubject` (unique, nullable), `email` (unique, nullable), và lưu avatar Google nếu được cấp.
 - Mật khẩu của tài khoản Google không được dùng để đăng nhập mật khẩu. Cột password hiện tại vẫn được điền chuỗi ngẫu nhiên đã băm để giữ tương thích schema; đăng nhập username/password chỉ hoạt động với tài khoản có username do hệ thống quản trị tạo.
-- Thêm `customer_table_sessions`: `id`, `customerId`, `tableId`, `tableToken`, `status` (`ACTIVE`, `CLOSED`, `EXPIRED`), `startedAt`, `endedAt`, `businessDate`, `endedReason`. Ràng buộc một phiên `ACTIVE` cho mỗi khách.
+- Thêm `customer_table_sessions`: `id`, `customerId`, `tableId`, `tableToken`, `status` (`ACTIVE`, `CLOSED`, `EXPIRED`), `startedAt`, `lastActivityAt`, `paidAt`, `endedAt`, `businessDate`, `endedReason`. Ràng buộc một phiên `ACTIVE` cho mỗi khách.
 - Thêm sổ cái `loyalty_point_transactions`: `id`, `customerId`, `orderId` (unique), `points`, `type` (`EARN`), `createdAt`. Số dư là tổng sổ cái, không lưu một biến điểm dễ lệch.
 - Thêm `customerId` nullable vào `orders`. Đơn vãng lai tiếp tục có giá trị `null`; đơn trong phiên đăng nhập giữ khách đã tạo đơn.
 
@@ -57,6 +57,7 @@ Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Go
 - Nếu phiên đang hoạt động: QR quét lại đúng bàn đi thẳng menu; QR bàn khác hiển thị xác nhận chuyển bàn, rồi đóng phiên cũ và tạo phiên mới.
 - Trang menu QR vãng lai: logo `CH` ở góc trên trái trở thành liên kết về landing page. Không làm gián đoạn gọi món và gọi nhân viên hiện có.
 - Khi khách đã đăng nhập và menu được mở bằng QR, frontend gọi API scan để liên kết/khôi phục phiên bàn. Đơn tạo từ lúc đó gửi kèm JWT và backend gắn `customerId` theo phiên; nếu không đăng nhập vẫn tạo đơn công khai như cũ.
+- Mở menu, thao tác giỏ hàng và tạo đơn trong một phiên đăng nhập đều cập nhật `lastActivityAt`. Hoạt động sau khi thanh toán cuối cùng giữ phiên thêm 30 phút; nếu khách tạo đơn mới, mốc 30 phút chỉ bắt đầu lại khi đơn mới đó thanh toán.
 
 ### UX chi tiết
 
@@ -69,14 +70,14 @@ Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Go
 
 - Khi staff/admin ghi nhận thanh toán cuối cùng của một đơn, backend dùng transaction tạo đúng một giao dịch `EARN` cho `orderId`; unique constraint bảo đảm không cộng trùng khi bấm lại, thanh toán gộp hoặc retry.
 - Chỉ cộng điểm cho đơn có `customerId` và đã thanh toán. Đơn hủy, đơn chưa trả tiền và khách vãng lai không có điểm.
-- Sau khi trạng thái bàn đồng bộ thành `AVAILABLE`, các customer table session đang active của bàn được đóng với lý do `PAID`. QR token của bàn được giữ nguyên; chỉ API quản trị “Tạo QR mới” mới thay token và yêu cầu in lại QR.
+- Sau khi trạng thái bàn đồng bộ thành `AVAILABLE`, các customer table session đang active của bàn được đánh dấu `paidAt` nhưng chưa đóng ngay. Nếu khách không có hoạt động mới trong 30 phút, backend đóng phiên với lý do `IDLE_AFTER_PAID`; nếu tạo đơn mới, `paidAt` được làm mới sau lần thanh toán kế tiếp. QR token của bàn được giữ nguyên; chỉ API quản trị “Tạo QR mới” mới thay token và yêu cầu in lại QR.
 - Staff/admin thấy tên khách (nếu có) và số điểm cộng dự kiến/thành công trong chi tiết đơn. Không để lộ email hay dữ liệu không cần thiết trên màn vận hành.
 - Tài khoản khách làm mới số điểm và lịch sử sau thanh toán qua refetch; realtime/SSE có thể bổ sung sau, không là điều kiện của phase này.
 
 ## Phase 4 — Hoàn thiện, dữ liệu cũ và vận hành
 
 - Migration TypeORM có khả năng rollback; đơn dữ liệu cũ giữ `customerId = null` và không hồi tố điểm.
-- Job/lazy guard hết hạn phiên: mọi truy vấn phiên active đều kiểm `businessDate` theo VN; một cron định kỳ đóng phiên cũ để dữ liệu sạch, nhưng độ đúng không phụ thuộc cron.
+- Job/lazy guard hết hạn phiên: mọi truy vấn phiên active đều kiểm `businessDate` theo VN và `paidAt + 30 phút <= now` khi không có hoạt động sau thanh toán; một cron định kỳ đóng phiên cũ để dữ liệu sạch, nhưng độ đúng không phụ thuộc cron.
 - Admin có danh sách khách/điểm đọc-only ở phase này nếu chi phí UI hợp lý; không có chức năng đổi điểm hay trừ điểm.
 - Thêm audit log tối thiểu cho callback OAuth thất bại, lỗi liên kết bàn và giao dịch điểm.
 - Viết hướng dẫn cấu hình Google Cloud: OAuth consent screen, authorized JavaScript origins, redirect URI production/staging, và các biến môi trường trên VPS. Không commit secret.
@@ -100,7 +101,7 @@ Khách Google: Landing → Google OAuth → Tài khoản → Quét QR → Phiên
 
 ## Kiểm thử và tiêu chí nghiệm thu
 
-- Unit/integration: xác minh Google token/state, tạo/lấy đúng khách, giới hạn một phiên active, hết hạn qua ngày VN, chuyển bàn, tính điểm làm tròn xuống và idempotency giao dịch điểm.
+- Unit/integration: xác minh Google token/state, tạo/lấy đúng khách, giới hạn một phiên active, hết hạn qua ngày VN, hết hạn sau 30 phút không hoạt động kể từ thanh toán, gia hạn khi khách gọi thêm món, chuyển bàn, tính điểm làm tròn xuống và idempotency giao dịch điểm.
 - E2E/Playwright mobile: từ landing đăng nhập (mock OAuth), quét QR/nhập token, tiếp tục menu, icon giỏ, QR sai, phiên qua ngày và logout.
 - Regression: luồng QR vãng lai, staff/admin password login, đặt đơn/thanh toán hiện hữu đều xanh.
 - Chỉ bật production khi Google OAuth đã cấu hình callback HTTPS đúng tại `chalocoffee.com` và có thử nghiệm tài khoản thật.
@@ -112,6 +113,7 @@ Khách Google: Landing → Google OAuth → Tài khoản → Quét QR → Phiên
 - Khách vãng lai vẫn đặt món bằng QR như hiện tại.
 - Tích điểm sau thanh toán, tỷ lệ 1 điểm/1.000đ, làm tròn xuống.
 - QR mỗi bàn là cố định; chỉ admin chủ động tạo lại QR mới được đổi token.
+- Sau thanh toán, phiên bàn khách tự đóng sau 30 phút không hoạt động; hoạt động/gọi thêm món trong thời gian này gia hạn phiên.
 
 ## Plan thực thi
 
