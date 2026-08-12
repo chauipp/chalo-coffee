@@ -75,8 +75,8 @@ export class OrderService {
     private readonly customerService: CustomerService,
   ) {}
 
-  private buildDto(order: Order) {
-    return {
+  private buildDto(order: Order, includeStaffContext = false) {
+    const dto = {
       id: order.id,
       tableId: order.tableId,
       tableName: order.table?.name ?? null,
@@ -104,6 +104,17 @@ export class OrderService {
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     };
+
+    if (!includeStaffContext) return dto;
+
+    return {
+      ...dto,
+      customerDisplayName: order.customer?.fullName ?? null,
+      loyaltyPointsEarned: (order.loyaltyTransactions ?? []).reduce(
+        (sum, transaction) => sum + transaction.points,
+        0,
+      ),
+    };
   }
 
   /**
@@ -123,6 +134,8 @@ export class OrderService {
       .createQueryBuilder('o')
       .leftJoinAndSelect('o.items', 'items')
       .leftJoinAndSelect('o.table', 'table')
+      .leftJoinAndSelect('o.customer', 'customer')
+      .leftJoinAndSelect('o.loyaltyTransactions', 'loyaltyTransactions')
       // Đang xử lý = (PENDING/CONFIRMED/PREPARING/READY) HOẶC (COMPLETED nhưng
       // chưa thanh toán). Đơn đã phục vụ mà chưa thu tiền vẫn phải đứng trong
       // bảng staff (cột "Đã phục vụ") để thu ngân biết mà đi thu; chỉ rời bảng
@@ -146,7 +159,7 @@ export class OrderService {
       .orderBy('o.createdAt', 'ASC')
       .getMany();
 
-    return orders.map((o) => this.buildDto(o));
+    return orders.map((o) => this.buildDto(o, true));
   }
 
   private async resolvePayableOrders(
@@ -476,23 +489,25 @@ export class OrderService {
       this.orderRepo
         .createQueryBuilder('o')
         .leftJoinAndSelect('o.items', 'items')
-        .leftJoinAndSelect('o.table', 'table'),
+        .leftJoinAndSelect('o.table', 'table')
+        .leftJoinAndSelect('o.customer', 'customer')
+        .leftJoinAndSelect('o.loyaltyTransactions', 'loyaltyTransactions'),
     )
       .orderBy('o.createdAt', 'DESC')
       .skip(skip)
       .take(pageSize)
       .getMany();
 
-    return { list: orders.map((o) => this.buildDto(o)), total };
+    return { list: orders.map((o) => this.buildDto(o, true)), total };
   }
 
   async detail(id: string) {
     const order = await this.orderRepo.findOne({
       where: { id },
-      relations: ['items', 'table'],
+      relations: ['items', 'table', 'customer', 'loyaltyTransactions'],
     });
     if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
-    return this.buildDto(order);
+    return this.buildDto(order, true);
   }
 
   async byToken(token: string) {

@@ -14,6 +14,7 @@ import { Table } from '../../table/entities/table.entity';
 import { OrderItem } from './order-item.entity';
 import { PagerToken } from '../../pager/entities/pager-token.entity';
 import { User } from '../../user/entities/user.entity';
+import { LoyaltyPointTransaction } from '../../customer/entities/loyalty-point-transaction.entity';
 
 @Entity('orders')
 export class Order {
@@ -79,4 +80,7 @@ export class Order {
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];
+
+  @OneToMany(() => LoyaltyPointTransaction, (transaction) => transaction.order)
+  loyaltyTransactions: LoyaltyPointTransaction[];
 }

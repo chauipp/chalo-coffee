@@ -396,3 +396,132 @@ describe('OrderService loyalty payment ledger', () => {
     expect(harness.loyaltyTransactions).toHaveLength(0);
   });
 });
+
+describe('OrderService staff customer context', () => {
+  it('returns customer display name and earned points but no email in staff order DTO', async () => {
+    const harness = await buildPaymentHarness([]);
+    const customerOrder = order(ORDER_ONE_ID, {
+      paidStatus: true,
+      customer: {
+        id: 7,
+        fullName: 'Châu',
+        email: 'chau@gmail.com',
+      } as Order['customer'],
+    });
+    Object.assign(customerOrder, {
+      loyaltyTransactions: [
+        {
+          orderId: ORDER_ONE_ID,
+          customerId: 7,
+          points: 100,
+        } as LoyaltyPointTransaction,
+      ],
+    });
+
+    const dto = (
+      harness.service as unknown as {
+        buildDto(value: Order, includeStaffContext: boolean): Record<string, unknown>;
+      }
+    ).buildDto(customerOrder, true);
+
+    expect(dto).toMatchObject({
+      customerDisplayName: 'Châu',
+      loyaltyPointsEarned: 100,
+    });
+    expect(dto).not.toHaveProperty('customerEmail');
+    expect(dto).not.toHaveProperty('email');
+  });
+
+  it('does not expose customer context in public order DTOs', async () => {
+    const harness = await buildPaymentHarness([]);
+    const customerOrder = order(ORDER_ONE_ID, {
+      customer: {
+        id: 7,
+        fullName: 'Châu',
+        email: 'chau@gmail.com',
+      } as Order['customer'],
+    });
+
+    const dto = (
+      harness.service as unknown as {
+        buildDto(value: Order): Record<string, unknown>;
+      }
+    ).buildDto(customerOrder);
+
+    expect(dto).not.toHaveProperty('customerDisplayName');
+    expect(dto).not.toHaveProperty('loyaltyPointsEarned');
+    expect(JSON.stringify(dto)).not.toContain('chau@gmail.com');
+  });
+
+  it.each(['getActiveQueue', 'page', 'detail'] as const)(
+    'loads customer and loyalty relations for staff endpoint %s',
+    async (method) => {
+      const customerOrder = order(ORDER_ONE_ID, { customerId: 7 });
+      const queryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getCount: jest.fn().mockResolvedValue(1),
+        getMany: jest.fn().mockResolvedValue([customerOrder]),
+      };
+      const orderRepository = {
+        createQueryBuilder: jest.fn(() => queryBuilder),
+        findOne: jest.fn().mockResolvedValue(customerOrder),
+      };
+      const moduleRef = await Test.createTestingModule({
+        providers: [
+          OrderService,
+          { provide: getRepositoryToken(Order), useValue: orderRepository },
+          { provide: getRepositoryToken(OrderItem), useValue: {} },
+          { provide: getRepositoryToken(Table), useValue: {} },
+          { provide: getRepositoryToken(Product), useValue: {} },
+          { provide: DataSource, useValue: {} },
+          { provide: SseService, useValue: { emit: jest.fn() } },
+          { provide: SettingsService, useValue: { get: jest.fn() } },
+          { provide: CustomerService, useValue: {} },
+        ],
+      }).compile();
+      const service = moduleRef.get(OrderService);
+
+      if (method === 'getActiveQueue') {
+        await service.getActiveQueue();
+        const joins = queryBuilder.leftJoinAndSelect.mock.calls.map(
+          ([relation]: [string]) => relation,
+        );
+        expect(joins).toEqual(
+          expect.arrayContaining(['o.customer', 'o.loyaltyTransactions']),
+        );
+        return;
+      }
+
+      if (method === 'page') {
+        await service.page({ pageNo: 1, pageSize: 20 });
+        const joinedBuilders = orderRepository.createQueryBuilder.mock.results
+          .map(({ value }: { value: typeof queryBuilder }) => value)
+          .filter(Boolean);
+        const joins = joinedBuilders.flatMap((builder) =>
+          builder.leftJoinAndSelect.mock.calls.map(
+            ([relation]: [string]) => relation,
+          ),
+        );
+        expect(joins).toEqual(
+          expect.arrayContaining(['o.customer', 'o.loyaltyTransactions']),
+        );
+        return;
+      }
+
+      await service.detail(ORDER_ONE_ID);
+      expect(orderRepository.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          relations: expect.arrayContaining([
+            'customer',
+            'loyaltyTransactions',
+          ]),
+        }),
+      );
+    },
+  );
+});

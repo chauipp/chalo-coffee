@@ -50,6 +50,15 @@ export default function AdminOrdersPage() {
             #{r.id.slice(0, 8)}
           </p>
           <p className="text-xs text-gray-400">{r.tableName}</p>
+          {r.customerDisplayName && (
+            <p className="mt-0.5 text-xs font-medium text-sky-700 dark:text-sky-300">
+              {r.customerDisplayName} · +
+              {r.paidStatus
+                ? (r.loyaltyPointsEarned ?? 0)
+                : Math.floor(r.totalAmount / 1_000)}{" "}
+              điểm
+            </p>
+          )}
         </div>
       ),
     },
@@ -250,6 +259,20 @@ export default function AdminOrdersPage() {
                   <p className="mt-1 truncate text-xs text-gray-400">
                     {row.tableName} · {row.items?.length ?? 0} món
                   </p>
+                  {row.customerDisplayName && (
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+                      <span className="max-w-[12rem] truncate font-medium text-sky-700 dark:text-sky-300">
+                        {row.customerDisplayName}
+                      </span>
+                      <span className="rounded-full bg-sky-50 px-2 py-0.5 font-semibold text-sky-700 dark:bg-sky-900/20 dark:text-sky-300">
+                        +
+                        {row.paidStatus
+                          ? (row.loyaltyPointsEarned ?? 0)
+                          : Math.floor(row.totalAmount / 1_000)}{" "}
+                        điểm
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-end gap-1.5">
                   <Badge label={status.label} variant={status.variant} />

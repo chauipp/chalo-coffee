@@ -517,7 +517,7 @@ git commit -m "feat: add customer table shortcut to landing"
 
 ## Phase 4 — Vận hành, staff visibility và release
 
-- [ ] Task 9: Staff/admin order context and production configuration guide
+- [x] Task 9: Staff/admin order context and production configuration guide
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/order.service.ts`
@@ -533,7 +533,7 @@ git commit -m "feat: add customer table shortcut to landing"
 - Order DTO exposes only `customerDisplayName: string | null` and `loyaltyPointsEarned: number` to staff/admin; it never exposes customer email.
 - Deployment guide defines exact authorized origins/redirect callback, required secrets and post-deploy health checks.
 
-- [ ] **Step 1: Write failing staff visibility tests**
+- [x] **Step 1: Write failing staff visibility tests**
 
 ```ts
 it('returns customer display name and earned points but no email in staff order DTO', () => {
@@ -549,17 +549,17 @@ test('staff payment view displays earned points without displaying customer emai
 });
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run: `npm test -- order.service.loyalty.spec.ts --runInBand` and `PLAYWRIGHT_BASE_URL=http://localhost:<port> pnpm exec playwright test e2e/staff-customer-loyalty.spec.ts --project=chromium`
 
 Expected: visibility assertions fail until DTO/UI are added.
 
-- [ ] **Step 3: Implement minimal operational UI and guide**
+- [x] **Step 3: Implement minimal operational UI and guide**
 
 Extend order response join safely with customer display name and ledger points. Display a compact, optional line in payment/order details. Write `deploy/google-oauth.md` with Google Cloud consent screen, `https://chalocoffee.com` origin, exact callback (`https://<api-host>/api/auth/google/callback`), environment variable names, secret handling, migration command and rollback notes. Do not put actual client secret in any repository file.
 
-- [ ] **Step 4: Run full verification**
+- [x] **Step 4: Run full verification**
 
 Run:
 
@@ -571,7 +571,7 @@ PLAYWRIGHT_BASE_URL=http://localhost:<port> pnpm exec playwright test --project=
 
 Expected: all relevant tests pass; existing lint failures outside scope are documented separately rather than hidden.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-be/src/modules/order chalo-fe/src/services/order chalo-fe/src/app/'(staff)' chalo-fe/src/app/'(admin)' deploy
