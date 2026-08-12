@@ -17,7 +17,7 @@
 
 ---
 
-- [ ] Task 1: Xóa đơn an toàn ở backend
+- [x] Task 1: Xóa đơn an toàn ở backend
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/order.service.ts`

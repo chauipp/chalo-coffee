@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Body,
   Query,
   Param,
@@ -161,6 +162,17 @@ export class OrderController {
   })
   detail(@Query('id') id: string) {
     return this.orderService.detail(id);
+  }
+
+  @Delete(':id')
+  @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN)
+  @ApiOkResponse({
+    description: 'Xóa vĩnh viễn đơn hàng cùng các dữ liệu thanh toán liên quan',
+    schema: { example: { code: 200, message: 'success', data: { id: 'uuid' } } },
+  })
+  deleteByAdmin(@Param('id') id: string) {
+    return this.orderService.deleteByAdmin(id);
   }
 
   @Get('by-token/:token')

@@ -10,7 +10,8 @@ export type SseEventType =
   | 'order_prep_progress'
   | 'checkout_completed'
   | 'payment_completed'
-  | 'staff_call';
+  | 'staff_call'
+  | 'order_deleted';
 
 export interface SseEvent {
   type: SseEventType;
