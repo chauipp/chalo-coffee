@@ -175,7 +175,7 @@ git add chalo-be/src/modules/auth chalo-be/src/modules/user/user.service.ts chal
 git commit -m "feat: add secure Google customer sign-in"
 ```
 
-- [ ] Task 3: Customer shortcut API and expiry rules
+- [x] Task 3: Customer shortcut API and expiry rules
 
 **Files:**
 - Create: `chalo-be/src/modules/customer/customer.module.ts`

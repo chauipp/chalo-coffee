@@ -20,8 +20,7 @@ import { PagerModule } from './modules/pager/pager.module';
 import { HealthModule } from './modules/health/health.module';
 import { SseModule } from './modules/sse/sse.module';
 import { SettingsModule } from './modules/settings/settings.module';
-import { CustomerTableSession } from './modules/customer/entities/customer-table-session.entity';
-import { LoyaltyPointTransaction } from './modules/customer/entities/loyalty-point-transaction.entity';
+import { CustomerModule } from './modules/customer/customer.module';
 
 @Module({
   imports: [
@@ -36,9 +35,9 @@ import { LoyaltyPointTransaction } from './modules/customer/entities/loyalty-poi
       inject: [ConfigService],
       useFactory: getTypeOrmConfig,
     }),
-    TypeOrmModule.forFeature([CustomerTableSession, LoyaltyPointTransaction]),
     AuthModule,
     UserModule,
+    CustomerModule,
     CategoryModule,
     ProductModule,
     TableModule,
