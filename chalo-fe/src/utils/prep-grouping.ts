@@ -12,6 +12,7 @@ export interface PrepUnit {
   quantity: number;
   tableName: string;
   note: string | null;
+  modifiers?: string;
   ticked: boolean;
 }
 
@@ -81,10 +82,11 @@ export const groupByProduct = (orders: OrderDto[]): ProductGroup[] => {
       if (asTime(o.createdAt) < asTime(g.oldestCreatedAt))
         g.oldestCreatedAt = o.createdAt;
 
-      const key = normalizeNote(it.note);
+      const modifiers = (it.selectedModifiers ?? []).map((modifier) => `${modifier.groupName}: ${modifier.optionName}`).join(" · ");
+      const key = `${normalizeNote(it.note)}|${modifiers.toLowerCase()}`;
       let b = g.batches.find((x) => x.key === key);
       if (!b) {
-        b = { key, note: key === "" ? null : it.note, units: [] };
+        b = { key, note: [modifiers, it.note].filter(Boolean).join(" · ") || null, units: [] };
         g.batches.push(b);
       }
       for (let u = 0; u < it.quantity; u++) {
@@ -95,6 +97,7 @@ export const groupByProduct = (orders: OrderDto[]): ProductGroup[] => {
           quantity: it.quantity,
           tableName: o.tableName,
           note: it.note,
+          modifiers,
           // preparedQuantity là một con số đếm ⇒ N ly đầu là đã pha
           ticked: u < it.preparedQuantity,
         });

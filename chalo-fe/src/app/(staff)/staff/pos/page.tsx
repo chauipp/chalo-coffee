@@ -2,6 +2,8 @@
 "use client";
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
+import { Modal } from "@/components/shared/ui/Modal";
+import { ProductModifierPicker, isModifierSelectionValid, modifierPrice } from "@/components/menu/ProductModifierPicker";
 import { QUERY_KEYS } from "@/constants";
 import { useInfinitePagination } from "@/hooks/useInfinitePagination";
 import { useGetCategorySimpleList } from "@/services/lookup/lookup.queries";
@@ -16,11 +18,14 @@ import { ProductCard } from "./_components/ProductCard";
 import { useCart } from "./_hooks/useCart";
 
 export interface POSCartItem {
+  cartKey: string;
   productId: string;
   productName: string;
   price: number;
   quantity: number;
   note?: string;
+  modifierOptionIds: string[];
+  selectedModifiers: { groupName: string; optionName: string; priceAdjustment: number }[];
 }
 
 export default function StaffPOSPage() {
@@ -35,6 +40,8 @@ export default function StaffPOSPage() {
     useState<boolean>(false);
   const [showPagerBoard, setShowPagerBoard] = useState(false);
   const [showMobileCart, setShowMobileCart] = useState(false);
+  const [modifierProduct, setModifierProduct] = useState<ProductDto | null>(null);
+  const [modifierOptionIds, setModifierOptionIds] = useState<string[]>([]);
 
   const { data: categories } = useGetCategorySimpleList();
 
@@ -102,6 +109,7 @@ export default function StaffPOSPage() {
           productId: item.productId,
           quantity: item.quantity,
           note: item.note?.trim() || undefined,
+          modifierOptionIds: item.modifierOptionIds,
         })),
       });
 
@@ -189,7 +197,7 @@ export default function StaffPOSPage() {
                   <ProductCard
                     key={p.id}
                     inCart={inCart}
-                    onAddToCart={addToCart}
+                    onAddToCart={(product) => product.modifierGroups?.length ? (setModifierProduct(product), setModifierOptionIds([])) : addToCart(product)}
                     product={p}
                   />
                 );
@@ -304,7 +312,7 @@ export default function StaffPOSPage() {
           ) : (
             cart.map((item) => (
               <CartItem
-                key={item.productId}
+                key={item.cartKey}
                 item={item}
                 onRemoveFromCart={removeFromCart}
                 onUpdateQuantity={updateQuantity}
@@ -344,6 +352,10 @@ export default function StaffPOSPage() {
           </div>
         </div>
       </div>
+
+      <Modal open={!!modifierProduct} onClose={() => setModifierProduct(null)} title={modifierProduct?.name ?? "Tùy chọn món"} size="sm">
+        {modifierProduct && <div><ProductModifierPicker groups={modifierProduct.modifierGroups} selectedIds={modifierOptionIds} onChange={setModifierOptionIds} /><div className="mt-4 flex items-center justify-between border-t border-stone-100 pt-4"><span className="font-bold text-brand-700">{(modifierProduct.price + modifierPrice(modifierProduct.modifierGroups, modifierOptionIds)).toLocaleString("vi-VN")}đ</span><button type="button" disabled={!isModifierSelectionValid(modifierProduct.modifierGroups, modifierOptionIds)} onClick={() => { addToCart(modifierProduct, modifierOptionIds); setModifierProduct(null); }} className="min-h-11 rounded-xl bg-brand-500 px-4 text-sm font-semibold text-white disabled:opacity-50">Thêm vào đơn</button></div></div>}
+      </Modal>
 
       <button
         type="button"

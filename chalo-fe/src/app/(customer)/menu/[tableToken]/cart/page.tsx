@@ -8,6 +8,7 @@ import {
 import { useCartStore } from "@/stores/cart.store";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { modifierLabel } from "@/utils/cart-modifiers";
 
 export default function CartPage() {
   const { tableToken } = useParams<{ tableToken: string }>();
@@ -31,6 +32,7 @@ export default function CartPage() {
         productId: item.productId,
         quantity: item.quantity,
         note: item.note,
+        modifierOptionIds: item.modifierOptionIds,
       })),
       note: note,
       tableToken: tableToken,
@@ -105,7 +107,7 @@ export default function CartPage() {
         <div className="space-y-3">
           {items.map((item) => (
             <div
-              key={item.productId}
+              key={item.cartKey}
               className="rounded-2xl bg-white dark:bg-stone-900 p-3 shadow-sm border border-stone-100 dark:border-stone-800 transition-colors"
             >
               <div className="relative flex gap-3">
@@ -132,13 +134,14 @@ export default function CartPage() {
                     <p className="text-sm font-bold text-brand-600 dark:text-brand-400 mt-1">
                       {item.price.toLocaleString("vi-VN")}đ
                     </p>
+                    {(item.selectedModifiers?.length ?? 0) > 0 && <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{modifierLabel(item.selectedModifiers)}</p>}
                   </div>
 
                   {/* Quantity Controls */}
                   <div className="flex items-center gap-3 mt-2">
                     <button
                       onClick={() =>
-                        updateQuantity(item.productId, item.quantity - 1)
+                        updateQuantity(item.cartKey, item.quantity - 1)
                       }
                       aria-label="Giảm số lượng"
                       className="flex size-8 items-center justify-center rounded-full border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 active:scale-95 transition-all text-lg font-medium"
@@ -150,7 +153,7 @@ export default function CartPage() {
                     </span>
                     <button
                       onClick={() =>
-                        updateQuantity(item.productId, item.quantity + 1)
+                        updateQuantity(item.cartKey, item.quantity + 1)
                       }
                       aria-label="Tăng số lượng"
                       className="flex size-8 items-center justify-center rounded-full border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 active:scale-95 transition-all text-lg font-medium disabled:opacity-30"
@@ -163,7 +166,7 @@ export default function CartPage() {
                 {/* Remove Button */}
                 <button
                   className="absolute right-0 top-0 size-7 flex items-center justify-center text-stone-400 dark:text-stone-500 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-500/10"
-                  onClick={() => removeItem(item.productId)}
+                  onClick={() => removeItem(item.cartKey)}
                   aria-label="Xoá món"
                 >
                   ✕
@@ -173,7 +176,7 @@ export default function CartPage() {
               {/* Per-item note */}
               <input
                 value={item.note ?? ""}
-                onChange={(e) => updateNote(item.productId, e.target.value)}
+                onChange={(e) => updateNote(item.cartKey, e.target.value)}
                 maxLength={200}
                 placeholder="Ghi chú cho món (VD: ít đường...)"
                 className="mt-3 w-full rounded-xl border border-dashed border-stone-200 dark:border-stone-700 bg-transparent px-3 py-1.5 text-xs text-stone-700 dark:text-stone-300 outline-none transition-colors placeholder:text-stone-400 dark:placeholder:text-stone-600 focus:border-brand-400 focus:border-solid"

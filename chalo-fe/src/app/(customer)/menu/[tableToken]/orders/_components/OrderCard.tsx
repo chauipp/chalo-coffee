@@ -56,6 +56,7 @@ export const OrderCard = ({
             <span className="text-sm text-stone-700 dark:text-stone-300 truncate pr-4">
               {item.productName}
               <span className="text-stone-400">x{item.quantity}</span>
+              {(item.selectedModifiers?.length ?? 0) > 0 && <span className="block text-xs text-brand-600 dark:text-brand-300">{item.selectedModifiers!.map((modifier) => `${modifier.groupName}: ${modifier.optionName}`).join(" · ")}</span>}
             </span>
             <span className="text-sm font-medium text-stone-900 dark:text-stone-100 shrink-0">
               {item.subtotal.toLocaleString("vi-VN")}đ

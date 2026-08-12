@@ -4,9 +4,9 @@ import { POSCartItem } from "../page";
 
 interface CartItemProps {
   item: POSCartItem;
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, delta: number) => void;
-  onUpdateItemNote: (productId: string, note: string) => void; // Thêm prop này
+  onRemoveFromCart: (cartKey: string) => void;
+  onUpdateQuantity: (cartKey: string, delta: number) => void;
+  onUpdateItemNote: (cartKey: string, note: string) => void;
 }
 
 export const CartItem = ({
@@ -26,7 +26,7 @@ export const CartItem = ({
       {/* --- DÒNG 1: Tên món, Giá, Nút xoá, Tăng giảm số lượng --- */}
       <div className="flex items-start gap-2">
         <button
-          onClick={() => onRemoveFromCart(item.productId)}
+          onClick={() => onRemoveFromCart(item.cartKey)}
           title="Xoá món"
           className="size-6 mt-0.5 shrink-0 rounded-full text-stone-400 dark:text-stone-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center transition-colors focus:outline-none"
         >
@@ -55,11 +55,12 @@ export const CartItem = ({
               </button>
             )}
           </div>
+          {item.selectedModifiers.length > 0 && <p className="mt-1 text-[11px] text-stone-500">{item.selectedModifiers.map((modifier) => `${modifier.groupName}: ${modifier.optionName}`).join(" · ")}</p>}
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
           <button
-            onClick={() => onUpdateQuantity(item.productId, -1)}
+            onClick={() => onUpdateQuantity(item.cartKey, -1)}
             className="size-6 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 text-sm font-bold hover:bg-stone-200 dark:hover:bg-stone-700 flex items-center justify-center transition-colors"
           >
             -
@@ -68,7 +69,7 @@ export const CartItem = ({
             {item.quantity}
           </span>
           <button
-            onClick={() => onUpdateQuantity(item.productId, 1)}
+            onClick={() => onUpdateQuantity(item.cartKey, 1)}
             className="size-6 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 text-sm font-bold hover:bg-stone-200 dark:hover:bg-stone-700 flex items-center justify-center transition-colors"
           >
             +
@@ -84,7 +85,7 @@ export const CartItem = ({
               type="text"
               autoFocus={isEditingNote && !item.note} // Tự động focus để gõ ngay khi bấm "Thêm ghi chú"
               value={item.note || ""}
-              onChange={(e) => onUpdateItemNote(item.productId, e.target.value)}
+              onChange={(e) => onUpdateItemNote(item.cartKey, e.target.value)}
               onBlur={() => {
                 // Khi click ra ngoài, nếu trống thì tự động giấu ô input đi cho gọn
                 setIsEditingNote(false);
@@ -95,7 +96,7 @@ export const CartItem = ({
             {/* Nút xoá nhanh ghi chú */}
             {item.note && (
               <button
-                onClick={() => onUpdateItemNote(item.productId, "")}
+                onClick={() => onUpdateItemNote(item.cartKey, "")}
                 className="absolute right-1.5 p-1 text-stone-400 hover:text-red-500 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors"
               >
                 <span className="text-[9px] font-bold block">✕</span>

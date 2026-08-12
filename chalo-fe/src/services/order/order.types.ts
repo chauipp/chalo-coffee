@@ -29,6 +29,7 @@ export interface OrderItemDto {
   preparedQuantity: number;
   subtotal: number;
   note: string | null;
+  selectedModifiers?: { groupName: string; optionName: string; priceAdjustment: number }[];
 }
 
 export interface OrderDto {
@@ -55,7 +56,7 @@ export interface OrderDto {
 // ============================================================================
 export interface CreateOrderPayload {
   tableToken: string;
-  items: { productId: string; quantity: number; note?: string }[];
+  items: { productId: string; quantity: number; note?: string; modifierOptionIds?: string[] }[];
   note?: string;
   pagerNumber?: number; // optional thẻ bàn — BE assigns an ASSIGNED pager on create
 }
@@ -123,12 +124,15 @@ export interface TopProductItem {
 // 5. UI & LOCAL STATE (Dữ liệu dùng nội bộ để render Component/State Frontend)
 // ============================================================================
 export interface CartItem {
+  cartKey: string;
   productId: string;
   productName: string;
   productImageUrl: string | null;
   price: number;
   quantity: number;
   note?: string;
+  modifierOptionIds: string[];
+  selectedModifiers: { groupName: string; optionName: string; priceAdjustment: number }[];
 }
 
 // ============================================================================

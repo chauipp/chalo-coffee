@@ -72,6 +72,7 @@ export const Receipt = ({
               <tr key={item.id}>
                 <td style={{ padding: "2px 0" }}>
                   {item.productName}
+                  {(item.selectedModifiers?.length ?? 0) > 0 ? ` — ${item.selectedModifiers!.map((modifier) => `${modifier.groupName}: ${modifier.optionName}`).join(", ")}` : ""}
                   {item.note ? ` (${item.note})` : ""}
                 </td>
                 <td style={{ textAlign: "center" }}>{item.quantity}</td>

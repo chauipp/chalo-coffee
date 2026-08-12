@@ -98,7 +98,7 @@
 - [ ] Step 4: Run Playwright admin form flow at mobile width: add group, add option, observe `0đ`, edit price, and validate required fields.
 - [ ] Step 5: Commit `feat: let admins configure product modifiers`.
 
-- [ ] Task 4: Add modifier-aware cart and customer ordering UX
+- [x] Task 4: Add modifier-aware cart and customer ordering UX
 
 **Files:**
 - Create: `chalo-fe/src/components/menu/ProductModifierPicker.tsx`
@@ -122,7 +122,7 @@
 - [ ] Step 5: Run Playwright customer flow at 375×667: blocked required selection, price update, two distinct combinations, cart/checkout option display.
 - [ ] Step 6: Commit `feat: support modifiers in customer orders`.
 
-- [ ] Task 5: Add modifier-aware staff POS and operational display
+- [x] Task 5: Add modifier-aware staff POS and operational display
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/pos/page.tsx`

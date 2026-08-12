@@ -2,10 +2,12 @@ import { Modal } from "@/components/shared/ui/Modal";
 import { ProductDto } from "@/services/menu";
 import { MAX_ITEM_QUANTITY } from "@/stores/cart.store";
 import { useState } from "react";
+import { ProductModifierPicker, isModifierSelectionValid, modifierPrice } from "@/components/menu/ProductModifierPicker";
+import { buildSelectedModifiers, canonicalModifierKey } from "@/utils/cart-modifiers";
 
 interface ProductCardProps {
   product: ProductDto;
-  onAddToCart: (quantity: number, note?: string) => void;
+  onAddToCart: (quantity: number, note?: string, modifierOptionIds?: string[], price?: number, cartKey?: string) => void;
 }
 
 const stepperButtonClass =
@@ -16,6 +18,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const [detailOpen, setDetailOpen] = useState<boolean>(false);
   const [detailQuantity, setDetailQuantity] = useState<number>(1);
   const [detailNote, setDetailNote] = useState<string>("");
+  const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
   const [imgError, setImgError] = useState<boolean>(false);
   const isUnavailable = product.status !== "AVAILABLE" || !product.isActive;
   const showImage = !!product.imageUrl && !imgError;
@@ -23,11 +26,14 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const openDetail = () => {
     setDetailQuantity(1);
     setDetailNote("");
+    setSelectedOptionIds([]);
     setDetailOpen(true);
   };
 
   const handleDetailAdd = () => {
-    onAddToCart(detailQuantity, detailNote.trim() || undefined);
+    if (!isModifierSelectionValid(product.modifierGroups, selectedOptionIds)) return;
+    const adjustment = modifierPrice(product.modifierGroups, selectedOptionIds);
+    onAddToCart(detailQuantity, detailNote.trim() || undefined, selectedOptionIds, product.price + adjustment, `${product.id}:${canonicalModifierKey(selectedOptionIds)}:${detailNote.trim()}`);
     setDetailQuantity(1);
     setDetailNote("");
     setDetailOpen(false);
@@ -111,10 +117,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  onAddToCart(quantity);
-                  setQuantity(1);
-                }}
+                onClick={product.modifierGroups?.length ? openDetail : () => { onAddToCart(quantity, undefined, [], product.price, `${product.id}::`); setQuantity(1); }}
                 className="rounded-full bg-brand-500 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-brand-400/30 transition-colors hover:bg-brand-600 active:bg-brand-700"
               >
                 Thêm
@@ -156,6 +159,8 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
               {product.description || "Món này chưa có mô tả."}
             </p>
 
+            <ProductModifierPicker groups={product.modifierGroups} selectedIds={selectedOptionIds} onChange={setSelectedOptionIds} />
+
             {!isUnavailable && (
               <div className="mt-4">
                 <label
@@ -180,7 +185,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           <div className="border-t border-stone-100 pt-4 dark:border-stone-800">
             <div className="mb-3 flex items-center justify-between gap-3">
               <span className="text-base font-bold text-brand-700 dark:text-brand-300">
-                {product.price.toLocaleString("vi-VN")}đ
+                {(product.price + modifierPrice(product.modifierGroups, selectedOptionIds)).toLocaleString("vi-VN")}đ
               </span>
               <div className="grid grid-cols-[2rem_1.75rem_2rem] items-center">
                 <button
@@ -219,7 +224,8 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
               <button
                 type="button"
                 onClick={handleDetailAdd}
-                className="w-full rounded-full bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-brand-400/30 transition-colors hover:bg-brand-600 active:bg-brand-700"
+                disabled={!isModifierSelectionValid(product.modifierGroups, selectedOptionIds)}
+                className="w-full rounded-full bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-brand-400/30 transition-colors hover:bg-brand-600 active:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Thêm {detailQuantity} vào giỏ
               </button>

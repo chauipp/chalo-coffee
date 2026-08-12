@@ -97,6 +97,7 @@ export const OrderCard = ({
                 ×{item.quantity}
               </span>
             </span>
+            {(item.selectedModifiers?.length ?? 0) > 0 && <span className="block truncate text-[10px] text-brand-600 dark:text-brand-300">{item.selectedModifiers!.map((modifier) => `${modifier.groupName}: ${modifier.optionName}`).join(" · ")}</span>}
             {item.note && (
               <span className="text-brand-500 dark:text-brand-400 text-[10px] shrink-0">
                 📝 {item.note}
