@@ -19,7 +19,7 @@
 
 ---
 
-- [ ] Task 1: Thêm floating action Zalo và bản đồ
+- [x] Task 1: Thêm floating action Zalo và bản đồ
 
   **Files:**
   - Modify: `chalo-fe/src/app/_components/PublicLanding.tsx`
@@ -34,7 +34,7 @@
   - [ ] Thêm tooltip nhãn đặt bên trái icon với `hidden sm:block`, chỉ mở khi hover/focus bằng group classes.
   - [ ] Chạy `PLAYWRIGHT_BASE_URL=http://localhost:3105 pnpm exec playwright test e2e/public-landing.spec.ts --project=chromium`; commit `feat: add landing floating contact actions`.
 
-- [ ] Task 2: Kiểm giao diện và bàn giao
+- [x] Task 2: Kiểm giao diện và bàn giao
 
   **Files:**
   - Modify: `docs/superpowers/plans/2026-08-12-landing-floating-actions.md`
