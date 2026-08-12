@@ -6,6 +6,7 @@ export const ROUTES = {
 
   //public (customer)
   MENU: "/menu",
+  ACCOUNT: "/account",
 
   DASHBOARD: "/dashboard",
 
@@ -40,5 +41,5 @@ export const PUBLIC_ROUTES = [
 export const ROLE_DEFAULT_ROUTES: Record<string, string> = {
   ADMIN: ROUTES.ADMIN.DASHBOARD,
   MODERATOR: ROUTES.STAFF.ORDERS,
-  CUSTOMER: ROUTES.MENU,
+  CUSTOMER: ROUTES.ACCOUNT,
 };
