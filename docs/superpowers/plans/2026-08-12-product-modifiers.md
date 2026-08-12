@@ -35,7 +35,7 @@
 
 ## Tasks
 
-- [ ] Task 1: Persist product modifier configuration and order snapshots
+- [x] Task 1: Persist product modifier configuration and order snapshots
 
 **Files:**
 - Create: `chalo-be/src/modules/product/entities/product-modifier-group.entity.ts`

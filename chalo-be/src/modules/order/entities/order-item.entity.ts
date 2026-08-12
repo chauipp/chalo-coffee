@@ -41,6 +41,9 @@ export class OrderItem {
   @Column({ type: 'text', nullable: true })
   note: string | null;
 
+  @Column({ type: 'jsonb', default: () => "'[]'::jsonb" })
+  selectedModifiers: Array<{ groupName: string; optionName: string; priceAdjustment: number }>;
+
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'orderId' })
   order: Order;

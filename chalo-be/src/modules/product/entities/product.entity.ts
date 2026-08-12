@@ -11,6 +11,7 @@ import {
 import { Category } from '../../category/entities/category.entity';
 import { ProductStatus } from '../../../common/enums/product-status.enum';
 import { OrderItem } from '../../order/entities/order-item.entity';
+import { ProductModifierGroup } from './product-modifier-group.entity';
 
 @Entity('products')
 export class Product {
@@ -58,4 +59,7 @@ export class Product {
 
   @OneToMany(() => OrderItem, (item) => item.product)
   orderItems: OrderItem[];
+
+  @OneToMany(() => ProductModifierGroup, (group) => group.product, { cascade: true })
+  modifierGroups: ProductModifierGroup[];
 }
