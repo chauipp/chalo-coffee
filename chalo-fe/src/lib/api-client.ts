@@ -152,23 +152,23 @@ apiClient.interceptors.response.use(
 
 export const request = {
   get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return apiClient.get<ApiResponse<T>, T>(url, config);
+    return apiClient.get<ApiResponse<T>, T>(url, config) as unknown as Promise<T>;
   },
   post<T>(
     url: string,
     data?: unknown,
     config?: AxiosRequestConfig,
   ): Promise<T> {
-    return apiClient.post<ApiResponse<T>, T>(url, data, config);
+    return apiClient.post<ApiResponse<T>, T>(url, data, config) as unknown as Promise<T>;
   },
   put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    return apiClient.put<ApiResponse<T>, T>(url, data, config);
+    return apiClient.put<ApiResponse<T>, T>(url, data, config) as unknown as Promise<T>;
   },
   delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return apiClient.delete<ApiResponse<T>, T>(url, config);
+    return apiClient.delete<ApiResponse<T>, T>(url, config) as unknown as Promise<T>;
   },
   download(url: string, config?: AxiosRequestConfig): Promise<Blob> {
-    return apiClient.get<Blob, Blob>(url, { ...config, responseType: "blob" });
+    return apiClient.get<Blob, Blob>(url, { ...config, responseType: "blob" }) as unknown as Promise<Blob>;
   },
   upload<T>(
     url: string,
@@ -178,6 +178,6 @@ export const request = {
     return apiClient.post<ApiResponse<T>, T>(url, formData, {
       ...config,
       headers: { "Content-Type": "multipart/form-data" },
-    });
+    }) as unknown as Promise<T>;
   },
 };
