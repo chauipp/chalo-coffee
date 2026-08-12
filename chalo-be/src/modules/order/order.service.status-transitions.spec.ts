@@ -90,4 +90,27 @@ describe('OrderService STATUS_TRANSITIONS', () => {
     const result = await service.updateStatus({ id: 'o1', status: 'COMPLETED' } as any);
     expect(result.status).toBe('COMPLETED');
   });
+
+  it('giữ nguyên QR token khi bàn trở lại trống sau thanh toán', async () => {
+    const table = { id: 't1', status: 'OCCUPIED', qrToken: 'qr-in-tren-ban' };
+    const orderRepository = {
+      createQueryBuilder: () => ({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getCount: jest.fn().mockResolvedValue(0),
+      }),
+    };
+    const tableRepository = {
+      findOne: jest.fn().mockResolvedValue(table),
+      save: jest.fn().mockImplementation(async (value) => value),
+    };
+    manager.getRepository.mockImplementation((entity: unknown) =>
+      entity === Order ? orderRepository : tableRepository,
+    );
+
+    await (service as any).syncTableOccupancyAfterOrderChange(manager, 't1');
+
+    expect(table.status).toBe('AVAILABLE');
+    expect(table.qrToken).toBe('qr-in-tren-ban');
+  });
 });

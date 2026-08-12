@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, EntityManager, In } from 'typeorm';
 import { randomBytes } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CheckoutSession, CheckoutSessionStatus } from './entities/checkout-session.entity';
@@ -207,11 +206,7 @@ export class OrderService {
     if (!table) return;
 
     if (remaining === 0) {
-      const shouldRotateToken = table.status === TableStatus.OCCUPIED;
       table.status = TableStatus.AVAILABLE;
-      if (shouldRotateToken) {
-        table.qrToken = uuidv4();
-      }
     } else {
       table.status = TableStatus.OCCUPIED;
       // Không cần query latest order nữa
