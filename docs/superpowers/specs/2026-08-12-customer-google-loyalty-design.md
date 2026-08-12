@@ -10,7 +10,7 @@ Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Go
 
 - Đơn hiện chỉ gắn với `tableToken`, không gắn với khách hay tài khoản.
 - Giỏ hàng được lưu trong `localStorage` với `tableToken`; quét QR mới sẽ xóa giỏ của bàn trước.
-- Bàn trở lại khả dụng và sinh token mới sau khi không còn đơn đang xử lý/chưa thanh toán. Nếu một bàn còn đơn qua đêm thì token vẫn còn, vì vậy không được dùng token lưu cục bộ làm bằng chứng khách còn ngồi tại bàn hôm sau.
+- QR token là mã cố định in/dán tại mỗi bàn và không tự đổi khi thanh toán. Chỉ admin chủ động bấm “Tạo QR mới” mới sinh token khác. Vì QR cũ luôn có thể còn hợp lệ, không được dùng token lưu cục bộ làm bằng chứng khách còn ngồi tại bàn hôm sau.
 
 ## Nguyên tắc sản phẩm
 
@@ -69,7 +69,7 @@ Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Go
 
 - Khi staff/admin ghi nhận thanh toán cuối cùng của một đơn, backend dùng transaction tạo đúng một giao dịch `EARN` cho `orderId`; unique constraint bảo đảm không cộng trùng khi bấm lại, thanh toán gộp hoặc retry.
 - Chỉ cộng điểm cho đơn có `customerId` và đã thanh toán. Đơn hủy, đơn chưa trả tiền và khách vãng lai không có điểm.
-- Sau khi trạng thái bàn đồng bộ thành `AVAILABLE`, các customer table session đang active của bàn được đóng với lý do `PAID`; token bàn được xoay như hiện có.
+- Sau khi trạng thái bàn đồng bộ thành `AVAILABLE`, các customer table session đang active của bàn được đóng với lý do `PAID`. QR token của bàn được giữ nguyên; chỉ API quản trị “Tạo QR mới” mới thay token và yêu cầu in lại QR.
 - Staff/admin thấy tên khách (nếu có) và số điểm cộng dự kiến/thành công trong chi tiết đơn. Không để lộ email hay dữ liệu không cần thiết trên màn vận hành.
 - Tài khoản khách làm mới số điểm và lịch sử sau thanh toán qua refetch; realtime/SSE có thể bổ sung sau, không là điều kiện của phase này.
 
@@ -111,6 +111,7 @@ Khách Google: Landing → Google OAuth → Tài khoản → Quét QR → Phiên
 - Điểm không hết hạn.
 - Khách vãng lai vẫn đặt món bằng QR như hiện tại.
 - Tích điểm sau thanh toán, tỷ lệ 1 điểm/1.000đ, làm tròn xuống.
+- QR mỗi bàn là cố định; chỉ admin chủ động tạo lại QR mới được đổi token.
 
 ## Plan thực thi
 
