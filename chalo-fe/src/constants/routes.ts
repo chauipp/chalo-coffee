@@ -16,6 +16,7 @@ export const ROUTES = {
     ORDERS: "/staff/orders",
     POS: "/staff/pos",
     TABLES: "/staff/tables",
+    SHIFT: "/staff/shift",
   },
 
   //admin
@@ -29,6 +30,7 @@ export const ROUTES = {
     ORDERS: "/admin/orders",
     STAFF: "/admin/staff",
     SETTINGS: "/admin/settings",
+    SHIFT: "/admin/shift",
   },
 } as const;
 

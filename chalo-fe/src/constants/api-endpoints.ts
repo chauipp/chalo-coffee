@@ -81,6 +81,7 @@ export const API = {
     GET: "/settings",
     UPDATE: "/settings",
   },
+  SHIFT: { CURRENT: "/shift/current", OPEN: "/shift/open", CLOSE: "/shift/current/close", REPORT: "/shift/report" },
   UPLOAD: {
     IMAGE: "/upload/image",
   },

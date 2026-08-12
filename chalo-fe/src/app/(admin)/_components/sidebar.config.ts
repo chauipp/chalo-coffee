@@ -18,6 +18,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "Bàn & QR", href: ROUTES.ADMIN.TABLES, icon: TableIcon },
   { label: "Nhân viên", href: ROUTES.ADMIN.STAFF, icon: UsersIcon },
   { label: "Cài đặt", href: ROUTES.ADMIN.SETTINGS, icon: SettingsIcon },
+  { label: "Chốt ca", href: ROUTES.ADMIN.SHIFT, icon: ChartBarIcon },
 ];
 
 const ADMIN_MOBILE_PRIMARY_HREFS: readonly string[] = [
@@ -25,6 +26,7 @@ const ADMIN_MOBILE_PRIMARY_HREFS: readonly string[] = [
   ROUTES.ADMIN.MENU_CATEGORIES,
   ROUTES.ADMIN.ORDERS,
   ROUTES.ADMIN.TABLES,
+  ROUTES.ADMIN.SHIFT,
 ];
 
 const ADMIN_MOBILE_OVERFLOW_HREFS: readonly string[] = [

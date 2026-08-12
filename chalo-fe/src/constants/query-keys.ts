@@ -57,4 +57,5 @@ export const QUERY_KEYS = {
     TOP_PRODUCTS: (params: object) =>
       ["orders", "stats", "top-products", params] as const,
   },
+  SHIFT: { CURRENT: ["shift", "current"] as const, REPORT: (params: object = {}) => ["shift", "report", params] as const },
 } as const;

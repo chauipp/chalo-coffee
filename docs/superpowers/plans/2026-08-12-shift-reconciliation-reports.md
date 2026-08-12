@@ -71,7 +71,7 @@
 - [ ] Chạy backend unit suite/build.
 - [ ] Commit: `feat: add cash shift reconciliation reports API`.
 
-- [ ] Task 4: Nối UI thanh toán với sổ cái
+- [x] Task 4: Nối UI thanh toán với sổ cái
 
 **Files:**
 - Modify: `chalo-fe/src/services/order/order.{api,queries,types}.ts`, `constants/api-endpoints.ts`, `OrderPaymentPanel.tsx`
@@ -82,7 +82,7 @@
 - [ ] Chạy unit tests, TypeScript, build frontend.
 - [ ] Commit: `feat: connect staff payment panel to ledger`.
 
-- [ ] Task 5: Xây UI mở/chốt ca và report responsive
+- [x] Task 5: Xây UI mở/chốt ca và report responsive
 
 **Files:**
 - Create: `chalo-fe/src/services/shift/{shift.api,shift.queries,shift.types}.ts`, `chalo-fe/src/app/(staff)/staff/shift/page.tsx`, `chalo-fe/src/app/(admin)/admin/shift/page.tsx`
