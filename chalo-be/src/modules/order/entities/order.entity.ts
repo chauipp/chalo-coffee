@@ -13,6 +13,7 @@ import { OrderStatus } from '../../../common/enums/order-status.enum';
 import { Table } from '../../table/entities/table.entity';
 import { OrderItem } from './order-item.entity';
 import { PagerToken } from '../../pager/entities/pager-token.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity('orders')
 export class Order {
@@ -26,6 +27,10 @@ export class Order {
   @Index()
   @Column({ type: 'varchar', length: 255 })
   tableToken: string;
+
+  @Index()
+  @Column({ type: 'int', nullable: true })
+  customerId: number | null;
 
   @Column({
     type: 'enum',
@@ -67,6 +72,10 @@ export class Order {
   @ManyToOne(() => Table, { eager: false })
   @JoinColumn({ name: 'tableId' })
   table: Table;
+
+  @ManyToOne(() => User, { eager: false, nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'customerId' })
+  customer: User | null;
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];

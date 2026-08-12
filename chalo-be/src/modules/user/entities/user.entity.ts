@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Index,
 } from 'typeorm';
 import { UserRole } from '../../../common/enums/user-role.enum';
 
@@ -22,6 +23,14 @@ export class User {
 
   @Column({ type: 'varchar', length: 500, nullable: true, default: null })
   avatar: string | null;
+
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, default: null })
+  googleSubject: string | null;
+
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 320, nullable: true, default: null })
+  email: string | null;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.MODERATOR })
   role: UserRole;
