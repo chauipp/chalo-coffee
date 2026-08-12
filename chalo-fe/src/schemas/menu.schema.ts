@@ -26,6 +26,17 @@ export const ProductSchema = z.object({
   sortOrder: z.coerce.number().int().min(0).optional(),
   status: z.enum(PRODUCT_STATUS),
   isActive: z.boolean().default(true)
+  ,modifierGroups: z.array(z.object({
+    name: z.string().min(1, "Tên nhóm tùy chọn không được để trống").max(80),
+    selectionType: z.enum(["SINGLE", "MULTIPLE"]),
+    isRequired: z.boolean(),
+    sortOrder: z.coerce.number().int().min(0),
+    options: z.array(z.object({
+      name: z.string().min(1, "Tên lựa chọn không được để trống").max(80),
+      priceAdjustment: z.coerce.number().int().min(0, "Phụ thu không được âm"),
+      sortOrder: z.coerce.number().int().min(0),
+    })).min(1, "Mỗi nhóm cần ít nhất một lựa chọn"),
+  })).default([])
 })
 
 export type ProductFormType = z.infer<typeof ProductSchema>

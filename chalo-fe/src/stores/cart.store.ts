@@ -11,9 +11,9 @@ interface CartState {
   tableToken: string | null;
   setTable: (tableToken: string) => void;
   addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  updateNote: (productId: string, note: string) => void;
+  removeItem: (cartKey: string) => void;
+  updateQuantity: (cartKey: string, quantity: number) => void;
+  updateNote: (cartKey: string, note: string) => void;
   clearCart: () => void;
   getItemCount: () => number;
   getTotalAmount: () => number;
@@ -35,11 +35,11 @@ export const useCartStore = create<CartState>()(
       addItem: (newItem, quantity = 1) =>
         set((state) => {
           const existingItem = state.items.find(
-            (c) => c.productId === newItem.productId,
+            (c) => c.cartKey === newItem.cartKey,
           );
           const updatedCart = existingItem
             ? state.items.map((cartItem) =>
-                cartItem.productId === newItem.productId
+                cartItem.cartKey === newItem.cartKey
                   ? {
                       ...cartItem,
                       quantity: clampQuantity(cartItem.quantity + quantity),
@@ -51,27 +51,27 @@ export const useCartStore = create<CartState>()(
             : [...state.items, { ...newItem, quantity: clampQuantity(quantity) }];
           return { items: updatedCart };
         }),
-      removeItem: (productId) =>
+      removeItem: (cartKey) =>
         set((state) => ({
-          items: state.items.filter((item) => item.productId !== productId),
+          items: state.items.filter((item) => item.cartKey !== cartKey),
         })),
-      updateQuantity: (productId, quantity) => {
+      updateQuantity: (cartKey, quantity) => {
         if (quantity <= 0) {
-          get().removeItem(productId);
+          get().removeItem(cartKey);
           return;
         }
         set((state) => ({
           items: state.items.map((item) =>
-            item.productId === productId
+            item.cartKey === cartKey
               ? { ...item, quantity: clampQuantity(quantity) }
               : item,
           ),
         }));
       },
-      updateNote: (productId, note) =>
+      updateNote: (cartKey, note) =>
         set((state) => ({
           items: state.items.map((item) =>
-            item.productId === productId
+            item.cartKey === cartKey
               ? { ...item, note: note || undefined }
               : item,
           ),
@@ -83,6 +83,19 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "chalo-cart",
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as Partial<CartState>;
+        return {
+          ...state,
+          items: (state.items ?? []).map((item) => ({
+            ...item,
+            modifierOptionIds: item.modifierOptionIds ?? [],
+            selectedModifiers: item.selectedModifiers ?? [],
+            cartKey: item.cartKey ?? `${item.productId}::${item.note ?? ""}`,
+          })),
+        } as CartState;
+      },
       storage: createJSONStorage(() => {
         if (typeof window === "undefined") {
           return {

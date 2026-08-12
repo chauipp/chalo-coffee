@@ -34,6 +34,12 @@ export const PRODUCT_STATUS = [
 ] as const;
 export type ProductStatus = (typeof PRODUCT_STATUS)[number];
 
+export type ModifierSelectionType = "SINGLE" | "MULTIPLE";
+export interface ProductModifierOptionDto { id: string; name: string; priceAdjustment: number; sortOrder: number }
+export interface ProductModifierGroupDto { id: string; name: string; selectionType: ModifierSelectionType; isRequired: boolean; sortOrder: number; options: ProductModifierOptionDto[] }
+export interface ProductModifierOptionInput { name: string; priceAdjustment: number; sortOrder: number }
+export interface ProductModifierGroupInput { name: string; selectionType: ModifierSelectionType; isRequired: boolean; sortOrder: number; options: ProductModifierOptionInput[] }
+
 export interface ProductDto {
   id: string;
   categoryId: string;
@@ -46,6 +52,7 @@ export interface ProductDto {
   sortOrder: number;
   isActive: boolean;
   prepTime: number;
+  modifierGroups?: ProductModifierGroupDto[];
   createdAt: string;
 }
 
@@ -65,6 +72,7 @@ export interface CreateProductPayload {
   prepTime: number;
   status: ProductStatus;
   isActive: boolean;
+  modifierGroups?: ProductModifierGroupInput[];
 }
 
 export interface UpdateProductPayload extends CreateProductPayload {

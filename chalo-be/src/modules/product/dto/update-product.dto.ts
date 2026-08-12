@@ -10,8 +10,12 @@ import {
   Max,
   IsEnum,
   IsBoolean,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ProductStatus } from '../../../common/enums/product-status.enum';
+import { ProductModifierGroupDto } from './product-modifier.dto';
 
 export class UpdateProductDto {
   @ApiProperty({ example: 'uuid' })
@@ -63,6 +67,12 @@ export class UpdateProductDto {
   @ApiProperty({ example: true })
   @IsBoolean()
   isActive: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductModifierGroupDto)
+  modifierGroups?: ProductModifierGroupDto[];
 }
 
 export class UpdateProductStatusDto {

@@ -252,6 +252,7 @@ export default function OrderTrackingPage() {
                       <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 truncate">
                         {item.productName}
                       </p>
+                      {(item.selectedModifiers?.length ?? 0) > 0 && <p className="mt-1 text-xs text-brand-600 dark:text-brand-300">{item.selectedModifiers!.map((modifier) => `${modifier.groupName}: ${modifier.optionName}`).join(" · ")}</p>}
                       <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                         {item.price.toLocaleString("vi-VN")}đ{" "}
                         <span className="mx-1">×</span> {item.quantity}

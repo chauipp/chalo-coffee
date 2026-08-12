@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import { type Resolver, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useProductDraft } from "@/hooks/useProductDraft";
+import { ProductModifierFields } from "@/components/menu/ProductModifierFields";
 
 interface ProductFormProps {
   defaultValue?: ProductDto;
@@ -47,10 +48,12 @@ export const ProductForm = ({
             price: defaultValue.price,
             sortOrder: defaultValue.sortOrder,
             status: defaultValue.status,
+            modifierGroups: defaultValue.modifierGroups?.map(({ name, selectionType, isRequired, sortOrder, options }) => ({ name, selectionType, isRequired, sortOrder, options: options.map(({ name, priceAdjustment, sortOrder }) => ({ name, priceAdjustment, sortOrder })) })) ?? [],
           }
         : {
             isActive: true,
             status: "AVAILABLE",
+            modifierGroups: [],
           },
     [defaultValue],
   );
@@ -69,12 +72,12 @@ export const ProductForm = ({
     formState: { errors },
   } = useForm<ProductFormType>({
     resolver: zodResolver(ProductSchema) as Resolver<ProductFormType>,
-    defaultValues,
+    defaultValues: defaultValues as ProductFormType,
   });
 
   const formValues = useWatch({ control });
   useEffect(() => {
-    if (productId) saveDraft(formValues);
+    if (productId) saveDraft(formValues as Partial<ProductFormType>);
   }, [formValues, productId, saveDraft]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,6 +156,8 @@ export const ProductForm = ({
           </FormField>
         </div>
       </section>
+
+      <ProductModifierFields control={control} register={register} setValue={setValue} />
 
       <section
         data-testid="product-edit-section-operations"

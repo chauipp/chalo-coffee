@@ -120,14 +120,19 @@ export const CustomerMenuClient = ({
     product: ProductDto,
     quantity: number,
     itemNote?: string,
+    modifierOptionIds: string[] = [],
+    price = product.price,
+    cartKey = `${product.id}::`,
   ) => {
     addItem(
       {
         productId: product.id,
-        price: product.price,
+        cartKey, price,
         productImageUrl: product.imageUrl,
         productName: product.name,
         note: itemNote,
+        modifierOptionIds,
+        selectedModifiers: (product.modifierGroups ?? []).flatMap((group) => group.options.filter((option) => modifierOptionIds.includes(option.id)).map((option) => ({ groupName: group.name, optionName: option.name, priceAdjustment: option.priceAdjustment }))),
       },
       quantity,
     );
@@ -292,8 +297,8 @@ export const CustomerMenuClient = ({
                     <ProductCard
                       product={p}
                       key={p.id}
-                      onAddToCart={(quantity, itemNote) =>
-                        handleAddToCart(p, quantity, itemNote)
+                      onAddToCart={(quantity, itemNote, modifierOptionIds, price, cartKey) =>
+                        handleAddToCart(p, quantity, itemNote, modifierOptionIds, price, cartKey)
                       }
                     />
                   ))}
@@ -312,8 +317,8 @@ export const CustomerMenuClient = ({
                       <ProductCard
                         product={p}
                         key={p.id}
-                        onAddToCart={(quantity, itemNote) =>
-                        handleAddToCart(p, quantity, itemNote)
+                        onAddToCart={(quantity, itemNote, modifierOptionIds, price, cartKey) =>
+                          handleAddToCart(p, quantity, itemNote, modifierOptionIds, price, cartKey)
                       }
                       />
                     ))}

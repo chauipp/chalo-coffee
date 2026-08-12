@@ -11,6 +11,7 @@ import { OrderItem } from './entities/order-item.entity';
 import { CheckoutSession, CheckoutSessionStatus } from './entities/checkout-session.entity';
 import { Table } from '../table/entities/table.entity';
 import { Product } from '../product/entities/product.entity';
+import { ModifierSelectionType } from '../product/entities/product-modifier-group.entity';
 import { PagerToken } from '../pager/entities/pager-token.entity';
 import { PagerStatus } from '../../common/enums/pager-status.enum';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -98,6 +99,7 @@ export class OrderService {
         preparedQuantity: item.preparedQuantity,
         subtotal: item.subtotal,
         note: item.note,
+        selectedModifiers: item.selectedModifiers ?? [],
       })),
       totalAmount: order.totalAmount,
       estimateWaitMinutes: order.estimatedWaitMinutes,
@@ -356,7 +358,10 @@ export class OrderService {
       let totalAmount = 0;
 
       for (const itemDto of dto.items) {
-        const product = await manager.findOneBy(Product, { id: itemDto.productId });
+        const product = await manager.findOne(Product, {
+          where: { id: itemDto.productId },
+          relations: { modifierGroups: { options: true } },
+        });
         if (!product) {
           throw new NotFoundException(`Sản phẩm không tồn tại`);
         }
@@ -365,16 +370,39 @@ export class OrderService {
             `Sản phẩm ${product.name} hiện không còn hàng`,
           );
         }
-        const subtotal = product.price * itemDto.quantity;
+        const requestedIds = itemDto.modifierOptionIds ?? [];
+        if (new Set(requestedIds).size !== requestedIds.length) {
+          throw new BadRequestException('Không được chọn trùng tùy chọn món');
+        }
+        const groups = product.modifierGroups ?? [];
+        const optionById = new Map(groups.flatMap((group) => (group.options ?? []).map((option) => [option.id, { group, option }] as const)));
+        const selected = requestedIds.map((id) => optionById.get(id));
+        if (selected.some((entry) => !entry)) {
+          throw new BadRequestException(`Tùy chọn không thuộc món ${product.name}`);
+        }
+        const selectedByGroup = new Map<string, number>();
+        for (const entry of selected) selectedByGroup.set(entry!.group.id, (selectedByGroup.get(entry!.group.id) ?? 0) + 1);
+        for (const group of groups) {
+          const count = selectedByGroup.get(group.id) ?? 0;
+          if (group.isRequired && count === 0) throw new BadRequestException(`Vui lòng chọn ${group.name}`);
+          if (group.selectionType === ModifierSelectionType.SINGLE && count > 1) throw new BadRequestException(`Chỉ được chọn một lựa chọn trong ${group.name}`);
+        }
+        const selectedModifiers = selected.map((entry) => {
+          const { group, option } = entry!;
+          return { groupName: group.name, optionName: option.name, priceAdjustment: option.priceAdjustment };
+        });
+        const unitPrice = product.price + selectedModifiers.reduce((sum, modifier) => sum + modifier.priceAdjustment, 0);
+        const subtotal = unitPrice * itemDto.quantity;
         totalAmount += subtotal;
         orderItems.push({
           productId: product.id,
           productName: product.name,
           productImageUrl: product.imageUrl,
-          price: product.price,
+          price: unitPrice,
           quantity: itemDto.quantity,
           subtotal,
           note: itemDto.note ?? null,
+          selectedModifiers,
         });
       }
 

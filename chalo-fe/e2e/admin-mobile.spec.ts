@@ -71,7 +71,7 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
   await expect(dialog).toBeVisible({ timeout: 15_000 });
 
   const sections = dialog.locator("[data-testid^='product-edit-section-']");
-  await expect(sections).toHaveCount(5);
+  await expect(sections).toHaveCount(6);
   await expect(sections.nth(0)).toHaveAttribute(
     "data-testid",
     "product-edit-section-info",
@@ -90,6 +90,10 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
   );
   await expect(sections.nth(4)).toHaveAttribute(
     "data-testid",
+    "product-edit-section-modifiers",
+  );
+  await expect(sections.nth(5)).toHaveAttribute(
+    "data-testid",
     "product-edit-section-visibility",
   );
   for (const heading of [
@@ -97,12 +101,18 @@ test("mobile product editor groups fields and keeps actions reachable", async ({
     "Giá & vận hành",
     "Mô tả",
     "Hình ảnh",
+    "Tùy chọn món",
     "Hiển thị",
   ]) {
     await expect(
       dialog.getByRole("heading", { name: heading, exact: true }),
     ).toBeVisible();
   }
+
+  await dialog.getByRole("button", { name: "Thêm nhóm" }).click();
+  await expect(dialog.getByLabel("Tên nhóm tùy chọn 1")).toBeVisible();
+  await dialog.getByLabel("Tên nhóm tùy chọn 1").fill("Size");
+  await expect(dialog.getByLabel("Phụ thu lựa chọn 1 nhóm 1")).toHaveValue("0");
 
   const prepTimeLabel = dialog.locator("label").filter({
     hasText: "Thời gian (phút)",

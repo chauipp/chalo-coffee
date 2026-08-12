@@ -16,7 +16,6 @@ describe('OrderService customer ownership', () => {
   let service: OrderService;
   let manager: {
     findOne: jest.Mock;
-    findOneBy: jest.Mock;
     create: jest.Mock;
     save: jest.Mock;
   };
@@ -43,23 +42,15 @@ describe('OrderService customer ownership', () => {
       findOne: jest
         .fn()
         .mockResolvedValueOnce({
-          id: 'table-1',
-          name: 'Bàn 01',
-          qrToken: dto.tableToken,
+          id: 'table-1', name: 'Bàn 01', qrToken: dto.tableToken,
+        })
+        .mockResolvedValueOnce({
+          id: 'product-1', name: 'Cà phê sữa', imageUrl: null, price: 35000,
+          status: ProductStatus.AVAILABLE, modifierGroups: [],
         })
         .mockImplementationOnce(async () => ({
-          ...savedOrder,
-          items: [],
-          table: { name: 'Bàn 01' },
-          pager: null,
+          ...savedOrder, items: [], table: { name: 'Bàn 01' }, pager: null,
         })),
-      findOneBy: jest.fn().mockResolvedValue({
-        id: 'product-1',
-        name: 'Cà phê sữa',
-        imageUrl: null,
-        price: 35000,
-        status: ProductStatus.AVAILABLE,
-      }),
       create: jest.fn((_entity, values) => ({ id: 'order-1', ...values })),
       save: jest.fn(async (entity, value) => {
         if (entity === Order) savedOrder = value;
