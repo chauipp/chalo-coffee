@@ -17,13 +17,15 @@ export function OrderPaymentPanel({
   onSuccess,
   order,
   tableOrders,
+  initialScope = "order",
 }: {
   order: OrderDto;
   tableOrders: OrderDto[];
+  initialScope?: PaymentScope;
   onCancel: () => void;
   onSuccess: () => void;
 }) {
-  const [scope, setScope] = useState<PaymentScope>("order");
+  const [scope, setScope] = useState<PaymentScope>(initialScope);
   const [method, setMethod] = useState<PaymentMethod>("qr");
   const [received, setReceived] = useState("");
   const { data: settings } = useGetSettings();

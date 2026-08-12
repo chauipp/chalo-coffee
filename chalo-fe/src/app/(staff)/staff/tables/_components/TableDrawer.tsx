@@ -5,6 +5,9 @@
 import { TableDto } from "@/services/table";
 import { STATUS_CONFIG } from "../tables.config";
 import { OrderRow } from "./OrderRow";
+import { OrderPaymentPanel } from "../../orders/_components/OrderPaymentPanel";
+import { useState } from "react";
+import { useGetOrderByToken } from "@/services/order/order.queries";
 
 interface TableDrawerProps {
   table: TableDto | null;
@@ -12,6 +15,8 @@ interface TableDrawerProps {
 }
 
 export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const { data: tableOrders = [], isLoading: isLoadingTableOrders } = useGetOrderByToken(table?.qrToken ?? "");
   if (!table) return null;
   const cfg = STATUS_CONFIG[table.status];
   const totalUnpaid = table.activeOrders
@@ -59,6 +64,22 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
 
         {/* Orders list — scrollable */}
         <div className="flex-1 overflow-y-auto px-5">
+          {paymentOpen && isLoadingTableOrders ? (
+            <div className="py-8 text-center text-sm text-gray-400">Đang tải đơn của bàn…</div>
+          ) : paymentOpen && tableOrders.length ? (
+            <div className="py-4">
+              <OrderPaymentPanel
+                order={tableOrders.find((order) => !order.paidStatus) ?? tableOrders[0]}
+                tableOrders={tableOrders}
+                initialScope="table"
+                onCancel={() => setPaymentOpen(false)}
+                onSuccess={() => { setPaymentOpen(false); onClose(); }}
+              />
+            </div>
+          ) : paymentOpen ? (
+            <div className="py-8 text-center text-sm text-gray-400">Không còn đơn chưa thanh toán.</div>
+          ) : (
+            <>
           {table.status === "AVAILABLE" || table.activeOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-center">
               <p className="text-2xl mb-2">🪑</p>
@@ -76,9 +97,11 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
               ))}
             </>
           )}
+            </>
+          )}
         </div>
 
-          {table.status === "OCCUPIED" &&
+          {!paymentOpen && table.status === "OCCUPIED" &&
           table.activeOrders.length > 0 &&
           totalUnpaid > 0 && (
             <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800 shrink-0">
@@ -90,6 +113,13 @@ export const TableDrawer = ({ onClose, table }: TableDrawerProps) => {
                   {totalUnpaid.toLocaleString("vi-VN")}đ
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={() => setPaymentOpen(true)}
+                className="mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-green-500 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-green-600"
+              >
+                Thanh toán cả bàn
+              </button>
             </div>
           )}
 
