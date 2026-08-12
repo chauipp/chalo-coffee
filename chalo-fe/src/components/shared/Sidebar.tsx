@@ -106,7 +106,7 @@ export const Sidebar = ({
 
       {/* ── Thanh bên / Drawer ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-gray-200 bg-white transition-transform duration-200 md:static md:z-auto md:w-auto md:translate-x-0 md:transition-[width] dark:border-gray-800 dark:bg-gray-900 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-gray-200 bg-white transition-transform duration-200 md:sticky md:top-0 md:z-40 md:h-screen md:w-auto md:translate-x-0 md:transition-[width] dark:border-gray-800 dark:bg-gray-900 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         } ${collapsed ? "md:w-16" : "md:w-60"}`}
       >
