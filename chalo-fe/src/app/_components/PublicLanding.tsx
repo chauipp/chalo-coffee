@@ -1,5 +1,9 @@
 "use client";
 
+import { ROLE_DEFAULT_ROUTES, USER_ROLE } from "@/constants";
+import { useCustomerShortcut } from "@/services/customer/customer.queries";
+import { useAuthStore } from "@/stores/auth.store";
+import { useCartStore } from "@/stores/cart.store";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingCategory } from "./landing-data";
@@ -26,6 +30,16 @@ function PinIcon({ className = "" }: { className?: string }) {
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
       <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" stroke="currentColor" strokeWidth="1.7" />
       <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
+function CartIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+      <circle cx="9" cy="20" r="1.25" fill="currentColor" />
+      <circle cx="18" cy="20" r="1.25" fill="currentColor" />
+      <path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L20.2 8H6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -81,6 +95,21 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
   const [activeCategoryId, setActiveCategoryId] = useState<string | "all">("all");
   const [showMobileDock, setShowMobileDock] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const { isHydrated, accessToken, user } = useAuthStore();
+  const cartItems = useCartStore((state) => state.items);
+  const cartTableToken = useCartStore((state) => state.tableToken);
+  const isCustomer =
+    isHydrated && !!accessToken && user?.role === USER_ROLE.CUSTOMER;
+  const customerShortcut = useCustomerShortcut({ enabled: isCustomer });
+  const shortcut = isCustomer ? customerShortcut.data : null;
+  const shortcutItemCount = useMemo(
+    () =>
+      shortcut && cartTableToken === shortcut.tableToken
+        ? cartItems.reduce((total, item) => total + item.quantity, 0)
+        : 0,
+    [cartItems, cartTableToken, shortcut],
+  );
+  const accountHref = user ? ROLE_DEFAULT_ROUTES[user.role] : "/login";
   const visibleGroups = useMemo(
     () => menu.filter((group) => activeCategoryId === "all" || group.id === activeCategoryId),
     [activeCategoryId, menu],
@@ -113,12 +142,60 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
           <nav aria-label="Điều hướng trang chủ" className="flex items-center gap-1 text-sm font-medium sm:gap-3">
             <a href="#menu" className="rounded-full px-3 py-2 text-stone-600 transition hover:bg-brand-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Thực đơn</a>
             <a href={MAPS_URL} target="_blank" rel="noreferrer" className="hidden rounded-full px-3 py-2 text-stone-600 transition hover:bg-brand-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 sm:inline-flex">Tìm đường</a>
-            <Link href="/login" className="rounded-full bg-brand-700 px-3.5 py-2 text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Đăng nhập</Link>
+            {shortcut ? (
+              <Link
+                href={`/menu/${shortcut.tableToken}`}
+                aria-label={
+                  shortcutItemCount > 0
+                    ? `Giỏ hàng, ${shortcutItemCount} món`
+                    : "Giỏ hàng"
+                }
+                className="relative inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-brand-200 bg-white/80 text-brand-800 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-400 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+              >
+                <CartIcon className="size-5" />
+                {shortcutItemCount > 0 ? (
+                  <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-brand-700 px-1 text-[10px] font-bold leading-5 text-white ring-2 ring-brand-50">
+                    {shortcutItemCount}
+                  </span>
+                ) : null}
+              </Link>
+            ) : null}
+            {isHydrated && accessToken && user ? (
+              <Link href={accountHref} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-brand-700 px-3 py-2 text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">
+                {user.avatar ? (
+                  <img src={user.avatar} alt="" className="size-6 rounded-full object-cover" />
+                ) : (
+                  <span aria-hidden="true" className="flex size-6 items-center justify-center rounded-full bg-white/20 text-[11px] font-bold">
+                    {user.fullName.trim().charAt(0).toUpperCase() || "C"}
+                  </span>
+                )}
+                <span className="hidden sm:inline">Tài khoản</span>
+              </Link>
+            ) : (
+              <Link href="/login" className="rounded-full bg-brand-700 px-3.5 py-2 text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Đăng nhập</Link>
+            )}
           </nav>
         </div>
       </header>
 
       <main>
+        {shortcut ? (
+          <aside aria-label="Bàn đang dùng" className="border-b border-brand-100 bg-white/70">
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-600">Bàn đang dùng</p>
+                <p className="truncate text-sm font-semibold text-brand-900">
+                  {shortcut.table.name}
+                  {shortcut.table.area ? <span className="font-normal text-stone-500"> · {shortcut.table.area}</span> : null}
+                </p>
+              </div>
+              <Link href={`/menu/${shortcut.tableToken}`} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">
+                Tiếp tục gọi món
+                <ArrowUpRightIcon className="size-4" />
+              </Link>
+            </div>
+          </aside>
+        ) : null}
         <section ref={heroRef} className="relative isolate overflow-hidden">
           <div aria-hidden="true" className="absolute -left-24 top-8 -z-10 size-64 rounded-full bg-brand-200/45 blur-3xl" />
           <div aria-hidden="true" className="absolute -right-24 bottom-0 -z-10 size-72 rounded-full bg-brand-100 blur-3xl" />

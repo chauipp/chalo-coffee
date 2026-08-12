@@ -460,7 +460,7 @@ git add chalo-fe/src/services/customer chalo-fe/src/app/'(customer)'/account cha
 git commit -m "feat: add mobile customer account and table scan"
 ```
 
-- [ ] Task 8: Landing shortcut and customer QR-menu integration
+- [x] Task 8: Landing shortcut and customer QR-menu integration
 
 **Files:**
 - Modify: `chalo-fe/src/app/_components/PublicLanding.tsx`

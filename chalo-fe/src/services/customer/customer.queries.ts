@@ -18,11 +18,12 @@ export const useCustomerProfile = () =>
     queryFn: getCustomerProfile,
   });
 
-export const useCustomerShortcut = () =>
+export const useCustomerShortcut = (options?: { enabled?: boolean }) =>
   useQuery({
     queryKey: QUERY_KEYS.CUSTOMER.SHORTCUT,
     queryFn: getCustomerShortcut,
     staleTime: 30_000,
+    enabled: options?.enabled ?? true,
   });
 
 export const useCustomerLoyalty = () =>
