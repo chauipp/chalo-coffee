@@ -96,7 +96,7 @@
 - [ ] Chạy unit tests, TS, build.
 - [ ] Commit: `feat: add responsive shift reconciliation workspace`.
 
-- [ ] Task 6: E2E, tài liệu và tích hợp
+- [x] Task 6: E2E, tài liệu và tích hợp
 
 **Files:**
 - Create/Modify: `chalo-fe/e2e/shift-reconciliation.spec.ts`, `docs/superpowers/summaries/2026-08-12-shift-reconciliation-reports-summary.md`

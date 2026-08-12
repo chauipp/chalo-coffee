@@ -115,7 +115,7 @@ test("mặc định thanh toán một đơn bằng tiền mặt và tính tiền
   await expect(page.getByText("30.000đ")).toBeVisible();
   await page.getByRole("button", { name: "Xác nhận đã thanh toán" }).click();
 
-  expect(payBody).toEqual({ orderId: order.id, tableToken: order.tableToken });
+  expect(payBody).toEqual({ orderId: order.id, tableToken: order.tableToken, method: "CASH", receivedAmount: 150_000 });
   expect(payAllBody).toBeNull();
 });
 
@@ -131,7 +131,7 @@ test("có thể đổi sang cả bàn và thanh toán QR theo tổng gộp", asy
   await page.getByRole("button", { name: "Xác nhận đã thanh toán" }).click();
 
   expect(payBody).toBeNull();
-  expect(payAllBody).toEqual({ tableToken: order.tableToken });
+  expect(payAllBody).toEqual({ tableToken: order.tableToken, method: "BANK_TRANSFER" });
 });
 
 test("bước thanh toán vẫn vừa màn hình mobile", async ({ page }) => {
