@@ -35,6 +35,14 @@ import { ProductStatus } from '../../common/enums/product-status.enum';
 import { ESTIMATED_WAIT_BARISTAS } from '../../common/constants';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
+import { CustomerService } from '../customer/customer.service';
+import { UserRole } from '../../common/enums/user-role.enum';
+
+export type OptionalOrderCustomer = {
+  id: number;
+  username: string;
+  role: UserRole;
+};
 
 const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
   // Khách đặt -> kéo thẳng vào pha, bỏ bước xác nhận
@@ -64,14 +72,16 @@ export class OrderService {
     private readonly dataSource: DataSource,
     private readonly sseService: SseService,
     private readonly settingsService: SettingsService,
+    private readonly customerService: CustomerService,
   ) {}
 
-  private buildDto(order: Order) {
-    return {
+  private buildDto(order: Order, includeStaffContext = false) {
+    const dto = {
       id: order.id,
       tableId: order.tableId,
       tableName: order.table?.name ?? null,
       tableToken: order.tableToken,
+      customerId: order.customerId ?? null,
       status: order.status,
       paidStatus: order.paidStatus,
       items: (order.items || []).map((item) => ({
@@ -94,6 +104,17 @@ export class OrderService {
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     };
+
+    if (!includeStaffContext) return dto;
+
+    return {
+      ...dto,
+      customerDisplayName: order.customer?.fullName ?? null,
+      loyaltyPointsEarned: (order.loyaltyTransactions ?? []).reduce(
+        (sum, transaction) => sum + transaction.points,
+        0,
+      ),
+    };
   }
 
   /**
@@ -113,6 +134,8 @@ export class OrderService {
       .createQueryBuilder('o')
       .leftJoinAndSelect('o.items', 'items')
       .leftJoinAndSelect('o.table', 'table')
+      .leftJoinAndSelect('o.customer', 'customer')
+      .leftJoinAndSelect('o.loyaltyTransactions', 'loyaltyTransactions')
       // Đang xử lý = (PENDING/CONFIRMED/PREPARING/READY) HOẶC (COMPLETED nhưng
       // chưa thanh toán). Đơn đã phục vụ mà chưa thu tiền vẫn phải đứng trong
       // bảng staff (cột "Đã phục vụ") để thu ngân biết mà đi thu; chỉ rời bảng
@@ -136,7 +159,7 @@ export class OrderService {
       .orderBy('o.createdAt', 'ASC')
       .getMany();
 
-    return orders.map((o) => this.buildDto(o));
+    return orders.map((o) => this.buildDto(o, true));
   }
 
   private async resolvePayableOrders(
@@ -314,7 +337,10 @@ export class OrderService {
     };
   }
 
-  async create(dto: CreateOrderDto) {
+  async create(
+    dto: CreateOrderDto,
+    authenticatedUser: OptionalOrderCustomer | null = null,
+  ) {
     return this.dataSource.transaction(async (manager) => {
       const table = await manager.findOne(Table, {
         where: { qrToken: dto.tableToken },
@@ -353,9 +379,24 @@ export class OrderService {
       // đến đơn đang được tạo. Hoạt động đúng với PostgreSQL Read Committed (mặc định).
       const estimatedWaitMinutes = await this.computeEstimatedWait();
 
+      let customerId: number | null = null;
+      if (authenticatedUser?.role === UserRole.CUSTOMER) {
+        const shortcut = await this.customerService.getActiveShortcut(
+          authenticatedUser.id,
+        );
+        if (shortcut?.tableToken === dto.tableToken) {
+          customerId = authenticatedUser.id;
+          await this.customerService.touchShortcut(
+            authenticatedUser.id,
+            dto.tableToken,
+          );
+        }
+      }
+
       const order = manager.create(Order, {
         tableId: table.id,
         tableToken: dto.tableToken,
+        customerId,
         status: OrderStatus.PENDING,
         totalAmount,
         estimatedWaitMinutes,
@@ -448,23 +489,25 @@ export class OrderService {
       this.orderRepo
         .createQueryBuilder('o')
         .leftJoinAndSelect('o.items', 'items')
-        .leftJoinAndSelect('o.table', 'table'),
+        .leftJoinAndSelect('o.table', 'table')
+        .leftJoinAndSelect('o.customer', 'customer')
+        .leftJoinAndSelect('o.loyaltyTransactions', 'loyaltyTransactions'),
     )
       .orderBy('o.createdAt', 'DESC')
       .skip(skip)
       .take(pageSize)
       .getMany();
 
-    return { list: orders.map((o) => this.buildDto(o)), total };
+    return { list: orders.map((o) => this.buildDto(o, true)), total };
   }
 
   async detail(id: string) {
     const order = await this.orderRepo.findOne({
       where: { id },
-      relations: ['items', 'table'],
+      relations: ['items', 'table', 'customer', 'loyaltyTransactions'],
     });
     if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
-    return this.buildDto(order);
+    return this.buildDto(order, true);
   }
 
   async byToken(token: string) {
@@ -765,6 +808,7 @@ export class OrderService {
       order.paidStatus = true;
       order.paymentRequested = false;
       await manager.save(Order, order);
+      await this.customerService.awardPointsForOrder(manager, order);
       await this.syncTableOccupancyAfterOrderChange(manager, order.tableId);
 
       this.sseService.emit({
@@ -807,6 +851,9 @@ export class OrderService {
       }
       if (orders.length) {
         await manager.save(Order, orders);
+        for (const order of orders) {
+          await this.customerService.awardPointsForOrder(manager, order);
+        }
       }
 
       await this.syncTableOccupancyAfterOrderChange(manager, table.id);
@@ -922,6 +969,7 @@ export class OrderService {
       order.paidStatus = true;
       order.paymentRequested = false;
       await manager.save(Order, order);
+      await this.customerService.awardPointsForOrder(manager, order);
     }
 
     session.status = CheckoutSessionStatus.COMPLETED;

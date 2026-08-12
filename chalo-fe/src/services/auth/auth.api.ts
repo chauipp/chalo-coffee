@@ -17,6 +17,14 @@ export const userLogin = (data: LoginPayload): Promise<LoginResponse> => {
   return request.post(API.AUTH.LOGIN, data, { skipAuth: true } as never)
 }
 
+export const exchangeGoogleCode = (code: string): Promise<LoginResponse> => {
+  return request.post(
+    API.AUTH.GOOGLE_EXCHANGE,
+    { code },
+    { skipAuth: true } as never,
+  );
+};
+
 export interface RegisterPayload {
   username: string;
   password: string;

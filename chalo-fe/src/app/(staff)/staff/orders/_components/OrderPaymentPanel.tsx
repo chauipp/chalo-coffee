@@ -99,6 +99,16 @@ export function OrderPaymentPanel({
           {total.toLocaleString("vi-VN")}đ
         </p>
       </div>
+      {scope === "order" && order.customerDisplayName ? (
+        <div className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 dark:border-sky-800/60 dark:bg-sky-900/20">
+          <p className="text-sm font-semibold text-sky-800 dark:text-sky-200">
+            {order.customerDisplayName}
+          </p>
+          <p className="mt-0.5 text-xs font-medium text-sky-700 dark:text-sky-300">
+            Cộng {Math.floor(order.totalAmount / 1_000)} điểm
+          </p>
+        </div>
+      ) : null}
       <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Phương thức thanh toán">
         {([
           ["qr", "▣ QR chuyển khoản"],

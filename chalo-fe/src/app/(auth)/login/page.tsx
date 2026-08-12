@@ -1,7 +1,9 @@
 // src/app/(auth)/login/page.tsx
 import Link from "next/link";
 import { ROUTES } from "@/constants";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import LoginForm from "./_components/LoginForm";
+import { Suspense } from "react";
 
 export default function LoginPage() {
   return (
@@ -27,15 +29,26 @@ export default function LoginPage() {
               Chalo Coffee
             </h1>
             <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
-              Đăng nhập
+              Khách hàng và nhân viên
             </p>
+          </div>
+          <Suspense
+            fallback={
+              <div className="min-h-11 w-full animate-pulse rounded-xl bg-stone-100 dark:bg-stone-800" />
+            }
+          >
+            <GoogleSignInButton />
+          </Suspense>
+          <div className="my-6 flex items-center gap-3" aria-hidden="true">
+            <div className="h-px flex-1 bg-stone-200 dark:bg-stone-700" />
+            <span className="text-xs font-medium text-stone-400">Tài khoản nội bộ</span>
+            <div className="h-px flex-1 bg-stone-200 dark:bg-stone-700" />
           </div>
           {/* form */}
           <LoginForm />
           <p className="mt-6 text-center text-sm text-stone-500 dark:text-stone-400">
-            Chưa có tài khoản?{" "}
-            <Link href={ROUTES.REGISTER} className="font-medium text-brand-500 hover:text-brand-600">
-              Đăng ký
+            <Link href="/" className="font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
+              Về trang chủ
             </Link>
           </p>
         </div>

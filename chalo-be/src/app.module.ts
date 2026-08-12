@@ -20,6 +20,7 @@ import { PagerModule } from './modules/pager/pager.module';
 import { HealthModule } from './modules/health/health.module';
 import { SseModule } from './modules/sse/sse.module';
 import { SettingsModule } from './modules/settings/settings.module';
+import { CustomerModule } from './modules/customer/customer.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SettingsModule } from './modules/settings/settings.module';
     }),
     AuthModule,
     UserModule,
+    CustomerModule,
     CategoryModule,
     ProductModule,
     TableModule,

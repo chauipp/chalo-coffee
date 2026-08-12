@@ -36,6 +36,8 @@ export interface OrderDto {
   tableId: string;
   tableName: string;
   tableToken: string;
+  customerDisplayName?: string | null;
+  loyaltyPointsEarned?: number;
   items: OrderItemDto[];
   status: OrderStatus;
   paidStatus: boolean;

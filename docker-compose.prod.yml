@@ -42,6 +42,11 @@ services:
       APP_URL: ${PUBLIC_URL}
       APP_FRONTEND_URL: ${PUBLIC_URL}
       CORS_ORIGIN: ${PUBLIC_URL}
+      GOOGLE_OAUTH_ENABLED: ${GOOGLE_OAUTH_ENABLED:-false}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-}
+      FRONTEND_URL: ${PUBLIC_URL}
       # Seed demo dùng tài khoản hardcode admin/admin, staff/staff (SEED_*_PASSWORD chưa được backend dùng)
       SEED_ON_STARTUP: ${SEED_ON_STARTUP:-false}
     volumes:
@@ -57,6 +62,7 @@ services:
       args:
         # Nhúng vào bundle lúc build -> đổi PUBLIC_URL thì phải build lại frontend (--build).
         NEXT_PUBLIC_API_BASE_URL: ${PUBLIC_URL}/api
+        NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED: ${GOOGLE_OAUTH_ENABLED:-false}
     restart: unless-stopped
     environment:
       NODE_ENV: production

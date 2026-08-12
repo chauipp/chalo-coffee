@@ -3,10 +3,19 @@
 export const API = {
   AUTH: {
     LOGIN: "/auth/login",
+    GOOGLE_EXCHANGE: "/auth/google/exchange",
     REGISTER: "/auth/register",
     REFRESH: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
     ME: "/auth/me",
+  },
+  CUSTOMER: {
+    ME: "/customer/me",
+    TABLE_SESSION: "/customer/table-session",
+    SCAN_TABLE: "/customer/table-session/scan",
+    LEAVE_TABLE: "/customer/table-session/leave",
+    LOYALTY: "/customer/loyalty",
+    ORDERS: "/customer/orders",
   },
   USER: {
     PAGE: "/user/page",

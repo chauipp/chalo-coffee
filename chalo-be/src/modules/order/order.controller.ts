@@ -7,6 +7,8 @@ import {
   Query,
   Param,
   HttpCode,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -31,6 +33,12 @@ import { Public } from '../../common/decorators/public.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { OrderStatus } from '../../common/enums/order-status.enum';
+import { OptionalJwtAuthGuard } from './optional-jwt-auth.guard';
+import type { OptionalOrderCustomer } from './order.service';
+
+type OptionalCustomerRequest = Express.Request & {
+  user?: OptionalOrderCustomer | null;
+};
 
 @ApiTags('Order')
 @Controller('order')
@@ -39,6 +47,7 @@ export class OrderController {
 
   @Post('create')
   @Public()
+  @UseGuards(OptionalJwtAuthGuard)
   @ApiOkResponse({
     description: 'Create order success',
     schema: {
@@ -50,6 +59,7 @@ export class OrderController {
           tableId: 'uuid',
           tableName: 'Ban 01',
           tableToken: 'uuid-v4',
+          customerId: null,
           status: 'PENDING',
           items: [],
           totalAmount: 70000,
@@ -62,8 +72,11 @@ export class OrderController {
       },
     },
   })
-  create(@Body() dto: CreateOrderDto) {
-    return this.orderService.create(dto);
+  create(
+    @Body() dto: CreateOrderDto,
+    @Request() req: OptionalCustomerRequest,
+  ) {
+    return this.orderService.create(dto, req.user ?? null);
   }
 
   @Get('active')

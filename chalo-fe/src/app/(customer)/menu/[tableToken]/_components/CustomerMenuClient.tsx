@@ -1,9 +1,13 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/_components/CustomerMenuClient.tsx
 import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
+import { USER_ROLE } from "@/constants";
 import { CategoryDto, ProductDto } from "@/services/menu";
+import { useScanTable } from "@/services/customer/customer.queries";
 import { useCallStaff } from "@/services/order/order.queries";
+import { useAuthStore } from "@/stores/auth.store";
 import { useCartStore } from "@/stores/cart.store";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { OccupiedModal } from "./OccupiedModal";
@@ -38,16 +42,35 @@ export const CustomerMenuClient = ({
   });
   const [callCooldown, setCallCooldown] = useState<boolean>(false);
   const cooldownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scannedShortcutKey = useRef<string | null>(null);
 
+  const { isHydrated, accessToken, user } = useAuthStore();
   const itemCount = useCartStore((s) => s.getItemCount());
   const addItem = useCartStore((s) => s.addItem);
   const setTable = useCartStore((s) => s.setTable);
   const callStaffMutation = useCallStaff();
+  const scanTableMutation = useScanTable();
 
   // Giỏ hàng gắn với bàn — quét QR bàn khác thì làm mới giỏ
   useEffect(() => {
     if (tableToken) setTable(tableToken);
   }, [tableToken, setTable]);
+
+  useEffect(() => {
+    if (
+      !isHydrated ||
+      !accessToken ||
+      user?.role !== USER_ROLE.CUSTOMER ||
+      !tableToken
+    ) {
+      return;
+    }
+
+    const scanKey = `${user.id}:${tableToken}`;
+    if (scannedShortcutKey.current === scanKey) return;
+    scannedShortcutKey.current = scanKey;
+    scanTableMutation.mutate({ tableToken });
+  }, [accessToken, isHydrated, scanTableMutation, tableToken, user]);
 
   useEffect(() => {
     return () => {
@@ -108,6 +131,14 @@ export const CustomerMenuClient = ({
       },
       quantity,
     );
+    if (
+      isHydrated &&
+      accessToken &&
+      user?.role === USER_ROLE.CUSTOMER &&
+      tableToken
+    ) {
+      scanTableMutation.mutate({ tableToken });
+    }
   };
 
   return (
@@ -128,9 +159,13 @@ export const CustomerMenuClient = ({
           <div className="mx-auto flex flex-col gap-3 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white shadow-sm">
+                <Link
+                  href="/"
+                  aria-label="Chalo Coffee - Trang chủ"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white shadow-sm transition hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+                >
                   CH
-                </div>
+                </Link>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold leading-none text-gray-950 dark:text-gray-50 sm:text-base">
                     Chalo Coffee

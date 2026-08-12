@@ -10,6 +10,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (pathname.startsWith(ROUTES.ACCOUNT)) {
+    if (!token) {
+      const url = new URL(ROUTES.LOGIN, request.url)
+      url.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(url)
+    }
+    if (role && role !== USER_ROLE.CUSTOMER) {
+      const dest = ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN
+      return NextResponse.redirect(new URL(dest, request.url))
+    }
+    return NextResponse.next()
+  }
+
   if (PUBLIC_ROUTES.some(r => pathname.startsWith(r))) {
     if (token && role) {
       const dest = ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN

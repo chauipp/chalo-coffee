@@ -3,6 +3,12 @@ export const QUERY_KEYS = {
   AUTH: {
     ME: ["auth", "me"] as const,
   },
+  CUSTOMER: {
+    PROFILE: ["customer", "profile"] as const,
+    SHORTCUT: ["customer", "shortcut"] as const,
+    LOYALTY: ["customer", "loyalty"] as const,
+    ORDERS: (params: object) => ["customer", "orders", params] as const,
+  },
   USERS: {
     ALL: ["users"] as const,
     PAGE: (params: object) => ["users", "page", params] as const,

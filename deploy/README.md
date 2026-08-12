@@ -73,6 +73,8 @@ nano .env
 - `DB_PASSWORD` — mật khẩu DB mạnh:  `openssl rand -base64 24`
 - `JWT_SECRET` và `JWT_REFRESH_SECRET` — hai giá trị **khác nhau**:  `openssl rand -hex 32`
   (backend sẽ **từ chối khởi động** nếu để giá trị mặc định.)
+- Nếu bật đăng nhập Google, làm theo [google-oauth.md](google-oauth.md) để khai
+  báo đúng origin, callback và secret.
 
 ---
 

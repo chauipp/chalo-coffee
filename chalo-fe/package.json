@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:unit": "node --test --experimental-strip-types src/**/*.test.mts",
+    "test:unit": "node --test --experimental-strip-types $(find src -name '*.test.mts' -print)",
     "test:e2e": "playwright test",
     "dump:src": "node scripts/dump-src.mjs",
     "dump:project": "node scripts/dump-project-code.mjs",

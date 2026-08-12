@@ -105,6 +105,11 @@ export default function OrderDetailModal() {
                     <p className="text-xs text-gray-400 font-mono">
                       #{order.id.slice(-6).toUpperCase()}
                     </p>
+                    {order.customerDisplayName && (
+                      <p className="mt-1 text-xs font-medium text-sky-700 dark:text-sky-300">
+                        Khách: {order.customerDisplayName}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     {pagerNumber != null && (
@@ -166,6 +171,13 @@ export default function OrderDetailModal() {
                     {order.totalAmount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
+                {order.customerDisplayName && (
+                  <p className="rounded-xl bg-sky-50 px-4 py-2.5 text-sm font-semibold text-sky-700 dark:bg-sky-900/20 dark:text-sky-300">
+                    {order.paidStatus
+                      ? `Đã cộng ${order.loyaltyPointsEarned ?? 0} điểm cho ${order.customerDisplayName}`
+                      : `Cộng ${Math.floor(order.totalAmount / 1_000)} điểm khi thanh toán`}
+                  </p>
+                )}
               </div>
             )}
           </div>
