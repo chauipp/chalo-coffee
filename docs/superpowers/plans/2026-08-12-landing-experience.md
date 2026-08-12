@@ -12,7 +12,7 @@
 
 ---
 
-- [ ] Task 1: Thêm mood selector và hành vi chọn category
+- [x] Task 1: Thêm mood selector và hành vi chọn category
 
   **Files:**
   - Modify: `chalo-fe/src/app/_components/PublicLanding.tsx`
@@ -23,7 +23,7 @@
   - [ ] Render ba button accessible sau CTA hero, không che CTA hiện tại và xếp wrap trên mobile.
   - [ ] Chạy Playwright targeted test; commit `feat: add landing mood shortcuts`.
 
-- [ ] Task 2: Thêm animation hero và thanh CTA mobile
+- [x] Task 2: Thêm animation hero và thanh CTA mobile
 
   **Files:**
   - Modify: `chalo-fe/src/app/_components/PublicLanding.tsx`
@@ -36,7 +36,7 @@
   - [ ] Test mobile: dock chưa hiện đầu trang, scroll qua hero thì hiện, click Thực đơn tới `#menu`, body không horizontal overflow; reduced motion CSS được assert ở build/source hoặc computed style.
   - [ ] Chạy `pnpm test:unit`, `pnpm exec tsc --noEmit`, Playwright targeted; commit `feat: enhance mobile landing actions`.
 
-- [ ] Task 3: Kiểm UI, summary và bàn giao
+- [x] Task 3: Kiểm UI, summary và bàn giao
 
   **Files:**
   - Modify: `docs/superpowers/plans/2026-08-12-landing-experience.md`
