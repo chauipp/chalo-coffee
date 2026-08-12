@@ -6,6 +6,8 @@ Cho phép khách đăng nhập bằng Google để tích điểm và tiếp tụ
 
 Google chỉ tạo tài khoản `CUSTOMER`; tuyệt đối không thể dùng Google để nhận quyền `ADMIN` hoặc `MODERATOR`.
 
+Admin vẫn có thể đổi vai trò một tài khoản Google đã tồn tại sang `MODERATOR` hoặc `ADMIN` bằng màn quản lý nhân sự hiện có. Google là phương thức xác thực, không phải cơ chế tự cấp quyền; sau lần đăng nhập/làm mới phiên kế tiếp, JWT phản ánh vai trò mới.
+
 ## Trạng thái hiện tại và vấn đề cần giải quyết
 
 - Đơn hiện chỉ gắn với `tableToken`, không gắn với khách hay tài khoản.
