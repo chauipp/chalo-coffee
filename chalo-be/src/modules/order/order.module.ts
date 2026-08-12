@@ -12,6 +12,7 @@ import { SseModule } from '../sse/sse.module';
 import { SettingsModule } from '../settings/settings.module';
 import { CustomerModule } from '../customer/customer.module';
 import { OptionalJwtAuthGuard } from './optional-jwt-auth.guard';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { OptionalJwtAuthGuard } from './optional-jwt-auth.guard';
     SseModule,
     SettingsModule,
     CustomerModule,
+    PaymentModule,
   ],
   providers: [OrderService, OptionalJwtAuthGuard],
   controllers: [OrderController],

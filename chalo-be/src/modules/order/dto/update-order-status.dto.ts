@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsEnum, IsString, IsOptional, MaxLength } from 'class-validator';
 import { OrderStatus } from '../../../common/enums/order-status.enum';
+import { RecordStaffPaymentDto } from '../../payment/dto/record-payment.dto';
 
 export class UpdateOrderStatusDto {
   @ApiProperty({ example: 'uuid' })
@@ -18,7 +19,7 @@ export class RequestPaymentDto {
   orderId: string;
 }
 
-export class PaySingleOrderDto {
+export class PaySingleOrderDto extends RecordStaffPaymentDto {
   @ApiProperty({ example: 'uuid' })
   @IsUUID()
   orderId: string;
@@ -28,7 +29,7 @@ export class PaySingleOrderDto {
   tableToken: string;
 }
 
-export class PayUnpaidOrdersByTableDto {
+export class PayUnpaidOrdersByTableDto extends RecordStaffPaymentDto {
   @ApiProperty({ description: 'qrToken của bàn' })
   @IsString()
   tableToken: string;

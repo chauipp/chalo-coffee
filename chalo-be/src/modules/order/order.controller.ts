@@ -259,7 +259,6 @@ export class OrderController {
   }
 
   @Post('pay')
-  @Public()
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Thanh toán một đơn theo orderId',
@@ -275,12 +274,13 @@ export class OrderController {
       },
     },
   })
-  paySingle(@Body() dto: PaySingleOrderDto) {
-    return this.orderService.paySingleOrder(dto);
+  @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  paySingle(@Body() dto: PaySingleOrderDto, @Request() req: { user: { id: number } }) {
+    return this.orderService.paySingleOrder(dto, req.user.id);
   }
 
   @Post('pay-all')
-  @Public()
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Thanh toán gộp tất cả đơn chưa trả tiền của bàn theo tableToken',
@@ -297,8 +297,10 @@ export class OrderController {
       },
     },
   })
-  payBulkByTable(@Body() dto: PayUnpaidOrdersByTableDto) {
-    return this.orderService.payUnpaidOrdersByTable(dto);
+  @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  payBulkByTable(@Body() dto: PayUnpaidOrdersByTableDto, @Request() req: { user: { id: number } }) {
+    return this.orderService.payUnpaidOrdersByTable(dto, req.user.id);
   }
 
   @Post('call-staff')
@@ -414,8 +416,8 @@ export class OrderController {
       },
     },
   })
-  checkoutCompleteStaff(@Body() dto: CheckoutCompleteStaffDto) {
-    return this.orderService.checkoutCompleteStaff(dto);
+  checkoutCompleteStaff(@Body() dto: CheckoutCompleteStaffDto, @Request() req: { user: { id: number } }) {
+    return this.orderService.checkoutCompleteStaff(dto, req.user.id);
   }
 
   @Post('request-payment-batch')

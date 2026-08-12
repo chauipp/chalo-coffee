@@ -45,7 +45,7 @@
 - [ ] Chạy `pnpm test -- payment.service.spec.ts --runInBand && pnpm build` trong `chalo-be`.
 - [ ] Commit: `feat: add payment reconciliation ledger`.
 
-- [ ] Task 2: Tập trung hóa ghi nhận thanh toán của order
+- [x] Task 2: Tập trung hóa ghi nhận thanh toán của order
 
 **Files:**
 - Create: `chalo-be/src/modules/payment/payment.service.ts`, `chalo-be/src/modules/payment/payment.module.ts`, `chalo-be/src/modules/payment/dto/record-payment.dto.ts`

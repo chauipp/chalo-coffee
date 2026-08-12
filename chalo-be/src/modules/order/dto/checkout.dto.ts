@@ -9,6 +9,7 @@ import {
   Min,
   ArrayMinSize,
 } from 'class-validator';
+import { RecordStaffPaymentDto } from '../../payment/dto/record-payment.dto';
 
 export class CheckoutPreviewDto {
   @ApiProperty({ description: 'qrToken của bàn (cùng giá trị khi tạo đơn)' })
@@ -54,7 +55,7 @@ export class CheckoutCompleteDto {
   clientSecret: string;
 }
 
-export class CheckoutCompleteStaffDto {
+export class CheckoutCompleteStaffDto extends RecordStaffPaymentDto {
   @ApiProperty()
   @IsUUID()
   sessionId: string;
