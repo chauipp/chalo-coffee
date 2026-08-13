@@ -32,7 +32,7 @@ export const CartViewCinematic = ({
   if (items.length === 0) {
     return (
       <div className="flex min-h-screen flex-col bg-stone-50 dark:bg-stone-950">
-        <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
+        <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-700 dark:bg-stone-900">
           <button onClick={onBack} className="text-stone-600 dark:text-stone-300">
             ← Quay lại
           </button>
@@ -58,7 +58,7 @@ export const CartViewCinematic = ({
 
   return (
     <div className="flex min-h-screen flex-col bg-stone-50 dark:bg-stone-950">
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/90">
         <button onClick={onBack} className="text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
@@ -85,7 +85,7 @@ export const CartViewCinematic = ({
           <div
             key={item.cartKey}
             className={`relative flex gap-3 py-4 ${
-              idx > 0 ? "border-t border-brand-200/50 dark:border-stone-800" : ""
+              idx > 0 ? "border-t border-brand-200/50 dark:border-stone-700" : ""
             }`}
           >
             <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-2xl dark:bg-stone-900">
@@ -152,7 +152,7 @@ export const CartViewCinematic = ({
           </div>
         ))}
 
-        <div className="mt-4 rounded-2xl bg-white/60 p-4 dark:bg-stone-900/60">
+        <div className="mt-4 rounded-2xl bg-white/60 p-4 dark:bg-stone-900">
           <label className="mb-2 block text-sm text-brand-800 dark:text-brand-200">
             Ghi chú cho đơn hàng
           </label>
@@ -167,7 +167,7 @@ export const CartViewCinematic = ({
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 space-y-3 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-0 right-0 z-30 space-y-3 border-t border-brand-200/60 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
         <div className="flex items-center justify-between">
           <span className="text-base text-brand-700 dark:text-brand-200/70">
             Tổng cộng

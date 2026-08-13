@@ -18,7 +18,7 @@ export const ProductCardCinematic = ({
     <>
       <div
         data-testid={`product-card-${product.id}`}
-        className={`relative flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-sm transition-opacity dark:border-stone-800 dark:bg-stone-900 ${
+        className={`relative flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-sm transition-opacity dark:border-stone-700 dark:bg-stone-900 ${
           s.isUnavailable ? "opacity-50" : ""
         }`}
       >
@@ -183,7 +183,7 @@ export const ProductCardCinematic = ({
             )}
           </div>
 
-          <div className="border-t border-stone-100 px-5 pb-5 pt-4 dark:border-stone-800">
+          <div className="border-t border-stone-100 px-5 pb-5 pt-4 dark:border-stone-700">
             <div className="mb-3 flex items-center justify-between gap-3">
               <span className="text-lg font-semibold text-brand-700 dark:text-brand-300">
                 {s.detailTotal.toLocaleString("vi-VN")}đ

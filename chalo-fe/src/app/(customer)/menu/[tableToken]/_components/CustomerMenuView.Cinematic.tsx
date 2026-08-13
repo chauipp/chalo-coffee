@@ -27,7 +27,7 @@ export const CustomerMenuViewCinematic = ({
 }: CustomerMenuViewProps) => {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-950 dark:bg-stone-950 dark:text-stone-50">
-      <header className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50/90 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+      <header className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50/90 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/90">
         <div className="mx-auto flex flex-col gap-3 px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -110,7 +110,7 @@ export const CustomerMenuViewCinematic = ({
             </div>
 
             <div className="relative min-w-0">
-              <div className="flex gap-2 overflow-x-auto rounded-xl border border-stone-200 bg-white p-1 dark:border-stone-800 dark:bg-stone-900 md:justify-end">
+              <div className="flex gap-2 overflow-x-auto rounded-xl border border-stone-200 bg-white p-1 dark:border-stone-700 dark:bg-stone-900 md:justify-end">
                 <button
                   onClick={() => onSelectCategory(null)}
                   className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${

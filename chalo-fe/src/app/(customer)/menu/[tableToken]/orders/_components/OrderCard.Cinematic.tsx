@@ -14,7 +14,7 @@ export const OrderCardCinematic = ({
   return (
     <button
       onClick={onClick}
-      className="w-full rounded-2xl bg-white p-4 text-left transition-colors hover:bg-white dark:bg-stone-900/60 dark:hover:bg-stone-900"
+      className="w-full rounded-2xl bg-white p-4 text-left transition-colors hover:bg-white dark:bg-stone-900 dark:hover:bg-stone-900"
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
@@ -74,7 +74,7 @@ export const OrderCardCinematic = ({
         )}
       </div>
 
-      <div className="flex items-center justify-between border-t border-brand-200/50 pt-3 dark:border-stone-800">
+      <div className="flex items-center justify-between border-t border-brand-200/50 pt-3 dark:border-stone-700">
         <span className="text-sm text-brand-700 dark:text-brand-200/60">
           Tổng: {order.items.reduce((sum, i) => sum + i.quantity, 0)} món
         </span>
