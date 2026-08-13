@@ -4,6 +4,7 @@ import { ROUTES } from "@/constants";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import LoginForm from "./_components/LoginForm";
 import { Suspense } from "react";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 export default function LoginPage() {
   return (
@@ -22,9 +23,7 @@ export default function LoginPage() {
         <div className="rounded-2xl bg-white dark:bg-stone-900 shadow-xl shadow-brand-100/50 dark:shadow-none border border-stone-100 dark:border-stone-800 p-8">
           {/* logo-title */}
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-brand-400 shadow-brand-400/30 text-3xl select-none">
-              ☕
-            </div>
+            <BrandLogo className="mx-auto mb-4 size-16 rounded-2xl border border-brand-200 bg-white object-contain p-1 shadow-lg shadow-brand-400/20 dark:border-stone-700 dark:bg-stone-800" />
             <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">
               Chalo Coffee
             </h1>

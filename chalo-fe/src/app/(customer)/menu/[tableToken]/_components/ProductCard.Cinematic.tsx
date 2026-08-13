@@ -4,6 +4,7 @@ import { Modal } from "@/components/shared/ui/Modal";
 import { ProductDto } from "@/services/menu";
 import { ProductModifierPicker } from "@/components/menu/ProductModifierPicker";
 import { AddToCartHandler, useProductCardState } from "./useProductCardState";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 export const ProductCardCinematic = ({
   product,
@@ -38,7 +39,7 @@ export const ProductCardCinematic = ({
           className="absolute inset-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-inset"
         />
 
-        {!s.showImage && <div className="flex size-28 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-sm font-semibold text-brand-700 dark:bg-brand-950/50 dark:text-brand-300">CH</div>}
+        {!s.showImage && <div className="flex size-28 shrink-0 items-center justify-center rounded-xl bg-brand-100 p-3 dark:bg-brand-950/50"><BrandLogo className="size-full object-contain" /></div>}
         <div className="relative flex min-w-0 flex-1 self-stretch">
           <div className="min-w-0 flex-1 pr-1">
             <p className="line-clamp-2 text-base font-semibold leading-snug text-stone-900 dark:text-stone-50">

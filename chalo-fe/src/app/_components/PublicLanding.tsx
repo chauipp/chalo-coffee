@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingCategory } from "./landing-data";
 import { findLandingCategoryByKeywords, formatVnd } from "./landing-data";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 const MAPS_URL = "https://maps.app.goo.gl/miDX5WUrMF9vxkia8?g_st=ac";
 const ZALO_URL = "https://zalo.me/0913017988";
@@ -136,8 +137,8 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
     <div className="min-h-screen overflow-x-clip bg-brand-50 pb-24 text-stone-900 sm:pb-0">
       <header className="sticky top-0 z-30 border-b border-brand-100/80 bg-brand-50/90 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-          <Link href="/" aria-label="Chalo Coffee về trang chủ" className="shrink-0 font-serif text-lg font-bold tracking-[0.14em] text-brand-800 transition hover:text-brand-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
-            CHALO<span className="text-brand-500">.</span>
+          <Link href="/" aria-label="Chalo Coffee về trang chủ" className="shrink-0 rounded-xl bg-white/70 p-1 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
+            <BrandLogo className="size-10 object-contain" />
           </Link>
           <nav aria-label="Điều hướng trang chủ" className="flex items-center gap-1 text-sm font-medium sm:gap-3">
             <a href="#menu" className="rounded-full px-3 py-2 text-stone-600 transition hover:bg-brand-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Thực đơn</a>
@@ -269,7 +270,7 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
         </section>
       </main>
 
-      <footer className="border-t border-brand-100 bg-white/55"><div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between sm:px-6"><p className="font-serif font-bold tracking-[0.08em] text-brand-800">CHALO COFFEE</p><div className="flex gap-4"><a href={MAPS_URL} target="_blank" rel="noreferrer" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Bản đồ</a><a href={ZALO_URL} target="_blank" rel="noreferrer" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Zalo</a><Link href="/login" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Đăng nhập</Link></div></div></footer>
+      <footer className="border-t border-brand-100 bg-white/55"><div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between sm:px-6"><BrandLogo className="h-9 w-9 object-contain" /><div className="flex gap-4"><a href={MAPS_URL} target="_blank" rel="noreferrer" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Bản đồ</a><a href={ZALO_URL} target="_blank" rel="noreferrer" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Zalo</a><Link href="/login" className="hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">Đăng nhập</Link></div></div></footer>
 
       {showMobileDock ? (
         <nav aria-label="Thao tác nhanh" className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-200/90 bg-brand-50/95 px-4 pt-2 shadow-[0_-8px_24px_rgba(86,52,21,.1)] backdrop-blur-lg sm:hidden" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>

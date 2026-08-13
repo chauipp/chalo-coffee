@@ -26,6 +26,7 @@ import {
 } from "./_components/icons";
 import LoyaltyBalanceCard from "./_components/LoyaltyBalanceCard";
 import TableQrScanner from "./_components/TableQrScanner";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 const STATUS_LABEL: Record<CustomerOrder["status"], string> = {
   PENDING: "Đã tiếp nhận",
@@ -124,9 +125,9 @@ function CustomerAccountContent() {
           <Link
             href="/"
             aria-label="Chalo Coffee - Trang chủ"
-            className="flex size-11 items-center justify-center rounded-2xl bg-brand-700 text-sm font-black tracking-tight text-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+            className="flex size-11 items-center justify-center overflow-hidden rounded-2xl border border-brand-200 bg-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 dark:border-stone-700 dark:bg-stone-800"
           >
-            CH
+            <BrandLogo className="size-full object-contain p-1" />
           </Link>
           <button
             type="button"

@@ -16,6 +16,7 @@ import { ChevronLeftIcon } from "./icons/ChevronLeftIcon";
 import { MenuIcon } from "./icons/MenuIcon";
 import { XIcon } from "./icons/XIcon";
 import { UserMenu } from "./UserMenu";
+import { BrandLogo } from "./BrandLogo";
 
 type NavItem = {
   label: string;
@@ -84,9 +85,7 @@ export const Sidebar = ({
         >
           <MenuIcon className="size-5" />
         </button>
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-400 text-lg shadow shadow-brand-400">
-          ☕
-        </div>
+        <BrandLogo className="size-8 shrink-0 rounded-lg border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-gray-900 dark:text-gray-100">
             Chalo Coffee
@@ -116,15 +115,13 @@ export const Sidebar = ({
             <button
               onClick={toggle}
               title="Mở rộng menu"
-              className="mx-auto flex size-9 items-center justify-center rounded-xl bg-brand-400 text-xl shadow shadow-brand-400"
+              className="mx-auto overflow-hidden rounded-xl border border-brand-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800"
             >
-              ☕
+              <BrandLogo className="size-9 object-contain p-0.5" />
             </button>
           ) : (
             <>
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-400 text-xl shadow shadow-brand-400">
-                ☕
-              </div>
+              <BrandLogo className="size-9 shrink-0 rounded-xl border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
               <div className="ml-3 min-w-0 flex-1">
                 <p className="truncate text-sm font-bold text-gray-900 dark:text-gray-100">
                   Chalo Coffee
