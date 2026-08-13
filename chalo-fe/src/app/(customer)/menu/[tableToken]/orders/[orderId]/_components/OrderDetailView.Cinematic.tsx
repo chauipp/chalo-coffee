@@ -10,7 +10,12 @@ interface OrderDetailViewProps {
   isPaid: boolean;
   canPay: boolean;
   currentStepIndex: number;
-  steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
+  steps: {
+    statuses: OrderStatus[];
+    activeLabel: string;
+    completedLabel: string;
+    emoji: string;
+  }[];
   onPayClick: () => void;
   onBackToOrders: () => void;
   onBackToMenu: () => void;
@@ -101,7 +106,7 @@ export const OrderDetailViewCinematic = ({
         )}
 
         {!isCancelled && (
-          <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
+          <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} />
         )}
 
         <div className="rounded-3xl bg-white p-5 dark:bg-stone-900">
