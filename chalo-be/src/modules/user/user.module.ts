@@ -9,10 +9,12 @@ import { Product } from '../product/entities/product.entity';
 import { Table } from '../table/entities/table.entity';
 import { Order } from '../order/entities/order.entity';
 import { OrderItem } from '../order/entities/order-item.entity';
+import { CustomerModule } from '../customer/customer.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Category, Product, Table, Order, OrderItem]),
+    CustomerModule,
   ],
   providers: [UserService, SeedService],
   controllers: [UserController],

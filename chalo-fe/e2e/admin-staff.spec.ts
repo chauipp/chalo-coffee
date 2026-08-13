@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-// Exercises the real Staff (Nhân viên) admin page against the live backend
-// (no mocking): log in as admin/admin, navigate via the real sidebar link,
-// assert the seeded user list renders, then create a UNIQUE throwaway staff
-// account and assert it appears in the list.
+// Exercises the real "Người dùng" admin page (tab Nhân viên) against the live
+// backend (no mocking): log in as admin/admin, navigate via the real sidebar
+// link, assert the seeded user list renders, then create a UNIQUE throwaway
+// staff account and assert it appears in the list.
 //
 // NOTE: this writes a real user row to the shared DB with the identifiable
 // prefix "e2e_staff_" so it can be found and cleaned up later.
@@ -15,18 +15,22 @@ test("admin lists users and creates a new staff account", async ({ page }) => {
   await page.getByRole("button", { name: "Đăng nhập" }).click();
   await page.waitForURL("**/admin/dashboard");
 
-  // 2. Navigate to the Staff page via the real sidebar link (no 404).
-  await page.getByRole("link", { name: "Nhân viên" }).click();
-  await page.waitForURL("**/admin/staff");
+  // 2. Navigate to the Users page via the real sidebar link (no 404). Tab
+  //    "Nhân viên" is selected by default.
+  await page.getByRole("link", { name: "Người dùng" }).click();
+  await page.waitForURL("**/admin/users");
   await expect(
-    page.getByRole("heading", { name: "Nhân viên" }),
+    page.getByRole("heading", { name: "Người dùng" }),
   ).toBeVisible();
 
   // 3. The seeded user list renders real rows: at least one "@username" cell
-  //    and a positive total in the pagination footer.
-  await expect(page.getByText(/^@\w+/).first()).toBeVisible({
-    timeout: 15_000,
-  });
+  //    and a positive total in the pagination footer. Scoped to the desktop
+  //    <table> because DataTable also renders a hidden mobile-card copy of
+  //    the same text earlier in the DOM (md:hidden), which a plain
+  //    getByText().first() would match first even though it's invisible.
+  await expect(
+    page.locator("table").getByText(/^@\w+/).first(),
+  ).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText(/Tổng:\s*\d+\s*bản ghi/)).toBeVisible();
 
   // 4. Create a UNIQUE throwaway staff account.
@@ -41,8 +45,13 @@ test("admin lists users and creates a new staff account", async ({ page }) => {
   await page.getByRole("button", { name: "Tạo mới" }).click();
 
   // 5. Success toast + the new row appears at the top of the (id-desc) list.
+  //    Same table scoping as step 3: the exact "@username" text also exists
+  //    (invisible) in the mobile-card DOM, which would otherwise trip
+  //    Playwright's strict-mode duplicate-match check.
   await expect(page.getByText("Thêm nhân viên thành công")).toBeVisible({
     timeout: 15_000,
   });
-  await expect(page.getByText(`@${username}`)).toBeVisible({ timeout: 15_000 });
+  await expect(
+    page.locator("table").getByText(`@${username}`),
+  ).toBeVisible({ timeout: 15_000 });
 });

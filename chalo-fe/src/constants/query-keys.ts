@@ -13,6 +13,12 @@ export const QUERY_KEYS = {
     ALL: ["users"] as const,
     PAGE: (params: object) => ["users", "page", params] as const,
   },
+  CUSTOMERS: {
+    ALL: ["customers"] as const,
+    ORDERS: (id: number, params: object) =>
+      ["customers", id, "orders", params] as const,
+    LOYALTY: (id: number) => ["customers", id, "loyalty"] as const,
+  },
   SETTINGS: {
     ALL: ["settings"] as const,
   },

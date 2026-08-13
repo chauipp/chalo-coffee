@@ -28,7 +28,7 @@ export const ROUTES = {
     MENU_PRODUCTS: "/admin/menu/products",
     TABLES: "/admin/tables",
     ORDERS: "/admin/orders",
-    STAFF: "/admin/staff",
+    USERS: "/admin/users",
     SETTINGS: "/admin/settings",
     SHIFT: "/admin/shift",
   },

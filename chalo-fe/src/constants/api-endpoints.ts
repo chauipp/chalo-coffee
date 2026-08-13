@@ -23,6 +23,9 @@ export const API = {
     UPDATE: "/user/update",
     CHANGE_PASSWORD: "/user/change-password",
     DELETE: "/user/delete",
+    CUSTOMER_ORDERS: (id: number) => `/user/${id}/orders`,
+    CUSTOMER_LOYALTY: (id: number) => `/user/${id}/loyalty`,
+    SET_ACTIVE: (id: number) => `/user/${id}/active`,
   },
   CATEGORY: {
     LIST: "/menu/category/list",

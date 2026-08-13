@@ -123,7 +123,15 @@ export class UserService {
         kw: `%${keyword}%`,
       });
     }
-    if (role) qb.andWhere('u.role = :role', { role });
+    if (role) {
+      qb.andWhere('u.role = :role', { role });
+    } else {
+      // Màn quản lý nhân viên: mặc định ẩn tài khoản CUSTOMER (đăng ký/Google)
+      // trừ khi có người chủ động lọc theo role đó.
+      qb.andWhere('u.role IN (:...roles)', {
+        roles: [UserRole.ADMIN, UserRole.MODERATOR],
+      });
+    }
     if (isActive !== undefined)
       qb.andWhere('u.isActive = :isActive', { isActive });
 
@@ -146,11 +154,39 @@ export class UserService {
     const user = await this.userRepo.findOneBy({ id: dto.id });
     if (!user) throw new NotFoundException('Người dùng không tồn tại');
 
+    // Màn quản lý nhân viên chỉ được sửa tài khoản ADMIN/MODERATOR. Tài khoản
+    // CUSTOMER (đăng ký thường hoặc Google) không thuộc phạm vi này.
+    if (user.role === UserRole.CUSTOMER) {
+      throw new ForbiddenException(
+        'Không thể chỉnh sửa tài khoản khách hàng từ màn quản lý nhân viên',
+      );
+    }
+    if (dto.role === UserRole.CUSTOMER) {
+      throw new BadRequestException(
+        'Không thể chuyển tài khoản nhân viên thành khách hàng',
+      );
+    }
+
     user.fullName = dto.fullName;
     user.avatar = dto.avatar ?? null;
     user.role = dto.role;
     user.isActive = dto.isActive;
 
+    const saved = await this.userRepo.save(user);
+    return this.toDto(saved);
+  }
+
+  async setActive(id: number, isActive: boolean, requesterId: number) {
+    const user = await this.userRepo.findOneBy({ id });
+    if (!user) throw new NotFoundException('Người dùng không tồn tại');
+
+    if (id === requesterId && !isActive) {
+      throw new ForbiddenException(
+        'Không thể tự khoá tài khoản đang đăng nhập',
+      );
+    }
+
+    user.isActive = isActive;
     const saved = await this.userRepo.save(user);
     return this.toDto(saved);
   }
