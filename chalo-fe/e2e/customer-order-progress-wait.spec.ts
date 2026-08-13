@@ -86,6 +86,7 @@ test("pending order marks receiving as the active service step", async ({ page, 
 
   await expect(page.getByText("Đang tiếp nhận", { exact: true })).toBeVisible();
   await expect(page.getByText("Đã pha chế", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Chờ dự kiến: ~8 phút", { exact: true })).toBeVisible();
   await expect(page.getByText("Đang tiến hành", { exact: false })).toHaveCount(0);
   await expect(page.getByTestId("service-step-active")).toHaveText(/Đang tiếp nhận/);
 });
@@ -121,4 +122,5 @@ test("completed order shows every service step as completed", async ({ page, req
   await expect(page.getByText("Đã sẵn sàng phục vụ", { exact: true })).toBeVisible();
   await expect(page.getByText("Đã phục vụ", { exact: true })).toBeVisible();
   await expect(page.getByTestId("service-step-active")).toHaveCount(0);
+  await expect(page.getByText("Chờ dự kiến:", { exact: false })).toHaveCount(0);
 });

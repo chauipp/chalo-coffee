@@ -10,6 +10,11 @@ export const OrderCardCinematic = ({
   onClick: () => void;
 }) => {
   const meta = STATUS_META[order.status];
+  const showEstimatedWait =
+    order.estimateWaitMinutes !== null &&
+    order.estimateWaitMinutes > 0 &&
+    order.status !== "COMPLETED" &&
+    order.status !== "CANCELLED";
 
   return (
     <button
@@ -47,6 +52,12 @@ export const OrderCardCinematic = ({
           )}
         </div>
       </div>
+
+      {showEstimatedWait && (
+        <p className="mb-3 inline-flex items-center rounded-full bg-brand-100 px-2.5 py-1 text-xs font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+          ⏱ Chờ dự kiến: ~{order.estimateWaitMinutes} phút
+        </p>
+      )}
 
       <div className="mb-3 space-y-1">
         {order.items.slice(0, 3).map((item) => (
