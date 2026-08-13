@@ -29,13 +29,13 @@ export const OrderDetailViewCinematic = ({
   onBackToMenu,
 }: OrderDetailViewProps) => {
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
-        <button onClick={onBackToOrders} className="shrink-0 text-brand-700 dark:text-brand-200/70">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+        <button onClick={onBackToOrders} className="shrink-0 text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
         <div className="flex-1 overflow-hidden">
-          <h1 className="truncate font-serif text-base text-brand-950 dark:text-brand-50">
+          <h1 className="truncate font-semibold text-base text-stone-900 dark:text-stone-50">
             Chi tiết đơn
           </h1>
           <p className="font-mono text-xs text-brand-500 dark:text-brand-300/50">
@@ -74,7 +74,7 @@ export const OrderDetailViewCinematic = ({
               🎉
             </div>
             <div>
-              <p className="text-base font-serif text-green-800 dark:text-green-400">
+              <p className="text-base font-semibold text-green-800 dark:text-green-400">
                 Hoàn tất tuyệt vời!
               </p>
               <p className="mt-0.5 text-sm text-green-600 dark:text-green-500/80">
@@ -93,7 +93,7 @@ export const OrderDetailViewCinematic = ({
               <p className="text-xs uppercase tracking-wider text-brand-600 dark:text-brand-300/60">
                 Thời gian chờ dự kiến
               </p>
-              <p className="text-lg font-serif text-brand-800 dark:text-brand-300">
+              <p className="text-lg font-semibold text-brand-800 dark:text-brand-300">
                 Khoảng {order.estimateWaitMinutes} phút
               </p>
             </div>
@@ -104,8 +104,8 @@ export const OrderDetailViewCinematic = ({
           <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
         )}
 
-        <div className="rounded-3xl bg-white/70 p-5 dark:bg-stone-900/60">
-          <h2 className="mb-4 font-serif text-sm text-brand-950 dark:text-brand-50">
+        <div className="rounded-3xl bg-white p-5 dark:bg-stone-900/60">
+          <h2 className="mb-4 font-semibold text-sm text-stone-900 dark:text-stone-50">
             Chi tiết món ({order.items.reduce((s, i) => s + i.quantity, 0)} món)
           </h2>
           <div className="space-y-4">
@@ -120,7 +120,7 @@ export const OrderDetailViewCinematic = ({
                 </div>
                 <div className="flex min-w-0 flex-1 justify-between">
                   <div className="pr-2">
-                    <p className="truncate text-sm text-brand-950 dark:text-brand-100">
+                    <p className="truncate text-sm text-stone-900 dark:text-brand-100">
                       {item.productName}
                     </p>
                     {(item.selectedModifiers?.length ?? 0) > 0 && (
@@ -137,7 +137,7 @@ export const OrderDetailViewCinematic = ({
                       </p>
                     )}
                   </div>
-                  <p className="shrink-0 text-sm text-brand-950 dark:text-brand-50">
+                  <p className="shrink-0 text-sm text-stone-900 dark:text-stone-50">
                     {item.subtotal.toLocaleString("vi-VN")}đ
                   </p>
                 </div>
@@ -147,7 +147,7 @@ export const OrderDetailViewCinematic = ({
 
           <div className="mt-5 flex items-center justify-between border-t border-dashed border-brand-200 pt-4 dark:border-stone-800">
             <span className="text-sm text-brand-600 dark:text-brand-300/60">Tổng cộng</span>
-            <span className="font-serif text-xl text-brand-700 dark:text-brand-300">
+            <span className="font-semibold text-xl text-brand-700 dark:text-brand-300">
               {order.totalAmount.toLocaleString("vi-VN")}đ
             </span>
           </div>
@@ -166,7 +166,7 @@ export const OrderDetailViewCinematic = ({
         )}
       </main>
 
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-stone-200 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
         {canPay && (
           <button
             onClick={onPayClick}
@@ -184,7 +184,7 @@ export const OrderDetailViewCinematic = ({
           </button>
           <button
             onClick={onBackToMenu}
-            className="flex-1 rounded-2xl bg-brand-700 py-3.5 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+            className="flex-1 rounded-2xl bg-brand-700 py-3.5 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-stone-900"
           >
             ☕ Đặt thêm
           </button>

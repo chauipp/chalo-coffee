@@ -27,8 +27,8 @@ export const CustomerMenuViewCinematic = ({
   onOrdersClick,
 }: CustomerMenuViewProps) => {
   return (
-    <div className="min-h-screen bg-brand-50 text-brand-950 dark:bg-stone-950 dark:text-brand-50">
-      <header className="sticky top-0 z-30 border-b border-brand-200/60 bg-brand-50/90 backdrop-blur-xl dark:border-stone-800/80 dark:bg-stone-950/90">
+    <div className="min-h-screen bg-stone-50 text-stone-950 dark:bg-stone-950 dark:text-stone-50">
+      <header className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50/90 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
         <div className="mx-auto flex flex-col gap-3 px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -40,10 +40,10 @@ export const CustomerMenuViewCinematic = ({
                 CH
               </Link>
               <div className="min-w-0">
-                <p className="truncate font-serif text-sm leading-none sm:text-base">
+                <p className="truncate text-sm font-semibold leading-none sm:text-base">
                   Chalo Coffee
                 </p>
-                <p className="mt-1 truncate text-xs text-brand-700 dark:text-brand-200/70">
+                <p className="mt-1 truncate text-xs text-stone-500 dark:text-stone-400">
                   {tableName}
                 </p>
               </div>
@@ -57,7 +57,7 @@ export const CustomerMenuViewCinematic = ({
                 title={
                   callCooldown ? "Đã gọi, nhân viên đang đến" : "Gọi nhân viên đến bàn"
                 }
-                className="flex size-8 items-center justify-center rounded-full border border-brand-200 text-brand-700 disabled:opacity-40 dark:border-stone-800 dark:text-brand-200"
+                className="flex size-8 items-center justify-center rounded-full border border-stone-200 text-stone-600 disabled:opacity-40 dark:border-stone-700 dark:text-stone-300"
               >
                 <svg
                   aria-hidden="true"
@@ -77,7 +77,7 @@ export const CustomerMenuViewCinematic = ({
               <ThemeSwitch />
               <button
                 onClick={onOrdersClick}
-                className="rounded-full bg-brand-700 px-3 py-2 text-xs font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+                className="rounded-xl bg-brand-700 px-3 py-2 text-xs font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
               >
                 Đơn của tôi
               </button>
@@ -89,7 +89,7 @@ export const CustomerMenuViewCinematic = ({
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
-                className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-brand-400"
+                className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-stone-400"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -103,18 +103,18 @@ export const CustomerMenuViewCinematic = ({
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Tìm món..."
-                className="w-full rounded-full border border-brand-200 bg-white/70 py-2 pl-10 pr-4 text-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-stone-800 dark:bg-stone-900/70"
+                className="w-full rounded-xl border border-stone-200 bg-white py-2 pl-10 pr-4 text-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-stone-700 dark:bg-stone-900"
               />
             </div>
 
             <div className="relative min-w-0">
-              <div className="flex gap-2 overflow-x-auto rounded-full border border-brand-200/60 bg-white/50 p-1 dark:border-stone-800 dark:bg-stone-900/50 md:justify-end">
+              <div className="flex gap-2 overflow-x-auto rounded-xl border border-stone-200 bg-white p-1 dark:border-stone-800 dark:bg-stone-900 md:justify-end">
                 <button
                   onClick={() => onSelectCategory(null)}
                   className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                     !activeCateId
                       ? "bg-brand-700 text-brand-50 dark:bg-brand-300 dark:text-brand-950"
-                      : "text-brand-700 hover:bg-white dark:text-brand-200/70 dark:hover:bg-stone-800"
+                      : "text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
                   }`}
                 >
                   Tất cả
@@ -126,7 +126,7 @@ export const CustomerMenuViewCinematic = ({
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                       activeCateId === c.id
                         ? "bg-brand-700 text-brand-50 dark:bg-brand-300 dark:text-brand-950"
-                        : "text-brand-700 hover:bg-white dark:text-brand-200/70 dark:hover:bg-stone-800"
+                        : "text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
                     }`}
                   >
                     {c.name}
@@ -140,15 +140,15 @@ export const CustomerMenuViewCinematic = ({
 
       <main className="mx-auto px-4 pb-28 pt-4">
         {!hasAnyProduct ? (
-          <div className="py-24 text-center text-brand-700 dark:text-brand-200/70">
+          <div className="py-24 text-center text-stone-600 dark:text-stone-400">
             <p className="text-sm font-medium">Thực đơn đang được cập nhật</p>
-            <p className="mt-1 text-xs text-brand-500 dark:text-brand-300/50">
+            <p className="mt-1 text-xs text-stone-500 dark:text-stone-500">
               Vui lòng quay lại sau hoặc gọi nhân viên để được hỗ trợ.
             </p>
           </div>
         ) : isFiltering ? (
           filterProduct.length === 0 ? (
-            <div className="py-20 text-center text-brand-700 dark:text-brand-200/70">
+            <div className="py-20 text-center text-stone-600 dark:text-stone-400">
               <p className="text-sm">Không tìm thấy món phù hợp</p>
             </div>
           ) : (
@@ -168,7 +168,7 @@ export const CustomerMenuViewCinematic = ({
           <div className="space-y-8">
             {grouped?.map(({ category, products }) => (
               <section key={category.id}>
-                <h2 className="mb-3 font-serif text-base sm:text-lg">
+                <h2 className="mb-3 text-base font-semibold sm:text-lg">
                   {category.name}
                 </h2>
                 <div className="grid gap-3">
@@ -192,7 +192,7 @@ export const CustomerMenuViewCinematic = ({
         onClick={onCartClick}
         disabled={itemCount === 0}
         aria-label="Xem giỏ hàng"
-        className="fixed bottom-5 right-4 z-30 flex size-16 items-center justify-center rounded-full bg-brand-700 text-brand-50 shadow-[0_18px_38px_rgba(126,77,32,0.38)] ring-4 ring-brand-50/90 transition active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500 dark:bg-brand-300 dark:text-brand-950 dark:ring-stone-950/90 dark:disabled:bg-stone-800 sm:bottom-7 sm:right-7"
+        className="fixed bottom-5 right-4 z-30 flex size-14 items-center justify-center rounded-2xl bg-brand-700 text-brand-50 shadow-lg shadow-stone-900/10 transition active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500 dark:bg-brand-300 dark:text-brand-950 dark:shadow-black/20 dark:disabled:bg-stone-800 sm:bottom-7 sm:right-7"
       >
         <svg
           aria-hidden="true"
@@ -210,7 +210,7 @@ export const CustomerMenuViewCinematic = ({
         </svg>
         <span
           key={itemCount}
-          className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-brand-950 px-1.5 py-0.5 text-xs font-bold text-brand-50 motion-safe:animate-[badge-pop_0.25s_cubic-bezier(0.16,1,0.3,1)] dark:bg-brand-50 dark:text-brand-950"
+          className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-stone-900 px-1.5 py-0.5 text-xs font-bold text-white dark:bg-stone-50 dark:text-stone-950"
         >
           {itemCount}
         </span>

@@ -18,7 +18,7 @@ export const ProductCardCinematic = ({
     <>
       <div
         data-testid={`product-card-${product.id}`}
-        className={`relative flex h-40 items-end overflow-hidden rounded-2xl bg-[radial-gradient(120%_140%_at_20%_10%,var(--color-brand-300)_0%,var(--color-brand-500)_55%,var(--color-brand-800)_100%)] transition-opacity dark:bg-[radial-gradient(120%_140%_at_20%_10%,var(--color-brand-700)_0%,var(--color-brand-900)_55%,var(--color-stone-950)_100%)] ${
+        className={`relative flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-sm transition-opacity dark:border-stone-800 dark:bg-stone-900 ${
           s.isUnavailable ? "opacity-50" : ""
         }`}
       >
@@ -28,24 +28,23 @@ export const ProductCardCinematic = ({
             alt={product.name}
             loading="lazy"
             onError={() => s.setImgError(true)}
-            className="absolute inset-0 size-full object-cover"
+            className="size-28 shrink-0 rounded-xl object-cover"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-
         <button
           type="button"
           onClick={s.openDetail}
           aria-label={`Xem chi tiết ${product.name}`}
-          className="absolute inset-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-inset"
+          className="absolute inset-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-inset"
         />
 
-        <div className="relative flex w-full items-end justify-between gap-3 p-4">
+        {!s.showImage && <div className="flex size-28 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-sm font-semibold text-brand-700 dark:bg-brand-950/50 dark:text-brand-300">CH</div>}
+        <div className="relative flex min-w-0 flex-1 items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate font-serif text-lg text-white">
+            <p className="truncate text-base font-semibold text-stone-900 dark:text-stone-50">
               {product.name}
             </p>
-            <p className="text-xs text-brand-200">
+            <p className="mt-1 text-sm font-medium text-brand-700 dark:text-brand-300">
               {product.price.toLocaleString("vi-VN")}đ
             </p>
           </div>
@@ -64,7 +63,7 @@ export const ProductCardCinematic = ({
                       s.quickAdd();
                     }
               }
-              className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-300 text-lg font-bold text-brand-950 shadow-[0_8px_18px_-6px_rgba(224,179,121,0.55)] transition-transform active:scale-90"
+              className="relative z-10 flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-lg font-bold text-brand-50 transition-transform active:scale-90 dark:bg-brand-300 dark:text-brand-950"
             >
               +
             </button>
@@ -72,8 +71,8 @@ export const ProductCardCinematic = ({
         </div>
 
         {s.isUnavailable && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-            <span className="rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-stone-700">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-stone-950/70">
+            <span className="rounded-full bg-stone-900 px-2 py-0.5 text-xs font-semibold text-white dark:bg-stone-50 dark:text-stone-900">
               {product.status === "OUT_OF_STOCK" ? "Hết hàng" : "Tạm ngưng"}
             </span>
           </div>
@@ -91,7 +90,7 @@ export const ProductCardCinematic = ({
         <div className="relative flex max-h-[78vh] flex-col">
           <div
             data-testid="product-detail-media"
-            className="relative h-64 shrink-0 overflow-hidden bg-[radial-gradient(120%_140%_at_20%_10%,var(--color-brand-300)_0%,var(--color-brand-700)_100%)]"
+            className="relative h-56 shrink-0 overflow-hidden bg-stone-100 dark:bg-stone-800"
           >
             {s.showImage && (
               <img
@@ -102,16 +101,15 @@ export const ProductCardCinematic = ({
                 className="absolute inset-0 size-full object-cover"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
             <button
               type="button"
               aria-label="Đóng"
               onClick={() => s.setDetailOpen(false)}
-              className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm"
+              className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-white/90 text-stone-700 shadow-sm dark:bg-stone-900/90 dark:text-stone-200"
             >
               ✕
             </button>
-            <h2 className="absolute bottom-4 left-4 right-4 font-serif text-2xl text-white">
+            <h2 className="absolute bottom-4 left-4 right-4 text-xl font-semibold text-stone-900 dark:text-stone-50">
               {product.name}
             </h2>
           </div>
@@ -150,7 +148,7 @@ export const ProductCardCinematic = ({
 
           <div className="border-t border-stone-100 px-5 pb-5 pt-4 dark:border-stone-800">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <span className="font-serif text-lg text-brand-700 dark:text-brand-300">
+              <span className="text-lg font-semibold text-brand-700 dark:text-brand-300">
                 {s.detailTotal.toLocaleString("vi-VN")}đ
               </span>
               <div className="grid grid-cols-[2rem_1.75rem_2rem] items-center">

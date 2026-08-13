@@ -33,12 +33,12 @@ const SessionPanel = ({
   const { settings, expired, mm, ss, qrPayload } = useCheckoutSession(session, tableName);
 
   return (
-    <div className="space-y-4 rounded-2xl bg-white/70 p-5 dark:bg-stone-900/70">
+    <div className="space-y-4 rounded-2xl bg-white p-5 dark:bg-stone-900/70">
       <div className="text-center">
         <p className="text-xs uppercase tracking-wider text-brand-600 dark:text-brand-300/60">
           Phiên thanh toán gộp
         </p>
-        <p className="mt-2 font-serif text-3xl text-brand-800 dark:text-brand-300">
+        <p className="mt-2 font-semibold text-3xl text-brand-800 dark:text-brand-300">
           {session!.totalAmount.toLocaleString("vi-VN")}đ
         </p>
         <p
@@ -73,7 +73,7 @@ const SessionPanel = ({
       {expired ? (
         <button
           onClick={onRestartSession}
-          className="w-full rounded-full bg-brand-700 py-3.5 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+          className="w-full rounded-full bg-brand-700 py-3.5 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-stone-900"
         >
           Tạo lại phiên thanh toán
         </button>
@@ -101,12 +101,12 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
   const { step, orders, totalAmount, onStart, isStarting, onGoToOrders, onGoToMenu } = props;
 
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
-      <header className="flex items-center gap-3 border-b border-brand-200/60 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
-        <button onClick={onGoToOrders} className="text-brand-700 dark:text-brand-200/70">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+      <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
+        <button onClick={onGoToOrders} className="text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
-        <h1 className="font-serif text-base text-brand-950 dark:text-brand-50">
+        <h1 className="font-semibold text-base text-stone-900 dark:text-stone-50">
           Thanh toán một lần
         </h1>
       </header>
@@ -117,12 +117,12 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
             <div className="flex size-20 items-center justify-center rounded-full bg-green-50 text-4xl dark:bg-green-900/20">
               🎉
             </div>
-            <p className="font-serif text-lg text-brand-950 dark:text-brand-50">
+            <p className="font-semibold text-lg text-stone-900 dark:text-stone-50">
               Đã thanh toán tất cả đơn của bàn
             </p>
             <button
               onClick={onGoToOrders}
-              className="rounded-full bg-brand-700 px-8 py-3 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+              className="rounded-full bg-brand-700 px-8 py-3 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-stone-900"
             >
               Xem đơn hàng
             </button>
@@ -136,12 +136,12 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
             <div className="flex size-20 items-center justify-center rounded-full bg-brand-100 text-4xl dark:bg-stone-900">
               ✅
             </div>
-            <p className="text-sm text-brand-700 dark:text-brand-200/70">
+            <p className="text-sm text-stone-600 dark:text-stone-300">
               Không có đơn nào cần thanh toán
             </p>
             <button
               onClick={onGoToMenu}
-              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-stone-900"
             >
               Xem thực đơn
             </button>
@@ -149,7 +149,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
         ) : step === "session" ? (
           <SessionPanel {...props} />
         ) : (
-          <div className="space-y-3 rounded-2xl bg-white/60 p-4 dark:bg-stone-900/60">
+          <div className="space-y-3 rounded-2xl bg-white p-4 dark:bg-stone-900/60">
             <p className="text-sm text-brand-800 dark:text-brand-200">
               {orders.length} đơn sẽ được thanh toán
             </p>
@@ -164,17 +164,17 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
                       {o.items.reduce((s, i) => s + i.quantity, 0)} món
                     </p>
                   </div>
-                  <span className="shrink-0 text-sm text-brand-950 dark:text-brand-50">
+                  <span className="shrink-0 text-sm text-stone-900 dark:text-stone-50">
                     {o.totalAmount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
               ))}
             </div>
-            <div className="flex items-center justify-between border-t border-brand-200/60 pt-3 dark:border-stone-800">
-              <span className="text-sm text-brand-950 dark:text-brand-50">
+            <div className="flex items-center justify-between border-t border-stone-200 pt-3 dark:border-stone-800">
+              <span className="text-sm text-stone-900 dark:text-stone-50">
                 Tổng cần thanh toán
               </span>
-              <span className="font-serif text-lg text-brand-700 dark:text-brand-300">
+              <span className="font-semibold text-lg text-brand-700 dark:text-brand-300">
                 {totalAmount.toLocaleString("vi-VN")}đ
               </span>
             </div>
@@ -183,7 +183,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
       </main>
 
       {step === "review" && (
-        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
           <button
             onClick={onStart}
             disabled={isStarting}

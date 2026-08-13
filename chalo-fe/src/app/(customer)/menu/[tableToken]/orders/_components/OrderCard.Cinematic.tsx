@@ -14,7 +14,7 @@ export const OrderCardCinematic = ({
   return (
     <button
       onClick={onClick}
-      className="w-full rounded-2xl bg-white/70 p-4 text-left transition-colors hover:bg-white dark:bg-stone-900/60 dark:hover:bg-stone-900"
+      className="w-full rounded-2xl bg-white p-4 text-left transition-colors hover:bg-white dark:bg-stone-900/60 dark:hover:bg-stone-900"
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
@@ -62,7 +62,7 @@ export const OrderCardCinematic = ({
                 </span>
               )}
             </span>
-            <span className="shrink-0 text-sm text-brand-950 dark:text-brand-50">
+            <span className="shrink-0 text-sm text-stone-900 dark:text-stone-50">
               {item.subtotal.toLocaleString("vi-VN")}đ
             </span>
           </div>
@@ -78,7 +78,7 @@ export const OrderCardCinematic = ({
         <span className="text-sm text-brand-700 dark:text-brand-200/60">
           Tổng: {order.items.reduce((sum, i) => sum + i.quantity, 0)} món
         </span>
-        <span className="font-serif text-base text-brand-700 dark:text-brand-300">
+        <span className="font-semibold text-base text-brand-700 dark:text-brand-300">
           {order.totalAmount.toLocaleString("vi-VN")}đ
         </span>
       </div>
