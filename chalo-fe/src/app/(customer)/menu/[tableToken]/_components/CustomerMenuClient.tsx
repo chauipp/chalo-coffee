@@ -1,17 +1,17 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/_components/CustomerMenuClient.tsx
-import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import { USER_ROLE } from "@/constants";
 import { CategoryDto, ProductDto } from "@/services/menu";
 import { useScanTable } from "@/services/customer/customer.queries";
 import { useCallStaff } from "@/services/order/order.queries";
 import { useAuthStore } from "@/stores/auth.store";
 import { useCartStore } from "@/stores/cart.store";
-import Link from "next/link";
+import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { OccupiedModal } from "./OccupiedModal";
-import { ProductCard } from "./ProductCard";
+import { CustomerMenuViewCinematic } from "./CustomerMenuView.Cinematic";
+import { CustomerMenuViewPlayful } from "./CustomerMenuView.Playful";
 
 const CALL_STAFF_COOLDOWN_MS = 30_000;
 
@@ -146,6 +146,28 @@ export const CustomerMenuClient = ({
     }
   };
 
+  const orderTheme = useOrderThemeStore((s) => s.theme);
+
+  const viewProps = {
+    tableName,
+    categories,
+    activeCateId,
+    onSelectCategory: setActiveCateId,
+    search,
+    onSearchChange: setSearch,
+    grouped,
+    filterProduct,
+    hasAnyProduct: initProducts.length > 0,
+    isFiltering: !!activeCateId || !!search,
+    onAddToCart: handleAddToCart,
+    onCallStaff: handleCallStaff,
+    callCooldown,
+    callStaffPending: callStaffMutation.isPending,
+    itemCount,
+    onCartClick: () => router.push(`/menu/${tableToken}/cart`),
+    onOrdersClick: () => router.push(`/menu/${tableToken}/orders`),
+  };
+
   return (
     <>
       {showOccupiedModal && (
@@ -158,205 +180,11 @@ export const CustomerMenuClient = ({
           tableName={tableName}
         />
       )}
-
-      <div className="min-h-screen bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-gray-50">
-        <header className="sticky top-0 z-30 border-b border-gray-100/80 bg-white/90 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-gray-800/80 dark:bg-gray-950/90 dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-          <div className="mx-auto flex flex-col gap-3 px-4 py-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
-                <Link
-                  href="/"
-                  aria-label="Chalo Coffee - Trang chủ"
-                  className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white shadow-sm transition hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
-                >
-                  CH
-                </Link>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold leading-none text-gray-950 dark:text-gray-50 sm:text-base">
-                    Chalo Coffee
-                  </p>
-                  <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
-                    {tableName}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleCallStaff}
-                  disabled={callCooldown || callStaffMutation.isPending}
-                  aria-label="Gọi nhân viên"
-                  title={
-                    callCooldown
-                      ? "Đã gọi, nhân viên đang đến"
-                      : "Gọi nhân viên đến bàn"
-                  }
-                  className="flex size-8 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:bg-brand-50 hover:text-brand-600 disabled:opacity-40 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
-                >
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    className="size-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                  </svg>
-                </button>
-                <ThemeSwitch />
-                <button
-                  onClick={() => router.push(`/menu/${tableToken}/orders`)}
-                  className="rounded-full bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-200 dark:hover:bg-brand-900/50"
-                >
-                  Đơn của tôi
-                </button>
-              </div>
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-[minmax(16rem,24rem)_1fr] md:items-center">
-              <div className="relative">
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Tìm món..."
-                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-950 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-50 dark:placeholder:text-gray-500"
-                />
-              </div>
-
-              <div className="relative min-w-0">
-                <div className="pointer-events-none absolute inset-y-1 left-0 z-10 w-6 bg-linear-to-r from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
-                <div className="pointer-events-none absolute inset-y-1 right-0 z-10 w-6 bg-linear-to-l from-white/90 to-transparent dark:from-gray-950/90 md:hidden" />
-                <div className="flex gap-2 overflow-x-auto rounded-full border border-gray-200 bg-gray-100/80 p-1 shadow-inner dark:border-gray-800 dark:bg-gray-900/80 md:justify-end">
-                  <button
-                    onClick={() => setActiveCateId(null)}
-                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
-                      !activeCateId
-                        ? "bg-white text-brand-700 shadow-sm ring-1 ring-brand-200 dark:bg-gray-800 dark:text-brand-200 dark:ring-brand-800"
-                        : "text-gray-600 hover:bg-white/70 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800/80 dark:hover:text-gray-100"
-                    }`}
-                  >
-                    Tất cả
-                  </button>
-                  {categories.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() =>
-                        setActiveCateId(activeCateId === c.id ? null : c.id)
-                      }
-                      className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
-                        activeCateId === c.id
-                          ? "bg-white text-brand-700 shadow-sm ring-1 ring-brand-200 dark:bg-gray-800 dark:text-brand-200 dark:ring-brand-800"
-                          : "text-gray-600 hover:bg-white/70 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800/80 dark:hover:text-gray-100"
-                      }`}
-                    >
-                      {c.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main className="mx-auto px-4 pb-28 pt-4">
-          {initProducts.length === 0 ? (
-            <div className="py-24 text-center text-gray-500 dark:text-gray-400">
-              <p className="text-sm font-medium">
-                Thực đơn đang được cập nhật
-              </p>
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                Vui lòng quay lại sau hoặc gọi nhân viên để được hỗ trợ.
-              </p>
-            </div>
-          ) : activeCateId || search ? (
-            <>
-              {filterProduct.length === 0 ? (
-                <div className="py-20 text-center text-gray-500 dark:text-gray-400">
-                  <p className="text-sm">Không tìm thấy món phù hợp</p>
-                </div>
-              ) : (
-                <div className="grid gap-3">
-                  {filterProduct.map((p) => (
-                    <ProductCard
-                      product={p}
-                      key={p.id}
-                      onAddToCart={(quantity, itemNote, modifierOptionIds, price, cartKey) =>
-                        handleAddToCart(p, quantity, itemNote, modifierOptionIds, price, cartKey)
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="space-y-8">
-              {grouped?.map(({ category, products }) => (
-                <section key={category.id}>
-                  <h2 className="mb-3 text-base font-bold text-gray-950 dark:text-gray-50 sm:text-lg">
-                    {category.name}
-                  </h2>
-                  <div className="grid gap-3">
-                    {products.map((p) => (
-                      <ProductCard
-                        product={p}
-                        key={p.id}
-                        onAddToCart={(quantity, itemNote, modifierOptionIds, price, cartKey) =>
-                          handleAddToCart(p, quantity, itemNote, modifierOptionIds, price, cartKey)
-                      }
-                      />
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-          )}
-        </main>
-
-        <button
-          onClick={() => router.push(`/menu/${tableToken}/cart`)}
-          disabled={itemCount === 0}
-          aria-label="Xem giỏ hàng"
-          className="fixed bottom-5 right-4 z-30 flex size-16 items-center justify-center rounded-full bg-brand-500 text-white shadow-[0_18px_38px_rgba(248,146,26,0.38)] ring-4 ring-white/90 transition hover:bg-brand-600 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-lg disabled:ring-white/80 dark:ring-gray-950/90 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 sm:bottom-7 sm:right-7"
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="size-7"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="8" cy="21" r="1" />
-            <circle cx="19" cy="21" r="1" />
-            <path d="M2.05 2.05h2l2.4 12.25a2 2 0 0 0 2 1.7h8.8a2 2 0 0 0 2-1.55l1.35-7.45H5.12" />
-          </svg>
-          <span
-            key={itemCount}
-            className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full bg-gray-950 px-1.5 py-0.5 text-xs font-bold text-white shadow-sm ring-2 ring-white motion-safe:animate-[badge-pop_0.25s_cubic-bezier(0.16,1,0.3,1)] dark:bg-white dark:text-gray-950 dark:ring-gray-950"
-          >
-            {itemCount}
-          </span>
-        </button>
-      </div>
+      {orderTheme === "cinematic" ? (
+        <CustomerMenuViewCinematic {...viewProps} />
+      ) : (
+        <CustomerMenuViewPlayful {...viewProps} />
+      )}
     </>
   );
 };
