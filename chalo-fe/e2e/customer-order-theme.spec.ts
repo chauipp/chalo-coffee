@@ -70,7 +70,7 @@ async function dismissOccupiedModal(page: Page) {
   if (occupiedVisible) await occupiedContinue.click();
 }
 
-test("menu dùng một giao diện và thêm nhanh 1 món vào giỏ hàng", async ({
+test("menu chọn số lượng trước khi thêm món không modifier vào giỏ hàng", async ({
   page,
   request,
 }) => {
@@ -84,31 +84,22 @@ test("menu dùng một giao diện và thêm nhanh 1 món vào giỏ hàng", asy
 
   const card = page.getByTestId(`product-card-${targetProduct!.id}`);
   await expect(card).toBeVisible({ timeout: 15_000 });
+  await card.getByRole("button", { name: "Tăng số lượng" }).click();
+  await expect(card.getByText("2", { exact: true })).toBeVisible();
   await card
-    .getByRole("button", { name: `Thêm nhanh ${targetProduct!.name}` })
+    .getByRole("button", { name: `Thêm 2 ${targetProduct!.name} vào giỏ` })
     .click();
-
-  const modal = page.getByTestId(`product-detail-modal-${targetProduct!.id}`);
-  const modalOpened = await modal
-    .waitFor({ state: "visible", timeout: 1000 })
-    .then(() => true)
-    .catch(() => false);
-  if (modalOpened) {
-    // Sản phẩm có modifier: nút + mở modal chi tiết thay vì thêm ngay —
-    // hoàn tất luồng thêm qua modal, giữ số lượng mặc định là 1.
-    await modal.getByRole("button", { name: /^Thêm 1 vào giỏ$/ }).click();
-    await expect(modal).toBeHidden();
-  }
 
   const cartButton = page.getByRole("button", { name: "Xem giỏ hàng" });
   await expect(cartButton).toBeEnabled();
-  await expect(cartButton.locator("span").last()).toHaveText("1");
+  await expect(cartButton.locator("span").last()).toHaveText("2");
 
   await cartButton.click();
   await expect(page).toHaveURL(new RegExp(`/menu/${tableToken}/cart$`));
   await expect(
     page.getByRole("button", { name: "Giảm số lượng" }),
   ).toHaveCount(1);
+  await expect(page.getByText("2", { exact: true })).toBeVisible();
 
   expect(failures.consoleErrors).toEqual([]);
   expect(failures.failedResponses).toEqual([]);
