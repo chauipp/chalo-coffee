@@ -33,7 +33,7 @@ const SessionPanel = ({
   const { settings, expired, mm, ss, qrPayload } = useCheckoutSession(session, tableName);
 
   return (
-    <div className="space-y-4 rounded-2xl bg-white p-5 dark:bg-stone-900/70">
+    <div className="space-y-4 rounded-2xl bg-white p-5 dark:bg-stone-900">
       <div className="text-center">
         <p className="text-xs uppercase tracking-wider text-brand-600 dark:text-brand-300/60">
           Phiên thanh toán gộp
@@ -102,7 +102,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
+      <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-700 dark:bg-stone-900">
         <button onClick={onGoToOrders} className="text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
@@ -149,7 +149,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
         ) : step === "session" ? (
           <SessionPanel {...props} />
         ) : (
-          <div className="space-y-3 rounded-2xl bg-white p-4 dark:bg-stone-900/60">
+          <div className="space-y-3 rounded-2xl bg-white p-4 dark:bg-stone-900">
             <p className="text-sm text-brand-800 dark:text-brand-200">
               {orders.length} đơn sẽ được thanh toán
             </p>
@@ -170,7 +170,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
                 </div>
               ))}
             </div>
-            <div className="flex items-center justify-between border-t border-stone-200 pt-3 dark:border-stone-800">
+            <div className="flex items-center justify-between border-t border-stone-200 pt-3 dark:border-stone-700">
               <span className="text-sm text-stone-900 dark:text-stone-50">
                 Tổng cần thanh toán
               </span>
@@ -183,7 +183,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
       </main>
 
       {step === "review" && (
-        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
           <button
             onClick={onStart}
             disabled={isStarting}

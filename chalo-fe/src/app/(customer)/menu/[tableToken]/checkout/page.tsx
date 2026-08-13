@@ -6,11 +6,9 @@ import {
 } from "@/services/order/order.queries";
 import { CheckoutSessionResult } from "@/services/order/order.types";
 import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
-import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { CheckoutViewCinematic } from "./_components/CheckoutView.Cinematic";
-import { CheckoutViewPlayful } from "./_components/CheckoutView.Playful";
 
 export default function CheckoutPage() {
   const { tableToken } = useParams<{ tableToken: string }>();
@@ -20,9 +18,6 @@ export default function CheckoutPage() {
   useCustomerOrderEvents(tableToken);
   const startMutation = useCheckoutStart();
   const completeMutation = useCheckoutComplete(tableToken);
-  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
-  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
-  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const [session, setSession] = useState<CheckoutSessionResult | null>(null);
   const [done, setDone] = useState<boolean>(false);
@@ -68,9 +63,5 @@ export default function CheckoutPage() {
     onGoToMenu: () => router.push(`/menu/${tableToken}`),
   };
 
-  return orderTheme === "cinematic" ? (
-    <CheckoutViewCinematic {...viewProps} />
-  ) : (
-    <CheckoutViewPlayful {...viewProps} />
-  );
+  return <CheckoutViewCinematic {...viewProps} />;
 }

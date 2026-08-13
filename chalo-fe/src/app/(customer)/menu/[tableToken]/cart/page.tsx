@@ -5,11 +5,9 @@ import {
   useGetEstimatedWait,
 } from "@/services/order/order.queries";
 import { useCartStore } from "@/stores/cart.store";
-import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { CartViewCinematic } from "./_components/CartView.Cinematic";
-import { CartViewPlayful } from "./_components/CartView.Playful";
 
 export default function CartPage() {
   const { tableToken } = useParams<{ tableToken: string }>();
@@ -22,9 +20,6 @@ export default function CartPage() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const updateNote = useCartStore((s) => s.updateNote);
   const removeItem = useCartStore((s) => s.removeItem);
-  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
-  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
-  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const createOrderMutation = useCreateOrder();
   const { data: waitData } = useGetEstimatedWait();
@@ -59,9 +54,5 @@ export default function CartPage() {
     onBack: () => router.back(),
   };
 
-  return orderTheme === "cinematic" ? (
-    <CartViewCinematic {...viewProps} />
-  ) : (
-    <CartViewPlayful {...viewProps} />
-  );
+  return <CartViewCinematic {...viewProps} />;
 }

@@ -18,7 +18,7 @@ export const ProductCardCinematic = ({
     <>
       <div
         data-testid={`product-card-${product.id}`}
-        className={`relative flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-sm transition-opacity dark:border-stone-800 dark:bg-stone-900 ${
+        className={`relative flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-sm transition-opacity dark:border-stone-700 dark:bg-stone-900 ${
           s.isUnavailable ? "opacity-50" : ""
         }`}
       >
@@ -48,25 +48,62 @@ export const ProductCardCinematic = ({
               {product.price.toLocaleString("vi-VN")}đ
             </p>
           </div>
-          {!s.isUnavailable && (
+          {!s.isUnavailable && s.hasModifiers && (
             <button
               type="button"
-              aria-label={`Thêm nhanh ${product.name}`}
-              onClick={
-                s.hasModifiers
-                  ? (e) => {
-                      e.stopPropagation();
-                      s.openDetail();
-                    }
-                  : (e) => {
-                      e.stopPropagation();
-                      s.quickAdd();
-                    }
-              }
-              className="relative z-10 flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-lg font-bold text-brand-50 transition-transform active:scale-90 dark:bg-brand-300 dark:text-brand-950"
+              aria-label={`Chọn tuỳ chọn ${product.name}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                s.openDetail();
+              }}
+              className="relative z-10 shrink-0 rounded-xl bg-brand-700 px-3 py-2 text-xs font-semibold text-brand-50 transition-transform active:scale-95 dark:bg-brand-300 dark:text-brand-950"
             >
-              +
+              Tuỳ chọn
             </button>
+          )}
+          {!s.isUnavailable && !s.hasModifiers && (
+            <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
+              <div className="inline-flex items-center rounded-xl border border-stone-200 bg-stone-50 p-0.5 dark:border-stone-700 dark:bg-stone-800">
+                <button
+                  type="button"
+                  aria-label="Giảm số lượng"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    s.setQuantity((q) => q - 1);
+                  }}
+                  disabled={s.quantity <= 1}
+                  className="flex size-8 items-center justify-center rounded-lg text-base font-semibold text-stone-600 hover:bg-white disabled:opacity-30 dark:text-stone-300 dark:hover:bg-stone-700"
+                >
+                  −
+                </button>
+                <span className="w-7 text-center text-sm font-semibold text-stone-900 dark:text-stone-50">
+                  {s.quantity}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Tăng số lượng"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    s.setQuantity((q) => q + 1);
+                  }}
+                  disabled={s.quantity >= s.MAX_ITEM_QUANTITY}
+                  className="flex size-8 items-center justify-center rounded-lg text-base font-semibold text-stone-600 hover:bg-white disabled:opacity-30 dark:text-stone-300 dark:hover:bg-stone-700"
+                >
+                  +
+                </button>
+              </div>
+              <button
+                type="button"
+                aria-label={`Thêm ${s.quantity} ${product.name} vào giỏ`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  s.quickAdd();
+                }}
+                className="rounded-xl bg-brand-700 px-3 py-2 text-xs font-semibold text-brand-50 transition-transform active:scale-95 dark:bg-brand-300 dark:text-brand-950"
+              >
+                Thêm
+              </button>
+            </div>
           )}
         </div>
 
@@ -146,7 +183,7 @@ export const ProductCardCinematic = ({
             )}
           </div>
 
-          <div className="border-t border-stone-100 px-5 pb-5 pt-4 dark:border-stone-800">
+          <div className="border-t border-stone-100 px-5 pb-5 pt-4 dark:border-stone-700">
             <div className="mb-3 flex items-center justify-between gap-3">
               <span className="text-lg font-semibold text-brand-700 dark:text-brand-300">
                 {s.detailTotal.toLocaleString("vi-VN")}đ

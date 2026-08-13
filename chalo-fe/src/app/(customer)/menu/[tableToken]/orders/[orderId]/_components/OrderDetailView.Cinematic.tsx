@@ -30,7 +30,7 @@ export const OrderDetailViewCinematic = ({
 }: OrderDetailViewProps) => {
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/90">
         <button onClick={onBackToOrders} className="shrink-0 text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
@@ -104,7 +104,7 @@ export const OrderDetailViewCinematic = ({
           <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
         )}
 
-        <div className="rounded-3xl bg-white p-5 dark:bg-stone-900/60">
+        <div className="rounded-3xl bg-white p-5 dark:bg-stone-900">
           <h2 className="mb-4 font-semibold text-sm text-stone-900 dark:text-stone-50">
             Chi tiết món ({order.items.reduce((s, i) => s + i.quantity, 0)} món)
           </h2>
@@ -145,7 +145,7 @@ export const OrderDetailViewCinematic = ({
             ))}
           </div>
 
-          <div className="mt-5 flex items-center justify-between border-t border-dashed border-brand-200 pt-4 dark:border-stone-800">
+          <div className="mt-5 flex items-center justify-between border-t border-dashed border-brand-200 pt-4 dark:border-stone-700">
             <span className="text-sm text-brand-600 dark:text-brand-300/60">Tổng cộng</span>
             <span className="font-semibold text-xl text-brand-700 dark:text-brand-300">
               {order.totalAmount.toLocaleString("vi-VN")}đ
@@ -166,7 +166,7 @@ export const OrderDetailViewCinematic = ({
         )}
       </main>
 
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-stone-200 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-stone-200 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
         {canPay && (
           <button
             onClick={onPayClick}
@@ -178,7 +178,7 @@ export const OrderDetailViewCinematic = ({
         <div className="flex gap-3">
           <button
             onClick={onBackToOrders}
-            className="flex-1 rounded-2xl border border-brand-200 bg-brand-50/60 py-3.5 text-sm text-brand-700 dark:border-stone-700 dark:bg-stone-900/60 dark:text-brand-300"
+            className="flex-1 rounded-2xl border border-brand-200 bg-stone-50/60 py-3.5 text-sm text-brand-700 dark:border-stone-700 dark:bg-stone-900 dark:text-brand-300"
           >
             Tất cả đơn
           </button>

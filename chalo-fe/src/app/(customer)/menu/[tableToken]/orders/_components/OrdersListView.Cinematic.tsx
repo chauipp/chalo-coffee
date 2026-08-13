@@ -31,7 +31,7 @@ export const OrdersListViewCinematic = ({
 }: OrdersListViewProps) => {
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/90">
         <button onClick={onGoToMenu} className="text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
@@ -93,7 +93,7 @@ export const OrdersListViewCinematic = ({
             </div>
 
             {orders.length > 1 && (
-              <div className="space-y-2 rounded-2xl bg-white p-4 dark:bg-stone-900/60">
+              <div className="space-y-2 rounded-2xl bg-white p-4 dark:bg-stone-900">
                 <p className="text-sm text-brand-800 dark:text-brand-200">Tổng kết</p>
                 <div className="flex justify-between text-sm">
                   <span className="text-brand-600 dark:text-brand-300/60">
@@ -113,7 +113,7 @@ export const OrdersListViewCinematic = ({
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-stone-200 pt-2 dark:border-stone-800">
+                <div className="flex justify-between border-t border-stone-200 pt-2 dark:border-stone-700">
                   <span className="text-sm text-stone-900 dark:text-stone-50">
                     Còn cần thanh toán
                   </span>
@@ -127,7 +127,7 @@ export const OrdersListViewCinematic = ({
         )}
       </main>
 
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-stone-200 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-stone-200 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
         {unpaidOrders.length > 0 && (
           <button
             onClick={onCheckout}

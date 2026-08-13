@@ -14,7 +14,7 @@ export const ServiceStepperCinematic = ({
   isServed,
 }: ServiceStepperProps) => {
   return (
-    <div className="rounded-3xl bg-white p-5 dark:bg-stone-900/60">
+    <div className="rounded-3xl bg-white p-5 dark:bg-stone-900">
       <h2 className="mb-5 font-semibold text-base text-stone-900 dark:text-stone-50">
         Tiến trình phục vụ
       </h2>

@@ -1,9 +1,7 @@
-// src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.tsx — chọn biến thể theo orderTheme
+// src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.tsx
 "use client";
 import { OrderDto } from "@/services/order/order.types";
-import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { OrderCardCinematic } from "./OrderCard.Cinematic";
-import { OrderCardPlayful } from "./OrderCard.Playful";
 
 export const OrderCard = ({
   order,
@@ -11,13 +9,4 @@ export const OrderCard = ({
 }: {
   order: OrderDto;
   onClick: () => void;
-}) => {
-  const storeTheme = useOrderThemeStore((s) => s.theme);
-  const isHydrated = useOrderThemeStore((s) => s.isHydrated);
-  const theme = isHydrated ? storeTheme : "playful";
-  return theme === "cinematic" ? (
-    <OrderCardCinematic order={order} onClick={onClick} />
-  ) : (
-    <OrderCardPlayful order={order} onClick={onClick} />
-  );
-};
+}) => <OrderCardCinematic order={order} onClick={onClick} />;
