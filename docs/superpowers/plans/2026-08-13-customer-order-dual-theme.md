@@ -3421,6 +3421,906 @@ git commit -m "test: add e2e coverage for order theme toggle and persistence"
 
 ---
 
+### Task 9: Theme vỏ 2 trang đơn hàng (danh sách + chi tiết)
+
+**Bổ sung sau final review:** Task 6/7 chỉ theme `OrderCard` và `ServiceStepper`
+— phần khung trang (`orders/page.tsx`, `orders/[orderId]/page.tsx`: header,
+banner, khối chi tiết món, thanh hành động dưới) vẫn giữ nguyên `bg-stone-50`/
+`bg-white` trung tính, gây đứt mạch thị giác khi khách đi từ giỏ hàng/thanh
+toán (đã theme) sang xem đơn (chưa theme). Task này theme nốt phần khung còn
+lại, theo đúng pattern wrapper mỏng + 2 view trình bày đã dùng ở Task 3-6.
+
+**Files:**
+- Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Playful.tsx`
+- Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Cinematic.tsx`
+- Modify: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/page.tsx`
+- Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Playful.tsx`
+- Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Cinematic.tsx`
+- Modify: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/page.tsx`
+
+`OrderCard` (Task 6) và `ServiceStepperPlayful`/`ServiceStepperCinematic`
+(Task 7) không đổi — 2 view mới ở task này chỉ bọc quanh chúng.
+`PayConfirmModal` (modal xác nhận thanh toán) **giữ nguyên, không theme** —
+đây là dialog xác nhận dùng chung, ngoài phạm vi 2 "ngôn ngữ hình ảnh".
+
+**Interfaces:**
+
+```ts
+// dùng cho OrdersListView.*
+interface OrdersListViewProps {
+  orders: OrderDto[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+  totalAllItems: number | undefined;
+  unpaidOrders: OrderDto[];
+  unpaidTotal: number;
+  onOrderClick: (orderId: string) => void;
+  onGoToMenu: () => void;
+  onCheckout: () => void;
+}
+
+// dùng cho OrderDetailView.*
+interface OrderDetailViewProps {
+  order: OrderDto;
+  isCancelled: boolean;
+  isServed: boolean;
+  isPaid: boolean;
+  canPay: boolean;
+  currentStepIndex: number;
+  steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
+  onPayClick: () => void;
+  onBackToOrders: () => void;
+  onBackToMenu: () => void;
+}
+```
+
+- [ ] **Step 1: Tạo `OrdersListView.Playful.tsx`**
+
+Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Playful.tsx`:
+
+```tsx
+"use client";
+// src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Playful.tsx
+import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
+import { OrderDto } from "@/services/order/order.types";
+import { OrderCard } from "./OrderCard";
+
+interface OrdersListViewProps {
+  orders: OrderDto[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+  totalAllItems: number | undefined;
+  unpaidOrders: OrderDto[];
+  unpaidTotal: number;
+  onOrderClick: (orderId: string) => void;
+  onGoToMenu: () => void;
+  onCheckout: () => void;
+}
+
+export const OrdersListViewPlayful = ({
+  orders,
+  isLoading,
+  isError,
+  onRetry,
+  totalAllItems,
+  unpaidOrders,
+  unpaidTotal,
+  onOrderClick,
+  onGoToMenu,
+  onCheckout,
+}: OrdersListViewProps) => {
+  return (
+    <div className="min-h-screen bg-stone-50 dark:bg-carnival">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b-2 border-stone-900 bg-white px-4 py-3 dark:border-brand-50 dark:bg-carnival-raised">
+        <button onClick={onGoToMenu} className="text-stone-500 dark:text-stone-400">
+          ← Quay lại
+        </button>
+        <div className="flex-1">
+          <h1 className="text-base font-black text-stone-900 dark:text-brand-50">
+            Đơn hàng của bàn
+          </h1>
+          {orders && orders.length > 1 && (
+            <p className="text-xs text-stone-400 dark:text-stone-500">
+              {orders.length} lần đặt · {totalAllItems} món
+            </p>
+          )}
+        </div>
+      </header>
+
+      <main className="space-y-4 p-4 pb-32">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <SpinnerIcon className="size-8 animate-spin text-pop-500" />
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-stone-400 dark:text-stone-500">
+            <p className="text-sm font-bold text-stone-600 dark:text-stone-400">
+              Không tải được danh sách đơn
+            </p>
+            <button
+              onClick={onRetry}
+              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-white dark:border-brand-50"
+            >
+              Thử lại
+            </button>
+          </div>
+        ) : !orders || orders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-stone-400 dark:text-stone-500">
+            <div className="flex size-20 items-center justify-center rounded-full border-2 border-stone-900 bg-white dark:border-brand-50 dark:bg-carnival-raised">
+              <span className="text-4xl">📋</span>
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-bold text-stone-600 dark:text-stone-400">
+                Chưa có đơn hàng nào
+              </p>
+              <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
+                Hãy chọn món từ thực đơn để bắt đầu
+              </p>
+            </div>
+            <button
+              onClick={onGoToMenu}
+              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-white dark:border-brand-50"
+            >
+              Xem thực đơn
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-3">
+              {orders.map((o) => (
+                <OrderCard key={o.id} order={o} onClick={() => onOrderClick(o.id)} />
+              ))}
+            </div>
+
+            {orders.length > 1 && (
+              <div className="space-y-2 rounded-2xl border-2 border-stone-900 bg-white p-4 dark:border-brand-50 dark:bg-carnival-raised">
+                <p className="text-sm font-bold text-stone-700 dark:text-stone-300">
+                  Tổng kết
+                </p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-stone-500 dark:text-stone-400">
+                    Tổng tất cả ({orders.length} đơn)
+                  </span>
+                  <span className="font-bold text-stone-900 dark:text-brand-50">
+                    {orders.reduce((s, o) => s + o.totalAmount, 0).toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+                {orders.some((o) => o.paidStatus) && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600 dark:text-green-400">
+                      Đã thanh toán {orders.filter((o) => o.paidStatus).length} đơn
+                    </span>
+                    <span className="font-bold text-green-600 dark:text-green-400">
+                      - {orders.filter((o) => o.paidStatus).reduce((s, o) => s + o.totalAmount, 0).toLocaleString("vi-VN")}đ
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t-2 border-stone-900 pt-2 dark:border-brand-50">
+                  <span className="text-sm font-bold text-stone-900 dark:text-brand-50">
+                    Còn cần thanh toán
+                  </span>
+                  <span className="text-base font-black text-pop-600 dark:text-pop-400">
+                    {unpaidTotal.toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t-2 border-stone-900 bg-white px-4 py-4 dark:border-brand-50 dark:bg-carnival-raised">
+        {unpaidOrders.length > 0 && (
+          <button
+            onClick={onCheckout}
+            className="w-full rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-white shadow-[3px_3px_0_var(--color-stone-900)] dark:border-brand-50"
+          >
+            Thanh toán tất cả · {unpaidTotal.toLocaleString("vi-VN")}đ
+          </button>
+        )}
+        <button
+          onClick={onGoToMenu}
+          className="w-full rounded-2xl border-2 border-stone-900 bg-pop-500 py-3 text-sm font-bold text-white dark:border-brand-50"
+        >
+          ☕ Đặt thêm món
+        </button>
+      </div>
+    </div>
+  );
+};
+```
+
+- [ ] **Step 2: Tạo `OrdersListView.Cinematic.tsx`**
+
+Tạo file cùng thư mục, cùng props/nhánh như Step 1, đổi sang bảng Điện ảnh
+(`brand-*`/`stone-950`, `font-serif`, không viền dày/đổ bóng cứng):
+
+```tsx
+"use client";
+// src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Cinematic.tsx
+import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
+import { OrderDto } from "@/services/order/order.types";
+import { OrderCard } from "./OrderCard";
+
+interface OrdersListViewProps {
+  orders: OrderDto[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+  totalAllItems: number | undefined;
+  unpaidOrders: OrderDto[];
+  unpaidTotal: number;
+  onOrderClick: (orderId: string) => void;
+  onGoToMenu: () => void;
+  onCheckout: () => void;
+}
+
+export const OrdersListViewCinematic = ({
+  orders,
+  isLoading,
+  isError,
+  onRetry,
+  totalAllItems,
+  unpaidOrders,
+  unpaidTotal,
+  onOrderClick,
+  onGoToMenu,
+  onCheckout,
+}: OrdersListViewProps) => {
+  return (
+    <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+        <button onClick={onGoToMenu} className="text-brand-700/70 dark:text-brand-200/70">
+          ← Quay lại
+        </button>
+        <div className="flex-1">
+          <h1 className="font-serif text-base text-brand-950 dark:text-brand-50">
+            Đơn hàng của bàn
+          </h1>
+          {orders && orders.length > 1 && (
+            <p className="text-xs text-brand-500/70 dark:text-brand-300/50">
+              {orders.length} lần đặt · {totalAllItems} món
+            </p>
+          )}
+        </div>
+      </header>
+
+      <main className="space-y-4 p-4 pb-32">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <SpinnerIcon className="size-8 animate-spin text-brand-400" />
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700/60 dark:text-brand-200/50">
+            <p className="text-sm text-brand-700/80 dark:text-brand-200/70">
+              Không tải được danh sách đơn
+            </p>
+            <button
+              onClick={onRetry}
+              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+            >
+              Thử lại
+            </button>
+          </div>
+        ) : !orders || orders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700/60 dark:text-brand-200/50">
+            <div className="flex size-20 items-center justify-center rounded-full bg-brand-100 dark:bg-stone-900">
+              <span className="text-4xl">📋</span>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-brand-700/80 dark:text-brand-200/70">
+                Chưa có đơn hàng nào
+              </p>
+              <p className="mt-1 text-xs text-brand-500/60 dark:text-brand-300/40">
+                Hãy chọn món từ thực đơn để bắt đầu
+              </p>
+            </div>
+            <button
+              onClick={onGoToMenu}
+              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+            >
+              Xem thực đơn
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-3">
+              {orders.map((o) => (
+                <OrderCard key={o.id} order={o} onClick={() => onOrderClick(o.id)} />
+              ))}
+            </div>
+
+            {orders.length > 1 && (
+              <div className="space-y-2 rounded-2xl bg-white/60 p-4 dark:bg-stone-900/60">
+                <p className="text-sm text-brand-800 dark:text-brand-200">Tổng kết</p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-brand-600/70 dark:text-brand-300/60">
+                    Tổng tất cả ({orders.length} đơn)
+                  </span>
+                  <span className="text-brand-950 dark:text-brand-50">
+                    {orders.reduce((s, o) => s + o.totalAmount, 0).toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+                {orders.some((o) => o.paidStatus) && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600 dark:text-green-400">
+                      Đã thanh toán {orders.filter((o) => o.paidStatus).length} đơn
+                    </span>
+                    <span className="text-green-600 dark:text-green-400">
+                      - {orders.filter((o) => o.paidStatus).reduce((s, o) => s + o.totalAmount, 0).toLocaleString("vi-VN")}đ
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-brand-200/60 pt-2 dark:border-stone-800">
+                  <span className="text-sm text-brand-950 dark:text-brand-50">
+                    Còn cần thanh toán
+                  </span>
+                  <span className="font-serif text-base text-brand-700 dark:text-brand-300">
+                    {unpaidTotal.toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+        {unpaidOrders.length > 0 && (
+          <button
+            onClick={onCheckout}
+            className="w-full rounded-2xl bg-green-700 py-3.5 text-base font-semibold text-brand-50 dark:bg-green-500"
+          >
+            Thanh toán tất cả · {unpaidTotal.toLocaleString("vi-VN")}đ
+          </button>
+        )}
+        <button
+          onClick={onGoToMenu}
+          className="w-full rounded-2xl bg-brand-700 py-3 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+        >
+          ☕ Đặt thêm món
+        </button>
+      </div>
+    </div>
+  );
+};
+```
+
+- [ ] **Step 3: Sửa `orders/page.tsx` để chọn view theo theme**
+
+Giữ nguyên toàn bộ logic đầu hàm (`useGetOrderByToken`, `useCustomerOrderEvents`,
+tính `unpaidOrders`/`unpaidTotal`/`totalAllItems`), thay import + phần
+`return`:
+
+```tsx
+"use client";
+import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
+import { useGetOrderByToken } from "@/services/order/order.queries";
+import { useOrderThemeStore } from "@/stores/orderTheme.store";
+import { useParams, useRouter } from "next/navigation";
+import { OrdersListViewCinematic } from "./_components/OrdersListView.Cinematic";
+import { OrdersListViewPlayful } from "./_components/OrdersListView.Playful";
+
+export default function OrdersPage() {
+  const { tableToken } = useParams<{ tableToken: string }>();
+  const router = useRouter();
+
+  const {
+    data: orders,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetOrderByToken(tableToken);
+  useCustomerOrderEvents(tableToken);
+  const orderTheme = useOrderThemeStore((s) => s.theme);
+
+  const unpaidOrders = orders?.filter((o) => !o.paidStatus) ?? [];
+  const unpaidTotal = unpaidOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+  const totalAllItems = orders
+    ?.flatMap((o) => o.items)
+    .reduce((sum, i) => sum + i.quantity, 0);
+
+  const viewProps = {
+    orders,
+    isLoading,
+    isError,
+    onRetry: () => refetch(),
+    totalAllItems,
+    unpaidOrders,
+    unpaidTotal,
+    onOrderClick: (orderId: string) => router.push(`/menu/${tableToken}/orders/${orderId}`),
+    onGoToMenu: () => router.push(`/menu/${tableToken}`),
+    onCheckout: () => router.push(`/menu/${tableToken}/checkout`),
+  };
+
+  return orderTheme === "cinematic" ? (
+    <OrdersListViewCinematic {...viewProps} />
+  ) : (
+    <OrdersListViewPlayful {...viewProps} />
+  );
+}
+```
+
+- [ ] **Step 4: Tạo `OrderDetailView.Playful.tsx`**
+
+Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Playful.tsx`:
+
+```tsx
+"use client";
+// src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Playful.tsx
+import { OrderDto, OrderStatus } from "@/services/order/order.types";
+import { ServiceStepperPlayful } from "./ServiceStepper.Playful";
+
+interface OrderDetailViewProps {
+  order: OrderDto;
+  isCancelled: boolean;
+  isServed: boolean;
+  isPaid: boolean;
+  canPay: boolean;
+  currentStepIndex: number;
+  steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
+  onPayClick: () => void;
+  onBackToOrders: () => void;
+  onBackToMenu: () => void;
+}
+
+export const OrderDetailViewPlayful = ({
+  order,
+  isCancelled,
+  isServed,
+  isPaid,
+  canPay,
+  currentStepIndex,
+  steps,
+  onPayClick,
+  onBackToOrders,
+  onBackToMenu,
+}: OrderDetailViewProps) => {
+  return (
+    <div className="min-h-screen bg-stone-50 dark:bg-carnival">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b-2 border-stone-900 bg-white px-4 py-3 dark:border-brand-50 dark:bg-carnival-raised">
+        <button onClick={onBackToOrders} className="shrink-0 text-stone-500 dark:text-stone-400">
+          ← Quay lại
+        </button>
+        <div className="flex-1 overflow-hidden">
+          <h1 className="truncate text-base font-black text-stone-900 dark:text-brand-50">
+            Chi tiết đơn
+          </h1>
+          <p className="font-mono text-xs text-stone-400 dark:text-stone-500">
+            #{order.id.slice(-6).toUpperCase()} · {order.tableName}
+          </p>
+        </div>
+        <div className="shrink-0">
+          {isPaid ? (
+            <span className="inline-flex items-center gap-1 rounded-full border-2 border-stone-900 bg-green-100 px-2.5 py-1 text-[10px] font-bold text-green-700 dark:border-brand-50 dark:bg-green-900/30 dark:text-green-400 sm:text-xs">
+              ✓ Đã thanh toán
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full border-2 border-stone-900 bg-red-50 px-2.5 py-1 text-[10px] font-bold text-red-600 dark:border-brand-50 dark:bg-red-900/20 dark:text-red-400 sm:text-xs">
+              Chưa thanh toán
+            </span>
+          )}
+        </div>
+      </header>
+
+      <main className="space-y-5 p-4 pb-52">
+        {isCancelled && (
+          <div className="flex flex-col items-center rounded-2xl border-2 border-red-600 bg-red-50 p-5 text-center dark:bg-red-900/10">
+            <span className="mb-2 text-3xl">❌</span>
+            <p className="text-base font-bold text-red-700 dark:text-red-400">
+              Đơn hàng đã bị huỷ
+            </p>
+            <p className="mt-1 text-sm text-red-600/80 dark:text-red-400/80">
+              Vui lòng liên hệ nhân viên nếu có thắc mắc.
+            </p>
+          </div>
+        )}
+
+        {isPaid && isServed && !isCancelled && (
+          <div className="flex items-center gap-4 rounded-2xl border-2 border-stone-900 bg-green-50 p-5 dark:border-brand-50 dark:bg-green-900/10">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-2xl dark:bg-green-800/50">
+              🎉
+            </div>
+            <div>
+              <p className="text-base font-bold text-green-800 dark:text-green-400">
+                Hoàn tất tuyệt vời!
+              </p>
+              <p className="mt-0.5 text-sm text-green-600 dark:text-green-500/80">
+                Cảm ơn bạn đã thưởng thức tại quán.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {order.estimateWaitMinutes !== null && order.estimateWaitMinutes > 0 && !isServed && !isCancelled && (
+          <div className="flex items-center gap-3 rounded-2xl border-2 border-stone-900 bg-pop-400/20 p-4 dark:border-brand-50">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-lg dark:bg-carnival-raised">
+              ⏱️
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-pop-600 dark:text-pop-400">
+                Thời gian chờ dự kiến
+              </p>
+              <p className="text-lg font-black text-stone-900 dark:text-brand-50">
+                Khoảng {order.estimateWaitMinutes} phút
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!isCancelled && (
+          <ServiceStepperPlayful steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
+        )}
+
+        <div className="rounded-3xl border-2 border-stone-900 bg-white p-5 dark:border-brand-50 dark:bg-carnival-raised">
+          <h2 className="mb-4 text-sm font-black text-stone-900 dark:text-brand-50">
+            Chi tiết món ({order.items.reduce((s, i) => s + i.quantity, 0)} món)
+          </h2>
+          <div className="space-y-4">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex gap-3">
+                <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-50 text-2xl dark:border-brand-50 dark:bg-carnival">
+                  {item.productImageUrl ? (
+                    <img src={item.productImageUrl} alt={item.productName} className="size-full object-cover" />
+                  ) : (
+                    "☕"
+                  )}
+                </div>
+                <div className="flex min-w-0 flex-1 justify-between">
+                  <div className="pr-2">
+                    <p className="truncate text-sm font-bold text-stone-900 dark:text-brand-50">
+                      {item.productName}
+                    </p>
+                    {(item.selectedModifiers?.length ?? 0) > 0 && (
+                      <p className="mt-1 text-xs text-pop-600 dark:text-pop-400">
+                        {item.selectedModifiers!.map((m) => `${m.groupName}: ${m.optionName}`).join(" · ")}
+                      </p>
+                    )}
+                    <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
+                      {item.price.toLocaleString("vi-VN")}đ <span className="mx-1">×</span> {item.quantity}
+                    </p>
+                    {item.note && (
+                      <p className="mt-1 inline-block max-w-full truncate rounded bg-pop-400/20 px-2 py-0.5 text-xs text-pop-600 dark:text-pop-400">
+                        📝 {item.note}
+                      </p>
+                    )}
+                  </div>
+                  <p className="shrink-0 text-sm font-bold text-stone-900 dark:text-brand-50">
+                    {item.subtotal.toLocaleString("vi-VN")}đ
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between border-t-2 border-dashed border-stone-300 pt-4 dark:border-stone-700">
+            <span className="text-sm font-bold text-stone-500 dark:text-stone-400">Tổng cộng</span>
+            <span className="text-xl font-black text-pop-600 dark:text-pop-400">
+              {order.totalAmount.toLocaleString("vi-VN")}đ
+            </span>
+          </div>
+        </div>
+
+        {order.note && (
+          <div className="rounded-2xl border-2 border-sky-300 bg-sky-50/50 p-4 dark:border-sky-800 dark:bg-sky-900/10">
+            <div className="mb-1.5 flex items-center gap-2">
+              <span className="text-base">📌</span>
+              <p className="text-xs font-bold uppercase tracking-wider text-sky-800 dark:text-sky-500">
+                Ghi chú cho quán
+              </p>
+            </div>
+            <p className="pl-6 text-sm text-stone-700 dark:text-stone-300">{order.note}</p>
+          </div>
+        )}
+      </main>
+
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t-2 border-stone-900 bg-white px-4 py-4 dark:border-brand-50 dark:bg-carnival-raised">
+        {canPay && (
+          <button
+            onClick={onPayClick}
+            className="w-full rounded-2xl border-2 border-stone-900 bg-green-500 py-4 text-base font-black text-white shadow-[3px_4px_0_var(--color-stone-900)] dark:border-brand-50"
+          >
+            Thanh toán · {order.totalAmount.toLocaleString("vi-VN")}đ
+          </button>
+        )}
+        <div className="flex gap-3">
+          <button
+            onClick={onBackToOrders}
+            className="flex-1 rounded-2xl border-2 border-stone-900 bg-white py-3.5 text-sm font-bold text-stone-700 dark:border-brand-50 dark:bg-carnival-raised dark:text-brand-100"
+          >
+            Tất cả đơn
+          </button>
+          <button
+            onClick={onBackToMenu}
+            className="flex-1 rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-sm font-black text-white dark:border-brand-50"
+          >
+            ☕ Đặt thêm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+- [ ] **Step 5: Tạo `OrderDetailView.Cinematic.tsx`**
+
+Tạo file cùng thư mục, cùng props/nhánh như Step 4, bảng màu Điện ảnh:
+
+```tsx
+"use client";
+// src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Cinematic.tsx
+import { OrderDto, OrderStatus } from "@/services/order/order.types";
+import { ServiceStepperCinematic } from "./ServiceStepper.Cinematic";
+
+interface OrderDetailViewProps {
+  order: OrderDto;
+  isCancelled: boolean;
+  isServed: boolean;
+  isPaid: boolean;
+  canPay: boolean;
+  currentStepIndex: number;
+  steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
+  onPayClick: () => void;
+  onBackToOrders: () => void;
+  onBackToMenu: () => void;
+}
+
+export const OrderDetailViewCinematic = ({
+  order,
+  isCancelled,
+  isServed,
+  isPaid,
+  canPay,
+  currentStepIndex,
+  steps,
+  onPayClick,
+  onBackToOrders,
+  onBackToMenu,
+}: OrderDetailViewProps) => {
+  return (
+    <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+        <button onClick={onBackToOrders} className="shrink-0 text-brand-700/70 dark:text-brand-200/70">
+          ← Quay lại
+        </button>
+        <div className="flex-1 overflow-hidden">
+          <h1 className="truncate font-serif text-base text-brand-950 dark:text-brand-50">
+            Chi tiết đơn
+          </h1>
+          <p className="font-mono text-xs text-brand-500/70 dark:text-brand-300/50">
+            #{order.id.slice(-6).toUpperCase()} · {order.tableName}
+          </p>
+        </div>
+        <div className="shrink-0">
+          {isPaid ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-[10px] font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-400 sm:text-xs">
+              ✓ Đã thanh toán
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-semibold text-red-600 dark:bg-red-900/20 dark:text-red-400 sm:text-xs">
+              Chưa thanh toán
+            </span>
+          )}
+        </div>
+      </header>
+
+      <main className="space-y-5 p-4 pb-52">
+        {isCancelled && (
+          <div className="flex flex-col items-center rounded-2xl bg-red-50 p-5 text-center dark:bg-red-900/10">
+            <span className="mb-2 text-3xl">❌</span>
+            <p className="text-base font-bold text-red-700 dark:text-red-400">
+              Đơn hàng đã bị huỷ
+            </p>
+            <p className="mt-1 text-sm text-red-600/80 dark:text-red-400/80">
+              Vui lòng liên hệ nhân viên nếu có thắc mắc.
+            </p>
+          </div>
+        )}
+
+        {isPaid && isServed && !isCancelled && (
+          <div className="flex items-center gap-4 rounded-2xl bg-green-50 p-5 dark:bg-green-900/10">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-2xl dark:bg-green-800/50">
+              🎉
+            </div>
+            <div>
+              <p className="text-base font-serif text-green-800 dark:text-green-400">
+                Hoàn tất tuyệt vời!
+              </p>
+              <p className="mt-0.5 text-sm text-green-600 dark:text-green-500/80">
+                Cảm ơn bạn đã thưởng thức tại quán.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {order.estimateWaitMinutes !== null && order.estimateWaitMinutes > 0 && !isServed && !isCancelled && (
+          <div className="flex items-center gap-3 rounded-2xl bg-brand-100/60 p-4 dark:bg-stone-900">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-lg dark:bg-brand-900/50">
+              ⏱️
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider text-brand-600/70 dark:text-brand-300/60">
+                Thời gian chờ dự kiến
+              </p>
+              <p className="text-lg font-serif text-brand-800 dark:text-brand-300">
+                Khoảng {order.estimateWaitMinutes} phút
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!isCancelled && (
+          <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
+        )}
+
+        <div className="rounded-3xl bg-white/70 p-5 dark:bg-stone-900/60">
+          <h2 className="mb-4 font-serif text-sm text-brand-950 dark:text-brand-50">
+            Chi tiết món ({order.items.reduce((s, i) => s + i.quantity, 0)} món)
+          </h2>
+          <div className="space-y-4">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex gap-3">
+                <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-2xl dark:bg-stone-900">
+                  {item.productImageUrl ? (
+                    <img src={item.productImageUrl} alt={item.productName} className="size-full object-cover" />
+                  ) : (
+                    "☕"
+                  )}
+                </div>
+                <div className="flex min-w-0 flex-1 justify-between">
+                  <div className="pr-2">
+                    <p className="truncate text-sm text-brand-950 dark:text-brand-100">
+                      {item.productName}
+                    </p>
+                    {(item.selectedModifiers?.length ?? 0) > 0 && (
+                      <p className="mt-1 text-xs text-brand-600 dark:text-brand-300">
+                        {item.selectedModifiers!.map((m) => `${m.groupName}: ${m.optionName}`).join(" · ")}
+                      </p>
+                    )}
+                    <p className="mt-0.5 text-xs text-brand-600/70 dark:text-brand-300/60">
+                      {item.price.toLocaleString("vi-VN")}đ <span className="mx-1">×</span> {item.quantity}
+                    </p>
+                    {item.note && (
+                      <p className="mt-1 inline-block max-w-full truncate rounded bg-brand-100/60 px-2 py-0.5 text-xs text-brand-700 dark:bg-stone-800 dark:text-brand-300">
+                        📝 {item.note}
+                      </p>
+                    )}
+                  </div>
+                  <p className="shrink-0 text-sm text-brand-950 dark:text-brand-50">
+                    {item.subtotal.toLocaleString("vi-VN")}đ
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between border-t border-dashed border-brand-200 pt-4 dark:border-stone-800">
+            <span className="text-sm text-brand-600/70 dark:text-brand-300/60">Tổng cộng</span>
+            <span className="font-serif text-xl text-brand-700 dark:text-brand-300">
+              {order.totalAmount.toLocaleString("vi-VN")}đ
+            </span>
+          </div>
+        </div>
+
+        {order.note && (
+          <div className="rounded-2xl bg-sky-50/50 p-4 dark:bg-sky-900/10">
+            <div className="mb-1.5 flex items-center gap-2">
+              <span className="text-base">📌</span>
+              <p className="text-xs uppercase tracking-wider text-sky-800 dark:text-sky-500">
+                Ghi chú cho quán
+              </p>
+            </div>
+            <p className="pl-6 text-sm text-brand-800 dark:text-brand-200">{order.note}</p>
+          </div>
+        )}
+      </main>
+
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+        {canPay && (
+          <button
+            onClick={onPayClick}
+            className="w-full rounded-full bg-green-700 py-4 text-base font-semibold text-brand-50 dark:bg-green-500"
+          >
+            Thanh toán · {order.totalAmount.toLocaleString("vi-VN")}đ
+          </button>
+        )}
+        <div className="flex gap-3">
+          <button
+            onClick={onBackToOrders}
+            className="flex-1 rounded-2xl border border-brand-200 bg-brand-50/60 py-3.5 text-sm text-brand-700 dark:border-stone-700 dark:bg-stone-900/60 dark:text-brand-300"
+          >
+            Tất cả đơn
+          </button>
+          <button
+            onClick={onBackToMenu}
+            className="flex-1 rounded-2xl bg-brand-700 py-3.5 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+          >
+            ☕ Đặt thêm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+- [ ] **Step 6: Sửa `orders/[orderId]/page.tsx` để chọn view theo theme**
+
+Giữ nguyên `SERVICE_STEPS`, toàn bộ hook đầu hàm (`useGetOrderByToken`,
+`useCustomerOrderEvents`, `usePayOrder`, `showPayConfirm` state,
+`handlePay`), và `PayConfirmModal` (không theme, giữ nguyên cách gọi hiện
+tại). Thêm import view + store, thay phần `return` (giữ `PayConfirmModal`
+render riêng, không đưa vào view):
+
+```tsx
+import { useOrderThemeStore } from "@/stores/orderTheme.store";
+import { OrderDetailViewCinematic } from "./_components/OrderDetailView.Cinematic";
+import { OrderDetailViewPlayful } from "./_components/OrderDetailView.Playful";
+// ... giữ nguyên các import khác đã có (SpinnerIcon, useCustomerOrderEvents, ...)
+```
+
+```tsx
+  const orderTheme = useOrderThemeStore((s) => s.theme);
+  // ... giữ nguyên isCancelled/isServed/isPaid/currentStepIndex/canPay/handlePay đã có
+
+  const viewProps = {
+    order,
+    isCancelled,
+    isServed,
+    isPaid,
+    canPay,
+    currentStepIndex,
+    steps: SERVICE_STEPS,
+    onPayClick: () => setShowPayConfirm(true),
+    onBackToOrders: () => router.push(`/menu/${tableToken}/orders`),
+    onBackToMenu: () => router.push(`/menu/${tableToken}`),
+  };
+
+  return (
+    <>
+      {showPayConfirm && (
+        <PayConfirmModal
+          isPending={payOrderMutation.isPending}
+          onCancel={() => setShowPayConfirm(false)}
+          onConfirm={handlePay}
+          total={order.totalAmount}
+          addInfo={`CHALO ${order.tableName ?? ""} DON ${order.id.slice(-6)}`}
+        />
+      )}
+      {orderTheme === "cinematic" ? (
+        <OrderDetailViewCinematic {...viewProps} />
+      ) : (
+        <OrderDetailViewPlayful {...viewProps} />
+      )}
+    </>
+  );
+}
+```
+
+Các nhánh sớm của hàm (`isLoading` → spinner, `!order` → "Đơn không còn hoạt
+động") giữ nguyên JSX trung tính như hiện tại — không cần theme vì đây là
+trạng thái tạm/chuyển tiếp, không phải nội dung chính của trang.
+
+- [ ] **Step 7: Kiểm tra & commit**
+
+Run: `pnpm --dir chalo-fe lint`
+Expected: sạch.
+
+```bash
+git add "chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Playful.tsx" \
+  "chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Cinematic.tsx" \
+  "chalo-fe/src/app/(customer)/menu/[tableToken]/orders/page.tsx" \
+  "chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Playful.tsx" \
+  "chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Cinematic.tsx" \
+  "chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/page.tsx"
+git commit -m "feat: theme orders list and order detail page shells"
+```
+
+---
+
 ## Self-Review
 
 **1. Spec coverage:**
