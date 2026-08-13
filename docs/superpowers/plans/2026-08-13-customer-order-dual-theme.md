@@ -4347,5 +4347,4 @@ lần ở `CustomerMenuView.types.ts` (Task 3), dùng lại ở cả 2 view. `Ca
 
 ## Kết quả
 
-_(Điền sau khi hoàn thành toàn bộ task — xem hướng dẫn ghi summary trong
-CLAUDE.md dự án.)_
+→ [`../summaries/2026-08-13-customer-order-dual-theme-summary.md`](../summaries/2026-08-13-customer-order-dual-theme-summary.md)
