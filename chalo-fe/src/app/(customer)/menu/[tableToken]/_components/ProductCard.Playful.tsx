@@ -27,7 +27,7 @@ export const ProductCardPlayful = ({
     <>
       <div
         data-testid={`product-card-${product.id}`}
-        className={`flex min-h-32 gap-3 rounded-2xl border-2 border-stone-900 bg-white p-3 shadow-[4px_4px_0_var(--color-stone-900)] transition-opacity motion-safe:animate-[card-in_0.35s_cubic-bezier(0.34,1.56,0.64,1)_backwards] dark:border-brand-50 dark:bg-carnival-raised dark:shadow-[4px_4px_0_var(--color-pop-600)] sm:gap-4 sm:p-4 ${
+        className={`relative flex min-h-32 gap-3 rounded-2xl border-2 border-stone-900 bg-white p-3 shadow-[4px_4px_0_var(--color-stone-900)] transition-opacity motion-safe:animate-[card-in_0.35s_cubic-bezier(0.34,1.56,0.64,1)_backwards] dark:border-brand-50 dark:bg-carnival-raised dark:shadow-[4px_4px_0_var(--color-pop-600)] sm:gap-4 sm:p-4 ${
           s.isUnavailable ? "opacity-50" : ""
         }`}
       >
@@ -113,6 +113,7 @@ export const ProductCardPlayful = ({
             </div>
           )}
         </div>
+        <ConfettiBurst triggerKey={burstKey} />
       </div>
 
       <Modal
@@ -226,7 +227,6 @@ export const ProductCardPlayful = ({
               </button>
             )}
           </div>
-          <ConfettiBurst triggerKey={burstKey} />
         </div>
       </Modal>
     </>

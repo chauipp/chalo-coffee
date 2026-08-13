@@ -16,21 +16,30 @@ interface Particle {
   color: string;
 }
 
+const buildParticles = (triggerKey: number): Particle[] =>
+  Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+    id: triggerKey * 100 + i,
+    angle: (360 / PARTICLE_COUNT) * i,
+    color: COLORS[i % COLORS.length],
+  }));
+
 export const ConfettiBurst = ({ triggerKey }: { triggerKey: number }) => {
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [firedKey, setFiredKey] = useState<number>(0);
+
+  // Adjust state during render (same pattern as ServiceStepper.Playful.tsx)
+  // instead of a synchronous setState-in-effect, to satisfy
+  // react-hooks/set-state-in-effect.
+  if (triggerKey !== firedKey && triggerKey !== 0) {
+    setFiredKey(triggerKey);
+    setParticles(buildParticles(triggerKey));
+  }
 
   useEffect(() => {
-    if (triggerKey === 0) return;
-    setParticles(
-      Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-        id: triggerKey * 100 + i,
-        angle: (360 / PARTICLE_COUNT) * i,
-        color: COLORS[i % COLORS.length],
-      })),
-    );
+    if (particles.length === 0) return;
     const timer = setTimeout(() => setParticles([]), 600);
     return () => clearTimeout(timer);
-  }, [triggerKey]);
+  }, [particles]);
 
   if (particles.length === 0) return null;
 
