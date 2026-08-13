@@ -56,7 +56,7 @@ const CURRENT_STEP_INDEX: Partial<Record<OrderStatus, number>> = {
   CONFIRMED: -1,
   PREPARING: 1,
   READY: 2,
-  COMPLETED: 3,
+  COMPLETED: 4,
 };
 
 export default function OrderTrackingPage() {
