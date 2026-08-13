@@ -13,7 +13,6 @@ interface ServiceStepperProps {
 export const ServiceStepperPlayful = ({
   steps,
   currentStepIndex,
-  isServed,
 }: ServiceStepperProps) => {
   const [burstKey, setBurstKey] = useState<number>(0);
   const [prevStepIndex, setPrevStepIndex] = useState<number>(currentStepIndex);
@@ -22,7 +21,7 @@ export const ServiceStepperPlayful = ({
   // prop changes) instead of useEffect, to avoid firing the burst on every
   // render and to keep it a single synchronous state transition.
   if (currentStepIndex !== prevStepIndex) {
-    if (currentStepIndex > prevStepIndex && currentStepIndex === steps.length - 1) {
+    if (currentStepIndex > prevStepIndex && currentStepIndex >= steps.length - 2) {
       setBurstKey((k) => k + 1);
     }
     setPrevStepIndex(currentStepIndex);
@@ -42,9 +41,9 @@ export const ServiceStepperPlayful = ({
               <div
                 className={`flex size-10 items-center justify-center rounded-full border-2 border-stone-900 text-base transition-transform dark:border-brand-50 ${
                   isDone
-                    ? "bg-pop-500 text-white"
+                    ? "bg-pop-500 text-stone-950"
                     : isCurrent
-                      ? "motion-safe:animate-bounce bg-pop-500 text-white"
+                      ? "motion-safe:animate-bounce bg-pop-500 text-stone-950"
                       : "bg-stone-100 text-stone-400 dark:bg-carnival dark:text-stone-500"
                 }`}
               >
@@ -53,7 +52,7 @@ export const ServiceStepperPlayful = ({
               <p
                 className={`text-xs font-bold ${
                   isCurrent
-                    ? "text-pop-600 dark:text-pop-400"
+                    ? "text-pop-700 dark:text-pop-400"
                     : isDone
                       ? "text-stone-900 dark:text-brand-50"
                       : "text-stone-400 dark:text-stone-600"
@@ -65,7 +64,7 @@ export const ServiceStepperPlayful = ({
           );
         })}
       </div>
-      {isServed && <ConfettiBurst triggerKey={burstKey} />}
+      {currentStepIndex >= steps.length - 2 && <ConfettiBurst triggerKey={burstKey} />}
     </div>
   );
 };
