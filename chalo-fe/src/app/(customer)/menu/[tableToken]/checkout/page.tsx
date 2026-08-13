@@ -1,6 +1,4 @@
-// src/app/(customer)/menu/[tableToken]/checkout/page.tsx
 "use client";
-import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import {
   useCheckoutPreview,
   useCheckoutStart,
@@ -8,10 +6,11 @@ import {
 } from "@/services/order/order.queries";
 import { CheckoutSessionResult } from "@/services/order/order.types";
 import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
+import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { CheckoutSummary } from "./_components/CheckoutSummary";
-import { CheckoutSessionPanel } from "./_components/CheckoutSessionPanel";
+import { CheckoutViewCinematic } from "./_components/CheckoutView.Cinematic";
+import { CheckoutViewPlayful } from "./_components/CheckoutView.Playful";
 
 export default function CheckoutPage() {
   const { tableToken } = useParams<{ tableToken: string }>();
@@ -21,6 +20,9 @@ export default function CheckoutPage() {
   useCustomerOrderEvents(tableToken);
   const startMutation = useCheckoutStart();
   const completeMutation = useCheckoutComplete(tableToken);
+  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
+  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const [session, setSession] = useState<CheckoutSessionResult | null>(null);
   const [done, setDone] = useState<boolean>(false);
@@ -41,91 +43,34 @@ export default function CheckoutPage() {
     setDone(true);
   };
 
-  const handleRestart = () => setSession(null);
+  const step = done
+    ? "done"
+    : isLoading
+      ? "loading"
+      : isError || !preview || preview.orders.length === 0
+        ? "empty"
+        : session
+          ? "session"
+          : "review";
 
-  return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      {/* header */}
-      <header className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-100 dark:border-stone-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
-        <button
-          onClick={() => router.push(`/menu/${tableToken}/orders`)}
-          className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
-        >
-          ← Quay lại
-        </button>
-        <h1 className="text-base font-bold text-stone-900 dark:text-white">
-          Thanh toán một lần
-        </h1>
-      </header>
+  const viewProps = {
+    step: step as "review" | "session" | "done" | "loading" | "empty",
+    orders: preview?.orders ?? [],
+    totalAmount: preview?.totalAmount ?? 0,
+    session,
+    onStart: handleStart,
+    isStarting: startMutation.isPending,
+    onConfirmPaid: handleComplete,
+    isConfirming: completeMutation.isPending,
+    onRestartSession: () => setSession(null),
+    tableName: preview?.tableName,
+    onGoToOrders: () => router.push(`/menu/${tableToken}/orders`),
+    onGoToMenu: () => router.push(`/menu/${tableToken}`),
+  };
 
-      <main className="p-4 space-y-4 pb-32">
-        {done ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-            <div className="size-20 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-4xl">
-              🎉
-            </div>
-            <p className="text-lg font-bold text-stone-900 dark:text-white">
-              Đã thanh toán tất cả đơn của bàn
-            </p>
-            <button
-              onClick={() => router.push(`/menu/${tableToken}/orders`)}
-              className="rounded-2xl bg-brand-500 px-8 py-3 text-sm font-semibold text-white hover:bg-brand-600 transition-colors"
-            >
-              Xem đơn hàng
-            </button>
-          </div>
-        ) : isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <SpinnerIcon className="size-8 animate-spin text-brand-400" />
-          </div>
-        ) : isError || !preview || preview.orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 text-stone-400 dark:text-stone-500 text-center">
-            <div className="size-20 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-4xl">
-              ✅
-            </div>
-            <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-              Không có đơn nào cần thanh toán
-            </p>
-            <button
-              onClick={() => router.push(`/menu/${tableToken}`)}
-              className="rounded-full bg-brand-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors"
-            >
-              Xem thực đơn
-            </button>
-          </div>
-        ) : session ? (
-          <CheckoutSessionPanel
-            totalAmount={session.totalAmount}
-            expiresAt={session.expiresAt}
-            sessionId={session.sessionId}
-            tableName={preview?.tableName}
-            onConfirm={handleComplete}
-            onRestart={handleRestart}
-            isPending={completeMutation.isPending}
-          />
-        ) : (
-          <CheckoutSummary
-            orders={preview.orders}
-            totalAmount={preview.totalAmount}
-          />
-        )}
-      </main>
-
-      {/* bottom CTA — only in review step */}
-      {!done && !session && preview && preview.orders.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 px-4 py-4 z-30">
-          <button
-            onClick={handleStart}
-            disabled={startMutation.isPending}
-            className="w-full rounded-2xl bg-green-500 py-3.5 text-base font-semibold text-white hover:bg-green-600 active:scale-[0.98] transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm"
-          >
-            {startMutation.isPending && (
-              <SpinnerIcon className="size-5 animate-spin" />
-            )}
-            Thanh toán {preview.totalAmount.toLocaleString("vi-VN")}đ
-          </button>
-        </div>
-      )}
-    </div>
+  return orderTheme === "cinematic" ? (
+    <CheckoutViewCinematic {...viewProps} />
+  ) : (
+    <CheckoutViewPlayful {...viewProps} />
   );
 }
