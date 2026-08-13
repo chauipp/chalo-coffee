@@ -39,9 +39,9 @@ export const ProductCardCinematic = ({
         />
 
         {!s.showImage && <div className="flex size-28 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-sm font-semibold text-brand-700 dark:bg-brand-950/50 dark:text-brand-300">CH</div>}
-        <div className="relative flex min-w-0 flex-1 items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-base font-semibold text-stone-900 dark:text-stone-50">
+        <div className="relative flex min-w-0 flex-1 self-stretch">
+          <div className="min-w-0 flex-1 pr-1">
+            <p className="line-clamp-2 text-base font-semibold leading-snug text-stone-900 dark:text-stone-50">
               {product.name}
             </p>
             <p className="mt-1 text-sm font-medium text-brand-700 dark:text-brand-300">
@@ -62,8 +62,8 @@ export const ProductCardCinematic = ({
             </button>
           )}
           {!s.isUnavailable && !s.hasModifiers && (
-            <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
-              <div className="inline-flex items-center rounded-xl border border-stone-200 bg-stone-50 p-0.5 dark:border-stone-700 dark:bg-stone-800">
+            <div className="absolute bottom-0 right-0 z-10 flex items-center gap-1.5">
+              <div className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 p-px dark:border-stone-700 dark:bg-stone-800">
                 <button
                   type="button"
                   aria-label="Giảm số lượng"
@@ -72,11 +72,11 @@ export const ProductCardCinematic = ({
                     s.setQuantity((q) => q - 1);
                   }}
                   disabled={s.quantity <= 1}
-                  className="flex size-8 items-center justify-center rounded-lg text-base font-semibold text-stone-600 hover:bg-white disabled:opacity-30 dark:text-stone-300 dark:hover:bg-stone-700"
+                  className="flex size-6 items-center justify-center rounded-md text-sm font-semibold text-stone-600 hover:bg-white disabled:opacity-30 dark:text-stone-300 dark:hover:bg-stone-700"
                 >
                   −
                 </button>
-                <span className="w-7 text-center text-sm font-semibold text-stone-900 dark:text-stone-50">
+                <span className="w-5 text-center text-xs font-semibold text-stone-900 dark:text-stone-50">
                   {s.quantity}
                 </span>
                 <button
@@ -87,7 +87,7 @@ export const ProductCardCinematic = ({
                     s.setQuantity((q) => q + 1);
                   }}
                   disabled={s.quantity >= s.MAX_ITEM_QUANTITY}
-                  className="flex size-8 items-center justify-center rounded-lg text-base font-semibold text-stone-600 hover:bg-white disabled:opacity-30 dark:text-stone-300 dark:hover:bg-stone-700"
+                  className="flex size-6 items-center justify-center rounded-md text-sm font-semibold text-stone-600 hover:bg-white disabled:opacity-30 dark:text-stone-300 dark:hover:bg-stone-700"
                 >
                   +
                 </button>
@@ -99,7 +99,7 @@ export const ProductCardCinematic = ({
                   e.stopPropagation();
                   s.quickAdd();
                 }}
-                className="rounded-xl bg-brand-700 px-3 py-2 text-xs font-semibold text-brand-50 transition-transform active:scale-95 dark:bg-brand-300 dark:text-brand-950"
+                className="rounded-lg bg-brand-700 px-2.5 py-1.5 text-xs font-semibold text-brand-50 transition-transform active:scale-95 dark:bg-brand-300 dark:text-brand-950"
               >
                 Thêm
               </button>
