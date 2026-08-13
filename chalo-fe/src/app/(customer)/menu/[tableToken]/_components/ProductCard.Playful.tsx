@@ -143,10 +143,7 @@ export const ProductCardPlayful = ({
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto py-4">
-            <h2 className="text-lg font-extrabold text-stone-900 dark:text-brand-50">
-              {product.name}
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-stone-600 dark:text-stone-300">
+            <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">
               {product.description || "Món này chưa có mô tả."}
             </p>
 
