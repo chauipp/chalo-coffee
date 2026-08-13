@@ -11,6 +11,8 @@ interface ModalProps {
   size?: "sm" | "md" | "lg";
   panelTestId?: string;
   presentation?: "dialog" | "bottom-sheet";
+  /** Ẩn thanh tiêu đề mặc định — dùng khi nội dung tự vẽ ảnh full-bleed đè lên tiêu đề (biến thể Điện ảnh) */
+  hideHeader?: boolean;
 }
 
 const sizeClass = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
@@ -22,6 +24,7 @@ const sheetSizeClass = {
 
 export const Modal = ({
   children,
+  hideHeader = false,
   onClose,
   open,
   panelTestId,
@@ -82,32 +85,40 @@ export const Modal = ({
         ].join(" ")}
       >
         {/* header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800 sm:px-6 sm:py-4">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-            {title}
-          </h2>
-          <button
-            aria-label="Đóng"
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 transition-colors"
-            onClick={onClose}
-          >
-            <svg
-              className="size-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {!hideHeader && (
+          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800 sm:px-6 sm:py-4">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {title}
+            </h2>
+            <button
+              aria-label="Đóng"
+              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 transition-colors"
+              onClick={onClose}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+              <svg
+                className="size-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
         {/* content */}
-        <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
+        <div
+          className={
+            hideHeader
+              ? "max-h-[calc(100dvh-8rem)] overflow-y-auto"
+              : "max-h-[calc(100dvh-8rem)] overflow-y-auto px-4 py-4 sm:px-6 sm:py-5"
+          }
+        >
           {children}
         </div>
       </div>
