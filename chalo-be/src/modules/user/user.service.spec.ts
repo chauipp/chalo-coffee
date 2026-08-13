@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
@@ -116,5 +120,57 @@ describe('UserService.page', () => {
 
     const roleFilter = calls.find((call) => call.clause.includes('u.role'));
     expect(roleFilter?.params).toMatchObject({ role: UserRole.CUSTOMER });
+  });
+});
+
+describe('UserService.setActive', () => {
+  it('khoá được tài khoản khách hàng', async () => {
+    const customer = {
+      id: 5,
+      username: 'google_khach_abc',
+      role: UserRole.CUSTOMER,
+      isActive: true,
+    } as User;
+    const repo = {
+      findOneBy: jest.fn().mockResolvedValue(customer),
+      save: jest.fn(async (input: User) => input),
+    };
+    const service = new UserService(repo as unknown as Repository<User>);
+
+    const updated = await service.setActive(5, false, 1);
+
+    expect(updated).toMatchObject({ id: 5, isActive: false });
+  });
+
+  it('chặn admin tự khoá chính mình', async () => {
+    const admin = {
+      id: 1,
+      username: 'admin',
+      role: UserRole.ADMIN,
+      isActive: true,
+    } as User;
+    const repo = {
+      findOneBy: jest.fn().mockResolvedValue(admin),
+      save: jest.fn(),
+    };
+    const service = new UserService(repo as unknown as Repository<User>);
+
+    await expect(service.setActive(1, false, 1)).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
+    expect(repo.save).not.toHaveBeenCalled();
+  });
+
+  it('báo lỗi khi không tìm thấy người dùng', async () => {
+    const repo = {
+      findOneBy: jest.fn().mockResolvedValue(null),
+      save: jest.fn(),
+    };
+    const service = new UserService(repo as unknown as Repository<User>);
+
+    await expect(service.setActive(999, false, 1)).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+    expect(repo.save).not.toHaveBeenCalled();
   });
 });

@@ -176,6 +176,21 @@ export class UserService {
     return this.toDto(saved);
   }
 
+  async setActive(id: number, isActive: boolean, requesterId: number) {
+    const user = await this.userRepo.findOneBy({ id });
+    if (!user) throw new NotFoundException('Người dùng không tồn tại');
+
+    if (id === requesterId && !isActive) {
+      throw new ForbiddenException(
+        'Không thể tự khoá tài khoản đang đăng nhập',
+      );
+    }
+
+    user.isActive = isActive;
+    const saved = await this.userRepo.save(user);
+    return this.toDto(saved);
+  }
+
   async changePassword(
     dto: ChangePasswordDto,
     requesterId: number,
