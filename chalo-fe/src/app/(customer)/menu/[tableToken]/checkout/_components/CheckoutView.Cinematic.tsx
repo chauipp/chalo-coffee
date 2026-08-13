@@ -1,11 +1,9 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/checkout/_components/CheckoutView.Cinematic.tsx
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-import { buildVietQR } from "@/lib/vietqr";
-import { useGetSettings } from "@/services/settings";
 import { CheckoutSessionResult, OrderDto } from "@/services/order/order.types";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useState } from "react";
+import { useCheckoutSession } from "./useCheckoutSession";
 
 interface CheckoutViewProps {
   step: "review" | "session" | "done" | "loading" | "empty";
@@ -32,31 +30,7 @@ const SessionPanel = ({
   CheckoutViewProps,
   "session" | "tableName" | "onConfirmPaid" | "isConfirming" | "onRestartSession"
 >) => {
-  const { data: settings } = useGetSettings();
-  const [remainingMs, setRemainingMs] = useState<number>(
-    () => new Date(session!.expiresAt).getTime() - Date.now(),
-  );
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setRemainingMs(new Date(session!.expiresAt).getTime() - Date.now());
-    }, 1000);
-    return () => clearInterval(id);
-  }, [session]);
-
-  const expired = remainingMs <= 0;
-  const mm = Math.max(0, Math.floor(remainingMs / 60000));
-  const ss = Math.max(0, Math.floor((remainingMs % 60000) / 1000));
-  const bankConfigured =
-    !!settings?.bankBin && !!settings?.bankAccountNo && !!settings?.bankAccountName;
-  const qrPayload = bankConfigured
-    ? buildVietQR({
-        bankBin: settings!.bankBin!,
-        accountNo: settings!.bankAccountNo!,
-        amount: session!.totalAmount,
-        addInfo: `CHALO ${tableName ?? ""} ${session!.sessionId.slice(-6)}`,
-      })
-    : null;
+  const { settings, expired, mm, ss, qrPayload } = useCheckoutSession(session, tableName);
 
   return (
     <div className="space-y-4 rounded-2xl bg-white/70 p-5 dark:bg-stone-900/70">

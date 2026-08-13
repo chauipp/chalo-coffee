@@ -1,11 +1,9 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/checkout/_components/CheckoutView.Playful.tsx
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-import { buildVietQR } from "@/lib/vietqr";
-import { useGetSettings } from "@/services/settings";
 import { CheckoutSessionResult, OrderDto } from "@/services/order/order.types";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useState } from "react";
+import { useCheckoutSession } from "./useCheckoutSession";
 
 interface CheckoutViewProps {
   step: "review" | "session" | "done" | "loading" | "empty";
@@ -32,31 +30,7 @@ const SessionPanel = ({
   CheckoutViewProps,
   "session" | "tableName" | "onConfirmPaid" | "isConfirming" | "onRestartSession"
 >) => {
-  const { data: settings } = useGetSettings();
-  const [remainingMs, setRemainingMs] = useState<number>(
-    () => new Date(session!.expiresAt).getTime() - Date.now(),
-  );
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setRemainingMs(new Date(session!.expiresAt).getTime() - Date.now());
-    }, 1000);
-    return () => clearInterval(id);
-  }, [session]);
-
-  const expired = remainingMs <= 0;
-  const mm = Math.max(0, Math.floor(remainingMs / 60000));
-  const ss = Math.max(0, Math.floor((remainingMs % 60000) / 1000));
-  const bankConfigured =
-    !!settings?.bankBin && !!settings?.bankAccountNo && !!settings?.bankAccountName;
-  const qrPayload = bankConfigured
-    ? buildVietQR({
-        bankBin: settings!.bankBin!,
-        accountNo: settings!.bankAccountNo!,
-        amount: session!.totalAmount,
-        addInfo: `CHALO ${tableName ?? ""} ${session!.sessionId.slice(-6)}`,
-      })
-    : null;
+  const { settings, expired, mm, ss, qrPayload } = useCheckoutSession(session, tableName);
 
   return (
     <div className="space-y-4 rounded-2xl border-2 border-stone-900 bg-white p-5 shadow-[4px_4px_0_var(--color-stone-900)] dark:border-brand-50 dark:bg-carnival-raised dark:shadow-[4px_4px_0_var(--color-pop-600)]">
@@ -110,7 +84,7 @@ const SessionPanel = ({
         <button
           onClick={onConfirmPaid}
           disabled={isConfirming}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-white disabled:opacity-60 dark:border-brand-50"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-stone-950 disabled:opacity-60 dark:border-brand-50"
         >
           {isConfirming ? (
             <>
@@ -158,7 +132,7 @@ export const CheckoutViewPlayful = (props: CheckoutViewProps) => {
           </div>
         ) : step === "loading" ? (
           <div className="flex items-center justify-center py-20">
-            <SpinnerIcon className="size-8 animate-spin text-pop-500" />
+            <SpinnerIcon className="size-8 animate-spin text-pop-700" />
           </div>
         ) : step === "empty" ? (
           <div className="flex flex-col items-center justify-center gap-4 py-20 text-center text-stone-400 dark:text-stone-500">
@@ -216,7 +190,7 @@ export const CheckoutViewPlayful = (props: CheckoutViewProps) => {
           <button
             onClick={onStart}
             disabled={isStarting}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-white shadow-[3px_3px_0_var(--color-stone-900)] disabled:opacity-60 dark:border-brand-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-stone-950 shadow-[3px_3px_0_var(--color-stone-900)] disabled:opacity-60 dark:border-brand-50"
           >
             {isStarting && <SpinnerIcon className="size-5 animate-spin" />}
             Thanh toán {totalAmount.toLocaleString("vi-VN")}đ
