@@ -94,10 +94,12 @@ test("orders list shows the estimate belonging to each active order only", async
   await mockCustomerOrders(page, [pending, preparing, completed, cancelled, unknownWait]);
 
   await page.goto(`/menu/${tableToken}/orders`);
+  await page.setViewportSize({ width: 375, height: 667 });
 
   await expect(page.getByText(/Chờ dự kiến: ~8 phút/)).toBeVisible();
   await expect(page.getByText(/Chờ dự kiến: ~3 phút/)).toBeVisible();
   await expect(page.getByText("Chờ dự kiến:", { exact: false })).toHaveCount(2);
+  await page.screenshot({ path: "test-results/customer-order-progress-wait-mobile.png", fullPage: true });
 });
 
 test("service step labels distinguish completed work from the current work", async ({ page }) => {
