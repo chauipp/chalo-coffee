@@ -15,7 +15,6 @@ export const QUERY_KEYS = {
   },
   CUSTOMERS: {
     ALL: ["customers"] as const,
-    PAGE: (params: object) => ["customers", "page", params] as const,
     ORDERS: (id: number, params: object) =>
       ["customers", id, "orders", params] as const,
     LOYALTY: (id: number) => ["customers", id, "loyalty"] as const,
