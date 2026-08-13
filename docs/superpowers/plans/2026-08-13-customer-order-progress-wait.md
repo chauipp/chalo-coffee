@@ -19,7 +19,7 @@
 
 ---
 
-- [ ] Task 1: Chuẩn hoá metadata tiến trình và stepper trạng thái
+- [x] Task 1: Chuẩn hoá metadata tiến trình và stepper trạng thái
 
 ### Task 1: Chuẩn hoá metadata tiến trình và stepper trạng thái
 
@@ -67,7 +67,7 @@
     git commit -m "feat: clarify customer order progress states"
     ```
 
-- [ ] Task 2: Hiển thị thời gian chờ của từng đơn ở danh sách và chi tiết
+- [x] Task 2: Hiển thị thời gian chờ của từng đơn ở danh sách và chi tiết
 
 ### Task 2: Hiển thị thời gian chờ của từng đơn ở danh sách và chi tiết
 
@@ -114,7 +114,7 @@
     git commit -m "feat: show customer order wait estimates"
     ```
 
-- [ ] Task 3: Kiểm UI và ghi nhận kết quả
+- [x] Task 3: Kiểm UI và ghi nhận kết quả
 
 ### Task 3: Kiểm UI và ghi nhận kết quả
 
