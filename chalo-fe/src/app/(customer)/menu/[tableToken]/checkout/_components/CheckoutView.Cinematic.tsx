@@ -81,7 +81,7 @@ const SessionPanel = ({
         <button
           onClick={onConfirmPaid}
           disabled={isConfirming}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-base font-semibold text-white disabled:opacity-60 dark:bg-green-500"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-base font-semibold text-white disabled:opacity-60 dark:bg-green-700"
         >
           {isConfirming ? (
             <>
@@ -187,7 +187,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
           <button
             onClick={onStart}
             disabled={isStarting}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-green-700 py-3.5 text-base font-semibold text-brand-50 disabled:opacity-60 dark:bg-green-500"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-green-700 py-3.5 text-base font-semibold text-brand-50 disabled:opacity-60 dark:bg-green-700"
           >
             {isStarting && <SpinnerIcon className="size-5 animate-spin" />}
             Thanh toán {totalAmount.toLocaleString("vi-VN")}đ
