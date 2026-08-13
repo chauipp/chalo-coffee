@@ -16,6 +16,7 @@ Liên quan: [spec](../specs/2026-08-13-customer-order-progress-wait-design.md) �
 - `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/page.tsx`: khai báo nhãn đang/đã/chưa tới và ánh xạ trạng thái order sang tiến trình.
 - `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/ServiceStepper.Cinematic.tsx`: render nhãn, màu và animation chỉ cho bước đang hoạt động.
 - `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.Cinematic.tsx`: hiển thị ETA riêng trên từng thẻ đơn.
+- `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/status-meta.ts`: sửa chip PENDING thành “Đang tiếp nhận”.
 - `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Cinematic.tsx`: chuẩn hoá ETA trang chi tiết.
 - `chalo-fe/e2e/customer-order-progress-wait.spec.ts`: test browser các trạng thái và ETA.
 
