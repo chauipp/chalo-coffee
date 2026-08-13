@@ -5,11 +5,19 @@ interface ToggleProps {
   onChange: (v: boolean) => void;
   label?: string;
   disabled?: boolean;
+  testId?: string;
 }
 
-export const Toggle = ({ checked, onChange, disabled, label }: ToggleProps) => (
+export const Toggle = ({
+  checked,
+  onChange,
+  disabled,
+  label,
+  testId,
+}: ToggleProps) => (
   <label className="flex items-center gap-3 cursor-pointer select-none">
     <div
+      data-testid={testId}
       onClick={() => !disabled && onChange(!checked)}
       className={`relative h-6 w-11 rounded-full transition-colors
         ${checked ? "bg-brand-400" : "bg-stone-200 dark:bg-stone-700"}
