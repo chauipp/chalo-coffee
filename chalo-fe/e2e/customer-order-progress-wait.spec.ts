@@ -113,6 +113,7 @@ test("orders list shows the estimate belonging to each active order only", async
 
   await expect(page.getByText(/Chờ dự kiến: ~8 phút/)).toBeVisible();
   await expect(page.getByText(/Chờ dự kiến: ~3 phút/)).toBeVisible();
+  await expect(page.getByText(/Đang tiếp nhận/)).toHaveCount(2);
   await expect(page.getByText("Chờ dự kiến:", { exact: false })).toHaveCount(2);
   await page.screenshot({ path: "test-results/customer-order-progress-wait-mobile.png", fullPage: true });
 });
