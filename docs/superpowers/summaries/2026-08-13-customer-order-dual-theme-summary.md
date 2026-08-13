@@ -58,19 +58,29 @@
   `hideHeader` — đúng như vậy, không có consumer nào khác của `Modal` bị ảnh
   hưởng (đã kiểm bằng review).
 
+## Đã xác minh trực quan (Playwright MCP)
+
+Cổng 3000 trống lại trong lúc hoàn tất (phiên khác đã xong việc), nên đã dựng
+được frontend thật (build `output: standalone` + backend chung có sẵn) và mở
+trình duyệt xem trực tiếp — không còn là hạn chế môi trường nữa:
+
+- Cả 4 tổ hợp (Điện ảnh/Rực rỡ × Sáng/Tối) trên màn thực đơn, modal chi tiết
+  món, giỏ hàng, thanh toán (cả bước xem trước và bước QR/đếm giờ), danh sách
+  đơn, chi tiết đơn ở trạng thái "Sẵn sàng" và "Đã phục vụ" — console và
+  network sạch (0 lỗi) ở mọi bước.
+- Xác nhận trực tiếp: thêm món vào giỏ đúng số lượng/tổng tiền ở cả 2 giao
+  diện; modal Điện ảnh ẩn header, không double-scroll; hook `useCheckoutSession`
+  (gộp từ 2 file trùng lặp) chạy đúng — QR hiện, đếm giờ chạy; stepper "Sẵn
+  sàng phục vụ" mount đúng (đường sửa lỗi confetti-chết ở vòng fix 2 đã đúng).
+- Hẹp màn hình 375×667 và 414×900 trên menu/giỏ/thanh toán/modal — không tràn
+  chữ, không vỡ layout.
+
 ## Còn dở / cần lưu ý
 
-- **Chưa có xác minh trực quan (Playwright) nào trên toàn nhánh.** Máy dev
-  hiện có cổng 3000 bị một phiên Claude Code khác đang chiếm, và CORS backend
-  chỉ mở cho đúng `http://localhost:3000`, nên không dựng được frontend riêng
-  để chạy e2e thật hay mở trình duyệt xem. Đây là hạn chế môi trường thật,
-  không phải bỏ qua chủ quan — cả 2 vòng final review đều nhấn mạnh điểm này,
-  và vòng 2 tìm ra đúng 1 lỗi (confetti không hiện) mà chỉ đọc code không
-  phát hiện được trước khi có review kỹ. **Trước khi coi tính năng này là
-  "xong" thật, cần: (1) chạy `pnpm --dir chalo-fe exec playwright test
-  e2e/customer-*.spec.ts` với backend + frontend thật, (2) mở trình duyệt tự
-  tay lướt qua cả 4 tổ hợp** (Điện ảnh/Rực rỡ × Sáng/Tối) trên màn thực đơn,
-  giỏ hàng, thanh toán, theo dõi đơn.
+- Chưa chạy được `customer-order-theme.spec.ts` bằng Playwright test runner
+  thật (chỉ xác minh tương đương bằng tay qua Playwright MCP ở trên) — nên
+  chạy `pnpm --dir chalo-fe exec playwright test e2e/customer-*.spec.ts` một
+  lần trước khi merge lên môi trường CI/staging để chốt lại bằng máy.
 - Vài mục Minor không sửa (không chặn merge, ghi lại để biết): interface
   props của `CartView`/`CheckoutView`/`OrdersListView`/`OrderDetailView` khai
   lại inline ở cả 2 file mỗi màn thay vì dùng chung 1 file `.types.ts` như
