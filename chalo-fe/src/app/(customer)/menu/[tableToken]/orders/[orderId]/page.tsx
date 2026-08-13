@@ -7,9 +7,12 @@ import {
   usePayOrder,
 } from "@/services/order/order.queries";
 import { OrderStatus } from "@/services/order/order.types";
+import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PayConfirmModal } from "./_components/PayConfirmModal";
+import { ServiceStepperCinematic } from "./_components/ServiceStepper.Cinematic";
+import { ServiceStepperPlayful } from "./_components/ServiceStepper.Playful";
 
 // CONFIRMED là trạng thái di sản (BE không còn chuyển PENDING → CONFIRMED),
 // nên gộp chung một bước với PENDING — tránh 2 bước trùng nhãn trong stepper.
@@ -33,6 +36,7 @@ export default function OrderTrackingPage() {
   useCustomerOrderEvents(tableToken);
 
   const payOrderMutation = usePayOrder(tableToken);
+  const orderTheme = useOrderThemeStore((s) => s.theme);
 
   if (isLoading)
     return (
@@ -172,61 +176,20 @@ export default function OrderTrackingPage() {
               </div>
             )}
           {/* Stepper Phục vụ */}
-          {!isCancelled && (
-            <div className="rounded-3xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-5 shadow-sm">
-              <h2 className="text-sm font-bold text-stone-900 dark:text-white mb-5">
-                Tiến trình phục vụ
-              </h2>
-              <div className="relative pl-2">
-                <div className="absolute left-[1.35rem] top-4 bottom-4 w-0.5 bg-stone-100 dark:bg-stone-800" />
-                <div className="space-y-6">
-                  {SERVICE_STEPS.map((step, stepIdx) => {
-                    const isDone = currentStepIndex > stepIdx;
-                    const isCurrent = currentStepIndex === stepIdx;
-
-                    return (
-                      <div
-                        key={step.statuses.join("-")}
-                        className="relative flex items-start gap-4"
-                      >
-                        <div
-                          className={`relative z-10 flex size-8 mt-[-2px] shrink-0 items-center justify-center rounded-full text-sm transition-all duration-300
-                            ${
-                              isDone
-                                ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30"
-                                : isCurrent
-                                  ? "bg-brand-500 text-white shadow-md shadow-brand-500/40 ring-4 ring-brand-100 dark:ring-brand-900/30"
-                                  : "bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500"
-                            }`}
-                        >
-                          {isDone ? "✓" : step.emoji}
-                        </div>
-                        <div className="flex-1">
-                          <p
-                            className={`text-sm font-bold
-                              ${
-                                isCurrent
-                                  ? "text-brand-600 dark:text-brand-400"
-                                  : isDone
-                                    ? "text-stone-900 dark:text-stone-200"
-                                    : "text-stone-400 dark:text-stone-600"
-                              }`}
-                          >
-                            {step.label}
-                          </p>
-                          {isCurrent && !isServed && (
-                            <p className="text-xs font-medium text-brand-500/80 dark:text-brand-400/80 mt-1 animate-pulse">
-                              Đang tiến hành...
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
+          {!isCancelled &&
+            (orderTheme === "cinematic" ? (
+              <ServiceStepperCinematic
+                steps={SERVICE_STEPS}
+                currentStepIndex={currentStepIndex}
+                isServed={isServed}
+              />
+            ) : (
+              <ServiceStepperPlayful
+                steps={SERVICE_STEPS}
+                currentStepIndex={currentStepIndex}
+                isServed={isServed}
+              />
+            ))}
           {/* Chi tiết đơn hàng */}
           <div className="rounded-3xl bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 p-5 shadow-sm">
             <h2 className="text-sm font-bold text-stone-900 dark:text-white mb-4">
