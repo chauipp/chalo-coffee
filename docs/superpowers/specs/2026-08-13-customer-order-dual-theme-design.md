@@ -217,3 +217,7 @@ Cùng nguồn trạng thái realtime (`useCustomerOrderEvents`, `useGetOrderByTo
 - Vì tách 2 component trình bày cho mỗi màn, cần cẩn thận không để hai bản lệch
   hành vi nghiệp vụ (vd. Điện ảnh bỏ stepper ở list nhưng vẫn phải gọi đúng
   `handleAddToCart` với `quantity=1` mặc định, không được thêm sai số lượng).
+
+## Plan thực thi
+
+→ [`../plans/2026-08-13-customer-order-dual-theme.md`](../plans/2026-08-13-customer-order-dual-theme.md)
