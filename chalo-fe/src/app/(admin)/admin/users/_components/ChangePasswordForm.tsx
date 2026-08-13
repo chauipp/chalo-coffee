@@ -1,5 +1,5 @@
 "use client";
-// src/app/(admin)/admin/staff/_components/ChangePasswordForm.tsx
+// src/app/(admin)/admin/users/_components/ChangePasswordForm.tsx
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { FormField } from "@/components/shared/ui/FormField";
 import { Input } from "@/components/shared/ui/Input";

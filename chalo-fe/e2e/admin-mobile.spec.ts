@@ -179,8 +179,8 @@ test("mobile admin uses product cards and keeps overflow navigation reachable", 
   await expect(
     page.getByRole("dialog", { name: "Mục quản trị khác" }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Nhân viên" }).click();
-  await page.waitForURL("**/admin/staff");
+  await page.getByRole("link", { name: "Người dùng" }).click();
+  await page.waitForURL("**/admin/users");
 });
 
 test("mobile admin logs out from overflow navigation", async ({ page }) => {
@@ -204,7 +204,7 @@ test("mobile admin presents every data collection as readable cards", async ({ p
     ["/admin/menu/categories", "admin-mobile-category-card"],
     ["/admin/tables", "admin-mobile-table-card"],
     ["/admin/orders", "admin-mobile-order-card"],
-    ["/admin/staff", "admin-mobile-staff-card"],
+    ["/admin/users", "admin-mobile-staff-card"],
   ]) {
     await page.goto(path);
     await expect(page.getByTestId(testId).first()).toBeVisible();

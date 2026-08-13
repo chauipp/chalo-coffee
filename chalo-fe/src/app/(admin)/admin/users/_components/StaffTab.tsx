@@ -1,5 +1,5 @@
 "use client";
-// src/app/(admin)/admin/staff/page.tsx
+// src/app/(admin)/admin/users/_components/StaffTab.tsx
 import { Badge } from "@/components/shared/ui/Badge";
 import { ConfirmDialog } from "@/components/shared/ui/ConfirmDialog";
 import { Column, DataTable } from "@/components/shared/ui/DataTable";
@@ -25,14 +25,13 @@ import {
   useUpdateUser,
 } from "@/services/user";
 import { useState } from "react";
-import { ChangePasswordForm } from "./_components/ChangePasswordForm";
-import { StaffForm } from "./_components/StaffForm";
-import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
-import { MobileFilterSheet } from "../../_components/MobileFilterSheet";
+import { ChangePasswordForm } from "./ChangePasswordForm";
+import { StaffForm } from "./StaffForm";
+import { MobileFilterSheet } from "../../../_components/MobileFilterSheet";
 
 const INITIAL_FILTER: UserPageParams = { pageNo: 1, pageSize: 10 };
 
-export default function StaffPage() {
+export function StaffTab() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<UserDto | null>(null);
   const [pwTarget, setPwTarget] = useState<UserDto | null>(null);
@@ -144,20 +143,18 @@ export default function StaffPage() {
   ];
 
   return (
-    <div className="space-y-5 p-4 sm:p-6">
-      <AdminMobilePageHeader
-        title="Nhân viên"
-        description="Quản lý tài khoản nhân viên & quản trị"
-        summary={`${table.pagination.total} tài khoản`}
-        action={
-          <button
-            onClick={() => setCreateOpen(true)}
-            className="w-full rounded-xl bg-brand-400 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-500 sm:w-auto"
-          >
-            + Thêm nhân viên
-          </button>
-        }
-      />
+    <div className="space-y-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-gray-500">
+          {table.pagination.total} tài khoản nhân viên
+        </p>
+        <button
+          onClick={() => setCreateOpen(true)}
+          className="w-full rounded-xl bg-brand-400 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-500 sm:w-auto"
+        >
+          + Thêm nhân viên
+        </button>
+      </div>
 
       <div className="hidden flex-wrap items-center gap-3 md:flex">
         <Input

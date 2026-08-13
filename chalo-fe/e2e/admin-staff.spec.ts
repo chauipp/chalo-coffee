@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-// Exercises the real Staff (Nhân viên) admin page against the live backend
-// (no mocking): log in as admin/admin, navigate via the real sidebar link,
-// assert the seeded user list renders, then create a UNIQUE throwaway staff
-// account and assert it appears in the list.
+// Exercises the real "Người dùng" admin page (tab Nhân viên) against the live
+// backend (no mocking): log in as admin/admin, navigate via the real sidebar
+// link, assert the seeded user list renders, then create a UNIQUE throwaway
+// staff account and assert it appears in the list.
 //
 // NOTE: this writes a real user row to the shared DB with the identifiable
 // prefix "e2e_staff_" so it can be found and cleaned up later.
@@ -15,11 +15,12 @@ test("admin lists users and creates a new staff account", async ({ page }) => {
   await page.getByRole("button", { name: "Đăng nhập" }).click();
   await page.waitForURL("**/admin/dashboard");
 
-  // 2. Navigate to the Staff page via the real sidebar link (no 404).
-  await page.getByRole("link", { name: "Nhân viên" }).click();
-  await page.waitForURL("**/admin/staff");
+  // 2. Navigate to the Users page via the real sidebar link (no 404). Tab
+  //    "Nhân viên" is selected by default.
+  await page.getByRole("link", { name: "Người dùng" }).click();
+  await page.waitForURL("**/admin/users");
   await expect(
-    page.getByRole("heading", { name: "Nhân viên" }),
+    page.getByRole("heading", { name: "Người dùng" }),
   ).toBeVisible();
 
   // 3. The seeded user list renders real rows: at least one "@username" cell
