@@ -1,7 +1,6 @@
 "use client";
 // src/app/(customer)/menu/[tableToken]/_components/CustomerMenuView.Cinematic.tsx
 import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
-import { OrderThemeSwitch } from "@/components/shared/OrderThemeSwitch";
 import { CategoryDto, ProductDto } from "@/services/menu";
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
@@ -35,9 +34,13 @@ export const CustomerMenuViewCinematic = ({
               <Link
                 href="/"
                 aria-label="Chalo Coffee - Trang chủ"
-                className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-700 text-xs font-bold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+                className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-stone-200 bg-white dark:border-stone-700 dark:bg-stone-900"
               >
-                CH
+                <img
+                  src="/brand/chalo-logo.jpg"
+                  alt="Chalo Coffee"
+                  className="size-full object-contain"
+                />
               </Link>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold leading-none sm:text-base">
@@ -73,7 +76,6 @@ export const CustomerMenuViewCinematic = ({
                   <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                 </svg>
               </button>
-              <OrderThemeSwitch />
               <ThemeSwitch />
               <button
                 onClick={onOrdersClick}

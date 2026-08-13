@@ -6,12 +6,10 @@ import { useScanTable } from "@/services/customer/customer.queries";
 import { useCallStaff } from "@/services/order/order.queries";
 import { useAuthStore } from "@/stores/auth.store";
 import { useCartStore } from "@/stores/cart.store";
-import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { OccupiedModal } from "./OccupiedModal";
 import { CustomerMenuViewCinematic } from "./CustomerMenuView.Cinematic";
-import { CustomerMenuViewPlayful } from "./CustomerMenuView.Playful";
 
 const CALL_STAFF_COOLDOWN_MS = 30_000;
 
@@ -146,10 +144,6 @@ export const CustomerMenuClient = ({
     }
   };
 
-  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
-  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
-  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
-
   const viewProps = {
     tableName,
     categories,
@@ -182,11 +176,7 @@ export const CustomerMenuClient = ({
           tableName={tableName}
         />
       )}
-      {orderTheme === "cinematic" ? (
-        <CustomerMenuViewCinematic {...viewProps} />
-      ) : (
-        <CustomerMenuViewPlayful {...viewProps} />
-      )}
+      <CustomerMenuViewCinematic {...viewProps} />
     </>
   );
 };

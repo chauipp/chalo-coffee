@@ -7,11 +7,9 @@ import {
   usePayOrder,
 } from "@/services/order/order.queries";
 import { OrderStatus } from "@/services/order/order.types";
-import { useOrderThemeStore } from "@/stores/orderTheme.store";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { OrderDetailViewCinematic } from "./_components/OrderDetailView.Cinematic";
-import { OrderDetailViewPlayful } from "./_components/OrderDetailView.Playful";
 import { PayConfirmModal } from "./_components/PayConfirmModal";
 
 // CONFIRMED là trạng thái di sản (BE không còn chuyển PENDING → CONFIRMED),
@@ -36,9 +34,6 @@ export default function OrderTrackingPage() {
   useCustomerOrderEvents(tableToken);
 
   const payOrderMutation = usePayOrder(tableToken);
-  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
-  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
-  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   if (isLoading)
     return (
@@ -109,11 +104,7 @@ export default function OrderTrackingPage() {
           addInfo={`CHALO ${order.tableName ?? ""} DON ${order.id.slice(-6)}`}
         />
       )}
-      {orderTheme === "cinematic" ? (
-        <OrderDetailViewCinematic {...viewProps} />
-      ) : (
-        <OrderDetailViewPlayful {...viewProps} />
-      )}
+      <OrderDetailViewCinematic {...viewProps} />
     </>
   );
 }

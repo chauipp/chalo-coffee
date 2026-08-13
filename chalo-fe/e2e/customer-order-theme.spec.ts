@@ -70,91 +70,7 @@ async function dismissOccupiedModal(page: Page) {
   if (occupiedVisible) await occupiedContinue.click();
 }
 
-test("mặc định vào menu là giao diện tiêu chuẩn", async ({ page, request }) => {
-  const failures = trackPageFailures(page);
-  const tableToken = await getFirstFreeTableToken(request);
-  test.skip(!tableToken, "Cần ít nhất 1 bàn");
-
-  await page.goto(`/menu/${tableToken}`);
-  await dismissOccupiedModal(page);
-
-  await expect(page.getByTestId("order-theme-playful")).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
-  await expect(page.getByTestId("order-theme-cinematic")).toHaveAttribute(
-    "aria-checked",
-    "false",
-  );
-
-  expect(failures.consoleErrors).toEqual([]);
-  expect(failures.failedResponses).toEqual([]);
-});
-
-test("chuyển sang giao diện tập trung và giữ lại sau khi tải lại trang", async ({
-  page,
-  request,
-}) => {
-  const failures = trackPageFailures(page);
-  const tableToken = await getFirstFreeTableToken(request);
-  test.skip(!tableToken, "Cần ít nhất 1 bàn");
-
-  await page.goto(`/menu/${tableToken}`);
-  await dismissOccupiedModal(page);
-
-  await page.getByTestId("order-theme-cinematic").click();
-  await expect(page.getByTestId("order-theme-cinematic")).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
-
-  await page.reload();
-  await dismissOccupiedModal(page);
-
-  await expect(page.getByTestId("order-theme-cinematic")).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
-
-  expect(failures.consoleErrors).toEqual([]);
-  expect(failures.failedResponses).toEqual([]);
-});
-
-test("toggle A/B độc lập với toggle Sáng/Tối — cả 4 tổ hợp không lỗi", async ({
-  page,
-  request,
-}) => {
-  const failures = trackPageFailures(page);
-  const tableToken = await getFirstFreeTableToken(request);
-  test.skip(!tableToken, "Cần ít nhất 1 bàn");
-
-  await page.goto(`/menu/${tableToken}`);
-  await dismissOccupiedModal(page);
-
-  for (const orderTheme of ["playful", "cinematic"] as const) {
-    await page.getByTestId(`order-theme-${orderTheme}`).click();
-    for (const uiTheme of ["light", "dark"] as const) {
-      await page.getByTestId("theme-switch").evaluate(
-        (el, targetDark) => {
-          const isDark = el.getAttribute("aria-checked") === "true";
-          if (isDark !== targetDark) el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-        },
-        uiTheme === "dark",
-      );
-      await expect(page.getByTestId(`order-theme-${orderTheme}`)).toHaveAttribute(
-        "aria-checked",
-        "true",
-      );
-      // không có lỗi console nghiêm trọng khi đổi tổ hợp
-      await expect(page.locator("body")).toBeVisible();
-    }
-  }
-
-  expect(failures.consoleErrors).toEqual([]);
-  expect(failures.failedResponses).toEqual([]);
-});
-
-test("giao diện tập trung: thêm nhanh 1 món từ nút + vào giỏ hàng", async ({
+test("menu dùng một giao diện và thêm nhanh 1 món vào giỏ hàng", async ({
   page,
   request,
 }) => {
@@ -165,12 +81,6 @@ test("giao diện tập trung: thêm nhanh 1 món từ nút + vào giỏ hàng",
 
   await page.goto(`/menu/${tableToken}`);
   await dismissOccupiedModal(page);
-
-  await page.getByTestId("order-theme-cinematic").click();
-  await expect(page.getByTestId("order-theme-cinematic")).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
 
   const card = page.getByTestId(`product-card-${targetProduct!.id}`);
   await expect(card).toBeVisible({ timeout: 15_000 });
