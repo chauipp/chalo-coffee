@@ -7,7 +7,6 @@ import { useState } from "react";
 interface ServiceStepperProps {
   steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
   currentStepIndex: number;
-  isServed: boolean;
 }
 
 export const ServiceStepperPlayful = ({

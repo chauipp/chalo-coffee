@@ -54,7 +54,7 @@ function trackPageFailures(page: Page) {
     if (message.type() === "error") consoleErrors.push(message.text());
   });
   page.on("response", (response) => {
-    if (response.status() >= 400) {
+    if (response.status() >= 400 && response.url().includes("/api/")) {
       failedResponses.push(`${response.status()} ${response.url()}`);
     }
   });

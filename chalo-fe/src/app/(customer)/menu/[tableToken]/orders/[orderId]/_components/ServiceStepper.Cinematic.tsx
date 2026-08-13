@@ -1,3 +1,4 @@
+"use client";
 // src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/ServiceStepper.Cinematic.tsx
 import { OrderStatus } from "@/services/order/order.types";
 
