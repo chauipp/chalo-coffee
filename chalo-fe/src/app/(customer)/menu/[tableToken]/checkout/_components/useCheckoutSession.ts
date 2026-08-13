@@ -18,7 +18,7 @@ export function useCheckoutSession(
   const [prevSession, setPrevSession] = useState(session);
 
   // Adjust state during render (same pattern as ServiceStepper.Playful.tsx /
-  // ConfettiBurst.tsx) instead of a synchronous setState-in-effect, so a new
+  // ServiceStepper cũ) instead of a synchronous setState-in-effect, so a new
   // session recomputes remainingMs immediately without tripping
   // react-hooks/set-state-in-effect. The effect below only owns the
   // recurring tick (an async setInterval callback), which is fine.

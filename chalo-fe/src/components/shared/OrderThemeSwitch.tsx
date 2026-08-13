@@ -1,5 +1,5 @@
 "use client";
-// src/components/shared/OrderThemeSwitch.tsx — chuyển đổi Điện ảnh/Rực rỡ, độc lập với nút Sáng/Tối
+// src/components/shared/OrderThemeSwitch.tsx — giữ lựa chọn giao diện cũ tương thích localStorage
 import { useOrderThemeStore } from "@/stores/orderTheme.store";
 
 export const OrderThemeSwitch = () => {
@@ -26,23 +26,23 @@ export const OrderThemeSwitch = () => {
         type="button"
         role="switch"
         aria-checked={isPlayful}
-        aria-label="Giao diện Rực rỡ"
+        aria-label="Giao diện tiêu chuẩn"
         data-testid="order-theme-playful"
         onClick={() => setTheme("playful")}
         className={pillClass(isPlayful)}
       >
-        Rực rỡ
+        Tiêu chuẩn
       </button>
       <button
         type="button"
         role="switch"
         aria-checked={!isPlayful}
-        aria-label="Giao diện Điện ảnh"
+        aria-label="Giao diện tập trung"
         data-testid="order-theme-cinematic"
         onClick={() => setTheme("cinematic")}
         className={pillClass(!isPlayful)}
       >
-        Điện ảnh
+        Tập trung
       </button>
     </div>
   );

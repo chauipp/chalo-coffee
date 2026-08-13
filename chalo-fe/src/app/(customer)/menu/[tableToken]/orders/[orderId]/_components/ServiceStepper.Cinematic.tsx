@@ -14,8 +14,8 @@ export const ServiceStepperCinematic = ({
   isServed,
 }: ServiceStepperProps) => {
   return (
-    <div className="rounded-3xl bg-white/70 p-5 dark:bg-stone-900/60">
-      <h2 className="mb-5 font-serif text-base text-brand-950 dark:text-brand-50">
+    <div className="rounded-3xl bg-white p-5 dark:bg-stone-900/60">
+      <h2 className="mb-5 font-semibold text-base text-stone-900 dark:text-stone-50">
         Tiến trình phục vụ
       </h2>
       <div className="relative pl-2">
@@ -29,9 +29,9 @@ export const ServiceStepperCinematic = ({
                 <div
                   className={`relative z-10 mt-[-2px] flex size-8 shrink-0 items-center justify-center rounded-full text-sm transition-all duration-500 ${
                     isDone
-                      ? "bg-brand-700 text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+                      ? "bg-brand-700 text-brand-50 dark:bg-brand-300 dark:text-stone-900"
                       : isCurrent
-                        ? "bg-brand-700 text-brand-50 ring-4 ring-brand-200 dark:bg-brand-300 dark:text-brand-950 dark:ring-brand-900/40"
+                        ? "bg-brand-700 text-brand-50 ring-4 ring-brand-200 dark:bg-brand-300 dark:text-stone-900 dark:ring-brand-900/40"
                         : "bg-brand-100 text-brand-400 dark:bg-stone-900 dark:text-stone-600"
                   }`}
                 >
@@ -39,11 +39,11 @@ export const ServiceStepperCinematic = ({
                 </div>
                 <div className="flex-1">
                   <p
-                    className={`font-serif text-sm ${
+                    className={`font-semibold text-sm ${
                       isCurrent
                         ? "text-brand-700 dark:text-brand-300"
                         : isDone
-                          ? "text-brand-950 dark:text-brand-100"
+                          ? "text-stone-900 dark:text-brand-100"
                           : "text-brand-400 dark:text-stone-600"
                     }`}
                   >

@@ -31,16 +31,16 @@ export const CartViewCinematic = ({
 }) => {
   if (items.length === 0) {
     return (
-      <div className="flex min-h-screen flex-col bg-brand-50 dark:bg-stone-950">
-        <header className="flex items-center gap-3 border-b border-brand-200/60 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
-          <button onClick={onBack} className="text-brand-700 dark:text-brand-200/70">
+      <div className="flex min-h-screen flex-col bg-stone-50 dark:bg-stone-950">
+        <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
+          <button onClick={onBack} className="text-stone-600 dark:text-stone-300">
             ← Quay lại
           </button>
-          <h1 className="font-serif text-base text-brand-950 dark:text-brand-50">
+          <h1 className="text-base font-semibold text-stone-900 dark:text-stone-50">
             Giỏ hàng
           </h1>
         </header>
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-brand-700 dark:text-brand-200/50">
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-stone-600 dark:text-stone-400">
           <div className="flex size-20 items-center justify-center rounded-full bg-brand-100 dark:bg-stone-900">
             <span className="text-4xl">🛒</span>
           </div>
@@ -57,12 +57,12 @@ export const CartViewCinematic = ({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-brand-50 dark:bg-stone-950">
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
-        <button onClick={onBack} className="text-brand-700 dark:text-brand-200/70">
+    <div className="flex min-h-screen flex-col bg-stone-50 dark:bg-stone-950">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+        <button onClick={onBack} className="text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
-        <h1 className="flex-1 font-serif text-base text-brand-950 dark:text-brand-50">
+        <h1 className="flex-1 text-base font-semibold text-stone-900 dark:text-stone-50">
           Giỏ hàng
         </h1>
         <span className="rounded-md bg-brand-100 px-2 py-0.5 text-sm text-brand-700 dark:bg-stone-900 dark:text-brand-300">
@@ -103,7 +103,7 @@ export const CartViewCinematic = ({
 
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">
-                <p className="truncate font-serif text-sm text-brand-950 dark:text-brand-50">
+            <p className="truncate text-sm font-medium text-stone-900 dark:text-stone-50">
                   {item.productName}
                 </p>
                 <span className="shrink-0 text-sm text-brand-700 dark:text-brand-300">
@@ -172,7 +172,7 @@ export const CartViewCinematic = ({
           <span className="text-base text-brand-700 dark:text-brand-200/70">
             Tổng cộng
           </span>
-          <span className="font-serif text-2xl text-brand-900 dark:text-brand-50">
+          <span className="text-2xl font-semibold text-stone-900 dark:text-stone-50">
             {totalAmount.toLocaleString("vi-VN")}đ
           </span>
         </div>

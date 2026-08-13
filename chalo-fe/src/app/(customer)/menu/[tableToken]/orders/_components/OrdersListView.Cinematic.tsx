@@ -30,13 +30,13 @@ export const OrdersListViewCinematic = ({
   onCheckout,
 }: OrdersListViewProps) => {
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
-        <button onClick={onGoToMenu} className="text-brand-700 dark:text-brand-200/70">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
+        <button onClick={onGoToMenu} className="text-stone-600 dark:text-stone-300">
           ← Quay lại
         </button>
         <div className="flex-1">
-          <h1 className="font-serif text-base text-brand-950 dark:text-brand-50">
+          <h1 className="font-semibold text-base text-stone-900 dark:text-stone-50">
             Đơn hàng của bàn
           </h1>
           {orders && orders.length > 1 && (
@@ -54,12 +54,12 @@ export const OrdersListViewCinematic = ({
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700 dark:text-brand-200/50">
-            <p className="text-sm text-brand-700 dark:text-brand-200/70">
+            <p className="text-sm text-stone-600 dark:text-stone-300">
               Không tải được danh sách đơn
             </p>
             <button
               onClick={onRetry}
-              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-stone-900"
             >
               Thử lại
             </button>
@@ -70,7 +70,7 @@ export const OrdersListViewCinematic = ({
               <span className="text-4xl">📋</span>
             </div>
             <div className="text-center">
-              <p className="text-sm text-brand-700 dark:text-brand-200/70">
+              <p className="text-sm text-stone-600 dark:text-stone-300">
                 Chưa có đơn hàng nào
               </p>
               <p className="mt-1 text-xs text-brand-500 dark:text-brand-300/40">
@@ -79,7 +79,7 @@ export const OrdersListViewCinematic = ({
             </div>
             <button
               onClick={onGoToMenu}
-              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+              className="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-medium text-brand-50 dark:bg-brand-300 dark:text-stone-900"
             >
               Xem thực đơn
             </button>
@@ -93,13 +93,13 @@ export const OrdersListViewCinematic = ({
             </div>
 
             {orders.length > 1 && (
-              <div className="space-y-2 rounded-2xl bg-white/60 p-4 dark:bg-stone-900/60">
+              <div className="space-y-2 rounded-2xl bg-white p-4 dark:bg-stone-900/60">
                 <p className="text-sm text-brand-800 dark:text-brand-200">Tổng kết</p>
                 <div className="flex justify-between text-sm">
                   <span className="text-brand-600 dark:text-brand-300/60">
                     Tổng tất cả ({orders.length} đơn)
                   </span>
-                  <span className="text-brand-950 dark:text-brand-50">
+                  <span className="text-stone-900 dark:text-stone-50">
                     {orders.reduce((s, o) => s + o.totalAmount, 0).toLocaleString("vi-VN")}đ
                   </span>
                 </div>
@@ -113,11 +113,11 @@ export const OrdersListViewCinematic = ({
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-brand-200/60 pt-2 dark:border-stone-800">
-                  <span className="text-sm text-brand-950 dark:text-brand-50">
+                <div className="flex justify-between border-t border-stone-200 pt-2 dark:border-stone-800">
+                  <span className="text-sm text-stone-900 dark:text-stone-50">
                     Còn cần thanh toán
                   </span>
-                  <span className="font-serif text-base text-brand-700 dark:text-brand-300">
+                  <span className="font-semibold text-base text-brand-700 dark:text-brand-300">
                     {unpaidTotal.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
@@ -127,7 +127,7 @@ export const OrdersListViewCinematic = ({
         )}
       </main>
 
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-stone-200 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
         {unpaidOrders.length > 0 && (
           <button
             onClick={onCheckout}
@@ -138,7 +138,7 @@ export const OrdersListViewCinematic = ({
         )}
         <button
           onClick={onGoToMenu}
-          className="w-full rounded-2xl bg-brand-700 py-3 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-brand-950"
+          className="w-full rounded-2xl bg-brand-700 py-3 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-stone-900"
         >
           ☕ Đặt thêm món
         </button>

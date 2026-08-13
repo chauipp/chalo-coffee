@@ -70,7 +70,7 @@ async function dismissOccupiedModal(page: Page) {
   if (occupiedVisible) await occupiedContinue.click();
 }
 
-test("mặc định vào menu là biến thể Rực rỡ", async ({ page, request }) => {
+test("mặc định vào menu là giao diện tiêu chuẩn", async ({ page, request }) => {
   const failures = trackPageFailures(page);
   const tableToken = await getFirstFreeTableToken(request);
   test.skip(!tableToken, "Cần ít nhất 1 bàn");
@@ -91,7 +91,7 @@ test("mặc định vào menu là biến thể Rực rỡ", async ({ page, reque
   expect(failures.failedResponses).toEqual([]);
 });
 
-test("chuyển sang Điện ảnh và giữ lại sau khi tải lại trang", async ({
+test("chuyển sang giao diện tập trung và giữ lại sau khi tải lại trang", async ({
   page,
   request,
 }) => {
@@ -154,7 +154,7 @@ test("toggle A/B độc lập với toggle Sáng/Tối — cả 4 tổ hợp kh�
   expect(failures.failedResponses).toEqual([]);
 });
 
-test("biến thể Cinematic: thêm nhanh 1 món từ nút + vào giỏ hàng", async ({
+test("giao diện tập trung: thêm nhanh 1 món từ nút + vào giỏ hàng", async ({
   page,
   request,
 }) => {
