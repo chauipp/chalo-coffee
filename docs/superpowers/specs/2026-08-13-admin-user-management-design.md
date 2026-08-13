@@ -142,4 +142,4 @@ API layer gọi `GET /user/page` với `role: "CUSTOMER"` cố định (ép sẵ
 
 ## Plan thực thi
 
-Xem `../plans/2026-08-13-admin-user-management.md` (tạo sau khi spec này được duyệt).
+Xem `../plans/2026-08-13-admin-user-management.md`.
