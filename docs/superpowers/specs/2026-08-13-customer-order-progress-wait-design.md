@@ -22,8 +22,9 @@ Mỗi vị trí chỉ có một chỗ trong giao diện; nội dung tại chỗ 
 - `COMPLETED`: **Đã phục vụ** là trạng thái hoàn tất cuối cùng.
 
 Không tạo thêm bước riêng cho `CONFIRMED`: đây vẫn là trạng thái hoàn thành
-của bước tiếp nhận. `CANCELLED` tiếp tục hiển thị thông báo huỷ riêng và không
-render tiến trình.
+của bước tiếp nhận. Vì chưa có pha chế, `CONFIRMED` không nhấn/animate một
+bước tiếp theo giả định. `CANCELLED` tiếp tục hiển thị thông báo huỷ riêng và
+không render tiến trình.
 
 ## Nhận diện bước hiện tại
 
@@ -53,4 +54,4 @@ bước hiện tại, ETA đúng từng thẻ đơn, console/network sạch.
 
 ## Plan thực thi
 
-Sẽ bổ sung liên kết plan sau khi bạn duyệt spec này.
+[Xem plan thực thi](../plans/2026-08-13-customer-order-progress-wait.md).
