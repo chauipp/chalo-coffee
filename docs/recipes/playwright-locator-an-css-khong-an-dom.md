@@ -10,9 +10,9 @@ hoặc `hidden md:table-row`, không phải điều kiện render nên vẫn lu�
 trong DOM dù đang chạy ở viewport desktop.
 
 Ví dụ đã gặp:
-- Task 4: `<article>` mobileCard của bảng nhân viên/khách hàng.
-- Task 7: nút `aria-label="Đóng menu"` của sidebar mobile trùng tên gần giống
-  nút `aria-label="Đóng"` của dialog chi tiết khách hàng.
+- `<article>` mobileCard của bảng nhân viên/khách hàng (`DataTable.tsx`).
+- Nút `aria-label="Đóng menu"` của sidebar mobile trùng tên gần giống nút
+  `aria-label="Đóng"` của dialog chi tiết khách hàng.
 
 ## Cách làm đúng
 
