@@ -1,6 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const tableToken = "progress-table";
+let consoleErrors: string[] = [];
+let failedRequests: string[] = [];
 
 const apiResponse = <T,>(data: T) => ({
   code: 200,
@@ -61,6 +63,14 @@ async function mockCustomerOrders(page: Page, orders: ReturnType<typeof orderWit
 }
 
 test.beforeEach(async ({ page }) => {
+  consoleErrors = [];
+  failedRequests = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 400) failedRequests.push(`${response.status()} ${response.url()}`);
+  });
   await page.addInitScript(() => {
     window.EventSource = class {
       addEventListener() {}
@@ -69,6 +79,11 @@ test.beforeEach(async ({ page }) => {
       onopen: (() => void) | null = null;
     } as unknown as typeof EventSource;
   });
+});
+
+test.afterEach(() => {
+  expect(consoleErrors).toEqual([]);
+  expect(failedRequests).toEqual([]);
 });
 
 test("pending order marks receiving as the active service step", async ({ page }) => {
