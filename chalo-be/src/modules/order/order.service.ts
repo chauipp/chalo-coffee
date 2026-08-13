@@ -625,7 +625,28 @@ export class OrderService {
       })
       .orderBy('o.createdAt', 'DESC')
       .getMany();
-    return orders.map((o) => this.buildDto(o));
+    const settings = await this.settingsService.get();
+    return Promise.all(
+      orders.map(async (order) => {
+        const dto = this.buildDto(order);
+        // Các đơn cũ có thể chưa lưu ETA lúc tạo. Tính lại theo chính order
+        // để khách luôn thấy thời gian hoàn tất thay vì mất hẳn badge.
+        if (
+          settings.waitTimeEnabled &&
+          dto.estimateWaitMinutes == null &&
+          dto.status !== OrderStatus.READY &&
+          dto.status !== OrderStatus.COMPLETED &&
+          dto.status !== OrderStatus.CANCELLED
+        ) {
+          const wait = await this.computeEstimatedWaitForOrder(
+            dto.id,
+            settings.baristaCount,
+          );
+          return { ...dto, estimateWaitMinutes: wait.estimatedCompletionMinutes };
+        }
+        return dto;
+      }),
+    );
   }
 
   async estimatedWait(orderId?: string) {
