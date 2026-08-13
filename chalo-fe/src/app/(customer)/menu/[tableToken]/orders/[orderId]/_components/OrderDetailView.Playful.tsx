@@ -101,7 +101,7 @@ export const OrderDetailViewPlayful = ({
         )}
 
         {!isCancelled && (
-          <ServiceStepperPlayful steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
+          <ServiceStepperPlayful steps={steps} currentStepIndex={currentStepIndex} />
         )}
 
         <div className="rounded-3xl border-2 border-stone-900 bg-white p-5 dark:border-brand-50 dark:bg-carnival-raised">
@@ -170,7 +170,7 @@ export const OrderDetailViewPlayful = ({
         {canPay && (
           <button
             onClick={onPayClick}
-            className="w-full rounded-2xl border-2 border-stone-900 bg-green-500 py-4 text-base font-black text-white shadow-[3px_4px_0_var(--color-stone-900)] dark:border-brand-50"
+            className="w-full rounded-2xl border-2 border-stone-900 bg-green-500 py-4 text-base font-black text-stone-950 shadow-[3px_4px_0_var(--color-stone-900)] dark:border-brand-50"
           >
             Thanh toán · {order.totalAmount.toLocaleString("vi-VN")}đ
           </button>

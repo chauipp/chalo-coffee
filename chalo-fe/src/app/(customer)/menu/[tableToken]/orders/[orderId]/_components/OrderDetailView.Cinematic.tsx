@@ -170,7 +170,7 @@ export const OrderDetailViewCinematic = ({
         {canPay && (
           <button
             onClick={onPayClick}
-            className="w-full rounded-full bg-green-700 py-4 text-base font-semibold text-brand-50 dark:bg-green-500"
+            className="w-full rounded-full bg-green-700 py-4 text-base font-semibold text-brand-50 dark:bg-green-700"
           >
             Thanh toán · {order.totalAmount.toLocaleString("vi-VN")}đ
           </button>

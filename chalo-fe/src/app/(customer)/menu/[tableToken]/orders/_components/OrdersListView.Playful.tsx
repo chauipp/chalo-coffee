@@ -50,7 +50,7 @@ export const OrdersListViewPlayful = ({
       <main className="space-y-4 p-4 pb-32">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <SpinnerIcon className="size-8 animate-spin text-pop-500" />
+            <SpinnerIcon className="size-8 animate-spin text-pop-700" />
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center gap-4 py-20 text-stone-400 dark:text-stone-500">
@@ -133,7 +133,7 @@ export const OrdersListViewPlayful = ({
         {unpaidOrders.length > 0 && (
           <button
             onClick={onCheckout}
-            className="w-full rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-white shadow-[3px_3px_0_var(--color-stone-900)] dark:border-brand-50"
+            className="w-full rounded-2xl border-2 border-stone-900 bg-green-500 py-3.5 text-base font-bold text-stone-950 shadow-[3px_3px_0_var(--color-stone-900)] dark:border-brand-50"
           >
             Thanh toán tất cả · {unpaidTotal.toLocaleString("vi-VN")}đ
           </button>

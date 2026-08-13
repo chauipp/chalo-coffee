@@ -131,7 +131,7 @@ export const OrdersListViewCinematic = ({
         {unpaidOrders.length > 0 && (
           <button
             onClick={onCheckout}
-            className="w-full rounded-2xl bg-green-700 py-3.5 text-base font-semibold text-brand-50 dark:bg-green-500"
+            className="w-full rounded-2xl bg-green-700 py-3.5 text-base font-semibold text-brand-50 dark:bg-green-700"
           >
             Thanh toán tất cả · {unpaidTotal.toLocaleString("vi-VN")}đ
           </button>
