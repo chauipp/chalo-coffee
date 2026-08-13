@@ -9,6 +9,7 @@ import { Select } from "@/components/shared/ui/Select";
 import { Toggle } from "@/components/shared/ui/Toggle";
 import { QUERY_KEYS } from "@/constants";
 import { useTablePagination } from "@/hooks/useTablePagination";
+import { getUserRoleBadge } from "@/utils/user-role-label";
 import {
   ChangePasswordType,
   StaffCreateType,
@@ -98,12 +99,10 @@ export default function StaffPage() {
     {
       key: "role",
       header: "Vai trò",
-      render: (r) => (
-        <Badge
-          label={r.role === "ADMIN" ? "Quản trị" : "Nhân viên"}
-          variant={r.role === "ADMIN" ? "blue" : "gray"}
-        />
-      ),
+      render: (r) => {
+        const badge = getUserRoleBadge(r.role);
+        return <Badge label={badge.label} variant={badge.variant} />;
+      },
     },
     {
       key: "active",
@@ -293,8 +292,8 @@ export default function StaffPage() {
                 </p>
               </div>
               <Badge
-                label={row.role === "ADMIN" ? "Quản trị" : "Nhân viên"}
-                variant={row.role === "ADMIN" ? "blue" : "gray"}
+                label={getUserRoleBadge(row.role).label}
+                variant={getUserRoleBadge(row.role).variant}
               />
             </div>
             <div className="mt-3 flex min-h-11 items-center justify-between border-t border-gray-100 pt-2 dark:border-gray-800">

@@ -38,7 +38,16 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
     if (pathname.startsWith(ROUTES.ADMIN.ROOT) && role !== USER_ROLE.ADMIN) {
-      return NextResponse.redirect(new URL(ROUTES.STAFF.ORDERS, request.url))
+      const dest = role ? ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN : ROUTES.LOGIN
+      return NextResponse.redirect(new URL(dest, request.url))
+    }
+    if (
+      pathname.startsWith(ROUTES.STAFF.ROOT) &&
+      role !== USER_ROLE.ADMIN &&
+      role !== USER_ROLE.MODERATOR
+    ) {
+      const dest = role ? ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN : ROUTES.LOGIN
+      return NextResponse.redirect(new URL(dest, request.url))
     }
   }
 
