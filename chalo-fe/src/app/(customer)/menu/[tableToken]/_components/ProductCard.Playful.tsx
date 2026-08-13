@@ -47,7 +47,7 @@ export const ProductCardPlayful = ({
                 className="size-24 rounded-xl border-2 border-stone-900 object-cover dark:border-brand-50 sm:size-28"
               />
             ) : (
-              <div className="flex size-24 items-center justify-center rounded-xl border-2 border-stone-900 bg-gradient-to-br from-pop-400 to-pop-500 text-sm font-black text-white dark:border-brand-50 sm:size-28">
+              <div className="flex size-24 items-center justify-center rounded-xl border-2 border-stone-900 bg-gradient-to-br from-pop-400 to-pop-500 text-sm font-black text-stone-950 dark:border-brand-50 sm:size-28">
                 CH
               </div>
             )}
@@ -136,7 +136,7 @@ export const ProductCardPlayful = ({
                 className="h-64 w-full object-cover"
               />
             ) : (
-              <div className="flex h-64 w-full items-center justify-center text-3xl font-black text-white">
+              <div className="flex h-64 w-full items-center justify-center text-3xl font-black text-stone-950">
                 CH
               </div>
             )}
