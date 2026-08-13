@@ -23,6 +23,19 @@ theo token...) bằng Playwright, và phải dựng server qua `next build` + st
    `proxy.ts` (xem `node_modules/next/dist/docs/.../proxy.md`), nhưng `middleware.ts` VẪN
    được build và chạy dưới nhãn `ƒ Proxy (Middleware)` trong output `next build`. Thấy nhãn
    đó không có nghĩa là code mới của bạn đã chạy.
+4. Khi chạy standalone, `server.js` tìm `.next/static` **tương đối với thư mục
+   đang chạy**. Sau build, copy asset vào bundle rồi khởi động từ chính thư mục
+   standalone:
+
+   ```bash
+   cp -r chalo-fe/.next/static chalo-fe/.next/standalone/.next/
+   cd chalo-fe/.next/standalone
+   PORT=3023 HOSTNAME=127.0.0.1 node server.js
+   ```
+
+   Chạy `node chalo-fe/.next/standalone/server.js` từ root làm HTML vẫn trả
+   `200`, nhưng `/_next/static/*` trả `404`; browser chỉ hiện trang trắng hoặc
+   hydration không hoàn tất.
 
 ## Cái bẫy
 
