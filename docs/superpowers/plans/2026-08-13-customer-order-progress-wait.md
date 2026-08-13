@@ -21,6 +21,8 @@
 
 - [ ] Task 1: Chuẩn hoá metadata tiến trình và stepper trạng thái
 
+### Task 1: Chuẩn hoá metadata tiến trình và stepper trạng thái
+
   **Files:**
   - Modify: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/page.tsx`
   - Modify: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/ServiceStepper.Cinematic.tsx`
@@ -67,6 +69,8 @@
 
 - [ ] Task 2: Hiển thị thời gian chờ của từng đơn ở danh sách và chi tiết
 
+### Task 2: Hiển thị thời gian chờ của từng đơn ở danh sách và chi tiết
+
   **Files:**
   - Modify: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.Cinematic.tsx`
   - Modify: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Cinematic.tsx`
@@ -111,6 +115,8 @@
     ```
 
 - [ ] Task 3: Kiểm UI và ghi nhận kết quả
+
+### Task 3: Kiểm UI và ghi nhận kết quả
 
   **Files:**
   - Modify: `docs/superpowers/plans/2026-08-13-customer-order-progress-wait.md`
