@@ -91,7 +91,7 @@ export function CustomerTab() {
           {table.pagination.total} khách hàng
         </p>
         <Input
-          placeholder="Tìm tên / tài khoản / email..."
+          placeholder="Tìm tên / tài khoản..."
           className="w-full sm:w-64"
           onChange={(e) =>
             table.updateFilter({ keyword: e.target.value || undefined })
