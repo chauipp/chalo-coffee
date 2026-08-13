@@ -7,6 +7,7 @@ import {
   Body,
   Query,
   Param,
+  ParseIntPipe,
   Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
@@ -88,11 +89,11 @@ export class UserController {
     schema: { example: { code: 200, message: 'success', data: { list: [], total: 0, pageNo: 1, pageSize: 5 } } },
   })
   async customerOrders(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query('pageNo') pageNo?: string,
     @Query('pageSize') pageSize?: string,
   ) {
-    const result = await this.customerService.getOrders(Number(id), {
+    const result = await this.customerService.getOrders(id, {
       pageNo: pageNo ? Number(pageNo) : undefined,
       pageSize: pageSize ? Number(pageSize) : undefined,
     });
@@ -117,8 +118,8 @@ export class UserController {
     description: 'Điểm tích luỹ của 1 khách hàng (admin xem)',
     schema: { example: { code: 200, message: 'success', data: { balance: 0 } } },
   })
-  customerLoyalty(@Param('id') id: string) {
-    return this.customerService.getLoyalty(Number(id));
+  customerLoyalty(@Param('id', ParseIntPipe) id: number) {
+    return this.customerService.getLoyalty(id);
   }
 
   @Put(':id/active')
@@ -128,10 +129,10 @@ export class UserController {
     schema: { example: { code: 200, message: 'success', data: { id: 3, isActive: false } } },
   })
   setActive(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: SetActiveDto,
     @Request() req: Express.Request & { user: { id: number } },
   ) {
-    return this.userService.setActive(Number(id), dto.isActive, req.user.id);
+    return this.userService.setActive(id, dto.isActive, req.user.id);
   }
 }
