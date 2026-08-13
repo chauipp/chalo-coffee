@@ -85,6 +85,7 @@ test("pending order marks receiving as the active service step", async ({ page, 
   await page.goto(`/menu/${tableToken}/orders/${order.id}`);
 
   await expect(page.getByText("Đang tiếp nhận", { exact: true })).toBeVisible();
+  await expect(page.getByText("Đã pha chế", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Đang tiến hành", { exact: false })).toHaveCount(0);
   await expect(page.getByTestId("service-step-active")).toHaveText(/Đang tiếp nhận/);
 });

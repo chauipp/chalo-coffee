@@ -18,30 +18,35 @@ const SERVICE_STEPS: {
   statuses: OrderStatus[];
   activeLabel: string;
   completedLabel: string;
+  pendingLabel: string;
   emoji: string;
 }[] = [
   {
     statuses: ["PENDING", "CONFIRMED"],
     activeLabel: "Đang tiếp nhận",
     completedLabel: "Đã tiếp nhận",
+    pendingLabel: "Tiếp nhận",
     emoji: "📋",
   },
   {
     statuses: ["PREPARING"],
     activeLabel: "Đang pha chế",
     completedLabel: "Đã pha chế",
+    pendingLabel: "Pha chế",
     emoji: "☕",
   },
   {
     statuses: ["READY"],
     activeLabel: "Sẵn sàng phục vụ",
     completedLabel: "Đã sẵn sàng phục vụ",
+    pendingLabel: "Phục vụ",
     emoji: "🔔",
   },
   {
     statuses: ["COMPLETED"],
     activeLabel: "Đã phục vụ",
     completedLabel: "Đã phục vụ",
+    pendingLabel: "Đã phục vụ",
     emoji: "🎁",
   },
 ];

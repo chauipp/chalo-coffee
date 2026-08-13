@@ -7,6 +7,7 @@ interface ServiceStepperProps {
     statuses: OrderStatus[];
     activeLabel: string;
     completedLabel: string;
+    pendingLabel: string;
     emoji: string;
   }[];
   currentStepIndex: number;
@@ -54,7 +55,11 @@ export const ServiceStepperCinematic = ({
                           : "text-brand-400 dark:text-stone-600"
                     }`}
                   >
-                    {isCurrent ? step.activeLabel : step.completedLabel}
+                    {isCurrent
+                      ? step.activeLabel
+                      : isDone
+                        ? step.completedLabel
+                        : step.pendingLabel}
                   </p>
                   {isCurrent && (
                     <span

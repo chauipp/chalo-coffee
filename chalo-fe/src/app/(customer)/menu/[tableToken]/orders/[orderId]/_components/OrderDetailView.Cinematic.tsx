@@ -14,6 +14,7 @@ interface OrderDetailViewProps {
     statuses: OrderStatus[];
     activeLabel: string;
     completedLabel: string;
+    pendingLabel: string;
     emoji: string;
   }[];
   onPayClick: () => void;
