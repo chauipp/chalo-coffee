@@ -43,7 +43,7 @@ export const CustomerMenuViewCinematic = ({
                 <p className="truncate font-serif text-sm leading-none sm:text-base">
                   Chalo Coffee
                 </p>
-                <p className="mt-1 truncate text-xs text-brand-700/70 dark:text-brand-200/70">
+                <p className="mt-1 truncate text-xs text-brand-700 dark:text-brand-200/70">
                   {tableName}
                 </p>
               </div>
@@ -114,7 +114,7 @@ export const CustomerMenuViewCinematic = ({
                   className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                     !activeCateId
                       ? "bg-brand-700 text-brand-50 dark:bg-brand-300 dark:text-brand-950"
-                      : "text-brand-700/70 hover:bg-white dark:text-brand-200/70 dark:hover:bg-stone-800"
+                      : "text-brand-700 hover:bg-white dark:text-brand-200/70 dark:hover:bg-stone-800"
                   }`}
                 >
                   Tất cả
@@ -126,7 +126,7 @@ export const CustomerMenuViewCinematic = ({
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                       activeCateId === c.id
                         ? "bg-brand-700 text-brand-50 dark:bg-brand-300 dark:text-brand-950"
-                        : "text-brand-700/70 hover:bg-white dark:text-brand-200/70 dark:hover:bg-stone-800"
+                        : "text-brand-700 hover:bg-white dark:text-brand-200/70 dark:hover:bg-stone-800"
                     }`}
                   >
                     {c.name}
@@ -140,15 +140,15 @@ export const CustomerMenuViewCinematic = ({
 
       <main className="mx-auto px-4 pb-28 pt-4">
         {!hasAnyProduct ? (
-          <div className="py-24 text-center text-brand-700/70 dark:text-brand-200/70">
+          <div className="py-24 text-center text-brand-700 dark:text-brand-200/70">
             <p className="text-sm font-medium">Thực đơn đang được cập nhật</p>
-            <p className="mt-1 text-xs text-brand-500/70 dark:text-brand-300/50">
+            <p className="mt-1 text-xs text-brand-500 dark:text-brand-300/50">
               Vui lòng quay lại sau hoặc gọi nhân viên để được hỗ trợ.
             </p>
           </div>
         ) : isFiltering ? (
           filterProduct.length === 0 ? (
-            <div className="py-20 text-center text-brand-700/70 dark:text-brand-200/70">
+            <div className="py-20 text-center text-brand-700 dark:text-brand-200/70">
               <p className="text-sm">Không tìm thấy món phù hợp</p>
             </div>
           ) : (

@@ -18,10 +18,10 @@ export const OrderCardCinematic = ({
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
-          <p className="font-mono text-xs text-brand-500/70 dark:text-brand-300/50">
+          <p className="font-mono text-xs text-brand-500 dark:text-brand-300/50">
             Đơn #{order.id.slice(-6).toUpperCase()}
           </p>
-          <p className="mt-0.5 text-xs text-brand-500/70 dark:text-brand-300/50">
+          <p className="mt-0.5 text-xs text-brand-500 dark:text-brand-300/50">
             {new Date(order.createdAt).toLocaleTimeString("vi-VN", {
               hour: "2-digit",
               minute: "2-digit",
@@ -53,7 +53,7 @@ export const OrderCardCinematic = ({
           <div key={item.id} className="flex items-center justify-between">
             <span className="truncate pr-4 text-sm text-brand-900 dark:text-brand-100">
               {item.productName}
-              <span className="text-brand-500/60">x{item.quantity}</span>
+              <span className="text-brand-500">x{item.quantity}</span>
               {(item.selectedModifiers?.length ?? 0) > 0 && (
                 <span className="block text-xs text-brand-600 dark:text-brand-300">
                   {item.selectedModifiers!
@@ -68,14 +68,14 @@ export const OrderCardCinematic = ({
           </div>
         ))}
         {order.items.length > 3 && (
-          <p className="text-xs text-brand-500/60 dark:text-brand-300/50">
+          <p className="text-xs text-brand-500 dark:text-brand-300/50">
             +{order.items.length - 3} món khác ...
           </p>
         )}
       </div>
 
       <div className="flex items-center justify-between border-t border-brand-200/50 pt-3 dark:border-stone-800">
-        <span className="text-sm text-brand-700/70 dark:text-brand-200/60">
+        <span className="text-sm text-brand-700 dark:text-brand-200/60">
           Tổng: {order.items.reduce((sum, i) => sum + i.quantity, 0)} món
         </span>
         <span className="font-serif text-base text-brand-700 dark:text-brand-300">
@@ -84,7 +84,7 @@ export const OrderCardCinematic = ({
       </div>
 
       <div className="mt-2 flex justify-end">
-        <span className="text-xs text-brand-400/70 dark:text-brand-300/40">
+        <span className="text-xs text-brand-400 dark:text-brand-300/40">
           Xem chi tiết →
         </span>
       </div>

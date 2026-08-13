@@ -32,7 +32,7 @@ export const OrdersListViewCinematic = ({
   return (
     <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
-        <button onClick={onGoToMenu} className="text-brand-700/70 dark:text-brand-200/70">
+        <button onClick={onGoToMenu} className="text-brand-700 dark:text-brand-200/70">
           ← Quay lại
         </button>
         <div className="flex-1">
@@ -40,7 +40,7 @@ export const OrdersListViewCinematic = ({
             Đơn hàng của bàn
           </h1>
           {orders && orders.length > 1 && (
-            <p className="text-xs text-brand-500/70 dark:text-brand-300/50">
+            <p className="text-xs text-brand-500 dark:text-brand-300/50">
               {orders.length} lần đặt · {totalAllItems} món
             </p>
           )}
@@ -53,8 +53,8 @@ export const OrdersListViewCinematic = ({
             <SpinnerIcon className="size-8 animate-spin text-brand-400" />
           </div>
         ) : isError ? (
-          <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700/60 dark:text-brand-200/50">
-            <p className="text-sm text-brand-700/80 dark:text-brand-200/70">
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700 dark:text-brand-200/50">
+            <p className="text-sm text-brand-700 dark:text-brand-200/70">
               Không tải được danh sách đơn
             </p>
             <button
@@ -65,15 +65,15 @@ export const OrdersListViewCinematic = ({
             </button>
           </div>
         ) : !orders || orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700/60 dark:text-brand-200/50">
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-brand-700 dark:text-brand-200/50">
             <div className="flex size-20 items-center justify-center rounded-full bg-brand-100 dark:bg-stone-900">
               <span className="text-4xl">📋</span>
             </div>
             <div className="text-center">
-              <p className="text-sm text-brand-700/80 dark:text-brand-200/70">
+              <p className="text-sm text-brand-700 dark:text-brand-200/70">
                 Chưa có đơn hàng nào
               </p>
-              <p className="mt-1 text-xs text-brand-500/60 dark:text-brand-300/40">
+              <p className="mt-1 text-xs text-brand-500 dark:text-brand-300/40">
                 Hãy chọn món từ thực đơn để bắt đầu
               </p>
             </div>
@@ -96,7 +96,7 @@ export const OrdersListViewCinematic = ({
               <div className="space-y-2 rounded-2xl bg-white/60 p-4 dark:bg-stone-900/60">
                 <p className="text-sm text-brand-800 dark:text-brand-200">Tổng kết</p>
                 <div className="flex justify-between text-sm">
-                  <span className="text-brand-600/70 dark:text-brand-300/60">
+                  <span className="text-brand-600 dark:text-brand-300/60">
                     Tổng tất cả ({orders.length} đơn)
                   </span>
                   <span className="text-brand-950 dark:text-brand-50">

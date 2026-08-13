@@ -49,7 +49,7 @@ export const ServiceStepperCinematic = ({
                     {step.label}
                   </p>
                   {isCurrent && !isServed && (
-                    <p className="motion-safe:animate-pulse mt-1 text-xs text-brand-500/80 dark:text-brand-300/70">
+                    <p className="motion-safe:animate-pulse mt-1 text-xs text-brand-500 dark:text-brand-300/70">
                       Đang tiến hành...
                     </p>
                   )}

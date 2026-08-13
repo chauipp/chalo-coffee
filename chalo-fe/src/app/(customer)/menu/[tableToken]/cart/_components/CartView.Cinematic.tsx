@@ -33,14 +33,14 @@ export const CartViewCinematic = ({
     return (
       <div className="flex min-h-screen flex-col bg-brand-50 dark:bg-stone-950">
         <header className="flex items-center gap-3 border-b border-brand-200/60 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
-          <button onClick={onBack} className="text-brand-700/70 dark:text-brand-200/70">
+          <button onClick={onBack} className="text-brand-700 dark:text-brand-200/70">
             ← Quay lại
           </button>
           <h1 className="font-serif text-base text-brand-950 dark:text-brand-50">
             Giỏ hàng
           </h1>
         </header>
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-brand-700/60 dark:text-brand-200/50">
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-brand-700 dark:text-brand-200/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-brand-100 dark:bg-stone-900">
             <span className="text-4xl">🛒</span>
           </div>
@@ -59,7 +59,7 @@ export const CartViewCinematic = ({
   return (
     <div className="flex min-h-screen flex-col bg-brand-50 dark:bg-stone-950">
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
-        <button onClick={onBack} className="text-brand-700/70 dark:text-brand-200/70">
+        <button onClick={onBack} className="text-brand-700 dark:text-brand-200/70">
           ← Quay lại
         </button>
         <h1 className="flex-1 font-serif text-base text-brand-950 dark:text-brand-50">
@@ -111,7 +111,7 @@ export const CartViewCinematic = ({
                 </span>
               </div>
               {(item.selectedModifiers?.length ?? 0) > 0 && (
-                <p className="mt-1 text-xs text-brand-600/70 dark:text-brand-300/70">
+                <p className="mt-1 text-xs text-brand-600 dark:text-brand-300/70">
                   {modifierLabel(item.selectedModifiers)}
                 </p>
               )}
@@ -143,7 +143,7 @@ export const CartViewCinematic = ({
                 <button
                   onClick={() => onRemoveItem(item.cartKey)}
                   aria-label="Xoá món"
-                  className="ml-auto text-xs text-brand-500/70 underline-offset-2 hover:underline dark:text-brand-300/60"
+                  className="ml-auto text-xs text-brand-500 underline-offset-2 hover:underline dark:text-brand-300/60"
                 >
                   Xoá
                 </button>
@@ -169,7 +169,7 @@ export const CartViewCinematic = ({
 
       <div className="fixed bottom-0 left-0 right-0 z-30 space-y-3 border-t border-brand-200/60 bg-brand-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
         <div className="flex items-center justify-between">
-          <span className="text-base text-brand-700/80 dark:text-brand-200/70">
+          <span className="text-base text-brand-700 dark:text-brand-200/70">
             Tổng cộng
           </span>
           <span className="font-serif text-2xl text-brand-900 dark:text-brand-50">

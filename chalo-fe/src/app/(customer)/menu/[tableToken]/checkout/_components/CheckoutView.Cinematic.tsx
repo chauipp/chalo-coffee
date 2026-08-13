@@ -61,7 +61,7 @@ const SessionPanel = ({
   return (
     <div className="space-y-4 rounded-2xl bg-white/70 p-5 dark:bg-stone-900/70">
       <div className="text-center">
-        <p className="text-xs uppercase tracking-wider text-brand-600/70 dark:text-brand-300/60">
+        <p className="text-xs uppercase tracking-wider text-brand-600 dark:text-brand-300/60">
           Phiên thanh toán gộp
         </p>
         <p className="mt-2 font-serif text-3xl text-brand-800 dark:text-brand-300">
@@ -69,7 +69,7 @@ const SessionPanel = ({
         </p>
         <p
           className={`mt-2 text-sm ${
-            expired ? "text-red-600 dark:text-red-400" : "text-brand-700/70 dark:text-brand-200/60"
+            expired ? "text-red-600 dark:text-red-400" : "text-brand-700 dark:text-brand-200/60"
           }`}
         >
           {expired ? "Phiên đã hết hạn" : `Hết hạn sau ${mm}:${ss.toString().padStart(2, "0")}`}
@@ -85,10 +85,10 @@ const SessionPanel = ({
             <p className="text-sm text-brand-900 dark:text-brand-100">
               {settings!.bankAccountName}
             </p>
-            <p className="font-mono text-xs text-brand-600/70 dark:text-brand-300/60">
+            <p className="font-mono text-xs text-brand-600 dark:text-brand-300/60">
               {settings!.bankAccountNo}
             </p>
-            <p className="mt-1 text-xs text-brand-500/70 dark:text-brand-300/50">
+            <p className="mt-1 text-xs text-brand-500 dark:text-brand-300/50">
               Mở app ngân hàng bất kỳ, quét mã — số tiền và nội dung đã điền
               sẵn. Chuyển xong hãy bấm nút bên dưới.
             </p>
@@ -129,7 +129,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
   return (
     <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
       <header className="flex items-center gap-3 border-b border-brand-200/60 bg-white px-4 py-3 dark:border-stone-800 dark:bg-stone-900">
-        <button onClick={onGoToOrders} className="text-brand-700/70 dark:text-brand-200/70">
+        <button onClick={onGoToOrders} className="text-brand-700 dark:text-brand-200/70">
           ← Quay lại
         </button>
         <h1 className="font-serif text-base text-brand-950 dark:text-brand-50">
@@ -158,11 +158,11 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
             <SpinnerIcon className="size-8 animate-spin text-brand-400" />
           </div>
         ) : step === "empty" ? (
-          <div className="flex flex-col items-center justify-center gap-4 py-20 text-center text-brand-700/60 dark:text-brand-200/50">
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-center text-brand-700 dark:text-brand-200/50">
             <div className="flex size-20 items-center justify-center rounded-full bg-brand-100 text-4xl dark:bg-stone-900">
               ✅
             </div>
-            <p className="text-sm text-brand-700/80 dark:text-brand-200/70">
+            <p className="text-sm text-brand-700 dark:text-brand-200/70">
               Không có đơn nào cần thanh toán
             </p>
             <button
@@ -183,10 +183,10 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
               {orders.map((o) => (
                 <div key={o.id} className="flex items-center justify-between">
                   <div className="min-w-0">
-                    <p className="font-mono text-xs text-brand-500/70 dark:text-brand-300/50">
+                    <p className="font-mono text-xs text-brand-500 dark:text-brand-300/50">
                       Đơn #{o.id.slice(-6).toUpperCase()}
                     </p>
-                    <p className="truncate text-xs text-brand-600/70 dark:text-brand-300/60">
+                    <p className="truncate text-xs text-brand-600 dark:text-brand-300/60">
                       {o.items.reduce((s, i) => s + i.quantity, 0)} món
                     </p>
                   </div>

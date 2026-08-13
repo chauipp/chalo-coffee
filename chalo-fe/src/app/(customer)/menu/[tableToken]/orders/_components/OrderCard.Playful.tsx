@@ -55,7 +55,7 @@ export const OrderCardPlayful = ({
               {item.productName}
               <span className="text-stone-400">x{item.quantity}</span>
               {(item.selectedModifiers?.length ?? 0) > 0 && (
-                <span className="block text-xs text-pop-600 dark:text-pop-400">
+                <span className="block text-xs text-pop-700 dark:text-pop-400">
                   {item.selectedModifiers!
                     .map((m) => `${m.groupName}: ${m.optionName}`)
                     .join(" · ")}
@@ -78,7 +78,7 @@ export const OrderCardPlayful = ({
         <span className="text-sm text-stone-500 dark:text-stone-400">
           Tổng: {order.items.reduce((sum, i) => sum + i.quantity, 0)} món
         </span>
-        <span className="text-base font-black text-pop-600 dark:text-pop-400">
+        <span className="text-base font-black text-pop-700 dark:text-pop-400">
           {order.totalAmount.toLocaleString("vi-VN")}đ
         </span>
       </div>

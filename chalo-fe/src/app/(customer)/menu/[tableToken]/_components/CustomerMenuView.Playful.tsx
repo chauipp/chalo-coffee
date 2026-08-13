@@ -35,7 +35,7 @@ export const CustomerMenuViewPlayful = ({
               <Link
                 href="/"
                 aria-label="Chalo Coffee - Trang chủ"
-                className="flex size-9 shrink-0 items-center justify-center rounded-lg border-2 border-stone-900 bg-pop-500 text-xs font-black text-white dark:border-brand-50"
+                className="flex size-9 shrink-0 items-center justify-center rounded-lg border-2 border-stone-900 bg-pop-500 text-xs font-black text-stone-950 dark:border-brand-50"
               >
                 CH
               </Link>
@@ -77,7 +77,7 @@ export const CustomerMenuViewPlayful = ({
               <ThemeSwitch />
               <button
                 onClick={onOrdersClick}
-                className="rounded-full border-2 border-stone-900 bg-pop-500 px-3 py-2 text-xs font-bold text-white dark:border-brand-50"
+                className="rounded-full border-2 border-stone-900 bg-pop-500 px-3 py-2 text-xs font-bold text-stone-950 dark:border-brand-50"
               >
                 Đơn của tôi
               </button>
@@ -113,7 +113,7 @@ export const CustomerMenuViewPlayful = ({
                   onClick={() => onSelectCategory(null)}
                   className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-all ${
                     !activeCateId
-                      ? "bg-pop-500 text-white"
+                      ? "bg-pop-500 text-stone-950"
                       : "text-stone-600 hover:bg-pop-500/10 dark:text-stone-300"
                   }`}
                 >
@@ -125,7 +125,7 @@ export const CustomerMenuViewPlayful = ({
                     onClick={() => onSelectCategory(activeCateId === c.id ? null : c.id)}
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-all ${
                       activeCateId === c.id
-                        ? "bg-pop-500 text-white"
+                        ? "bg-pop-500 text-stone-950"
                         : "text-stone-600 hover:bg-pop-500/10 dark:text-stone-300"
                     }`}
                   >
@@ -192,7 +192,7 @@ export const CustomerMenuViewPlayful = ({
         onClick={onCartClick}
         disabled={itemCount === 0}
         aria-label="Xem giỏ hàng"
-        className="motion-safe:animate-bounce fixed bottom-5 right-4 z-30 flex size-16 items-center justify-center rounded-full border-2 border-stone-900 bg-pop-500 text-white shadow-[4px_5px_0_var(--color-stone-900)] transition active:scale-95 disabled:animate-none disabled:cursor-not-allowed disabled:border-stone-300 disabled:bg-stone-300 disabled:text-stone-500 disabled:shadow-none dark:border-brand-50 dark:shadow-[4px_5px_0_var(--color-pop-600)] dark:disabled:border-stone-700 dark:disabled:bg-stone-800 sm:bottom-7 sm:right-7"
+        className="motion-safe:enabled:animate-bounce fixed bottom-5 right-4 z-30 flex size-16 items-center justify-center rounded-full border-2 border-stone-900 bg-pop-500 text-stone-950 shadow-[4px_5px_0_var(--color-stone-900)] transition active:scale-95 disabled:cursor-not-allowed disabled:border-stone-300 disabled:bg-stone-300 disabled:text-stone-500 disabled:shadow-none dark:border-brand-50 dark:shadow-[4px_5px_0_var(--color-pop-600)] dark:disabled:border-stone-700 dark:disabled:bg-stone-800 sm:bottom-7 sm:right-7"
       >
         <svg
           aria-hidden="true"

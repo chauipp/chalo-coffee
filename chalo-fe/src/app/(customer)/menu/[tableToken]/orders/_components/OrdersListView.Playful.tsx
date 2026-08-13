@@ -59,7 +59,7 @@ export const OrdersListViewPlayful = ({
             </p>
             <button
               onClick={onRetry}
-              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-white dark:border-brand-50"
+              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-stone-950 dark:border-brand-50"
             >
               Thử lại
             </button>
@@ -79,7 +79,7 @@ export const OrdersListViewPlayful = ({
             </div>
             <button
               onClick={onGoToMenu}
-              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-white dark:border-brand-50"
+              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-stone-950 dark:border-brand-50"
             >
               Xem thực đơn
             </button>
@@ -119,7 +119,7 @@ export const OrdersListViewPlayful = ({
                   <span className="text-sm font-bold text-stone-900 dark:text-brand-50">
                     Còn cần thanh toán
                   </span>
-                  <span className="text-base font-black text-pop-600 dark:text-pop-400">
+                  <span className="text-base font-black text-pop-700 dark:text-pop-400">
                     {unpaidTotal.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
@@ -140,7 +140,7 @@ export const OrdersListViewPlayful = ({
         )}
         <button
           onClick={onGoToMenu}
-          className="w-full rounded-2xl border-2 border-stone-900 bg-pop-500 py-3 text-sm font-bold text-white dark:border-brand-50"
+          className="w-full rounded-2xl border-2 border-stone-900 bg-pop-500 py-3 text-sm font-bold text-stone-950 dark:border-brand-50"
         >
           ☕ Đặt thêm món
         </button>

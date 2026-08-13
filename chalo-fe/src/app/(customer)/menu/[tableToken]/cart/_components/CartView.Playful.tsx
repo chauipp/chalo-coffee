@@ -47,7 +47,7 @@ export const CartViewPlayful = ({
           <p className="text-sm font-bold">Bàn của quý khách chưa có món</p>
           <button
             onClick={onBack}
-            className="mt-2 rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-white shadow-[3px_3px_0_var(--color-stone-900)] dark:border-brand-50 dark:shadow-[3px_3px_0_var(--color-pop-600)]"
+            className="mt-2 rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-stone-950 shadow-[3px_3px_0_var(--color-stone-900)] dark:border-brand-50 dark:shadow-[3px_3px_0_var(--color-pop-600)]"
           >
             Tiếp tục chọn món
           </button>
@@ -106,7 +106,7 @@ export const CartViewPlayful = ({
                     <p className="truncate pr-8 text-sm font-bold text-stone-900 dark:text-brand-50">
                       {item.productName}
                     </p>
-                    <p className="mt-1 text-sm font-bold text-pop-600 dark:text-pop-400">
+                    <p className="mt-1 text-sm font-bold text-pop-700 dark:text-pop-400">
                       {item.price.toLocaleString("vi-VN")}đ
                     </p>
                     {(item.selectedModifiers?.length ?? 0) > 0 && (
@@ -187,7 +187,7 @@ export const CartViewPlayful = ({
         <button
           onClick={onSubmit}
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-base font-bold text-white shadow-[3px_3px_0_var(--color-stone-900)] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-60 dark:border-brand-50 dark:shadow-[3px_3px_0_var(--color-pop-600)]"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-base font-bold text-stone-950 shadow-[3px_3px_0_var(--color-stone-900)] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-60 dark:border-brand-50 dark:shadow-[3px_3px_0_var(--color-pop-600)]"
         >
           {isSubmitting && <SpinnerIcon className="size-5 animate-spin" />}
           {isSubmitting ? "Đang gửi đơn..." : "Xác nhận đặt món"}

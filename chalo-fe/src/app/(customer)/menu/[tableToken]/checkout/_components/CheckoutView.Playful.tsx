@@ -64,7 +64,7 @@ const SessionPanel = ({
         <p className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
           Phiên thanh toán gộp
         </p>
-        <p className="mt-2 text-3xl font-black text-pop-600 dark:text-pop-400">
+        <p className="mt-2 text-3xl font-black text-pop-700 dark:text-pop-400">
           {session!.totalAmount.toLocaleString("vi-VN")}đ
         </p>
         <p
@@ -102,7 +102,7 @@ const SessionPanel = ({
       {expired ? (
         <button
           onClick={onRestartSession}
-          className="w-full rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-sm font-bold text-white dark:border-brand-50"
+          className="w-full rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-sm font-bold text-stone-950 dark:border-brand-50"
         >
           Tạo lại phiên thanh toán
         </button>
@@ -151,7 +151,7 @@ export const CheckoutViewPlayful = (props: CheckoutViewProps) => {
             </p>
             <button
               onClick={onGoToOrders}
-              className="rounded-2xl border-2 border-stone-900 bg-pop-500 px-8 py-3 text-sm font-bold text-white dark:border-brand-50"
+              className="rounded-2xl border-2 border-stone-900 bg-pop-500 px-8 py-3 text-sm font-bold text-stone-950 dark:border-brand-50"
             >
               Xem đơn hàng
             </button>
@@ -170,7 +170,7 @@ export const CheckoutViewPlayful = (props: CheckoutViewProps) => {
             </p>
             <button
               onClick={onGoToMenu}
-              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-white dark:border-brand-50"
+              className="rounded-full border-2 border-stone-900 bg-pop-500 px-6 py-2.5 text-sm font-bold text-stone-950 dark:border-brand-50"
             >
               Xem thực đơn
             </button>
@@ -203,7 +203,7 @@ export const CheckoutViewPlayful = (props: CheckoutViewProps) => {
               <span className="text-sm font-bold text-stone-900 dark:text-brand-50">
                 Tổng cần thanh toán
               </span>
-              <span className="text-lg font-black text-pop-600 dark:text-pop-400">
+              <span className="text-lg font-black text-pop-700 dark:text-pop-400">
                 {totalAmount.toLocaleString("vi-VN")}đ
               </span>
             </div>

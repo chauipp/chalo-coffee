@@ -31,14 +31,14 @@ export const OrderDetailViewCinematic = ({
   return (
     <div className="min-h-screen bg-brand-50 dark:bg-stone-950">
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-brand-200/60 bg-brand-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/90">
-        <button onClick={onBackToOrders} className="shrink-0 text-brand-700/70 dark:text-brand-200/70">
+        <button onClick={onBackToOrders} className="shrink-0 text-brand-700 dark:text-brand-200/70">
           ← Quay lại
         </button>
         <div className="flex-1 overflow-hidden">
           <h1 className="truncate font-serif text-base text-brand-950 dark:text-brand-50">
             Chi tiết đơn
           </h1>
-          <p className="font-mono text-xs text-brand-500/70 dark:text-brand-300/50">
+          <p className="font-mono text-xs text-brand-500 dark:text-brand-300/50">
             #{order.id.slice(-6).toUpperCase()} · {order.tableName}
           </p>
         </div>
@@ -90,7 +90,7 @@ export const OrderDetailViewCinematic = ({
               ⏱️
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-brand-600/70 dark:text-brand-300/60">
+              <p className="text-xs uppercase tracking-wider text-brand-600 dark:text-brand-300/60">
                 Thời gian chờ dự kiến
               </p>
               <p className="text-lg font-serif text-brand-800 dark:text-brand-300">
@@ -128,7 +128,7 @@ export const OrderDetailViewCinematic = ({
                         {item.selectedModifiers!.map((m) => `${m.groupName}: ${m.optionName}`).join(" · ")}
                       </p>
                     )}
-                    <p className="mt-0.5 text-xs text-brand-600/70 dark:text-brand-300/60">
+                    <p className="mt-0.5 text-xs text-brand-600 dark:text-brand-300/60">
                       {item.price.toLocaleString("vi-VN")}đ <span className="mx-1">×</span> {item.quantity}
                     </p>
                     {item.note && (
@@ -146,7 +146,7 @@ export const OrderDetailViewCinematic = ({
           </div>
 
           <div className="mt-5 flex items-center justify-between border-t border-dashed border-brand-200 pt-4 dark:border-stone-800">
-            <span className="text-sm text-brand-600/70 dark:text-brand-300/60">Tổng cộng</span>
+            <span className="text-sm text-brand-600 dark:text-brand-300/60">Tổng cộng</span>
             <span className="font-serif text-xl text-brand-700 dark:text-brand-300">
               {order.totalAmount.toLocaleString("vi-VN")}đ
             </span>

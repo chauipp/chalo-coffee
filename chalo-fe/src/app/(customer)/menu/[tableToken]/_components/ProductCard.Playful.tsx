@@ -66,7 +66,7 @@ export const ProductCardPlayful = ({
             <p className="line-clamp-2 text-sm font-extrabold leading-snug text-stone-900 dark:text-brand-50 sm:text-base">
               {product.name}
             </p>
-            <span className="text-sm font-bold text-pop-600 dark:text-pop-400 sm:text-base">
+            <span className="text-sm font-bold text-pop-700 dark:text-pop-400 sm:text-base">
               {product.price.toLocaleString("vi-VN")}đ
             </span>
           </div>
@@ -106,7 +106,7 @@ export const ProductCardPlayful = ({
                         setBurstKey((k) => k + 1);
                       }
                 }
-                className="rounded-full border-2 border-stone-900 bg-pop-500 px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0_var(--color-stone-900)] transition-transform hover:brightness-105 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-brand-50 dark:shadow-[2px_2px_0_var(--color-pop-600)]"
+                className="rounded-full border-2 border-stone-900 bg-pop-500 px-4 py-2 text-xs font-bold text-stone-950 shadow-[2px_2px_0_var(--color-stone-900)] transition-transform hover:brightness-105 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-brand-50 dark:shadow-[2px_2px_0_var(--color-pop-600)]"
               >
                 Thêm
               </button>
@@ -176,7 +176,7 @@ export const ProductCardPlayful = ({
 
           <div className="border-t-2 border-stone-900 pt-4 dark:border-brand-50">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <span className="text-base font-extrabold text-pop-600 dark:text-pop-400">
+              <span className="text-base font-extrabold text-pop-700 dark:text-pop-400">
                 {s.detailTotal.toLocaleString("vi-VN")}đ
               </span>
               <div className="grid grid-cols-[2rem_1.75rem_2rem] items-center">
@@ -220,7 +220,7 @@ export const ProductCardPlayful = ({
                   setBurstKey((k) => k + 1);
                 }}
                 disabled={!s.canAddDetail}
-                className="w-full rounded-full border-2 border-stone-900 bg-pop-500 px-4 py-3 text-sm font-bold text-white shadow-[3px_3px_0_var(--color-stone-900)] transition-transform hover:brightness-105 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-brand-50 dark:shadow-[3px_3px_0_var(--color-pop-600)]"
+                className="w-full rounded-full border-2 border-stone-900 bg-pop-500 px-4 py-3 text-sm font-bold text-stone-950 shadow-[3px_3px_0_var(--color-stone-900)] transition-transform hover:brightness-105 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-brand-50 dark:shadow-[3px_3px_0_var(--color-pop-600)]"
               >
                 Thêm {s.detailQuantity} vào giỏ
               </button>

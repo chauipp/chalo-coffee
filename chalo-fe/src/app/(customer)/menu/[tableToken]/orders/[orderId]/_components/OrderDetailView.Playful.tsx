@@ -90,7 +90,7 @@ export const OrderDetailViewPlayful = ({
               ⏱️
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-pop-600 dark:text-pop-400">
+              <p className="text-xs font-bold uppercase tracking-wider text-pop-700 dark:text-pop-400">
                 Thời gian chờ dự kiến
               </p>
               <p className="text-lg font-black text-stone-900 dark:text-brand-50">
@@ -124,7 +124,7 @@ export const OrderDetailViewPlayful = ({
                       {item.productName}
                     </p>
                     {(item.selectedModifiers?.length ?? 0) > 0 && (
-                      <p className="mt-1 text-xs text-pop-600 dark:text-pop-400">
+                      <p className="mt-1 text-xs text-pop-700 dark:text-pop-400">
                         {item.selectedModifiers!.map((m) => `${m.groupName}: ${m.optionName}`).join(" · ")}
                       </p>
                     )}
@@ -132,7 +132,7 @@ export const OrderDetailViewPlayful = ({
                       {item.price.toLocaleString("vi-VN")}đ <span className="mx-1">×</span> {item.quantity}
                     </p>
                     {item.note && (
-                      <p className="mt-1 inline-block max-w-full truncate rounded bg-pop-400/20 px-2 py-0.5 text-xs text-pop-600 dark:text-pop-400">
+                      <p className="mt-1 inline-block max-w-full truncate rounded bg-pop-400/20 px-2 py-0.5 text-xs text-pop-700 dark:text-pop-400">
                         📝 {item.note}
                       </p>
                     )}
@@ -147,7 +147,7 @@ export const OrderDetailViewPlayful = ({
 
           <div className="mt-5 flex items-center justify-between border-t-2 border-dashed border-stone-300 pt-4 dark:border-stone-700">
             <span className="text-sm font-bold text-stone-500 dark:text-stone-400">Tổng cộng</span>
-            <span className="text-xl font-black text-pop-600 dark:text-pop-400">
+            <span className="text-xl font-black text-pop-700 dark:text-pop-400">
               {order.totalAmount.toLocaleString("vi-VN")}đ
             </span>
           </div>
@@ -184,7 +184,7 @@ export const OrderDetailViewPlayful = ({
           </button>
           <button
             onClick={onBackToMenu}
-            className="flex-1 rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-sm font-black text-white dark:border-brand-50"
+            className="flex-1 rounded-2xl border-2 border-stone-900 bg-pop-500 py-3.5 text-sm font-black text-stone-950 dark:border-brand-50"
           >
             ☕ Đặt thêm
           </button>
