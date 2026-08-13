@@ -94,7 +94,7 @@ cách 2 file cũ được gấp vào view mới mà không sao chép logic tính
 
 ---
 
-### Task 1: Nền tảng — store, token màu, công tắc A/B, hiệu ứng confetti dùng chung
+- [x] Task 1: Nền tảng — store, token màu, công tắc A/B, hiệu ứng confetti dùng chung
 
 **Files:**
 - Create: `chalo-fe/src/stores/orderTheme.store.ts`
@@ -108,7 +108,7 @@ cách 2 file cũ được gấp vào view mới mà không sao chép logic tính
 - Produces: `<ConfettiBurst triggerKey={number} />` — tăng `triggerKey` (vd. đếm số lần bấm) để bắn 1 đợt hiệu ứng; `triggerKey={0}` (giá trị khởi tạo) không bắn gì.
 - Produces token CSS mới dùng được như class Tailwind: `bg-pop-400/500/600`, `text-pop-400/500/600`, `bg-carnival`, `bg-carnival-raised`.
 
-- [ ] **Step 1: Thêm token màu và keyframe confetti vào `globals.css`**
+- [x] **Step 1: Thêm token màu và keyframe confetti vào `globals.css`**
 
 Mở `chalo-fe/src/app/globals.css`, thêm vào cuối khối `@theme { ... }` hiện có
 (ngay sau dòng `--breakpoint-desktop: 1280px;`):
@@ -149,7 +149,7 @@ Thêm keyframe mới (đặt cạnh `@keyframes badge-pop` hiện có, trước 
 }
 ```
 
-- [ ] **Step 2: Tạo store `orderTheme.store.ts`**
+- [x] **Step 2: Tạo store `orderTheme.store.ts`**
 
 Tạo `chalo-fe/src/stores/orderTheme.store.ts`:
 
@@ -192,7 +192,7 @@ export const useOrderThemeStore = create<OrderThemeState>()(
 );
 ```
 
-- [ ] **Step 3: Tạo `OrderThemeSwitch.tsx`**
+- [x] **Step 3: Tạo `OrderThemeSwitch.tsx`**
 
 Tạo `chalo-fe/src/components/shared/OrderThemeSwitch.tsx`:
 
@@ -246,7 +246,7 @@ export const OrderThemeSwitch = () => {
 };
 ```
 
-- [ ] **Step 4: Tạo `ConfettiBurst.tsx`**
+- [x] **Step 4: Tạo `ConfettiBurst.tsx`**
 
 Tạo `chalo-fe/src/components/shared/ConfettiBurst.tsx`:
 
@@ -309,7 +309,7 @@ export const ConfettiBurst = ({ triggerKey }: { triggerKey: number }) => {
 };
 ```
 
-- [ ] **Step 5: Kiểm tra & commit**
+- [x] **Step 5: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: không lỗi mới liên quan các file vừa tạo/sửa.
@@ -324,7 +324,7 @@ git commit -m "feat: add order theme store, toggle switch, and confetti burst"
 
 ---
 
-### Task 2: Thẻ món & modal chi tiết (`ProductCard`) — 2 biến thể
+- [x] Task 2: Thẻ món & modal chi tiết (`ProductCard`) — 2 biến thể
 
 **Files:**
 - Modify: `chalo-fe/src/components/shared/ui/Modal.tsx:6-31` (thêm prop `hideHeader`)
@@ -349,7 +349,7 @@ git commit -m "feat: add order theme store, toggle switch, and confetti burst"
   - Nút thêm vào giỏ trong modal có text đúng `` `Thêm ${detailQuantity} vào giỏ` `` (không đổi câu chữ giữa 2 biến thể, chỉ đổi màu/hình).
   - `e2e/customer-menu-shortcut.spec.ts` bấm `getByRole("button", { name: "Thêm", exact: true }).first()` trên thẻ món không có modifier — **chỉ áp dụng cho biến thể Rực rỡ** (mặc định); biến thể Điện ảnh được phép đổi nút này thành icon "+" vì test đó chạy với theme mặc định.
 
-- [ ] **Step 1: Tạo hook dùng chung `useProductCardState.ts`**
+- [x] **Step 1: Tạo hook dùng chung `useProductCardState.ts`**
 
 Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/_components/useProductCardState.ts`:
 
@@ -448,7 +448,7 @@ export function useProductCardState(
 }
 ```
 
-- [ ] **Step 2: Thêm `hideHeader` vào `Modal.tsx`**
+- [x] **Step 2: Thêm `hideHeader` vào `Modal.tsx`**
 
 Trong `chalo-fe/src/components/shared/ui/Modal.tsx`, sửa interface (dòng 6-14)
 thành:
@@ -513,7 +513,7 @@ render header + content (dòng 84-112) thành:
 Mặc định `hideHeader=false` giữ nguyên hành vi mọi nơi khác đang dùng `Modal`
 (admin, staff...) — không phá gì.
 
-- [ ] **Step 3: Tạo `ProductCard.Playful.tsx`**
+- [x] **Step 3: Tạo `ProductCard.Playful.tsx`**
 
 Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/_components/ProductCard.Playful.tsx`:
 
@@ -757,7 +757,7 @@ export const ProductCardPlayful = ({
 };
 ```
 
-- [ ] **Step 4: Tạo `ProductCard.Cinematic.tsx`**
+- [x] **Step 4: Tạo `ProductCard.Cinematic.tsx`**
 
 Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/_components/ProductCard.Cinematic.tsx`:
 
@@ -968,7 +968,7 @@ export const ProductCardCinematic = ({
 };
 ```
 
-- [ ] **Step 5: Thay `ProductCard.tsx` thành wrapper chọn biến thể**
+- [x] **Step 5: Thay `ProductCard.tsx` thành wrapper chọn biến thể**
 
 Thay **toàn bộ nội dung** `chalo-fe/src/app/(customer)/menu/[tableToken]/_components/ProductCard.tsx`:
 
@@ -996,7 +996,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
 };
 ```
 
-- [ ] **Step 6: Kiểm tra & commit**
+- [x] **Step 6: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch lỗi (có thể có warning `no-img-element` sẵn có từ trước, không
@@ -1013,7 +1013,7 @@ git commit -m "feat: split ProductCard into Cinematic/Playful variants"
 
 ---
 
-### Task 3: Khung màn menu chính (`CustomerMenuClient`) — 2 biến thể + đặt công tắc A/B
+- [x] Task 3: Khung màn menu chính (`CustomerMenuClient`) — 2 biến thể + đặt công tắc A/B
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/_components/CustomerMenuView.Playful.tsx`
@@ -1641,7 +1641,7 @@ git commit -m "feat: split customer menu shell into Cinematic/Playful views, wir
 
 ---
 
-### Task 4: Giỏ hàng (`cart/page.tsx`) — 2 biến thể
+- [x] Task 4: Giỏ hàng (`cart/page.tsx`) — 2 biến thể
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/cart/_components/CartView.Playful.tsx`
@@ -1671,7 +1671,7 @@ interface CartViewProps {
 Cả hai biến thể tự render 2 nhánh: giỏ rỗng và giỏ có món (giữ đúng copy hiện
 có: `"Bàn của quý khách chưa có món"`, `"Tiếp tục chọn món"`).
 
-- [ ] **Step 1: Tạo `CartView.Playful.tsx`**
+- [x] **Step 1: Tạo `CartView.Playful.tsx`**
 
 Tạo file, dựa trên JSX hiện có của `cart/page.tsx` nhưng viền dày/đổ bóng cứng,
 tổng tiền có hiệu ứng nhảy số khi đổi (tái dùng keyframe `badge-pop` có sẵn),
@@ -1878,7 +1878,7 @@ export const CartViewPlayful = ({
 };
 ```
 
-- [ ] **Step 2: Tạo `CartView.Cinematic.tsx`**
+- [x] **Step 2: Tạo `CartView.Cinematic.tsx`**
 
 Tạo file cùng thư mục, cấu trúc giống hệt props/2 nhánh rỗng-có món ở Step 1
 nhưng theo bảng màu Điện ảnh (nền `brand-50`/`stone-950`, đường kẻ mảnh thay
@@ -2078,7 +2078,7 @@ export const CartViewCinematic = ({
 };
 ```
 
-- [ ] **Step 3: Sửa `cart/page.tsx` để chọn view theo theme**
+- [x] **Step 3: Sửa `cart/page.tsx` để chọn view theo theme**
 
 Thay nội dung `chalo-fe/src/app/(customer)/menu/[tableToken]/cart/page.tsx`
 (giữ nguyên toàn bộ phần logic đầu hàm — `useParams`, `useCartStore`,
@@ -2157,7 +2157,7 @@ export default function CartPage() {
 luôn `()` ngay khi lấy ra `totalAmount` là số, để 2 view nhận `number` thay vì
 phải tự gọi hàm; hành vi tính toán không đổi, chỉ đổi chỗ gọi.
 
-- [ ] **Step 4: Kiểm tra & commit**
+- [x] **Step 4: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch.
@@ -2171,7 +2171,7 @@ git commit -m "feat: split cart page into Cinematic/Playful views"
 
 ---
 
-### Task 5: Thanh toán (`checkout`) — 2 biến thể
+- [x] Task 5: Thanh toán (`checkout`) — 2 biến thể
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/checkout/_components/CheckoutView.Playful.tsx`
@@ -2208,7 +2208,7 @@ interface CheckoutViewProps {
 }
 ```
 
-- [ ] **Step 1: Tạo `CheckoutView.Playful.tsx`**
+- [x] **Step 1: Tạo `CheckoutView.Playful.tsx`**
 
 ```tsx
 "use client";
@@ -2441,7 +2441,7 @@ export const CheckoutViewPlayful = (props: CheckoutViewProps) => {
 };
 ```
 
-- [ ] **Step 2: Tạo `CheckoutView.Cinematic.tsx`**
+- [x] **Step 2: Tạo `CheckoutView.Cinematic.tsx`**
 
 Tạo file cùng cấu trúc props/step ở Step 1, đổi màu sang bảng Điện ảnh
 (`brand-*`, `font-serif` cho số tiền, QR vẫn nền trắng cố định như bản gốc để
@@ -2675,7 +2675,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
 };
 ```
 
-- [ ] **Step 3: Sửa `checkout/page.tsx` để chọn view theo theme**
+- [x] **Step 3: Sửa `checkout/page.tsx` để chọn view theo theme**
 
 Giữ nguyên toàn bộ state/hook (`useCheckoutPreview`, `useCheckoutStart`,
 `useCheckoutComplete`, `useCustomerOrderEvents`, `session`, `done`), chỉ thay
@@ -2758,7 +2758,7 @@ export default function CheckoutPage() {
 }
 ```
 
-- [ ] **Step 4: Kiểm tra & commit**
+- [x] **Step 4: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch.
@@ -2772,7 +2772,7 @@ git commit -m "feat: split checkout page into Cinematic/Playful views"
 
 ---
 
-### Task 6: Danh sách đơn (`OrderCard`) — 2 biến thể
+- [x] Task 6: Danh sách đơn (`OrderCard`) — 2 biến thể
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.Cinematic.tsx`
@@ -2783,7 +2783,7 @@ git commit -m "feat: split checkout page into Cinematic/Playful views"
 - Consumes: `STATUS_META` (`./status-meta.ts`, không đổi), `OrderDto`.
 - Produces: `OrderCard` giữ nguyên chữ ký `{ order: OrderDto; onClick: () => void }`.
 
-- [ ] **Step 1: Tạo `OrderCard.Playful.tsx`**
+- [x] **Step 1: Tạo `OrderCard.Playful.tsx`**
 
 ```tsx
 // src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.Playful.tsx
@@ -2881,7 +2881,7 @@ export const OrderCardPlayful = ({
 };
 ```
 
-- [ ] **Step 2: Tạo `OrderCard.Cinematic.tsx`**
+- [x] **Step 2: Tạo `OrderCard.Cinematic.tsx`**
 
 ```tsx
 // src/app/(customer)/menu/[tableToken]/orders/_components/OrderCard.Cinematic.tsx
@@ -2979,7 +2979,7 @@ export const OrderCardCinematic = ({
 };
 ```
 
-- [ ] **Step 3: Sửa `OrderCard.tsx` thành wrapper**
+- [x] **Step 3: Sửa `OrderCard.tsx` thành wrapper**
 
 Thay toàn bộ nội dung `OrderCard.tsx`:
 
@@ -3010,7 +3010,7 @@ export const OrderCard = ({
 (`OrderCard.tsx` gốc không có `"use client"` — nay bắt buộc thêm vì đọc
 zustand store dùng hook, phải chạy phía client.)
 
-- [ ] **Step 4: Kiểm tra & commit**
+- [x] **Step 4: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch.
@@ -3024,7 +3024,7 @@ git commit -m "feat: split order list card into Cinematic/Playful variants"
 
 ---
 
-### Task 7: Theo dõi đơn (tiến trình phục vụ) — 2 biến thể
+- [x] Task 7: Theo dõi đơn (tiến trình phục vụ) — 2 biến thể
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/ServiceStepper.Playful.tsx`
@@ -3047,7 +3047,7 @@ interface ServiceStepperProps {
 }
 ```
 
-- [ ] **Step 1: Tạo `ServiceStepper.Playful.tsx`**
+- [x] **Step 1: Tạo `ServiceStepper.Playful.tsx`**
 
 Thanh tiến độ ngang kiểu "level" — mốc active nảy nhẹ, hiệu ứng ăn mừng khi
 tới bước cuối (dùng lại `ConfettiBurst` từ Task 1):
@@ -3123,7 +3123,7 @@ export const ServiceStepperPlayful = ({
 };
 ```
 
-- [ ] **Step 2: Tạo `ServiceStepper.Cinematic.tsx`**
+- [x] **Step 2: Tạo `ServiceStepper.Cinematic.tsx`**
 
 Timeline dọc tối giản, chấm vàng đồng sáng dần:
 
@@ -3194,7 +3194,7 @@ export const ServiceStepperCinematic = ({
 };
 ```
 
-- [ ] **Step 3: Sửa `orders/[orderId]/page.tsx` để dùng ServiceStepper theo theme**
+- [x] **Step 3: Sửa `orders/[orderId]/page.tsx` để dùng ServiceStepper theo theme**
 
 Thêm import ở đầu file:
 
@@ -3234,7 +3234,7 @@ Thay toàn bộ khối "Stepper Phục vụ" (từ `{/* Stepper Phục vụ */}`
 Phần còn lại của file (banner huỷ/hoàn tất, chi tiết món, action dock) không
 đổi.
 
-- [ ] **Step 4: Kiểm tra & commit**
+- [x] **Step 4: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch.
@@ -3248,7 +3248,7 @@ git commit -m "feat: split order tracking stepper into Cinematic/Playful variant
 
 ---
 
-### Task 8: E2E cho công tắc A/B + xác minh trực quan toàn bộ luồng
+- [x] Task 8: E2E cho công tắc A/B + xác minh trực quan toàn bộ luồng
 
 **Files:**
 - Create: `chalo-fe/e2e/customer-order-theme.spec.ts`
@@ -3258,7 +3258,7 @@ git commit -m "feat: split order tracking stepper into Cinematic/Playful variant
   `order-theme-cinematic`, `product-card-*`, `product-detail-modal-*`,
   `vietqr-code`).
 
-- [ ] **Step 1: Viết `customer-order-theme.spec.ts`**
+- [x] **Step 1: Viết `customer-order-theme.spec.ts`**
 
 ```ts
 // chalo-fe/e2e/customer-order-theme.spec.ts
@@ -3376,19 +3376,19 @@ test("toggle A/B độc lập với toggle Sáng/Tối — cả 4 tổ hợp kh�
 });
 ```
 
-- [ ] **Step 2: Chạy thử bộ e2e liên quan**
+- [x] **Step 2: Chạy thử bộ e2e liên quan**
 
 Run: `pnpm --dir chalo-fe exec playwright test customer-order-theme customer-product-detail-modal customer-menu-shortcut`
 Expected: toàn bộ PASS. Nếu BE chưa chạy, khởi động theo hướng dẫn README của
 `chalo-be` trước khi chạy Playwright (Playwright config đã trỏ base URL —
 kiểm `playwright.config.ts` nếu cần đổi).
 
-- [ ] **Step 3: Build one-shot để bắt lỗi type/build (không dùng `next dev`)**
+- [x] **Step 3: Build one-shot để bắt lỗi type/build (không dùng `next dev`)**
 
 Run: `pnpm --dir chalo-fe build`
 Expected: build thành công, không lỗi TypeScript ở các file vừa tạo/sửa.
 
-- [ ] **Step 4: Xác minh bằng mắt qua Playwright MCP (bắt buộc theo `verifying-ui-with-playwright`)**
+- [x] **Step 4: Xác minh bằng mắt qua Playwright MCP (bắt buộc theo `verifying-ui-with-playwright`)**
 
 Dựng app qua `.next/standalone` (không dùng `next dev`/`next start` — xem
 Global Constraints), mở trình duyệt thật, với từng bàn/QR hợp lệ:
@@ -3412,7 +3412,7 @@ Global Constraints), mở trình duyệt thật, với từng bàn/QR hợp lệ
 Nếu bất kỳ bước nào lỗi, quay lại task tương ứng để sửa trước khi báo hoàn
 thành — không được báo xong chỉ dựa vào lint/build xanh.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-fe/e2e/customer-order-theme.spec.ts
@@ -3421,7 +3421,7 @@ git commit -m "test: add e2e coverage for order theme toggle and persistence"
 
 ---
 
-### Task 9: Theme vỏ 2 trang đơn hàng (danh sách + chi tiết)
+- [x] Task 9: Theme vỏ 2 trang đơn hàng (danh sách + chi tiết)
 
 **Bổ sung sau final review:** Task 6/7 chỉ theme `OrderCard` và `ServiceStepper`
 — phần khung trang (`orders/page.tsx`, `orders/[orderId]/page.tsx`: header,
@@ -3475,7 +3475,7 @@ interface OrderDetailViewProps {
 }
 ```
 
-- [ ] **Step 1: Tạo `OrdersListView.Playful.tsx`**
+- [x] **Step 1: Tạo `OrdersListView.Playful.tsx`**
 
 Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/_components/OrdersListView.Playful.tsx`:
 
@@ -3632,7 +3632,7 @@ export const OrdersListViewPlayful = ({
 };
 ```
 
-- [ ] **Step 2: Tạo `OrdersListView.Cinematic.tsx`**
+- [x] **Step 2: Tạo `OrdersListView.Cinematic.tsx`**
 
 Tạo file cùng thư mục, cùng props/nhánh như Step 1, đổi sang bảng Điện ảnh
 (`brand-*`/`stone-950`, `font-serif`, không viền dày/đổ bóng cứng):
@@ -3788,7 +3788,7 @@ export const OrdersListViewCinematic = ({
 };
 ```
 
-- [ ] **Step 3: Sửa `orders/page.tsx` để chọn view theo theme**
+- [x] **Step 3: Sửa `orders/page.tsx` để chọn view theo theme**
 
 Giữ nguyên toàn bộ logic đầu hàm (`useGetOrderByToken`, `useCustomerOrderEvents`,
 tính `unpaidOrders`/`unpaidTotal`/`totalAllItems`), thay import + phần
@@ -3843,7 +3843,7 @@ export default function OrdersPage() {
 }
 ```
 
-- [ ] **Step 4: Tạo `OrderDetailView.Playful.tsx`**
+- [x] **Step 4: Tạo `OrderDetailView.Playful.tsx`**
 
 Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/OrderDetailView.Playful.tsx`:
 
@@ -4045,7 +4045,7 @@ export const OrderDetailViewPlayful = ({
 };
 ```
 
-- [ ] **Step 5: Tạo `OrderDetailView.Cinematic.tsx`**
+- [x] **Step 5: Tạo `OrderDetailView.Cinematic.tsx`**
 
 Tạo file cùng thư mục, cùng props/nhánh như Step 4, bảng màu Điện ảnh:
 
@@ -4247,7 +4247,7 @@ export const OrderDetailViewCinematic = ({
 };
 ```
 
-- [ ] **Step 6: Sửa `orders/[orderId]/page.tsx` để chọn view theo theme**
+- [x] **Step 6: Sửa `orders/[orderId]/page.tsx` để chọn view theo theme**
 
 Giữ nguyên `SERVICE_STEPS`, toàn bộ hook đầu hàm (`useGetOrderByToken`,
 `useCustomerOrderEvents`, `usePayOrder`, `showPayConfirm` state,
@@ -4304,7 +4304,7 @@ Các nhánh sớm của hàm (`isLoading` → spinner, `!order` → "Đơn khôn
 động") giữ nguyên JSX trung tính như hiện tại — không cần theme vì đây là
 trạng thái tạm/chuyển tiếp, không phải nội dung chính của trang.
 
-- [ ] **Step 7: Kiểm tra & commit**
+- [x] **Step 7: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch.
