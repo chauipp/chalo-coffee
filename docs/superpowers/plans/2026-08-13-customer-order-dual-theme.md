@@ -1063,7 +1063,7 @@ interface CustomerMenuViewProps {
   - Nút giỏ hàng nổi: `aria-label="Xem giỏ hàng"`.
   - Badge số lượng hiển thị đúng số (`itemCount`), không đổi format.
 
-- [ ] **Step 1: Tạo `CustomerMenuView.Playful.tsx`**
+- [x] **Step 1: Tạo `CustomerMenuView.Playful.tsx`**
 
 Tạo file, chuyển gần nguyên JSX hiện có của `CustomerMenuClient.tsx` (phần
 `return (...)`) vào đây, chỉ đổi từ đọc state cục bộ sang đọc từ props, và
@@ -1292,7 +1292,7 @@ export const CustomerMenuViewPlayful = ({
 };
 ```
 
-- [ ] **Step 2: Tạo file type dùng chung `CustomerMenuView.types.ts`**
+- [x] **Step 2: Tạo file type dùng chung `CustomerMenuView.types.ts`**
 
 Tạo `chalo-fe/src/app/(customer)/menu/[tableToken]/_components/CustomerMenuView.types.ts`:
 
@@ -1331,7 +1331,7 @@ export interface CustomerMenuViewProps {
 (Đây là file được `import type` ở Step 1 — tạo file này **trước** khi chạy
 lint cho Step 1, thứ tự không quan trọng miễn cả hai tồn tại trước Step 6.)
 
-- [ ] **Step 3: Tạo `CustomerMenuView.Cinematic.tsx`**
+- [x] **Step 3: Tạo `CustomerMenuView.Cinematic.tsx`**
 
 Tạo file cùng thư mục, cấu trúc tương tự Step 1 nhưng theo bảng màu Điện ảnh —
 nền tối mặc định (không theo `dark:` của app mà **luôn tối**, đúng như spec:
@@ -1561,7 +1561,7 @@ export const CustomerMenuViewCinematic = ({
 };
 ```
 
-- [ ] **Step 4: Sửa `CustomerMenuClient.tsx` để rút JSX ra view**
+- [x] **Step 4: Sửa `CustomerMenuClient.tsx` để rút JSX ra view**
 
 Trong `CustomerMenuClient.tsx`, xoá toàn bộ khối `return (...)` hiện có (dòng
 149-362 gốc — header/main/FAB) và mọi import chỉ dùng cho JSX cũ
@@ -1626,7 +1626,7 @@ Gọi `useCallStaff()` cần thêm biến `callCooldown` — đã có sẵn tron
 tại (`const [callCooldown, setCallCooldown] = ...`), không cần đổi gì ở phần
 logic phía trên, chỉ đổi phần `return`.
 
-- [ ] **Step 5: Kiểm tra & commit**
+- [x] **Step 5: Kiểm tra & commit**
 
 Run: `pnpm --dir chalo-fe lint`
 Expected: sạch.
