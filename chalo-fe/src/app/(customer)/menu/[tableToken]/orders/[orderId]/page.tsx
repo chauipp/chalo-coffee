@@ -36,7 +36,9 @@ export default function OrderTrackingPage() {
   useCustomerOrderEvents(tableToken);
 
   const payOrderMutation = usePayOrder(tableToken);
-  const orderTheme = useOrderThemeStore((s) => s.theme);
+  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
+  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   if (isLoading)
     return (

@@ -12,7 +12,9 @@ export const OrderCard = ({
   order: OrderDto;
   onClick: () => void;
 }) => {
-  const theme = useOrderThemeStore((s) => s.theme);
+  const storeTheme = useOrderThemeStore((s) => s.theme);
+  const isHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const theme = isHydrated ? storeTheme : "playful";
   return theme === "cinematic" ? (
     <OrderCardCinematic order={order} onClick={onClick} />
   ) : (

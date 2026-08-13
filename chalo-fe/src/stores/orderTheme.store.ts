@@ -6,17 +6,21 @@ export type OrderTheme = "cinematic" | "playful";
 
 interface OrderThemeState {
   theme: OrderTheme;
+  isHydrated: boolean;
   setTheme: (theme: OrderTheme) => void;
   toggle: () => void;
+  setHydrated: () => void;
 }
 
 export const useOrderThemeStore = create<OrderThemeState>()(
   persist(
     (set, get) => ({
       theme: "playful",
+      isHydrated: false,
       setTheme: (theme) => set({ theme }),
       toggle: () =>
         set({ theme: get().theme === "playful" ? "cinematic" : "playful" }),
+      setHydrated: () => set({ isHydrated: true }),
     }),
     {
       name: "chalo-order-theme",
@@ -31,6 +35,8 @@ export const useOrderThemeStore = create<OrderThemeState>()(
         }
         return window.localStorage;
       }),
+      partialize: (state) => ({ theme: state.theme }),
+      onRehydrateStorage: () => (state) => { state?.setHydrated() },
     },
   ),
 );

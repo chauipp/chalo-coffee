@@ -12,7 +12,9 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
-  const theme = useOrderThemeStore((s) => s.theme);
+  const storeTheme = useOrderThemeStore((s) => s.theme);
+  const isHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const theme = isHydrated ? storeTheme : "playful";
   return theme === "cinematic" ? (
     <ProductCardCinematic product={product} onAddToCart={onAddToCart} />
   ) : (

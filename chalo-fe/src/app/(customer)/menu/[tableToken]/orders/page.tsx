@@ -18,7 +18,9 @@ export default function OrdersPage() {
     refetch,
   } = useGetOrderByToken(tableToken);
   useCustomerOrderEvents(tableToken);
-  const orderTheme = useOrderThemeStore((s) => s.theme);
+  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
+  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const unpaidOrders = orders?.filter((o) => !o.paidStatus) ?? [];
   const unpaidTotal = unpaidOrders.reduce((sum, o) => sum + o.totalAmount, 0);

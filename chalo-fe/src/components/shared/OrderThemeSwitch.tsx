@@ -3,8 +3,10 @@
 import { useOrderThemeStore } from "@/stores/orderTheme.store";
 
 export const OrderThemeSwitch = () => {
-  const theme = useOrderThemeStore((s) => s.theme);
+  const storeTheme = useOrderThemeStore((s) => s.theme);
+  const isHydrated = useOrderThemeStore((s) => s.isHydrated);
   const setTheme = useOrderThemeStore((s) => s.setTheme);
+  const theme = isHydrated ? storeTheme : "playful";
   const isPlayful = theme === "playful";
 
   const pillClass = (active: boolean) =>

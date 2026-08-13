@@ -20,7 +20,9 @@ export default function CheckoutPage() {
   useCustomerOrderEvents(tableToken);
   const startMutation = useCheckoutStart();
   const completeMutation = useCheckoutComplete(tableToken);
-  const orderTheme = useOrderThemeStore((s) => s.theme);
+  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
+  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const [session, setSession] = useState<CheckoutSessionResult | null>(null);
   const [done, setDone] = useState<boolean>(false);

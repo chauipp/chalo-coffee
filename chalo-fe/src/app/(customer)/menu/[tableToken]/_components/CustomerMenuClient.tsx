@@ -146,7 +146,9 @@ export const CustomerMenuClient = ({
     }
   };
 
-  const orderTheme = useOrderThemeStore((s) => s.theme);
+  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
+  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const viewProps = {
     tableName,

@@ -22,7 +22,9 @@ export default function CartPage() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const updateNote = useCartStore((s) => s.updateNote);
   const removeItem = useCartStore((s) => s.removeItem);
-  const orderTheme = useOrderThemeStore((s) => s.theme);
+  const storeOrderTheme = useOrderThemeStore((s) => s.theme);
+  const isOrderThemeHydrated = useOrderThemeStore((s) => s.isHydrated);
+  const orderTheme = isOrderThemeHydrated ? storeOrderTheme : "playful";
 
   const createOrderMutation = useCreateOrder();
   const { data: waitData } = useGetEstimatedWait();
