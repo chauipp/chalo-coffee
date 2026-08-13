@@ -49,7 +49,7 @@ export const ServiceStepperCinematic = ({
                   <p
                     className={`font-semibold text-sm ${
                       isCurrent
-                        ? "text-brand-700 dark:text-brand-300"
+                        ? "motion-safe:animate-pulse text-brand-700 dark:text-brand-300"
                         : isDone
                           ? "text-stone-900 dark:text-brand-100"
                           : "text-brand-400 dark:text-stone-600"
@@ -61,12 +61,6 @@ export const ServiceStepperCinematic = ({
                         ? step.completedLabel
                         : step.pendingLabel}
                   </p>
-                  {isCurrent && (
-                    <span
-                      aria-hidden="true"
-                      className="ml-1.5 inline-block size-1.5 rounded-full bg-brand-500 motion-safe:animate-pulse dark:bg-brand-300"
-                    />
-                  )}
                 </div>
               </div>
             );
