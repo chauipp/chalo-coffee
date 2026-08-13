@@ -14,12 +14,50 @@ import { PayConfirmModal } from "./_components/PayConfirmModal";
 
 // CONFIRMED là trạng thái di sản (BE không còn chuyển PENDING → CONFIRMED),
 // nên gộp chung một bước với PENDING — tránh 2 bước trùng nhãn trong stepper.
-const SERVICE_STEPS: { statuses: OrderStatus[]; label: string; emoji: string }[] = [
-  { statuses: ["PENDING", "CONFIRMED"], label: "Đã tiếp nhận", emoji: "📋" },
-  { statuses: ["PREPARING"], label: "Đang pha chế", emoji: "☕" },
-  { statuses: ["READY"], label: "Sẵn sàng phục vụ", emoji: "🔔" },
-  { statuses: ["COMPLETED"], label: "Đã phục vụ", emoji: "🎁" },
+const SERVICE_STEPS: {
+  statuses: OrderStatus[];
+  activeLabel: string;
+  completedLabel: string;
+  pendingLabel: string;
+  emoji: string;
+}[] = [
+  {
+    statuses: ["PENDING", "CONFIRMED"],
+    activeLabel: "Đang tiếp nhận",
+    completedLabel: "Đã tiếp nhận",
+    pendingLabel: "Tiếp nhận",
+    emoji: "📋",
+  },
+  {
+    statuses: ["PREPARING"],
+    activeLabel: "Đang pha chế",
+    completedLabel: "Đã pha chế",
+    pendingLabel: "Pha chế",
+    emoji: "☕",
+  },
+  {
+    statuses: ["READY"],
+    activeLabel: "Sẵn sàng phục vụ",
+    completedLabel: "Đã sẵn sàng phục vụ",
+    pendingLabel: "Phục vụ",
+    emoji: "🔔",
+  },
+  {
+    statuses: ["COMPLETED"],
+    activeLabel: "Đã phục vụ",
+    completedLabel: "Đã phục vụ",
+    pendingLabel: "Đã phục vụ",
+    emoji: "🎁",
+  },
 ];
+
+const CURRENT_STEP_INDEX: Partial<Record<OrderStatus, number>> = {
+  PENDING: 0,
+  CONFIRMED: -1,
+  PREPARING: 1,
+  READY: 2,
+  COMPLETED: 4,
+};
 
 export default function OrderTrackingPage() {
   const { tableToken, orderId } = useParams<{
@@ -69,9 +107,7 @@ export default function OrderTrackingPage() {
   const isServed = order.status === "COMPLETED";
   const isPaid = order.paidStatus;
 
-  const currentStepIndex = SERVICE_STEPS.findIndex((s) =>
-    s.statuses.includes(order.status),
-  );
+  const currentStepIndex = CURRENT_STEP_INDEX[order.status] ?? -1;
 
   const canPay = !isPaid && !isCancelled;
 

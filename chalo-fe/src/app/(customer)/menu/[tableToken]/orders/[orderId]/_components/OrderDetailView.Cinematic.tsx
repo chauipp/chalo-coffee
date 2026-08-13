@@ -10,7 +10,13 @@ interface OrderDetailViewProps {
   isPaid: boolean;
   canPay: boolean;
   currentStepIndex: number;
-  steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
+  steps: {
+    statuses: OrderStatus[];
+    activeLabel: string;
+    completedLabel: string;
+    pendingLabel: string;
+    emoji: string;
+  }[];
   onPayClick: () => void;
   onBackToOrders: () => void;
   onBackToMenu: () => void;
@@ -28,6 +34,12 @@ export const OrderDetailViewCinematic = ({
   onBackToOrders,
   onBackToMenu,
 }: OrderDetailViewProps) => {
+  const showEstimatedWait =
+    order.estimateWaitMinutes !== null &&
+    order.estimateWaitMinutes > 0 &&
+    !isServed &&
+    !isCancelled;
+
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-4 py-3 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/90">
@@ -84,24 +96,24 @@ export const OrderDetailViewCinematic = ({
           </div>
         )}
 
-        {order.estimateWaitMinutes !== null && order.estimateWaitMinutes > 0 && !isServed && !isCancelled && (
+        {showEstimatedWait && (
           <div className="flex items-center gap-3 rounded-2xl bg-brand-100/60 p-4 dark:bg-stone-900">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-lg dark:bg-brand-900/50">
               ⏱️
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-brand-600 dark:text-brand-300/60">
-                Thời gian chờ dự kiến
+                Chờ dự kiến
               </p>
               <p className="text-lg font-semibold text-brand-800 dark:text-brand-300">
-                Khoảng {order.estimateWaitMinutes} phút
+                ~{order.estimateWaitMinutes} phút
               </p>
             </div>
           </div>
         )}
 
         {!isCancelled && (
-          <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} isServed={isServed} />
+          <ServiceStepperCinematic steps={steps} currentStepIndex={currentStepIndex} />
         )}
 
         <div className="rounded-3xl bg-white p-5 dark:bg-stone-900">

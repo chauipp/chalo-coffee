@@ -3,15 +3,19 @@
 import { OrderStatus } from "@/services/order/order.types";
 
 interface ServiceStepperProps {
-  steps: { statuses: OrderStatus[]; label: string; emoji: string }[];
+  steps: {
+    statuses: OrderStatus[];
+    activeLabel: string;
+    completedLabel: string;
+    pendingLabel: string;
+    emoji: string;
+  }[];
   currentStepIndex: number;
-  isServed: boolean;
 }
 
 export const ServiceStepperCinematic = ({
   steps,
   currentStepIndex,
-  isServed,
 }: ServiceStepperProps) => {
   return (
     <div className="rounded-3xl bg-white p-5 dark:bg-stone-900">
@@ -25,7 +29,11 @@ export const ServiceStepperCinematic = ({
             const isDone = currentStepIndex > stepIdx;
             const isCurrent = currentStepIndex === stepIdx;
             return (
-              <div key={step.statuses.join("-")} className="relative flex items-start gap-4">
+              <div
+                key={step.statuses.join("-")}
+                data-testid={isCurrent ? "service-step-active" : undefined}
+                className="relative flex items-start gap-4"
+              >
                 <div
                   className={`relative z-10 mt-[-2px] flex size-8 shrink-0 items-center justify-center rounded-full text-sm transition-all duration-500 ${
                     isDone
@@ -47,12 +55,17 @@ export const ServiceStepperCinematic = ({
                           : "text-brand-400 dark:text-stone-600"
                     }`}
                   >
-                    {step.label}
+                    {isCurrent
+                      ? step.activeLabel
+                      : isDone
+                        ? step.completedLabel
+                        : step.pendingLabel}
                   </p>
-                  {isCurrent && !isServed && (
-                    <p className="motion-safe:animate-pulse mt-1 text-xs text-brand-500 dark:text-brand-300/70">
-                      Đang tiến hành...
-                    </p>
+                  {isCurrent && (
+                    <span
+                      aria-hidden="true"
+                      className="ml-1.5 inline-block size-1.5 rounded-full bg-brand-500 motion-safe:animate-pulse dark:bg-brand-300"
+                    />
                   )}
                 </div>
               </div>

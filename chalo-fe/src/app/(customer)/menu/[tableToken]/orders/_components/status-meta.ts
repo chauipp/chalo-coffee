@@ -6,7 +6,7 @@ export const STATUS_META: Record<
   { label: string; emoji: string; bgColor: string; textColor: string }
 > = {
   PENDING: {
-    label: "Đã tiếp nhận",
+    label: "Đang tiếp nhận",
     emoji: "📋",
     bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
     textColor: "text-yellow-700 dark:text-yellow-400",
