@@ -17,6 +17,7 @@ import {
 import { useGetTableList } from "@/services/table";
 import { useDeleteOrder } from "@/services/order/order.queries";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 import { MobileFilterSheet } from "../../_components/MobileFilterSheet";
 
@@ -33,6 +34,7 @@ const STATUS_BADGE: Record<OrderStatus, { label: string; variant: BadgeVariant }
 const INITIAL_FILTER: OrderPageParams = { pageNo: 1, pageSize: 20 };
 
 export default function AdminOrdersPage() {
+  const router = useRouter();
   const { data: tables } = useGetTableList();
   const table = useTablePagination<OrderDto, OrderPageParams>({
     initialFilter: INITIAL_FILTER,
@@ -56,7 +58,7 @@ export default function AdminOrdersPage() {
       key: "order",
       header: "Đơn",
       render: (r) => (
-        <div>
+        <button type="button" className="text-left" onClick={() => router.push(`/admin/orders/orders/${r.id}`)}>
           <p className="font-medium text-gray-900 dark:text-gray-100">
             #{r.id.slice(0, 8)}
           </p>
@@ -70,7 +72,7 @@ export default function AdminOrdersPage() {
               điểm
             </p>
           )}
-        </div>
+        </button>
       ),
     },
     {
@@ -274,6 +276,10 @@ export default function AdminOrdersPage() {
             <article
               data-testid="admin-mobile-order-card"
               className="rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+              role="button"
+              tabIndex={0}
+              onClick={() => router.push(`/admin/orders/orders/${row.id}`)}
+              onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); router.push(`/admin/orders/orders/${row.id}`); } }}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -316,7 +322,7 @@ export default function AdminOrdersPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setDeleteTarget(row)}
+                onClick={(event) => { event.stopPropagation(); setDeleteTarget(row); }}
                 className="mt-3 min-h-11 w-full rounded-xl border border-red-200 px-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-red-900/70 dark:text-red-400 dark:hover:bg-red-950/30"
               >
                 Xóa đơn
