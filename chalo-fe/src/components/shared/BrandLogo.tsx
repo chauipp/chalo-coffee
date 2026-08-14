@@ -10,10 +10,12 @@ export const BrandLogo = ({
   label = "Chalo Coffee",
   ...props
 }: BrandLogoProps) => (
-  <img
-    src="/brand/chalo-logo.jpg"
-    alt={label}
-    className={className}
-    {...props}
-  />
+  <span className={`brand-logo-frame ${className ?? ""}`}>
+    <img
+      src="/brand/chalo-logo.jpg"
+      alt={label}
+      className="brand-logo-art"
+      {...props}
+    />
+  </span>
 );

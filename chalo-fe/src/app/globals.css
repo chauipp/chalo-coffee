@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* The source artwork includes a large off-white margin around the round badge.
+   Keep that margin out of the brand mark so the seal fills its allocated size. */
+.brand-logo-frame {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.brand-logo-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1.52);
+  transform-origin: center;
+}
+
 /* Tailwind v4 mặc định dark: theo prefers-color-scheme (OS). App có toggle
    Sáng/Tối/Hệ thống riêng (ThemeProvider gắn class .dark lên <html>) nên phải
    chuyển dark: sang class-based — thiếu dòng này là toggle vô tác dụng. */
