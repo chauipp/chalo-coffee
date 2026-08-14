@@ -24,9 +24,14 @@ export function AdminOrdersOperationsLayout({ board }: { board: React.ReactNode 
           {dockVisible ? "Thu gọn khu pha chế" : "Mở khu pha chế"}
         </button>
       </div>
+      <div className="absolute right-4 top-2 z-20 hidden md:block">
+        <button type="button" onClick={toggle} aria-expanded={dockVisible} aria-controls="admin-prep-desktop" className="rounded-lg border border-brand-200 bg-white px-3 py-2 text-xs font-semibold text-brand-700 shadow-sm dark:border-brand-800 dark:bg-gray-900 dark:text-brand-300">
+          {dockVisible ? "Thu gọn khu pha chế" : "Mở khu pha chế"}
+        </button>
+      </div>
       <div className="hidden h-full md:block">
         {dockVisible ? (
-          <SplitPane storageKey="admin-orders-prep-split:v1" visible onToggleVisible={toggle} right={(controls) => <PrepDock {...controls} />} left={board} />
+          <div id="admin-prep-desktop" className="h-full"><SplitPane storageKey="admin-orders-prep-split:v1" visible onToggleVisible={toggle} right={(controls) => <PrepDock {...controls} />} left={board} /></div>
         ) : (
           <div className="h-full">{board}</div>
         )}
