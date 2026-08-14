@@ -6,16 +6,15 @@ Logo nhìn như bị thu nhỏ hoặc phần hình hải cẩu bị lọt thỏm
 
 ## Cách làm đúng
 
-`chalo-fe/public/brand/chalo-logo.jpg` chứa huy hiệu tròn ở giữa một vùng nền trắng lớn.
-Component `chalo-fe/src/components/shared/BrandLogo.tsx` dùng `.brand-logo-frame` làm khung
-overflow và `.brand-logo-art` với `object-fit: cover` + `transform: scale(1.52)` để chỉ phần
-huy hiệu chiếm khung hiển thị.
+Asset hiển thị chính là `chalo-fe/public/brand/chalo-logo-round.png`, một PNG vuông có nền
+trong suốt bên ngoài huy hiệu. Component `chalo-fe/src/components/shared/BrandLogo.tsx` dùng
+asset này trực tiếp; favicon trong `layout.tsx` cũng trỏ về cùng file.
 
 ## Cái bẫy
 
-Chỉ thêm `object-contain` hoặc tăng `width/height` cho `<img>` không cắt được khoảng trắng;
-hình tròn vẫn nhỏ và hải cẩu trông bị chìm. Không cần thay asset gốc nếu mọi nơi dùng chung;
-hãy crop ở lớp hiển thị.
+Chỉ thêm `object-contain` hoặc tăng `width/height` cho ảnh JPG gốc không cắt được khoảng trắng;
+hình tròn vẫn nhỏ và hải cẩu trông bị chìm. Dùng asset PNG đã crop để cả logo trong app và
+favicon dùng đúng một dấu hiệu nhận diện.
 
 ## Kiểm thế nào là đúng
 

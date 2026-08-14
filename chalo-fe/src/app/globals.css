@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
-/* The source artwork includes a large off-white margin around the round badge.
-   Keep that margin out of the brand mark so the seal fills its allocated size. */
+/* Keep the circular badge clipped to its allocated frame at every logo size. */
 .brand-logo-frame {
   position: relative;
   display: inline-block;
@@ -14,9 +13,7 @@
   width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: cover;
-  transform: scale(1.52);
-  transform-origin: center;
+  object-fit: contain;
 }
 
 /* Tailwind v4 mặc định dark: theo prefers-color-scheme (OS). App có toggle

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   description: "Chalo Coffee — thực đơn cà phê, trà và những khoảng chậm dành cho bạn.",
   icons: {
-    icon: "/icon.svg",
+    icon: "/brand/chalo-logo-round.png",
   },
 };
 

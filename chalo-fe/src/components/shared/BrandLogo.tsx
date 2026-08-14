@@ -12,7 +12,7 @@ export const BrandLogo = ({
 }: BrandLogoProps) => (
   <span className={`brand-logo-frame ${className ?? ""}`}>
     <img
-      src="/brand/chalo-logo.jpg"
+      src="/brand/chalo-logo-round.png"
       alt={label}
       className="brand-logo-art"
       {...props}
