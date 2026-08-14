@@ -55,7 +55,7 @@
 
   Run: `git add chalo-fe/src/components/orders/operations chalo-fe/src/app/(staff)/staff/orders && git commit -m "refactor: share order operations board"`
 
-## - [ ] Task 2: Tách nội dung chi tiết đơn và route modal dùng được cho admin
+## - [x] Task 2: Tách nội dung chi tiết đơn và route modal dùng được cho admin
 
 **Files:**
 - Create: `chalo-fe/src/components/orders/OrderDetailModalContent.tsx`
