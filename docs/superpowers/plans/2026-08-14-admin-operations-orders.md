@@ -89,7 +89,7 @@
 
   Run: `git add chalo-fe/src/components/orders/OrderDetailModalContent.tsx chalo-fe/src/app/(admin)/admin/orders chalo-fe/src/app/(staff)/staff/orders chalo-fe/src/components/shared && git commit -m "feat: share order detail modal with admin"`
 
-## - [ ] Task 3: Biến `/admin/orders` thành màn vận hành + lịch sử rõ ràng
+## - [x] Task 3: Biến `/admin/orders` thành màn vận hành + lịch sử rõ ràng
 
 **Files:**
 - Modify: `chalo-fe/src/app/(admin)/admin/orders/page.tsx`
@@ -122,7 +122,7 @@
 
   Run: `git add chalo-fe/src/app/(admin)/admin/orders && git commit -m "feat: add realtime order operations to admin"`
 
-## - [ ] Task 4: Thêm PrepDock admin thu gọn/mở rộng và lưu trạng thái riêng
+## - [x] Task 4: Thêm PrepDock admin thu gọn/mở rộng và lưu trạng thái riêng
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/_components/SplitPane.tsx`

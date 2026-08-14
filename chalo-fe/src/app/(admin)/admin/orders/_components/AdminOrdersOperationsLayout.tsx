@@ -4,17 +4,16 @@ import { useCallback, useState } from "react";
 import { PrepDock } from "@/app/(staff)/_components/PrepDock";
 import { SplitPane } from "@/app/(staff)/_components/SplitPane";
 import { AdminPrepDockDrawer } from "./AdminPrepDockDrawer";
-
-const VISIBLE_KEY = "admin-orders-prep-visible:v1";
+import { ADMIN_PREP_VISIBLE_STORAGE_KEY, readAdminPrepVisible } from "./adminPrepState";
 
 export function AdminOrdersOperationsLayout({ board }: { board: React.ReactNode }) {
   const [dockVisible, setDockVisible] = useState(() =>
-    typeof window !== "undefined" && localStorage.getItem(VISIBLE_KEY) === "true",
+    typeof window !== "undefined" && readAdminPrepVisible(localStorage),
   );
   const toggle = useCallback(() => {
     setDockVisible((previous) => {
       const next = !previous;
-      localStorage.setItem(VISIBLE_KEY, String(next));
+      localStorage.setItem(ADMIN_PREP_VISIBLE_STORAGE_KEY, String(next));
       return next;
     });
   }, []);
