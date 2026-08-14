@@ -19,7 +19,7 @@
 
 ---
 
-## - [ ] Task 1: Tách board vận hành và cấu hình trạng thái dùng chung
+## - [x] Task 1: Tách board vận hành và cấu hình trạng thái dùng chung
 
 **Files:**
 - Create: `chalo-fe/src/components/orders/operations/orders.config.ts`
