@@ -17,7 +17,7 @@ export function OrderPaymentPanel({
   onSuccess,
   order,
   tableOrders,
-  initialScope = "order",
+  initialScope = "table",
 }: {
   order: OrderDto;
   tableOrders: OrderDto[];
