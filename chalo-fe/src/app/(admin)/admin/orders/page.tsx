@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 import AdminOrdersHistory from "./_components/AdminOrdersHistory";
 import { AdminOrdersModeSwitch } from "./_components/AdminOrdersModeSwitch";
+import { AdminOrdersOperationsLayout } from "./_components/AdminOrdersOperationsLayout";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
 
@@ -48,7 +49,7 @@ export default function AdminOrdersPage() {
         <AdminMobilePageHeader title="Đơn hàng" description={isHistory ? "Lịch sử đơn hàng" : "Bảng vận hành realtime"} />
         <div className="mt-3"><AdminOrdersModeSwitch /></div>
       </div>
-      {isHistory ? <AdminOrdersHistory /> : <div className="min-h-[calc(100vh-10rem)]"><AdminOrdersOperations /></div>}
+      {isHistory ? <AdminOrdersHistory /> : <AdminOrdersOperationsLayout board={<AdminOrdersOperations />} />}
     </div>
   );
 }

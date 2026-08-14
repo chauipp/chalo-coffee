@@ -14,6 +14,7 @@ const clamp = (v: number, min: number, max: number) =>
 export interface SplitPaneControls {
   expanded: boolean;
   toggleExpand: () => void;
+  toggleVisible: () => void;
 }
 
 export const SplitPane = ({
@@ -24,6 +25,8 @@ export const SplitPane = ({
   defaultRatio = 9 / 13, // "3-3-3-4": 3 cột trái mỗi cột 3 phần, khu pha chế 4 phần
   minRatio = 0.25,
   maxRatio = 0.78,
+  visible = true,
+  onToggleVisible,
 }: {
   left: ReactNode;
   right: (controls: SplitPaneControls) => ReactNode;
@@ -32,6 +35,8 @@ export const SplitPane = ({
   defaultRatio?: number;
   minRatio?: number;
   maxRatio?: number;
+  visible?: boolean;
+  onToggleVisible?: () => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [ratio, setRatio] = useState(defaultRatio);
@@ -75,6 +80,8 @@ export const SplitPane = ({
     setRatio(next);
     save(next);
   };
+
+  const toggleVisible = onToggleVisible ?? (() => undefined);
 
   return (
     <div
@@ -141,9 +148,9 @@ export const SplitPane = ({
       <div
         className={`h-full min-w-0 flex-1 py-3 pr-3 max-md:min-h-0 max-md:px-2 max-md:pt-2 ${
           expanded ? "pl-3" : ""
-        } max-md:hidden`}
+        } ${visible ? "" : "hidden"} max-md:hidden`}
       >
-        {right({ expanded, toggleExpand })}
+        {right({ expanded, toggleExpand, toggleVisible })}
       </div>
     </div>
   );
