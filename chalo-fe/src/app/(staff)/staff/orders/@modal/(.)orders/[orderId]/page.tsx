@@ -11,8 +11,8 @@ export default function OrderDetailModal() {
     <OrderDetailModalContent
       orderId={orderId}
       closeHref={closeHref}
-      onClose={() => router.push(closeHref)}
-      onSuccess={() => router.push(closeHref)}
+      onClose={() => router.back()}
+      onSuccess={() => router.back()}
     />
   );
 }

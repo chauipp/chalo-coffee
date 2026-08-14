@@ -279,7 +279,13 @@ export default function AdminOrdersPage() {
               role="button"
               tabIndex={0}
               onClick={() => router.push(`/admin/orders/orders/${row.id}`)}
-              onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); router.push(`/admin/orders/orders/${row.id}`); } }}
+              onKeyDown={(event) => {
+                if ((event.target as HTMLElement).closest("button, a, input, select, textarea")) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  router.push(`/admin/orders/orders/${row.id}`);
+                }
+              }}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

@@ -7,5 +7,5 @@ export default function AdminOrderDetailModal() {
   const { orderId } = useParams<{ orderId: string }>();
   const router = useRouter();
   const closeHref = "/admin/orders";
-  return <OrderDetailModalContent orderId={orderId} closeHref={closeHref} onClose={() => router.push(closeHref)} onSuccess={() => router.push(closeHref)} />;
+  return <OrderDetailModalContent orderId={orderId} closeHref={closeHref} onClose={() => router.back()} onSuccess={() => router.back()} />;
 }
