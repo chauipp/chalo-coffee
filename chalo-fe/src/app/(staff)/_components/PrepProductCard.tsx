@@ -3,6 +3,7 @@
 // Card một MÓN — nhân vật chính của khu pha chế. Trong card chia mẻ theo ghi
 // chú vì ghi chú là thứ duy nhất ngăn hai ly được pha chung một lượt.
 import { PrepUnit, ProductGroup } from "@/utils/prep-grouping";
+import { getOrderSourceLabel } from "@/components/orders/OrderSourceBadge";
 
 export const PrepProductCard = ({
   group,
@@ -72,7 +73,7 @@ export const PrepProductCard = ({
                   >
                     {u.ticked ? "✓" : ""}
                   </span>
-                  {u.tableName}
+                  {u.tableName} · {getOrderSourceLabel(u.orderSource)}
                 </button>
               ))}
             </div>

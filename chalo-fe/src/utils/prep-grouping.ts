@@ -1,7 +1,7 @@
 // src/utils/prep-grouping.ts
 // Gom đơn đang pha theo MÓN (không theo bàn) cho khu pha chế, và tính tiến độ
 // theo bàn cho dải dưới đáy. Hàm thuần, không JSX — test được ở node.
-import { OrderDto } from "@/services/order/order.types";
+import { OrderDto, OrderSource } from "@/services/order/order.types";
 
 /** Một ly cụ thể cần pha */
 export interface PrepUnit {
@@ -11,6 +11,7 @@ export interface PrepUnit {
   unitIndex: number;
   quantity: number;
   tableName: string;
+  orderSource: OrderSource;
   note: string | null;
   modifiers?: string;
   ticked: boolean;
@@ -39,6 +40,7 @@ export interface ProductGroup {
 export interface TableProgress {
   orderId: string;
   tableName: string;
+  orderSource: OrderSource;
   total: number;
   done: number;
   createdAt: string;
@@ -96,6 +98,7 @@ export const groupByProduct = (orders: OrderDto[]): ProductGroup[] => {
           unitIndex: u,
           quantity: it.quantity,
           tableName: o.tableName,
+          orderSource: o.orderSource,
           note: it.note,
           modifiers,
           // preparedQuantity là một con số đếm ⇒ N ly đầu là đã pha
@@ -127,6 +130,7 @@ export const tableProgress = (orders: OrderDto[]): TableProgress[] =>
     .map((o) => ({
       orderId: o.id,
       tableName: o.tableName,
+      orderSource: o.orderSource,
       total: o.items.reduce((s, i) => s + i.quantity, 0),
       done: o.items.reduce(
         (s, i) => s + Math.min(i.preparedQuantity, i.quantity),

@@ -20,6 +20,7 @@ const makeOrder = (
   tableId: `tbl-${id}`,
   tableName,
   tableToken: `qr-${id}`,
+  orderSource: "N_A",
   status,
   paidStatus: false,
   items: [
