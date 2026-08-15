@@ -44,6 +44,7 @@ export class Order {
   @Column({
     type: 'enum',
     enum: OrderSource,
+    enumName: 'orders_order_source_enum',
     default: OrderSource.N_A,
   })
   orderSource: OrderSource;

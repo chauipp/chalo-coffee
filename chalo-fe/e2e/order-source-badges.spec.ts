@@ -10,6 +10,7 @@ const orders: OrderDto[] = [
     tableName: "Bàn QR",
     tableToken: "token-qr",
     orderSource: "QR",
+    pagerNumber: 11,
     status: "PENDING",
     paidStatus: false,
     items: [{ id: "item-qr", productId: "coffee", productName: "Cà phê QR", productImageUrl: null, price: 25000, quantity: 1, preparedQuantity: 0, subtotal: 25000, note: null }],
@@ -113,6 +114,7 @@ test("admin board and prep dock preserve QR, POS/pager, and N/A meanings", async
 
   await expect(sourceBadge(page, "QR")).toBeVisible();
   await expect(sourceBadge(page, "Quầy")).toBeVisible();
+  await expect(page.getByText("Thẻ #11", { exact: true })).toHaveCount(0);
   await expect(pagerBadge(page)).toBeVisible();
   await expect(sourceBadge(page, "N/A")).toBeVisible();
 
@@ -131,6 +133,7 @@ test("admin board and prep dock preserve QR, POS/pager, and N/A meanings", async
   await page.reload();
   await expect(sourceBadge(page, "QR")).toBeVisible();
   await expect(sourceBadge(page, "Quầy")).toBeVisible();
+  await expect(page.getByText("Thẻ #11", { exact: true })).toHaveCount(0);
   await expect(pagerBadge(page)).toBeVisible();
   await page.getByRole("button", { name: /Sẵn sàng phục vụ/ }).click();
   await expect(sourceBadge(page, "N/A")).toBeVisible();

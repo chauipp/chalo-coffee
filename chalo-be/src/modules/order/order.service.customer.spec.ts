@@ -132,6 +132,15 @@ describe('OrderService customer ownership', () => {
     expect(savedOrder?.orderSource).toBe(OrderSource.POS);
   });
 
+  it('lưu POS khi ADMIN tạo đơn trực tiếp', async () => {
+    await service.create(dto, {
+      ...customer,
+      role: UserRole.ADMIN,
+    });
+
+    expect(savedOrder?.orderSource).toBe(OrderSource.POS);
+  });
+
   it('giữ đơn vãng lai nếu bearer không phải CUSTOMER', async () => {
     const order = await service.create(dto, {
       ...customer,
