@@ -17,7 +17,7 @@
 
 ---
 
-- [ ] Task 1: Thay rail chữ bằng action icon mở rộng được
+- [x] Task 1: Thay rail chữ bằng action icon mở rộng được
 
 **Files:**
 - Modify: `chalo-fe/src/app/(admin)/_components/AdminPrepSidebarLayout.tsx:1-78`
@@ -27,7 +27,7 @@
 - Consumes: `CoffeeIcon` từ `@/components/shared/icons/CoffeeIcon`, `visible: boolean`, `setVisibility(next: boolean)`.
 - Produces: rail action với `data-testid="admin-prep-rail-action"`, `aria-label="Khu pha chế"`, `aria-pressed={visible}` và `aria-controls="admin-prep-dock"`.
 
-- [ ] **Step 1: Cập nhật E2E để định danh action icon, không phụ thuộc rail chữ**
+- [x] **Step 1: Cập nhật E2E để định danh action icon, không phụ thuộc rail chữ**
 
 ```ts
 const launcher = page.getByTestId("admin-prep-rail-action");
@@ -38,13 +38,13 @@ await launcher.click();
 await expect(launcher).toHaveAttribute("aria-pressed", "true");
 ```
 
-- [ ] **Step 2: Chạy E2E để xác nhận test thất bại trước khi có selector mới**
+- [x] **Step 2: Chạy E2E để xác nhận test thất bại trước khi có selector mới**
 
 Run: `PLAYWRIGHT_BASE_URL=http://localhost:3014 pnpm exec playwright test e2e/admin-prep-sidebar.spec.ts --project=chromium --reporter=line`
 
 Expected: FAIL vì `admin-prep-rail-action` chưa tồn tại.
 
-- [ ] **Step 3: Thay button rail bằng danh sách action icon**
+- [x] **Step 3: Thay button rail bằng danh sách action icon**
 
 ```tsx
 const railActions = [{
@@ -63,13 +63,13 @@ const railActions = [{
 ))}
 ```
 
-- [ ] **Step 4: Chạy kiểm tra TypeScript và E2E**
+- [x] **Step 4: Chạy kiểm tra TypeScript và E2E**
 
 Run: `pnpm exec tsc --noEmit --pretty false && PLAYWRIGHT_BASE_URL=http://localhost:3014 pnpm exec playwright test e2e/admin-prep-sidebar.spec.ts --project=chromium --reporter=line`
 
 Expected: cả hai lệnh PASS; action icon giữ rail luôn hiện và mở/đóng pane cạnh nội dung.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add chalo-fe/src/app/'(admin)'/_components/AdminPrepSidebarLayout.tsx chalo-fe/e2e/admin-prep-sidebar.spec.ts

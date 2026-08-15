@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { CoffeeIcon } from "@/components/shared/icons/CoffeeIcon";
 import { PrepDock } from "../../(staff)/_components/PrepDock";
 import { SplitPane } from "../../(staff)/_components/SplitPane";
 import {
@@ -45,6 +46,16 @@ export function AdminPrepSidebarLayout({
     writeAdminPrepVisible(next);
   }, []);
 
+  const railActions = [
+    {
+      id: "prep",
+      label: "Khu pha chế",
+      icon: CoffeeIcon,
+      active: visible,
+      onClick: () => setVisibility(!visible),
+    },
+  ];
+
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1">
       <div className="min-h-0 min-w-0 flex-1">
@@ -61,17 +72,30 @@ export function AdminPrepSidebarLayout({
           />
         ) : children}
       </div>
-      <button
-        type="button"
-        className="hidden min-h-10 w-10 shrink-0 items-center justify-center border-l border-gray-200 bg-white px-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-400 dark:border-gray-800 dark:bg-gray-900 dark:text-brand-400 dark:hover:bg-brand-950/30 md:flex"
-        aria-expanded={visible}
-        aria-controls={ADMIN_PREP_DOCK_ID}
-        aria-label={visible ? "Thu gọn khu pha chế" : "Pha chế"}
-        title={visible ? "Thu gọn khu pha chế" : "Mở khu pha chế"}
-        onClick={() => setVisibility(!visible)}
+      <aside
+        aria-label="Thanh công cụ bên phải"
+        className="hidden w-12 shrink-0 flex-col items-center gap-2 border-l border-gray-200 bg-white py-3 dark:border-gray-800 dark:bg-gray-900 md:flex"
       >
-        <span style={{ writingMode: "vertical-rl" }}>Pha chế</span>
-      </button>
+        {railActions.map(({ id, label, icon: Icon, active, onClick }) => (
+          <button
+            key={id}
+            type="button"
+            data-testid={`admin-${id}-rail-action`}
+            className={`flex size-9 items-center justify-center rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 ${
+              active
+                ? "bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300"
+                : "text-gray-500 hover:bg-brand-50 hover:text-brand-700 dark:text-gray-400 dark:hover:bg-brand-950/30 dark:hover:text-brand-300"
+            }`}
+            aria-label={label}
+            aria-pressed={active}
+            aria-controls={ADMIN_PREP_DOCK_ID}
+            title={label}
+            onClick={onClick}
+          >
+            <Icon className="size-5" aria-hidden="true" />
+          </button>
+        ))}
+      </aside>
     </div>
   );
 }
