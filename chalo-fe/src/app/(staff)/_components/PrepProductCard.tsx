@@ -54,7 +54,7 @@ export const PrepProductCard = ({
                   key={`${u.itemId}-${u.unitIndex}`}
                   onClick={() => onToggleUnit(u)}
                   aria-pressed={u.ticked}
-                  aria-label={`${u.tableName} — ly ${u.unitIndex + 1}/${u.quantity} ${group.productName}`}
+                  aria-label={`${u.tableName} (${getOrderSourceLabel(u.orderSource)}) — ly ${u.unitIndex + 1}/${u.quantity} ${group.productName}`}
                   title={
                     u.quantity > 1
                       ? `${u.tableName} · ly ${u.unitIndex + 1}/${u.quantity}`

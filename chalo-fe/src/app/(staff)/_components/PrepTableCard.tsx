@@ -22,7 +22,12 @@ export const PrepTableCard = ({
     >
       <div>
         <div className="flex items-baseline justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-1.5"><p className="text-sm font-bold text-stone-900 dark:text-stone-100 truncate">{table.tableName}</p><OrderSourceBadge source={table.orderSource} /></div>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <p className="text-sm font-bold text-stone-900 dark:text-stone-100 truncate">
+              {table.tableName}
+            </p>
+            <OrderSourceBadge source={table.orderSource} />
+          </div>
           <span
             className={`text-xs shrink-0 ${allDone ? "text-green-600 dark:text-green-400 font-semibold" : "text-stone-400"}`}
           >
