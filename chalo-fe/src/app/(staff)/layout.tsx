@@ -36,7 +36,7 @@ export default function StaffLayout({
             {children}
           </main>
         }
-        right={(ctl) => <PrepDock {...ctl} />}
+        right={() => <PrepDock />}
       />
       <MobileStaffNav />
     </div>

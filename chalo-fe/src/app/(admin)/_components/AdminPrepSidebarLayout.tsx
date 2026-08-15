@@ -45,38 +45,33 @@ export function AdminPrepSidebarLayout({
     writeAdminPrepVisible(next);
   }, []);
 
-  if (!visible) {
-    return (
-      <div className="flex h-full min-h-0 min-w-0 flex-1">
-        <div className="min-h-0 min-w-0 flex-1">{children}</div>
-        <button
-          type="button"
-          className="hidden min-h-10 min-w-10 shrink-0 items-center justify-center border-l border-gray-200 bg-white px-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-400 dark:border-gray-800 dark:bg-gray-900 dark:text-brand-400 dark:hover:bg-brand-950/30 md:flex"
-          aria-expanded={false}
-          aria-controls={ADMIN_PREP_DOCK_ID}
-          aria-label="Pha chế"
-          title="Mở khu pha chế"
-          onClick={() => setVisibility(true)}
-        >
-          <span style={{ writingMode: "vertical-rl" }}>Pha chế</span>
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <SplitPane
-      storageKey="admin-prep-split:v1"
-      className="h-full min-h-0 min-w-0 flex-1"
-      left={children}
-      right={(controls) => (
-        <div id={ADMIN_PREP_DOCK_ID} className="h-full min-h-0">
-          <PrepDock
-            {...controls}
-            onToggleVisible={() => setVisibility(false)}
+    <div className="flex h-full min-h-0 min-w-0 flex-1">
+      <div className="min-h-0 min-w-0 flex-1">
+        {visible ? (
+          <SplitPane
+            storageKey="admin-prep-split:v1"
+            className="h-full min-h-0 min-w-0"
+            left={children}
+            right={() => (
+              <div id={ADMIN_PREP_DOCK_ID} className="h-full min-h-0">
+                <PrepDock />
+              </div>
+            )}
           />
-        </div>
-      )}
-    />
+        ) : children}
+      </div>
+      <button
+        type="button"
+        className="hidden min-h-10 w-10 shrink-0 items-center justify-center border-l border-gray-200 bg-white px-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-400 dark:border-gray-800 dark:bg-gray-900 dark:text-brand-400 dark:hover:bg-brand-950/30 md:flex"
+        aria-expanded={visible}
+        aria-controls={ADMIN_PREP_DOCK_ID}
+        aria-label={visible ? "Thu gọn khu pha chế" : "Pha chế"}
+        title={visible ? "Thu gọn khu pha chế" : "Mở khu pha chế"}
+        onClick={() => setVisibility(!visible)}
+      >
+        <span style={{ writingMode: "vertical-rl" }}>Pha chế</span>
+      </button>
+    </div>
   );
 }

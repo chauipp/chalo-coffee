@@ -20,7 +20,9 @@ test("staff orders page shows split layout with draggable/keyboard resizer", asy
   ).toBeVisible();
   // 3 cột trái — nhãn đổi theo luồng đơn hàng mới (Task 10)
   // Scope theo span.text-sm.font-bold để tránh khớp hint rỗng
-  await expect(page.locator("span.text-sm.font-bold", { hasText: "Khách đặt" })).toBeVisible();
+  await expect(
+    page.locator("span.text-sm.font-bold", { hasText: "Khách đặt" }).last(),
+  ).toBeVisible();
   await expect(page.locator("span.text-sm.font-bold", { hasText: "Sẵn sàng phục vụ" })).toBeVisible();
   await expect(page.locator("span.text-sm.font-bold", { hasText: "Đã phục vụ" })).toBeVisible();
 
@@ -41,7 +43,7 @@ test("staff orders page shows split layout with draggable/keyboard resizer", asy
   expect(Math.abs(reloaded!.x - after!.x)).toBeLessThan(8);
 });
 
-test("khu pha chế hiển thị ở mọi màn staff và phóng to/thu lại được", async ({
+test("khu pha chế hiển thị ở mọi màn staff", async ({
   page,
 }) => {
   await page.goto("/login");
@@ -52,7 +54,6 @@ test("khu pha chế hiển thị ở mọi màn staff và phóng to/thu lại đ
 
   const prep = page.getByRole("heading", { name: "Đang pha chế" });
   const resizer = page.getByTestId("split-resizer");
-  const toggle = page.getByTestId("prep-expand-toggle");
 
   // Khu pha chế nằm ở layout → có mặt trên cả POS và Bàn, không chỉ Đơn hàng
   for (const path of ["/staff/orders", "/staff/pos", "/staff/tables"]) {
@@ -61,24 +62,5 @@ test("khu pha chế hiển thị ở mọi màn staff và phóng to/thu lại đ
     await expect(resizer).toBeVisible();
   }
 
-  // Mở rộng: chiếm hết chỗ bên phải menu → vùng trái và thanh kéo biến mất,
-  // nhưng menu (sidebar) vẫn còn để chuyển màn
-  const collapsedBox = await toggle.boundingBox();
-  await toggle.click();
-  await expect(resizer).toBeHidden();
-  const expandedBox = await toggle.boundingBox();
-  expect(expandedBox!.x).toBeLessThan(collapsedBox!.x); // đã nới sang trái
   await expect(page.getByRole("link", { name: "POS" })).toBeVisible();
-  const sidebarBox = await page.getByRole("link", { name: "POS" }).boundingBox();
-  expect(expandedBox!.x).toBeGreaterThan(sidebarBox!.x); // không đè lên menu
-
-  // Thu lại bằng nút
-  await toggle.click();
-  await expect(resizer).toBeVisible();
-
-  // Chuyển sang menu khác → tự thu về chế độ chia đôi
-  await toggle.click();
-  await expect(resizer).toBeHidden();
-  await page.getByRole("link", { name: "Đơn hàng" }).click();
-  await expect(resizer).toBeVisible({ timeout: 15_000 });
 });

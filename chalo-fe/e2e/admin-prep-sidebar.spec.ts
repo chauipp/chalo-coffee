@@ -55,7 +55,7 @@ test("admin prep rail creates an adjacent pane across dashboard and orders", asy
     expect(rightBox!.x).toBeGreaterThanOrEqual(resizerBox!.x + resizerBox!.width - 1);
     expect(rightBox!.width).toBeGreaterThan(0);
 
-    await dock.getByTestId("prep-visibility-toggle").click();
+    await launcher.click();
     await expect(resizer).toHaveCount(0);
     await expect(launcher).toBeVisible();
 

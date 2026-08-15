@@ -2,8 +2,6 @@
 // src/app/(staff)/_components/PrepStation.tsx
 // Khu vực Pha chế: gom các đơn PREPARING theo MÓN (không theo bàn). Không có
 // nút "Sẵn sàng" — tick đủ mọi ly của một bàn thì BE tự đẩy đơn sang READY.
-import { CollapseIcon } from "@/components/shared/icons/CollapseIcon";
-import { ExpandIcon } from "@/components/shared/icons/ExpandIcon";
 import { OrderDto } from "@/services/order/order.types";
 import { orderDragType } from "@/app/(staff)/staff/orders/orders.config";
 import { PrepUnit, groupByProduct, tableProgress } from "@/utils/prep-grouping";
@@ -15,18 +13,11 @@ import { TableProgressBar } from "./TableProgressBar";
 export const PrepStation = ({
   orders,
   onToggleUnit,
-  expanded,
-  onToggleExpand,
-  onToggleVisible,
   onDropOrder,
 }: {
   /** Các đơn PREPARING, sort cũ → mới */
   orders: OrderDto[];
   onToggleUnit: (unit: PrepUnit) => void;
-  expanded: boolean;
-  onToggleExpand: () => void;
-  /** Ẩn/hiện dock (chỉ có ở layout admin; staff luôn hiển thị dock). */
-  onToggleVisible?: () => void;
   /** Thả card "Khách đặt" vào đây = Bắt đầu pha (→ PREPARING) */
   onDropOrder?: (orderId: string) => void;
 }) => {
@@ -62,39 +53,6 @@ export const PrepStation = ({
     >
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-brand-200 dark:border-brand-800/50 shrink-0">
         <div className="flex items-center gap-2">
-          <button
-            onClick={onToggleExpand}
-            data-testid="prep-expand-toggle"
-            aria-pressed={expanded}
-            aria-label={
-              expanded
-                ? "Thu khu pha chế về chế độ chia đôi (Esc)"
-                : "Mở rộng khu pha chế chiếm hết vùng bên phải menu"
-            }
-            title={
-              expanded
-                ? "Thu lại · Esc"
-                : "Mở rộng khu pha chế · chuyển menu khác sẽ tự thu lại"
-            }
-            className="rounded-lg p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
-          >
-            {expanded ? (
-              <CollapseIcon className="size-4" />
-            ) : (
-              <ExpandIcon className="size-4" />
-            )}
-          </button>
-          {onToggleVisible && (
-            <button
-              onClick={onToggleVisible}
-              data-testid="prep-visibility-toggle"
-              aria-label="Thu gọn khu pha chế"
-              title="Thu gọn khu pha chế"
-              className="rounded-lg p-1.5 text-brand-600 transition-colors hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 dark:text-brand-400 dark:hover:bg-brand-900/30"
-            >
-              <CollapseIcon className="size-4" />
-            </button>
-          )}
           <span className="text-base">☕</span>
           <h2 className="text-sm font-bold text-brand-700 dark:text-brand-400">
             Đang pha chế
