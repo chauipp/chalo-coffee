@@ -47,4 +47,4 @@ Admin có một right sidebar pha chế nhất quán ở mọi màn `/admin/*` t
 
 ## Plan thực thi
 
-Sẽ tạo tại `../plans/2026-08-15-admin-global-prep-sidebar.md` sau khi spec được duyệt.
+[2026-08-15-admin-global-prep-sidebar.md](../plans/2026-08-15-admin-global-prep-sidebar.md)
