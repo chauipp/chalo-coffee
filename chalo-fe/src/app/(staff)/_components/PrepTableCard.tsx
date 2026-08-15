@@ -3,6 +3,7 @@
 // Card một BÀN — chế độ "theo bàn" của khu pha chế. Mỗi card là một đơn đang
 // pha, liệt kê từng món với các ô tick ly, dùng chung onToggleUnit với card món.
 import { PrepUnit, TableProgress } from "@/utils/prep-grouping";
+import { OrderSourceBadge } from "@/components/orders/OrderSourceBadge";
 
 export const PrepTableCard = ({
   table,
@@ -21,9 +22,12 @@ export const PrepTableCard = ({
     >
       <div>
         <div className="flex items-baseline justify-between gap-2">
-          <p className="text-sm font-bold text-stone-900 dark:text-stone-100 truncate">
-            {table.tableName}
-          </p>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <p className="text-sm font-bold text-stone-900 dark:text-stone-100 truncate">
+              {table.tableName}
+            </p>
+            <OrderSourceBadge source={table.orderSource} />
+          </div>
           <span
             className={`text-xs shrink-0 ${allDone ? "text-green-600 dark:text-green-400 font-semibold" : "text-stone-400"}`}
           >
@@ -61,6 +65,7 @@ export const PrepTableCard = ({
                   unitIndex: u,
                   quantity: it.quantity,
                   tableName: table.tableName,
+                  orderSource: table.orderSource,
                   note: it.note,
                   ticked: u < it.preparedQuantity,
                 };

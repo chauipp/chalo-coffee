@@ -71,6 +71,7 @@ export const TablePopover = ({
                     unitIndex: u,
                     quantity: it.quantity,
                     tableName: table.tableName,
+                    orderSource: table.orderSource,
                     note: it.note,
                     ticked,
                   })

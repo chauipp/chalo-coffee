@@ -10,6 +10,7 @@ import {
   Index,
 } from 'typeorm';
 import { OrderStatus } from '../../../common/enums/order-status.enum';
+import { OrderSource } from '../../../common/enums/order-source.enum';
 import { Table } from '../../table/entities/table.entity';
 import { OrderItem } from './order-item.entity';
 import { PagerToken } from '../../pager/entities/pager-token.entity';
@@ -39,6 +40,14 @@ export class Order {
     default: OrderStatus.PENDING,
   })
   status: OrderStatus;
+
+  @Column({
+    type: 'enum',
+    enum: OrderSource,
+    enumName: 'orders_order_source_enum',
+    default: OrderSource.N_A,
+  })
+  orderSource: OrderSource;
 
   @Column({ type: 'boolean', default: false })
   paidStatus: boolean;

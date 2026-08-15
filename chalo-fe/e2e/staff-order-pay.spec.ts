@@ -16,6 +16,7 @@ const order: OrderDto = {
   tableId: "tbl-10",
   tableName: "Bàn 10",
   tableToken: "qr-tbl-10",
+  orderSource: "N_A",
   status: "READY",
   paidStatus: false,
   items: [

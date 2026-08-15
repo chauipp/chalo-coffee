@@ -31,6 +31,7 @@ import {
   CheckoutRequestBatchPaymentDto,
 } from './dto/checkout.dto';
 import { OrderStatus } from '../../common/enums/order-status.enum';
+import { OrderSource } from '../../common/enums/order-source.enum';
 import { TableStatus } from '../../common/enums/table-status.enum';
 import { ProductStatus } from '../../common/enums/product-status.enum';
 import { ESTIMATED_WAIT_BARISTAS } from '../../common/constants';
@@ -91,6 +92,7 @@ export class OrderService {
       tableToken: order.tableToken,
       customerId: order.customerId ?? null,
       status: order.status,
+      orderSource: order.orderSource,
       paidStatus: order.paidStatus,
       items: (order.items || []).map((item) => ({
         id: item.id,
@@ -428,11 +430,18 @@ export class OrderService {
         }
       }
 
+      const orderSource =
+        authenticatedUser?.role === UserRole.ADMIN ||
+        authenticatedUser?.role === UserRole.MODERATOR
+          ? OrderSource.POS
+          : OrderSource.QR;
+
       const order = manager.create(Order, {
         tableId: table.id,
         tableToken: dto.tableToken,
         customerId,
         status: OrderStatus.PENDING,
+        orderSource,
         totalAmount,
         estimatedWaitMinutes,
         note: dto.note ?? null,

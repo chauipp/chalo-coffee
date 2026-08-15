@@ -15,6 +15,9 @@ export const ORDER_STATUS = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUS)[number];
 
+export const ORDER_SOURCE = ["QR", "POS", "N_A"] as const;
+export type OrderSource = (typeof ORDER_SOURCE)[number];
+
 // ============================================================================
 // 2. DTO - DATA TRANSFER OBJECTS 
 // ============================================================================
@@ -37,6 +40,7 @@ export interface OrderDto {
   tableId: string;
   tableName: string;
   tableToken: string;
+  orderSource: OrderSource;
   customerDisplayName?: string | null;
   loyaltyPointsEarned?: number;
   items: OrderItemDto[];

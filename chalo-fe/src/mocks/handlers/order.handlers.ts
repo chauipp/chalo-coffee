@@ -12,6 +12,7 @@ let orders: OrderDto[] = [
     tableId: "tbl_01",
     tableName: "Bàn 01",
     tableToken: "qr-token-tbl_01",
+    orderSource: "N_A",
     status: "PREPARING",
     paidStatus: false,
     items: [
@@ -49,6 +50,7 @@ let orders: OrderDto[] = [
     tableId: "tbl_08",
     tableName: "Bàn 08",
     tableToken: "qr-token-tbl_08",
+    orderSource: "N_A",
     status: "PENDING",
     paidStatus: false,
     items: [
@@ -75,6 +77,7 @@ let orders: OrderDto[] = [
     tableId: "tbl_03",
     tableName: "Bàn 03",
     tableToken: "qr-token-tbl_03",
+    orderSource: "N_A",
     status: "CONFIRMED",
     paidStatus: false,
     items: [
@@ -101,6 +104,7 @@ let orders: OrderDto[] = [
     tableId: "tbl_04",
     tableName: "Bàn 04",
     tableToken: "qr-token-tbl_04",
+    orderSource: "N_A",
     status: "READY",
     paidStatus: false,
     items: [
@@ -127,6 +131,7 @@ let orders: OrderDto[] = [
     tableId: "tbl_02",
     tableName: "Bàn 02",
     tableToken: "qr-token-tbl_02",
+    orderSource: "N_A",
     status: "COMPLETED",
     paidStatus: true,
     items: [
@@ -265,6 +270,7 @@ export const orderHandlers = [
       tableId: mockTableId,
       tableName: mockTableName,
       tableToken: tableToken,
+      orderSource: "QR",
       status: "PENDING",
       paidStatus: false,
       items: items.map((item) => {

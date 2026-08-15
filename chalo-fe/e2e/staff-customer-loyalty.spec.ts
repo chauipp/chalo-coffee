@@ -12,6 +12,7 @@ const customerOrder = {
   tableId: "10000000-0000-4000-8000-000000000001",
   tableName: "Bàn A",
   tableToken: "fixed-print-qr",
+  orderSource: "N_A",
   customerDisplayName: "Phạm Thái Châu",
   loyaltyPointsEarned: 100,
   customerEmail: "chau@gmail.com",

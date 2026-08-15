@@ -36,6 +36,7 @@ const order = (
     tableId: `t-${id}`,
     tableName,
     tableToken: `tok-${id}`,
+    orderSource: "N_A",
     items,
     status: "PREPARING",
     paidStatus: false,
@@ -136,6 +137,14 @@ test("dải bàn sắp FIFO theo đơn cũ nhất", () => {
     "Ban 03",
     "Ban 09",
   ]);
+});
+
+test("dải bàn giữ nguồn đơn để card pha chế hiển thị đúng", () => {
+  const orders = [
+    { ...order("o1", "Ban 09", "2026-07-17T01:05:00Z", [item("i1", "p1", "Cold Drip")]), orderSource: "POS" as const },
+  ];
+
+  expect(tableProgress(orders)[0].orderSource).toBe("POS");
 });
 
 test("nextPreparedQuantity: bấm ly chưa tick -> tick tới nó", () => {
