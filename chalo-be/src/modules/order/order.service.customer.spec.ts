@@ -11,6 +11,7 @@ import { SettingsService } from '../settings/settings.service';
 import { CustomerService } from '../customer/customer.service';
 import { ProductStatus } from '../../common/enums/product-status.enum';
 import { UserRole } from '../../common/enums/user-role.enum';
+import { OrderSource } from '../../common/enums/order-source.enum';
 
 describe('OrderService customer ownership', () => {
   let service: OrderService;
@@ -114,6 +115,21 @@ describe('OrderService customer ownership', () => {
 
     expect(order.customerId).toBeNull();
     expect(customerService.getActiveShortcut).not.toHaveBeenCalled();
+  });
+
+  it('lưu QR cho request public', async () => {
+    await service.create(dto, null);
+
+    expect(savedOrder?.orderSource).toBe(OrderSource.QR);
+  });
+
+  it('lưu POS cho vai trò nội bộ', async () => {
+    await service.create(dto, {
+      ...customer,
+      role: UserRole.MODERATOR,
+    });
+
+    expect(savedOrder?.orderSource).toBe(OrderSource.POS);
   });
 
   it('giữ đơn vãng lai nếu bearer không phải CUSTOMER', async () => {
