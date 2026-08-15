@@ -2,19 +2,11 @@
 // src/app/(staff)/_components/SplitPane.tsx
 // Chia đôi màn hình với thanh kéo (Split Resizer): pointer drag + bàn phím
 // (←/→ ±2%, Home/End = min/max), double-click reset. Tỷ lệ lưu localStorage.
-// Vùng phải có thể phóng to chiếm hết phần bên phải menu (expanded) — Esc,
-// bấm nút, hoặc chuyển sang menu khác đều đưa về lại chế độ chia đôi.
-import { usePathname } from "next/navigation";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+// Vùng phải có tỷ lệ kéo được và lưu theo từng layout.
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 const clamp = (v: number, min: number, max: number) =>
   Math.min(max, Math.max(min, v));
-
-/** Vùng phải tự render nút phóng to/thu nhỏ ở góc trên trái của nó */
-export interface SplitPaneControls {
-  expanded: boolean;
-  toggleExpand: () => void;
-}
 
 export const SplitPane = ({
   left,
@@ -26,7 +18,7 @@ export const SplitPane = ({
   maxRatio = 0.78,
 }: {
   left: ReactNode;
-  right: (controls: SplitPaneControls) => ReactNode;
+  right: () => ReactNode;
   storageKey: string;
   className?: string;
   defaultRatio?: number;
@@ -36,10 +28,8 @@ export const SplitPane = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [ratio, setRatio] = useState(defaultRatio);
   const [dragging, setDragging] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const ratioRef = useRef(ratio);
-  ratioRef.current = ratio;
-  const pathname = usePathname();
+  useEffect(() => { ratioRef.current = ratio; }, [ratio]);
 
   useEffect(() => {
     const saved = Number(localStorage.getItem(storageKey));
@@ -48,21 +38,6 @@ export const SplitPane = ({
   }, [storageKey, minRatio, maxRatio]);
 
   const save = (v: number) => localStorage.setItem(storageKey, String(v));
-
-  const toggleExpand = useCallback(() => setExpanded((prev) => !prev), []);
-
-  // Chuyển sang menu khác → trả vùng phải về tỷ lệ chia đôi ban đầu
-  useEffect(() => setExpanded(false), [pathname]);
-
-  // Esc để thoát chế độ phóng to
-  useEffect(() => {
-    if (!expanded) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setExpanded(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [expanded]);
 
   const moveTo = (clientX: number) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -81,12 +56,10 @@ export const SplitPane = ({
       ref={containerRef}
       className={`flex flex-col md:flex-row h-full min-h-0 min-w-0 ${className}`}
     >
-      {/* Vùng trái vẫn mounted khi phóng to → thu lại không mất state của trang */}
+      {/* Vùng trái luôn mounted để đổi tỷ lệ không làm mất state của trang */}
       <div
         style={{ width: `${ratio * 100}%` }}
-        className={`h-full min-w-0 shrink-0 max-md:h-auto max-md:min-h-0 max-md:w-full! max-md:flex-1 ${
-          expanded ? "md:hidden" : ""
-        }`}
+        className="h-full min-w-0 shrink-0 max-md:h-auto max-md:min-h-0 max-md:w-full! max-md:flex-1"
       >
         {left}
       </div>
@@ -96,9 +69,8 @@ export const SplitPane = ({
         aria-orientation="vertical"
         aria-label="Kéo để chỉnh tỷ lệ hai vùng (phím ← →, Home/End, double-click để đặt lại)"
         title="Kéo để chỉnh tỷ lệ · double-click đặt lại"
-        tabIndex={expanded ? -1 : 0}
+        tabIndex={0}
         data-testid="split-resizer"
-        hidden={expanded}
         onPointerDown={(e) => {
           e.preventDefault();
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -136,14 +108,10 @@ export const SplitPane = ({
           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400`}
       />
 
-      {/* Phóng to = vùng trái ẩn đi, vùng này flex-1 nên tự chiếm hết chỗ
-          còn lại bên phải menu (sidebar vẫn hiển thị) */}
       <div
-        className={`h-full min-w-0 flex-1 py-3 pr-3 max-md:min-h-0 max-md:px-2 max-md:pt-2 ${
-          expanded ? "pl-3" : ""
-        } max-md:hidden`}
+        className="h-full min-w-0 flex-1 py-3 pr-3 max-md:min-h-0 max-md:px-2 max-md:pt-2 max-md:hidden"
       >
-        {right({ expanded, toggleExpand })}
+        {right()}
       </div>
     </div>
   );

@@ -1,249 +1,29 @@
-// src/app/(staff)/staff/orders/page.tsx
 "use client";
 import { API, QUERY_KEYS } from "@/constants";
 import { SSEPayload, useSSE } from "@/hooks/useSSE";
-import {
-  useGetActiveOrder,
-  useUpdateOrderStatus,
-} from "@/services/order/order.queries";
-import { OrderDto, OrderStatus } from "@/services/order/order.types";
+import { useGetActiveOrder, useUpdateOrderStatus } from "@/services/order/order.queries";
+import { OrderStatus } from "@/services/order/order.types";
 import { useAuthStore } from "@/stores/auth.store";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { KanbanColumn } from "./_components/KanbanColumn";
-import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
-import { KANBAN_COLUMNS, KHACH_DAT_STATUSES } from "./orders.config";
+import { OrderOperationsBoard } from "@/components/orders/operations/OrderOperationsBoard";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
-
-/** So khớp không phân biệt hoa thường và dấu — gõ "ban 5" vẫn ra "Bàn 05" */
-const normalize = (s: string) =>
-  s
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "")
-    .replace(/đ/gi, "d")
-    .toLowerCase();
-
-/** Tiếng "ting" báo hiệu — pitch tuỳ loại sự kiện */
-const playBeep = (frequency = 880) => {
-  try {
-    const AudioContextClass =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    const ctx = new AudioContextClass();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = frequency;
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.5);
-  } catch {}
-};
-
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
+const playBeep = (frequency = 880) => { try { const C = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext; const c = new C(); const o = c.createOscillator(); const g = c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value = frequency; g.gain.setValueAtTime(.3, c.currentTime); g.gain.exponentialRampToValueAtTime(.001, c.currentTime + .5); o.start(); o.stop(c.currentTime + .5); } catch {} };
 export default function StaffOrdersPage() {
-  const qc = useQueryClient();
-  const prevPendingCountRef = useRef<number>(0);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [isSSEConnected, setIsSSEConnected] = useState<boolean>(false);
-  const [tableSearch, setTableSearch] = useState("");
-  const [mobileStatus, setMobileStatus] = useState<OrderStatus>("PENDING");
-
-  const accessToken = useAuthStore((s) => s.accessToken);
-
-  const { data: activeOrders, isLoading, refetch } = useGetActiveOrder();
-
-  const updateStatusMutation = useUpdateOrderStatus();
-
-  useSSE({
-    url: `${API_BASE}${API.SSE.ORDER_EVENTS}`,
-    token: accessToken,
-    onConnectionChange: setIsSSEConnected,
-    onEvent: (type, data) => {
-      switch (type) {
-        case "new_order":
-        case "payment_completed":
-        case "order_status_changed":
-        case "order_prep_progress":
-          qc.invalidateQueries({
-            queryKey: QUERY_KEYS.ORDERS.ACTIVE,
-          });
-          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
-          break;
-        case "payment_request": {
-          const p = data as SSEPayload["payment_request"];
-          playBeep(660);
-          toast.info(`Bàn ${p.tableName ?? ""} yêu cầu thanh toán`, {
-            duration: 8000,
-          });
-          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
-          break;
-        }
-        case "payment_request_batch": {
-          const p = data as SSEPayload["payment_request_batch"];
-          playBeep(660);
-          toast.info(
-            `Bàn ${p.tableName ?? ""} yêu cầu thanh toán gộp (${p.totalAmount.toLocaleString("vi-VN")}đ)`,
-            { duration: 8000 },
-          );
-          qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL });
-          break;
-        }
-        case "staff_call": {
-          const p = data as SSEPayload["staff_call"];
-          playBeep(520);
-          toast.warning(
-            `Bàn ${p.tableName ?? ""} đang gọi nhân viên${p.reason ? `: ${p.reason}` : ""}`,
-            { duration: 10000 },
-          );
-          break;
-        }
-      }
-    },
-    enabled: !!accessToken,
-    reconnectDelay: 3_000,
-  });
-
-  // ─── Sound for new PENDING orders ────────────────────────────────────────────────────────
-  const pendingCount = (activeOrders || []).filter(
-    (o) => o.status === "PENDING" || o.status === "CONFIRMED",
-  ).length;
-
-  useEffect(() => {
-    if (
-      pendingCount > prevPendingCountRef.current &&
-      prevPendingCountRef.current > 0
-    ) {
-      playBeep(880);
-      toast.info("🔔 Có đơn hàng mới!", { duration: 4000 });
+  const qc = useQueryClient(); const token = useAuthStore((s) => s.accessToken); const prev = useRef(0); const [live, setLive] = useState(false); const { data: orders, isLoading, refetch } = useGetActiveOrder(); const mutation = useUpdateOrderStatus();
+  useSSE({ url: `${API_BASE}${API.SSE.ORDER_EVENTS}`, token, onConnectionChange: setLive, onEvent: (type, data) => {
+    switch (type) {
+      case "new_order": case "payment_completed": case "order_status_changed": case "order_prep_progress":
+        qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE }); qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL }); break;
+      case "payment_request": { const p = data as SSEPayload["payment_request"]; playBeep(660); toast.info(`Bàn ${p.tableName ?? ""} yêu cầu thanh toán`, { duration: 8000 }); qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL }); break; }
+      case "payment_request_batch": { const p = data as SSEPayload["payment_request_batch"]; playBeep(660); toast.info(`Bàn ${p.tableName ?? ""} yêu cầu thanh toán gộp (${p.totalAmount.toLocaleString("vi-VN")}đ)`, { duration: 8000 }); qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ALL }); break; }
+      case "staff_call": { const p = data as SSEPayload["staff_call"]; playBeep(520); toast.warning(`Bàn ${p.tableName ?? ""} đang gọi nhân viên${p.reason ? `: ${p.reason}` : ""}`, { duration: 10000 }); break; }
     }
-    prevPendingCountRef.current = pendingCount;
-  }, [pendingCount]);
-
-  // ─── Handle status change ────────────────────────────────────────────────────────
-  const handleStatusChange = async (orderId: string, status: OrderStatus) => {
-    setUpdatingId(orderId);
-    try {
-      await updateStatusMutation.mutateAsync({ orderId, status });
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  /** Đơn của từng cột: "Khách đặt" gom cả CONFIRMED cũ; "Đã phục vụ" chỉ đơn chưa trả tiền */
-  const ordersForColumn = useMemo(() => {
-    const q = normalize(tableSearch.trim());
-    const all = (activeOrders ?? []).filter(
-      (o) => !q || normalize(o.tableName ?? "").includes(q),
-    );
-    return (status: OrderStatus): OrderDto[] => {
-      if (status === "PENDING")
-        return all.filter((o) => KHACH_DAT_STATUSES.includes(o.status));
-      if (status === "COMPLETED")
-        return all.filter((o) => o.status === "COMPLETED" && !o.paidStatus);
-      return all.filter((o) => o.status === status);
-    };
-  }, [activeOrders, tableSearch]);
-
-  const totalActive = activeOrders?.length ?? 0;
-  const leftColumns = KANBAN_COLUMNS;
-
-  return (
-    <div className="h-full flex flex-col">
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
-        <div>
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-            Đơn hàng
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Real-time · {totalActive} đơn đang xử lý
-          </p>
-        </div>
-        <div className="flex w-full items-center gap-2 sm:w-auto sm:gap-3">
-          <input
-            type="search"
-            value={tableSearch}
-            onChange={(e) => setTableSearch(e.target.value)}
-            placeholder="🔍 Tìm bàn..."
-            className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 sm:w-44 sm:flex-none"
-          />
-          <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
-            <span
-              className={`size-2 rounded-full ${
-                isSSEConnected ? "bg-green-500 animate-pulse" : "bg-gray-400"
-              }`}
-            />
-            {isSSEConnected ? "Live" : "Connecting..."}
-          </div>
-          <button
-            onClick={() => refetch()}
-            className="min-h-10 shrink-0 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
-          >
-            🔄 Làm mới
-          </button>
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div className="flex-1 flex items-center justify-center">
-          <SpinnerIcon className="size-8 animate-spin text-brand-400" />
-        </div>
-      ) : (
-        <>
-          <div className="flex shrink-0 gap-1 overflow-x-auto border-b border-gray-200 bg-white p-2 dark:border-gray-800 dark:bg-gray-900 md:hidden">
-            {leftColumns.map((column) => {
-              const count = ordersForColumn(column.status).length;
-              const active = mobileStatus === column.status;
-              return (
-                <button
-                  key={column.status}
-                  type="button"
-                  onClick={() => setMobileStatus(column.status)}
-                  className={`min-h-11 shrink-0 rounded-xl px-3 text-sm font-semibold transition-colors ${
-                    active
-                      ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300"
-                      : "text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800"
-                  }`}
-                >
-                  {column.emoji} {column.label} {count > 0 ? `(${count})` : ""}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex-1 min-h-0 p-3 md:hidden">
-            {leftColumns
-              .filter((column) => column.status === mobileStatus)
-              .map((column) => (
-                <KanbanColumn
-                  config={column}
-                  onStatusChange={handleStatusChange}
-                  updatingId={updatingId}
-                  orders={ordersForColumn(column.status)}
-                  key={column.status}
-                />
-              ))}
-          </div>
-          {/* Khu pha chế (cột "Đang pha chế") nằm ở layout staff desktop */}
-          <div className="relative hidden min-h-0 flex-1 overflow-x-auto p-4 md:block">
-          <div className="flex gap-3 h-full min-w-[680px]">
-            {leftColumns.map((col) => (
-              <KanbanColumn
-                config={col}
-                onStatusChange={handleStatusChange}
-                updatingId={updatingId}
-                orders={ordersForColumn(col.status)}
-                key={col.status}
-              />
-            ))}
-          </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
+  }, enabled: !!token, reconnectDelay: 3000 });
+  const pending = (orders ?? []).filter((o) => o.status === "PENDING" || o.status === "CONFIRMED").length;
+  useEffect(() => { if (pending > prev.current && prev.current > 0) { playBeep(); toast.info("🔔 Có đơn hàng mới!", { duration: 4000 }); } prev.current = pending; }, [pending]);
+  const update = (id: string, status: OrderStatus) => mutation.mutateAsync({ orderId: id, status });
+  return <OrderOperationsBoard orders={orders} isLoading={isLoading} isLive={live} onRefresh={() => { void refetch(); }} onStatusChange={update} detailHref={(id) => `/staff/orders/orders/${id}`} />;
 }

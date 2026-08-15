@@ -19,7 +19,7 @@
 
 ---
 
-## - [ ] Task 1: Tách board vận hành và cấu hình trạng thái dùng chung
+## - [x] Task 1: Tách board vận hành và cấu hình trạng thái dùng chung
 
 **Files:**
 - Create: `chalo-fe/src/components/orders/operations/orders.config.ts`
@@ -55,7 +55,7 @@
 
   Run: `git add chalo-fe/src/components/orders/operations chalo-fe/src/app/(staff)/staff/orders && git commit -m "refactor: share order operations board"`
 
-## - [ ] Task 2: Tách nội dung chi tiết đơn và route modal dùng được cho admin
+## - [x] Task 2: Tách nội dung chi tiết đơn và route modal dùng được cho admin
 
 **Files:**
 - Create: `chalo-fe/src/components/orders/OrderDetailModalContent.tsx`
@@ -89,7 +89,7 @@
 
   Run: `git add chalo-fe/src/components/orders/OrderDetailModalContent.tsx chalo-fe/src/app/(admin)/admin/orders chalo-fe/src/app/(staff)/staff/orders chalo-fe/src/components/shared && git commit -m "feat: share order detail modal with admin"`
 
-## - [ ] Task 3: Biến `/admin/orders` thành màn vận hành + lịch sử rõ ràng
+## - [x] Task 3: Biến `/admin/orders` thành màn vận hành + lịch sử rõ ràng
 
 **Files:**
 - Modify: `chalo-fe/src/app/(admin)/admin/orders/page.tsx`
@@ -122,7 +122,7 @@
 
   Run: `git add chalo-fe/src/app/(admin)/admin/orders && git commit -m "feat: add realtime order operations to admin"`
 
-## - [ ] Task 4: Thêm PrepDock admin thu gọn/mở rộng và lưu trạng thái riêng
+## - [x] Task 4: Thêm PrepDock admin thu gọn/mở rộng và lưu trạng thái riêng
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/_components/SplitPane.tsx`

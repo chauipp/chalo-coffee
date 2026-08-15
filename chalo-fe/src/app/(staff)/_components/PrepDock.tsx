@@ -19,13 +19,7 @@ const PREP_POLL_MS = 10_000;
 const byCreatedAsc = (a: OrderDto, b: OrderDto) =>
   +new Date(a.createdAt) - +new Date(b.createdAt);
 
-export const PrepDock = ({
-  expanded,
-  toggleExpand,
-}: {
-  expanded: boolean;
-  toggleExpand: () => void;
-}) => {
+export const PrepDock = () => {
   const { data: activeOrders } = useGetActiveOrder({
     refetchInterval: PREP_POLL_MS,
   });
@@ -51,8 +45,6 @@ export const PrepDock = ({
     <PrepStation
       orders={preparingOrders}
       onToggleUnit={handleToggleUnit}
-      expanded={expanded}
-      onToggleExpand={toggleExpand}
       onDropOrder={(orderId) =>
         updateStatus.mutate({ orderId, status: "PREPARING" })
       }

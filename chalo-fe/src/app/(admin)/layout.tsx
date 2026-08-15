@@ -6,6 +6,7 @@ import { ADMIN_NAV_ITEMS } from "./_components/sidebar.config";
 import { AdminStateRestorer } from "./_components/AdminStateRestorer";
 import { MobileAdminNav } from "./_components/MobileAdminNav";
 import { BrandLogo } from "@/components/shared/BrandLogo";
+import { AdminPrepSidebarLayout } from "./_components/AdminPrepSidebarLayout";
 
 export default function AdminLayout({
   children,
@@ -30,7 +31,7 @@ export default function AdminLayout({
             </div>
           </header>
           <main className="min-w-0 flex-1 overflow-auto pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
-            {children}
+            <AdminPrepSidebarLayout>{children}</AdminPrepSidebarLayout>
           </main>
         </div>
       </div>
