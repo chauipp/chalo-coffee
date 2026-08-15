@@ -35,7 +35,7 @@
 
 ## Task 1: Lưu nguồn đơn an toàn ở backend
 
-- [ ] Task 1: Lưu nguồn đơn an toàn ở backend
+- [x] Task 1: Lưu nguồn đơn an toàn ở backend
 
 **Files:**
 - Create: `chalo-be/src/common/enums/order-source.enum.ts`
@@ -102,7 +102,7 @@ git commit -m "feat: track trusted order sources"
 
 ## Task 2: Carry the source through frontend data and render reusable badges
 
-- [ ] Task 2: Carry the source through frontend data and render reusable badges
+- [x] Task 2: Carry the source through frontend data and render reusable badges
 
 **Files:**
 - Create: `chalo-fe/src/components/orders/OrderSourceBadge.tsx`
@@ -164,7 +164,7 @@ git commit -m "feat: show order source badges"
 
 ## Task 3: Verify end-to-end data and visual behavior
 
-- [ ] Task 3: Verify end-to-end data and visual behavior
+- [x] Task 3: Verify end-to-end data and visual behavior
 
 **Files:**
 - Create: `chalo-fe/e2e/order-source-badges.spec.ts`

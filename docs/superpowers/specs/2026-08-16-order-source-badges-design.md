@@ -43,4 +43,4 @@ Mỗi đơn mới phải lưu được kênh tạo đơn để nhân viên nhìn
 
 ## Plan thực thi
 
-Sẽ bổ sung sau khi spec được duyệt: [plan](../plans/2026-08-16-order-source-badges.md).
+[Kế hoạch thực thi](../plans/2026-08-16-order-source-badges.md).
