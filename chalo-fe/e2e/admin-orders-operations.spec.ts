@@ -25,7 +25,7 @@ test.beforeEach(async ({ page }) => {
   );
   await page.route("**/api/order/active**", (route) => route.fulfill(ok([order])));
   await page.route("**/api/order/page**", (route) =>
-    route.fulfill(ok({ content: [order], totalElements: 1, totalPages: 1, pageNo: 1, pageSize: 20 })),
+    route.fulfill(ok({ list: [order], total: 1 })),
   );
   await page.route("**/api/table**", (route) => route.fulfill(ok([])));
 });
@@ -43,6 +43,15 @@ test("admin chuyển sang lịch sử vẫn giữ bộ lọc và bảng dữ li�
   await expect(page).toHaveURL(/\/admin\/orders\?view=history/);
   await expect(page.getByText("Toàn bộ đơn hàng của quán")).toBeVisible();
   await expect(page.getByText("Không có đơn hàng nào.")).toHaveCount(0);
-  await expect(page.locator('input[type="date"]')).toBeVisible();
+  const dateFilter = page.locator('input[type="date"]');
+  await expect(dateFilter).toBeVisible();
+  await dateFilter.fill("2026-08-14");
+  await expect(dateFilter).toHaveValue("2026-08-14");
   await expect(page.getByRole("button", { name: "Xóa" }).first()).toBeVisible();
+
+  await page.getByRole("tab", { name: "Vận hành" }).click();
+  await expect(page).toHaveURL(/\/admin\/orders\?view=operations/);
+  await page.getByRole("tab", { name: "Lịch sử" }).click();
+  await expect(page).toHaveURL(/\/admin\/orders\?view=history/);
+  await expect(dateFilter).toHaveValue("2026-08-14");
 });

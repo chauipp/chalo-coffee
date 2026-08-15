@@ -8,6 +8,7 @@ import { OrderStatus } from "@/services/order/order.types";
 import { useAuthStore } from "@/stores/auth.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
 import AdminOrdersHistory from "./_components/AdminOrdersHistory";
 import { AdminOrdersModeSwitch } from "./_components/AdminOrdersModeSwitch";
@@ -19,11 +20,12 @@ function AdminOrdersOperations() {
   const token = useAuthStore((s) => s.accessToken);
   const { data: orders, isLoading, refetch } = useGetActiveOrder();
   const mutation = useUpdateOrderStatus();
+  const [isLive, setIsLive] = useState(false);
   useSSE({
     url: `${API_BASE}${API.SSE.ORDER_EVENTS}`,
     token,
     enabled: !!token,
-    onConnectionChange: () => undefined,
+    onConnectionChange: setIsLive,
     onEvent: (type) => {
       if (["new_order", "payment_completed", "order_status_changed", "order_prep_progress"].includes(type)) {
         void qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.ACTIVE });
@@ -36,7 +38,7 @@ function AdminOrdersOperations() {
     reconnectDelay: 3000,
   });
   const update = (orderId: string, status: OrderStatus) => mutation.mutateAsync({ orderId, status }).then(() => undefined);
-  return <OrderOperationsBoard orders={orders} isLoading={isLoading} isLive={!!token} onRefresh={() => { void refetch(); }} onStatusChange={update} detailHref={(id) => `/admin/orders/orders/${id}`} />;
+  return <OrderOperationsBoard orders={orders} isLoading={isLoading} isLive={isLive} onRefresh={() => { void refetch(); }} onStatusChange={update} detailHref={(id) => `/admin/orders/orders/${id}`} />;
 }
 
 export default function AdminOrdersPage() {
@@ -48,7 +50,12 @@ export default function AdminOrdersPage() {
         <AdminMobilePageHeader title="Đơn hàng" description={isHistory ? "Lịch sử đơn hàng" : "Bảng vận hành realtime"} />
         <div className="mt-3"><AdminOrdersModeSwitch /></div>
       </div>
-      {isHistory ? <AdminOrdersHistory /> : <AdminOrdersOperations />}
+      <div className={isHistory ? "" : "hidden"} aria-hidden={!isHistory}>
+        <AdminOrdersHistory />
+      </div>
+      <div className={isHistory ? "hidden" : ""} aria-hidden={isHistory}>
+        <AdminOrdersOperations />
+      </div>
     </div>
   );
 }
