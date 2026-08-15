@@ -27,11 +27,14 @@ test("admin prep rail creates an adjacent pane across dashboard and orders", asy
     const pageContent = page
       .getByRole("heading", { name: content, exact: true })
       .first();
-    const launcher = page.locator('[aria-controls="admin-prep-dock"]');
+    const launcher = page.getByTestId("admin-prep-rail-action");
     await expect(pageContent).toBeVisible();
     await expect(launcher).toBeVisible();
+    await expect(launcher).toHaveAttribute("aria-label", "Khu pha chế");
+    await expect(launcher).toHaveAttribute("aria-pressed", "false");
 
     await launcher.click();
+    await expect(launcher).toHaveAttribute("aria-pressed", "true");
 
     const resizer = page.getByTestId("split-resizer");
     const dock = page.locator("#admin-prep-dock");
@@ -58,6 +61,7 @@ test("admin prep rail creates an adjacent pane across dashboard and orders", asy
     await launcher.click();
     await expect(resizer).toHaveCount(0);
     await expect(launcher).toBeVisible();
+    await expect(launcher).toHaveAttribute("aria-pressed", "false");
 
     await launcher.click();
     await expect(resizer).toBeVisible();
