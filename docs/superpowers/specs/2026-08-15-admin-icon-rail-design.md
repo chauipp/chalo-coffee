@@ -17,3 +17,7 @@ Thay rail chữ `Pha chế` ở mép phải của toàn bộ màn admin desktop 
 
 - E2E xác nhận rail icon luôn hiện ở dashboard và orders, icon mở/đóng dock, và dock vẫn là pane cạnh nội dung.
 - Typecheck, test unit hiện có và kiểm UI Playwright phải xanh.
+
+## Plan thực thi
+
+Xem [plan](../plans/2026-08-15-admin-icon-rail.md).
