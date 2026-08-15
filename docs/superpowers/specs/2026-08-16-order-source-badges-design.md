@@ -20,12 +20,12 @@ Mỗi đơn mới phải lưu được kênh tạo đơn để nhân viên nhìn
 
 ## Mô hình dữ liệu
 
-`orderSource` là enum gồm `QR`, `POS`, và `N_A`. Cột không null, mặc định `N_A`, vì vậy dữ liệu cũ và mọi tích hợp chưa cập nhật vẫn hợp lệ. Payload tạo đơn nhận `orderSource`; backend kiểm tra giá trị enum và lưu nguyên giá trị này.
+`orderSource` là enum gồm `QR`, `POS`, và `N_A`. Cột không null, mặc định `N_A`, vì vậy dữ liệu cũ và mọi tích hợp chưa cập nhật vẫn hợp lệ. Backend tự xác định nguồn từ ngữ cảnh xác thực: người dùng nội bộ tạo tại POS là `POS`; khách hoặc request không xác thực qua QR là `QR`. Không nhận nguồn đơn từ payload, để khách không thể tự gắn nhãn `POS`.
 
 ## Giao diện và luồng dữ liệu
 
-- Trang menu QR gửi `QR` khi tạo đơn.
-- Trang staff POS gửi `POS` khi tạo đơn.
+- Trang menu QR tạo đơn qua endpoint công khai và backend lưu `QR`.
+- Trang staff POS giữ token đăng nhập khi tạo đơn; backend nhận diện vai trò nội bộ và lưu `POS`.
 - `OrderDto` mang `orderSource`, nên admin, prep dock và các thành phần hiển thị đơn không cần tự suy luận.
 - Badge hiển thị: `QR`, `Quầy`, hoặc `N/A`. Badge pager chỉ hiện thêm khi có `pagerNumber`.
 
