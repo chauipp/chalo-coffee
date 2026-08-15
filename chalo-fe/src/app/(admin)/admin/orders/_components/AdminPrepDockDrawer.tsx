@@ -25,7 +25,7 @@ export function AdminPrepDockDrawer({
     <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal="true" aria-label="Khu pha chế">
       <button className="absolute inset-0 bg-black/40" aria-label="Đóng khu pha chế" onClick={onClose} />
       <div id="admin-prep-drawer" ref={panelRef} tabIndex={-1} className="absolute inset-x-2 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] top-16 rounded-xl bg-white p-2 shadow-2xl outline-none dark:bg-gray-900">
-        <PrepDock expanded={false} toggleExpand={onClose} />
+        <PrepDock expanded={false} toggleExpand={() => undefined} onToggleVisible={onClose} />
       </div>
     </div>
   );

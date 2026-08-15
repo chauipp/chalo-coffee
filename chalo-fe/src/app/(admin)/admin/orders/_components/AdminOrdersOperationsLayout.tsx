@@ -19,16 +19,17 @@ export function AdminOrdersOperationsLayout({ board }: { board: React.ReactNode 
   }, []);
   return (
     <div className="relative h-full min-h-[calc(100vh-10rem)]">
-      <div className="absolute right-4 top-2 z-20 md:hidden">
-        <button type="button" onClick={toggle} aria-expanded={dockVisible} aria-controls="admin-prep-drawer" className="rounded-lg bg-brand-600 px-3 py-2 text-xs font-semibold text-white shadow">
-          {dockVisible ? "Thu gọn khu pha chế" : "Mở khu pha chế"}
+      {!dockVisible && (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={false}
+          aria-controls="admin-prep-desktop"
+          className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-l-xl border border-r-0 border-brand-300 bg-brand-500 px-2 py-3 text-xs font-semibold text-white shadow-lg transition-colors hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 [writing-mode:vertical-rl]"
+        >
+          Pha chế
         </button>
-      </div>
-      <div className="absolute right-4 top-2 z-20 hidden md:block">
-        <button type="button" onClick={toggle} aria-expanded={dockVisible} aria-controls="admin-prep-desktop" className="rounded-lg border border-brand-200 bg-white px-3 py-2 text-xs font-semibold text-brand-700 shadow-sm dark:border-brand-800 dark:bg-gray-900 dark:text-brand-300">
-          {dockVisible ? "Thu gọn khu pha chế" : "Mở khu pha chế"}
-        </button>
-      </div>
+      )}
       <div className="hidden h-full md:block">
         {dockVisible ? (
           <div id="admin-prep-desktop" className="h-full"><SplitPane storageKey="admin-orders-prep-split:v1" visible onToggleVisible={toggle} right={(controls) => <PrepDock {...controls} />} left={board} /></div>

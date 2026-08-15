@@ -7,7 +7,7 @@ test("admin mở và đóng khu pha chế ở mobile mà không tràn ngang", as
   await page.route("**/api/auth/me", (route) => route.fulfill(ok({ id: 1, username: "admin", role: "ADMIN", permissions: ["*"] })));
   await page.route("**/api/order/active**", (route) => route.fulfill(ok([])));
   await page.goto("/admin/orders");
-  const toggle = page.getByRole("button", { name: "Mở khu pha chế" });
+  const toggle = page.getByRole("button", { name: "Pha chế" });
   await expect(toggle).toBeVisible();
   await toggle.click();
   await expect(page.getByRole("dialog", { name: "Khu pha chế" })).toBeVisible();

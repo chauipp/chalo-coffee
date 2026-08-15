@@ -17,6 +17,7 @@ export const PrepStation = ({
   onToggleUnit,
   expanded,
   onToggleExpand,
+  onToggleVisible,
   onDropOrder,
 }: {
   /** Các đơn PREPARING, sort cũ → mới */
@@ -24,6 +25,8 @@ export const PrepStation = ({
   onToggleUnit: (unit: PrepUnit) => void;
   expanded: boolean;
   onToggleExpand: () => void;
+  /** Ẩn/hiện dock (chỉ có ở layout admin; staff luôn hiển thị dock). */
+  onToggleVisible?: () => void;
   /** Thả card "Khách đặt" vào đây = Bắt đầu pha (→ PREPARING) */
   onDropOrder?: (orderId: string) => void;
 }) => {
@@ -81,6 +84,17 @@ export const PrepStation = ({
               <ExpandIcon className="size-4" />
             )}
           </button>
+          {onToggleVisible && (
+            <button
+              onClick={onToggleVisible}
+              data-testid="prep-visibility-toggle"
+              aria-label="Thu gọn khu pha chế"
+              title="Thu gọn khu pha chế"
+              className="rounded-lg p-1.5 text-brand-600 transition-colors hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 dark:text-brand-400 dark:hover:bg-brand-900/30"
+            >
+              <CollapseIcon className="size-4" />
+            </button>
+          )}
           <span className="text-base">☕</span>
           <h2 className="text-sm font-bold text-brand-700 dark:text-brand-400">
             Đang pha chế
