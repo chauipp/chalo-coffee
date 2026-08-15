@@ -19,7 +19,7 @@
 
 ---
 
-## - [ ] Task 1: Tạo shell right sidebar desktop toàn cục
+## - [x] Task 1: Tạo shell right sidebar desktop toàn cục
 
 **Files:**
 - Create: `chalo-fe/src/app/(admin)/_components/AdminPrepSidebarLayout.tsx`
@@ -64,7 +64,7 @@
 
   Run: `git add chalo-fe/src/app/(admin)/_components chalo-fe/src/app/(staff)/_components/PrepDock.tsx chalo-fe/src/app/(staff)/_components/PrepStation.tsx && git commit -m "feat: add global admin prep sidebar shell"`
 
-## - [ ] Task 2: Gắn shell vào AdminLayout và gỡ dock cục bộ ở Orders
+## - [x] Task 2: Gắn shell vào AdminLayout và gỡ dock cục bộ ở Orders
 
 **Files:**
 - Modify: `chalo-fe/src/app/(admin)/layout.tsx`
@@ -103,7 +103,7 @@
 
   Run: `git add chalo-fe/src/app/'(admin)' chalo-fe/src/app/'(staff)'/_components/SplitPane.admin-state.test.mts && git commit -m "refactor: host prep dock in admin layout"`
 
-## - [ ] Task 3: Kiểm UI desktop và regression staff
+## - [x] Task 3: Kiểm UI desktop và regression staff
 
 **Files:**
 - Create: `chalo-fe/e2e/admin-prep-sidebar.spec.ts`
