@@ -25,7 +25,10 @@ export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectPr
   useEffect(() => {
     const element = scrollRef.current;
     if (!element) return;
-    const updateColumnCount = () => setColumnCount(Math.max(1, Math.floor((element.clientWidth + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP))));
+    const updateColumnCount = () => {
+      const nextColumnCount = Math.max(1, Math.floor((element.clientWidth + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP)));
+      setColumnCount((currentColumnCount) => currentColumnCount === nextColumnCount ? currentColumnCount : nextColumnCount);
+    };
     updateColumnCount();
     const observer = new ResizeObserver(updateColumnCount);
     observer.observe(element);
@@ -42,7 +45,7 @@ export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectPr
     <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((virtualItem) => {
         const product = products[virtualItem.index];
-        return <div key={product.id} className="absolute" style={{ height: ROW_HEIGHT - GRID_GAP, left: `calc(${virtualItem.lane} * ((100% - ${horizontalGap}px) / ${columnCount} + ${GRID_GAP}px))`, top: 0, transform: `translateY(${virtualItem.start}px)`, width: `calc((100% - ${horizontalGap}px) / ${columnCount})` }}>
+        return <div key={product.id} className="absolute" style={{ height: ROW_HEIGHT - GRID_GAP, left: `calc(${virtualItem.lane} * ((100% - ${horizontalGap}px) / ${columnCount} + ${GRID_GAP}px))`, top: 0, transform: `translate3d(0, ${virtualItem.start}px, 0)`, width: `calc((100% - ${horizontalGap}px) / ${columnCount})`, willChange: "transform" }}>
           <ProductCard product={product} quantity={quantitiesByProductId.get(product.id)} onAddToCart={onSelectProduct} />
         </div>;
       })}

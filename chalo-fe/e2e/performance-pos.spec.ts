@@ -15,7 +15,9 @@ const products = Array.from({ length: 300 }, (_, index) => ({
   id: `performance-${index}`,
   categoryId: "performance-category",
   categoryName: "Hiệu năng",
-  name: `Món hiệu năng ${index}`,
+  name: index === 1
+    ? "Món hiệu năng có tên dài để kiểm tra card luôn cùng chiều cao"
+    : `Món hiệu năng ${index}`,
   description: null,
   imageUrl: null,
   price: 20_000 + index,
@@ -96,6 +98,10 @@ for (const viewport of [
     await expect(page.getByText("Món hiệu năng 0")).toBeVisible();
     await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeGreaterThan(0);
     await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeLessThan(100);
+    const mountedCardHeights = await page.getByTestId("pos-product-card").evaluateAll(
+      (cards) => cards.map((card) => card.getBoundingClientRect().height),
+    );
+    expect([...new Set(mountedCardHeights)]).toHaveLength(1);
     const frameIntervals = await page.locator('[data-testid="pos-product-scroll"]').evaluate(async (element) => {
       const intervals: number[] = [];
       let previous = performance.now();
