@@ -542,7 +542,7 @@ Tat ca order API tra ve cung shape nay:
 ### GET `/api/order/page` (Bearer)
 
 - Query (optional):
-  - `pageNo` (default 1), `pageSize` (default 20)
+  - `pageNo` (default 1), `pageSize` (default 20, maximum 100; gia tri lon hon 100 se duoc clamp ve 100)
   - `status` = `PENDING | CONFIRMED | PREPARING | READY | COMPLETED | PAID | CANCELLED`
   - `tableId`, `date` (`YYYY-MM-DD`)
 - Response `data`: `{ "list": [<OrderDto>], "total": 50 }`

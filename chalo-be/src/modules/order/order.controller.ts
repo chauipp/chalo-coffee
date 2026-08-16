@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
-import { OrderService } from './order.service';
+import { normalizePageSize, OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateItemPreparedDto } from './dto/update-item-prepared.dto';
 import {
@@ -92,7 +92,7 @@ export class OrderController {
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MODERATOR)
   @ApiQuery({ name: 'pageNo', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'pageSize', required: false, maximum: 100 })
   @ApiQuery({ name: 'status', required: false, enum: OrderStatus })
   @ApiQuery({ name: 'tableId', required: false })
   @ApiQuery({ name: 'date', required: false, description: 'YYYY-MM-DD' })
@@ -115,7 +115,7 @@ export class OrderController {
   ) {
     return this.orderService.page({
       pageNo: pageNo ? Number(pageNo) : 1,
-      pageSize: pageSize ? Number(pageSize) : 20,
+      pageSize: normalizePageSize(pageSize ? Number(pageSize) : undefined),
       status,
       tableId,
       date,

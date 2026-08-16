@@ -89,11 +89,23 @@ describe('OrderService estimated-wait wiring', () => {
       orderBy: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue([legacyOrder]),
     };
-    orderRepo.createQueryBuilder.mockReturnValue(ordersQb);
+    const queueQb = {
+      select: jest.fn().mockReturnThis(),
+      addSelect: jest.fn().mockReturnThis(),
+      leftJoin: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      groupBy: jest.fn().mockReturnThis(),
+      addGroupBy: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      addOrderBy: jest.fn().mockReturnThis(),
+      getRawMany: jest.fn().mockResolvedValue([
+        { id: 'legacy-order', createdAt: new Date().toISOString(), prepMinutes: '36' },
+      ]),
+    };
+    orderRepo.createQueryBuilder
+      .mockReturnValueOnce(ordersQb)
+      .mockReturnValueOnce(queueQb);
     settings.get.mockResolvedValue({ waitTimeEnabled: true, baristaCount: 3 });
-    jest.spyOn(service as any, 'computeEstimatedWaitForOrder').mockResolvedValue({
-      estimatedCompletionMinutes: 12,
-    });
 
     await expect(service.byToken('token')).resolves.toEqual([
       expect.objectContaining({ id: 'legacy-order', estimateWaitMinutes: 12 }),
