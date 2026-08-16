@@ -4,6 +4,7 @@ import { MonitorIcon } from "@/components/shared/icons/MonitorIcon";
 import { TableIcon } from "@/components/shared/icons/TableIcon";
 import { ROUTES } from "@/constants";
 import { ChartBarIcon } from "@/components/shared/icons/ChartBarIcon";
+import { CoffeeIcon } from "@/components/shared/icons/CoffeeIcon";
 
 export const STAFF_HEADER_ITEMS = [
   { label: 'Đơn hàng', href: ROUTES.STAFF.ORDERS, icon: ClipboardListIcon },
@@ -11,3 +12,10 @@ export const STAFF_HEADER_ITEMS = [
   { label: 'Bàn', href: ROUTES.STAFF.TABLES, icon: TableIcon },
   { label: 'Chốt ca', href: ROUTES.STAFF.SHIFT, icon: ChartBarIcon }
 ]
+
+export const STAFF_MOBILE_PRIMARY_NAV_ITEMS = [
+  { label: 'Đơn hàng', href: ROUTES.STAFF.ORDERS, icon: ClipboardListIcon },
+  { label: 'POS', href: ROUTES.STAFF.POS, icon: MonitorIcon },
+  { label: 'Pha chế', href: ROUTES.STAFF.PREP, icon: CoffeeIcon },
+  { label: 'Bàn', href: ROUTES.STAFF.TABLES, icon: TableIcon },
+] as const;

@@ -60,6 +60,7 @@ test.beforeEach(async ({ baseURL, context, page }) => {
   await page.route("**/api/order/active**", (route) =>
     route.fulfill(ok(activeOrders)),
   );
+  await page.route("**/api/table/list**", (route) => route.fulfill(ok([])));
   await page.route(
     "**/api/order/item/mobile-prep-item/prepared",
     async (route) => {
@@ -77,6 +78,7 @@ test.beforeEach(async ({ baseURL, context, page }) => {
   await page.route("**/api/order/events**", (route) =>
     route.fulfill({ status: 200, contentType: "text/event-stream", body: "" }),
   );
+  await page.route("**/api/auth/logout", (route) => route.fulfill(ok(null)));
 });
 
 test("staff và admin mở workspace pha chế riêng", async ({ page }, testInfo) => {
@@ -128,6 +130,67 @@ test("staff và admin mở workspace pha chế riêng", async ({ page }, testInf
     path: testInfo.outputPath("admin-prep-mobile.png"),
     fullPage: true,
   });
+  expect(failedResponses).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("mobile navigation đưa Pha chế ra tab trực tiếp và giữ Khác khả dụng", async ({ page }) => {
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  page.on("response", (response) => {
+    if (response.status() >= 400) {
+      failedResponses.push(`${response.status()} ${response.url()}`);
+    }
+  });
+
+  await page.setViewportSize({ width: 375, height: 667 });
+
+  await page.goto("/staff/orders");
+  const staffNav = page.getByTestId("staff-mobile-nav");
+  await staffNav.getByRole("link", { name: "Pha chế" }).click();
+  await page.waitForURL("**/staff/prep");
+  await expect(staffNav.getByRole("link", { name: "Pha chế" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+
+  await staffNav.getByRole("button", { name: "Khác" }).click();
+  const staffOverflow = page.getByRole("dialog", { name: "Mục staff khác" });
+  await expect(staffOverflow.getByRole("link", { name: "Chốt ca" })).toBeVisible();
+  await expect(staffOverflow.getByRole("button", { name: "Đăng xuất" })).toBeVisible();
+
+  await page.goto("/admin/orders");
+  const adminNav = page.getByTestId("admin-mobile-nav");
+  await adminNav.getByRole("link", { name: "Pha chế" }).click();
+  await page.waitForURL("**/admin/prep");
+  await expect(adminNav.getByRole("link", { name: "Pha chế" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await page.getByRole("main").getByTestId("prep-mode-table").click();
+  const prepCard = page.getByRole("main").getByTestId("prep-table-mobile-prep-order");
+  await prepCard.scrollIntoViewIfNeeded();
+  const prepCardBox = await prepCard.boundingBox();
+  const navBox = await adminNav.boundingBox();
+  expect(prepCardBox).not.toBeNull();
+  expect(navBox).not.toBeNull();
+  expect(prepCardBox!.y + prepCardBox!.height).toBeLessThanOrEqual(navBox!.y);
+
+  await adminNav.getByRole("button", { name: "Khác" }).click();
+  const adminOverflow = page.getByRole("dialog", { name: "Mục quản trị khác" });
+  await expect(adminOverflow.getByRole("link", { name: "Bàn & QR" })).toBeVisible();
+
+  await page.goto("/staff/prep");
+  await staffNav.getByRole("button", { name: "Khác" }).click();
+  await page
+    .getByRole("dialog", { name: "Mục staff khác" })
+    .getByRole("button", { name: "Đăng xuất" })
+    .click();
+  await page.waitForURL("**/login");
   expect(failedResponses).toEqual([]);
   expect(consoleErrors).toEqual([]);
 });

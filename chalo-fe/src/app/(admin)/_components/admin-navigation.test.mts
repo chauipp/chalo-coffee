@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   getActiveAdminNavHref,
@@ -18,6 +19,33 @@ test("selects the most specific matching menu route", () => {
     getActiveAdminNavHref("/admin/menu/products/123", items),
     "/admin/menu/products",
   );
+});
+
+test("marks the prep workspace active from the mobile primary navigation", () => {
+  const mobilePrimary = [
+    { href: "/admin/dashboard" },
+    { href: "/admin/menu/categories" },
+    { href: "/admin/orders" },
+    { href: "/admin/prep" },
+  ];
+
+  assert.equal(
+    getActiveAdminNavHref("/admin/prep", mobilePrimary),
+    "/admin/prep",
+  );
+  assert.equal(
+    isAdminOverflowActive(
+      "/admin/prep",
+      mobilePrimary,
+      [{ href: "/admin/tables" }],
+    ),
+    false,
+  );
+  const mobileConfig = readFileSync(
+    new URL("./sidebar.config.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(mobileConfig, /ROUTES\.ADMIN\.PREP/);
 });
 
 test("only restores a saved route from the admin landing page", () => {
