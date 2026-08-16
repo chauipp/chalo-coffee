@@ -13,7 +13,7 @@ export const ProductCard = memo(({ product, quantity, onAddToCart }: ProductCard
     data-testid="pos-product-card"
     onClick={() => onAddToCart(product)}
     disabled={product.status !== "AVAILABLE"}
-    className={`relative rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[0.97]
+    className={`relative flex h-full w-full flex-col overflow-hidden rounded-xl border p-3 text-left transition-[transform,box-shadow,border-color,background-color] duration-150 hover:shadow-md active:scale-[0.97]
     ${
       product.status !== "AVAILABLE"
         ? "opacity-40 cursor-not-allowed border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-800"
@@ -40,10 +40,10 @@ export const ProductCard = memo(({ product, quantity, onAddToCart }: ProductCard
         "☕"
       )}
     </div>
-    <p className="text-xs font-semibold text-stone-900 dark:text-stone-100 leading-tight mb-1 line-clamp-2">
+    <p className="mb-1 min-h-8 text-xs font-semibold leading-tight line-clamp-2 text-stone-900 dark:text-stone-100">
       {product.name}
     </p>
-    <p className="text-xs font-bold text-brand-600 dark:text-brand-400">
+    <p className="mt-auto text-xs font-bold text-brand-600 dark:text-brand-400">
       {product.price.toLocaleString("vi-VN")}đ
     </p>
   </button>
