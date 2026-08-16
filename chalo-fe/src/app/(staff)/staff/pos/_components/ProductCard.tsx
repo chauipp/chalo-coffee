@@ -10,6 +10,7 @@ interface ProductCardProps {
 
 export const ProductCard = memo(({ product, quantity, onAddToCart }: ProductCardProps) => (
   <button
+    data-testid="pos-product-card"
     onClick={() => onAddToCart(product)}
     disabled={product.status !== "AVAILABLE"}
     className={`relative rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[0.97]

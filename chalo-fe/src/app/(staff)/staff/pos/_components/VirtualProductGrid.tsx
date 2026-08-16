@@ -32,7 +32,7 @@ export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectPr
   }, []);
   const virtualizer = useVirtualizer({ count: products.length, getScrollElement: () => scrollRef.current, estimateSize: () => ROW_HEIGHT, overscan: 3, lanes: columnCount });
   const horizontalGap = (columnCount - 1) * GRID_GAP;
-  return <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto p-3">
+  return <div ref={scrollRef} data-testid="pos-product-scroll" className="flex-1 min-h-0 overflow-y-auto p-3">
     <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((virtualItem) => {
         const product = products[virtualItem.index];

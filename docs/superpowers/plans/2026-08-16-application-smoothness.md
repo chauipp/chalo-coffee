@@ -34,7 +34,7 @@
 
 ## Task 1: Tối ưu product grid Staff POS
 
-- [ ] Task 1: Tối ưu product grid Staff POS
+- [x] Task 1: Tối ưu product grid Staff POS
 
 **Files:**
 - Modify: `chalo-fe/package.json`, `chalo-fe/pnpm-lock.yaml`
@@ -81,7 +81,7 @@ git commit -m "perf: virtualize staff POS products"
 
 ## Task 2: Loại bỏ request nền ở UI không dùng
 
-- [ ] Task 2: Loại bỏ request nền ở UI không dùng
+- [x] Task 2: Loại bỏ request nền ở UI không dùng
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/pos/page.tsx`
@@ -132,7 +132,7 @@ git commit -m "perf: pause unused staff and admin queries"
 
 ## Task 3: Bảo vệ truy vấn đơn hàng khi dữ liệu tăng
 
-- [ ] Task 3: Bảo vệ truy vấn đơn hàng khi dữ liệu tăng
+- [x] Task 3: Bảo vệ truy vấn đơn hàng khi dữ liệu tăng
 
 **Files:**
 - Create: `chalo-be/src/migrations/1784365811596-PerformanceIndexes.ts`
@@ -179,7 +179,7 @@ git commit -m "perf: bound and index order queries"
 
 ## Task 4: Đo lại production UI và bàn giao
 
-- [ ] Task 4: Đo lại production UI và bàn giao
+- [x] Task 4: Đo lại production UI và bàn giao
 
 **Files:**
 - Create: `chalo-fe/e2e/performance-pos.spec.ts`
