@@ -41,12 +41,13 @@ export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectPr
   }, [resetKey]);
   const virtualizer = useVirtualizer({ count: products.length, getScrollElement: () => scrollRef.current, estimateSize: () => ROW_HEIGHT, overscan: 3, lanes: columnCount });
   const horizontalGap = (columnCount - 1) * GRID_GAP;
+  const eagerImageCount = columnCount * 2;
   return <div ref={scrollRef} data-testid="pos-product-scroll" className="flex-1 min-h-0 overflow-y-auto p-3">
     <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((virtualItem) => {
         const product = products[virtualItem.index];
         return <div key={product.id} className="absolute" style={{ height: ROW_HEIGHT - GRID_GAP, left: `calc(${virtualItem.lane} * ((100% - ${horizontalGap}px) / ${columnCount} + ${GRID_GAP}px))`, top: 0, transform: `translate3d(0, ${virtualItem.start}px, 0)`, width: `calc((100% - ${horizontalGap}px) / ${columnCount})`, willChange: "transform" }}>
-          <ProductCard product={product} quantity={quantitiesByProductId.get(product.id)} onAddToCart={onSelectProduct} />
+          <ProductCard product={product} quantity={quantitiesByProductId.get(product.id)} onAddToCart={onSelectProduct} imageLoading={virtualItem.index < eagerImageCount ? "eager" : "lazy"} />
         </div>;
       })}
     </div>

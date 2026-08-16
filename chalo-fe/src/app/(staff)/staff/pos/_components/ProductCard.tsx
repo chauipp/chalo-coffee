@@ -6,9 +6,10 @@ interface ProductCardProps {
   product: ProductDto;
   quantity?: number;
   onAddToCart: (product: ProductDto) => void;
+  imageLoading?: "eager" | "lazy";
 }
 
-export const ProductCard = memo(({ product, quantity, onAddToCart }: ProductCardProps) => (
+export const ProductCard = memo(({ product, quantity, onAddToCart, imageLoading = "lazy" }: ProductCardProps) => (
   <button
     data-testid="pos-product-card"
     onClick={() => onAddToCart(product)}
@@ -33,7 +34,7 @@ export const ProductCard = memo(({ product, quantity, onAddToCart }: ProductCard
           src={product.imageUrl}
           alt={product.name}
           decoding="async"
-          loading="lazy"
+          loading={imageLoading}
           className="size-full object-cover rounded-lg"
         />
       ) : (

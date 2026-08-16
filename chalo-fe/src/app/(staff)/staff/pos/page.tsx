@@ -67,6 +67,7 @@ export default function StaffPOSPage() {
     initialFilter: productFilter,
     queryFn: getProductPage,
     queryKey: QUERY_KEYS.MENU.PRODUCTS,
+    staleTime: 5 * 60_000,
   });
 
   const { data: tables } = useGetTableList();
