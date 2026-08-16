@@ -11,6 +11,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { assertProductionSecrets } from './config/env.validation';
 import { HTTP_BODY_LIMIT } from './common/constants';
+import { UPLOAD_STATIC_ASSET_OPTIONS } from './config/upload-static-assets';
 
 async function bootstrap() {
   // Validate production secrets BEFORE bootstrap NestJS
@@ -48,7 +49,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
+  app.useStaticAssets(
+    join(__dirname, '..', 'uploads'),
+    UPLOAD_STATIC_ASSET_OPTIONS,
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({

@@ -19,7 +19,7 @@ const products = Array.from({ length: 300 }, (_, index) => ({
     ? "Món hiệu năng có tên dài để kiểm tra card luôn cùng chiều cao"
     : `Món hiệu năng ${index}`,
   description: null,
-  imageUrl: null,
+  imageUrl: `https://pos-fixture.test/images/${index}.svg`,
   price: 20_000 + index,
   status: "AVAILABLE",
   sortOrder: index,
@@ -38,7 +38,12 @@ const filteredProduct = {
 
 const FRAME_INTERVAL_BUDGET_MS = 1000 / 24; // 24fps is the minimum usable POS scroll budget.
 
-async function installFixture(page: Page) {
+type FixtureMetrics = {
+  imageRequests: number;
+  productPageRequests: number;
+};
+
+async function installFixture(page: Page, metrics?: FixtureMetrics) {
   await page.route("**/api/auth/login", (route) =>
     route.fulfill(ok({ accessToken: "test-token", refreshToken: "test-refresh", user: staff })),
   );
@@ -48,6 +53,7 @@ async function installFixture(page: Page) {
     { id: "filtered-category", name: "Đã lọc" },
   ])));
   await page.route("**/api/menu/product/page**", (route) => {
+    if (metrics) metrics.productPageRequests += 1;
     const url = new URL(route.request().url());
     const isFiltered = url.searchParams.get("name") === "lọc" || url.searchParams.get("categoryId") === "filtered-category";
     return route.fulfill(ok(isFiltered
@@ -61,6 +67,15 @@ async function installFixture(page: Page) {
     contentType: "text/event-stream",
     body: ": fixture connected\n\n",
   }));
+  await page.route("https://pos-fixture.test/images/**", (route) => {
+    if (metrics) metrics.imageRequests += 1;
+    return route.fulfill({
+      status: 200,
+      contentType: "image/svg+xml",
+      headers: { "cache-control": "public, max-age=31536000, immutable" },
+      body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#c58b3c"/></svg>',
+    });
+  });
 }
 
 async function login(page: Page) {
@@ -70,6 +85,31 @@ async function login(page: Page) {
   await page.getByRole("button", { name: "Đăng nhập" }).click();
   await page.waitForURL("**/staff/**");
 }
+
+test("POS keeps menu data and decoded images warm after staff navigation", async ({ page }) => {
+  const metrics: FixtureMetrics = { imageRequests: 0, productPageRequests: 0 };
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await installFixture(page, metrics);
+  await login(page);
+  await page.goto("/staff/pos");
+  await expect(page.getByAltText("Món hiệu năng 0")).toBeVisible();
+  await expect(page.getByAltText("Món hiệu năng 0")).toHaveAttribute("loading", "eager");
+  await expect.poll(() => metrics.imageRequests).toBeGreaterThan(0);
+  await expect.poll(() => metrics.productPageRequests).toBe(1);
+
+  await page.evaluate(() => {
+    const realNow = Date.now;
+    Date.now = () => realNow() + 60_001;
+  });
+  await page.getByRole("link", { name: "Đơn hàng" }).click();
+  await page.waitForURL("**/staff/orders");
+  await page.getByRole("link", { name: "POS" }).click();
+  await page.waitForURL("**/staff/pos");
+  await expect(page.getByAltText("Món hiệu năng 0")).toBeVisible();
+  await expect(page.getByAltText("Món hiệu năng 0")).toHaveAttribute("loading", "eager");
+
+  expect(metrics.productPageRequests).toBe(1);
+});
 
 for (const viewport of [
   { name: "desktop", width: 1440, height: 900 },
