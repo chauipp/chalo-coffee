@@ -31,6 +31,9 @@ const preparingOrder: OrderDto = {
   updatedAt: now,
 };
 
+let activeOrders: OrderDto[] = [preparingOrder];
+let preparedRequests: { method: string; payload: unknown }[] = [];
+
 const ok = (data: unknown) => ({
   status: 200,
   contentType: "application/json",
@@ -38,6 +41,8 @@ const ok = (data: unknown) => ({
 });
 
 test.beforeEach(async ({ baseURL, context, page }) => {
+  activeOrders = [preparingOrder];
+  preparedRequests = [];
   await context.addCookies([
     { name: "ACCESS_TOKEN", value: "test-admin-token", url: baseURL! },
     { name: "USER_ROLE", value: "ADMIN", url: baseURL! },
@@ -53,7 +58,21 @@ test.beforeEach(async ({ baseURL, context, page }) => {
     }));
   });
   await page.route("**/api/order/active**", (route) =>
-    route.fulfill(ok([preparingOrder])),
+    route.fulfill(ok(activeOrders)),
+  );
+  await page.route(
+    "**/api/order/item/mobile-prep-item/prepared",
+    async (route) => {
+      preparedRequests.push({
+        method: route.request().method(),
+        payload: route.request().postDataJSON(),
+      });
+      activeOrders = [{
+        ...preparingOrder,
+        items: [{ ...preparingOrder.items[0], preparedQuantity: 1 }],
+      }];
+      await route.fulfill(ok(activeOrders[0]));
+    },
   );
   await page.route("**/api/order/events**", (route) =>
     route.fulfill({ status: 200, contentType: "text/event-stream", body: "" }),
@@ -82,6 +101,14 @@ test("staff và admin mở workspace pha chế riêng", async ({ page }, testInf
   await expect(
     staffWorkspace.getByTestId("prep-table-mobile-prep-order"),
   ).toBeVisible();
+  const staffUnit = staffWorkspace.getByRole("button", {
+    name: "Bàn 01 — ly 1/1 Espresso",
+  });
+  await staffUnit.click();
+  await expect.poll(() => preparedRequests).toEqual([
+    { method: "PUT", payload: { preparedQuantity: 1 } },
+  ]);
+  await expect(staffUnit).toHaveAttribute("aria-pressed", "true");
 
   await page.goto("/admin/prep");
   await expect(
