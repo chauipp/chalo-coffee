@@ -1,14 +1,14 @@
 // src/app/(staff)/staff/pos/_components/ProductCard.tsx
 import { ProductDto } from "@/services/menu";
-import { POSCartItem } from "../page";
+import { memo } from "react";
 
 interface ProductCardProps {
   product: ProductDto;
-  inCart?: POSCartItem;
-  onAddToCart: (product: ProductDto) => void
+  quantity?: number;
+  onAddToCart: (product: ProductDto) => void;
 }
 
-export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) => (
+export const ProductCard = memo(({ product, quantity, onAddToCart }: ProductCardProps) => (
   <button
     onClick={() => onAddToCart(product)}
     disabled={product.status !== "AVAILABLE"}
@@ -16,14 +16,14 @@ export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) 
     ${
       product.status !== "AVAILABLE"
         ? "opacity-40 cursor-not-allowed border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-800"
-        : inCart
+        : quantity
           ? "border-brand-300 dark:border-brand-700 bg-brand-50 dark:bg-brand-900/20"
           : "border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-brand-300"
     }`}
   >
-    {inCart && (
+    {quantity && (
       <span className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-brand-400 text-white text-xs font-bold flex items-center justify-center shadow-sm">
-        {inCart.quantity}
+        {quantity}
       </span>
     )}
     <div className="size-10 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-xl mb-2">
@@ -31,6 +31,8 @@ export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) 
         <img
           src={product.imageUrl}
           alt={product.name}
+          decoding="async"
+          loading="lazy"
           className="size-full object-cover rounded-lg"
         />
       ) : (
@@ -44,4 +46,4 @@ export const ProductCard = ({ product, inCart, onAddToCart }: ProductCardProps) 
       {product.price.toLocaleString("vi-VN")}đ
     </p>
   </button>
-);
+));

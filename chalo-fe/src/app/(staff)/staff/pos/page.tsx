@@ -10,11 +10,11 @@ import { useGetCategorySimpleList } from "@/services/lookup/lookup.queries";
 import { getProductPage, ProductDto, ProductPageParam } from "@/services/menu";
 import { useCreateOrder } from "@/services/order/order.queries";
 import { useGetTableList } from "@/services/table";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CartItem } from "./_components/CartItem";
 import { PagerBoard } from "./_components/PagerBoard";
-import { ProductCard } from "./_components/ProductCard";
+import { VirtualProductGrid } from "./_components/VirtualProductGrid";
 import { useCart } from "./_hooks/useCart";
 
 export interface POSCartItem {
@@ -83,7 +83,17 @@ export default function StaffPOSPage() {
     totalItems,
     updateItemNote,
     updateQuantity,
+    quantitiesByProductId,
   } = useCart();
+
+  const handleSelectProduct = useCallback((product: ProductDto) => {
+    if (product.modifierGroups?.length) {
+      setModifierProduct(product);
+      setModifierOptionIds([]);
+      return;
+    }
+    addToCart(product);
+  }, [addToCart]);
 
   const handleSubmit = async () => {
     if (cart.length === 0) {
@@ -179,7 +189,7 @@ export default function StaffPOSPage() {
         </div>
 
         {/* Product grid */}
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {productPage.isLoading ? (
             <div className="flex items-center justify-center h-40">
               <SpinnerIcon className="size-8 animate-spin text-brand-400" />
@@ -190,29 +200,15 @@ export default function StaffPOSPage() {
               <p className="text-xs">Thử đổi từ khoá hoặc danh mục khác</p>
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(11.5rem,1fr))] gap-2">
-              {products.map((p) => {
-                const inCart = cart.find((i) => i.productId === p.id);
-                return (
-                  <ProductCard
-                    key={p.id}
-                    inCart={inCart}
-                    onAddToCart={(product) => product.modifierGroups?.length ? (setModifierProduct(product), setModifierOptionIds([])) : addToCart(product)}
-                    product={p}
-                  />
-                );
-              })}
-            </div>
+            <VirtualProductGrid
+              products={products}
+              quantitiesByProductId={quantitiesByProductId}
+              onSelectProduct={handleSelectProduct}
+              loadMoreRef={productPage.loadMoreRef}
+              hasNextPage={productPage.hasNextPage}
+              isFetchingNextPage={productPage.isFetchingNextPage}
+            />
           )}
-          <div ref={productPage.loadMoreRef} className="flex justify-center py-4">
-            {productPage.isFetchingNextPage ? (
-              <span className="text-sm text-gray-400">Đang tải thêm...</span>
-            ) : productPage.hasNextPage ? (
-              <span className="text-xs text-gray-400">Cuộn để tải thêm</span>
-            ) : products.length > 0 ? (
-              <span className="text-xs text-gray-400">Đã hiển thị tất cả</span>
-            ) : null}
-          </div>
         </div>
       </div>
 
