@@ -6,10 +6,12 @@ import { PrepDock } from "../../(staff)/_components/PrepDock";
 import { SplitPane } from "../../(staff)/_components/SplitPane";
 import {
   ADMIN_PREP_VISIBLE_STORAGE_KEY,
+  isAdminPrepDockEnabled,
   readAdminPrepVisible,
 } from "./adminPrepSidebarState";
 
 const ADMIN_PREP_DOCK_ID = "admin-prep-dock";
+const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
 
 function writeAdminPrepVisible(visible: boolean) {
   try {
@@ -29,8 +31,22 @@ export function AdminPrepSidebarLayout({
   children: React.ReactNode;
 }) {
   const [visible, setVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
+    const media = window.matchMedia(DESKTOP_MEDIA_QUERY);
+    const update = () => setIsDesktop(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) {
+      setVisible(false);
+      return;
+    }
+
     const timeout = window.setTimeout(() => {
       try {
         setVisible(readAdminPrepVisible(window.localStorage));
@@ -39,7 +55,7 @@ export function AdminPrepSidebarLayout({
       }
     });
     return () => window.clearTimeout(timeout);
-  }, []);
+  }, [isDesktop]);
 
   const setVisibility = useCallback((next: boolean) => {
     setVisible(next);
@@ -51,22 +67,23 @@ export function AdminPrepSidebarLayout({
       id: "prep",
       label: "Khu pha chế",
       icon: CoffeeIcon,
-      active: visible,
+      active: isAdminPrepDockEnabled(isDesktop, visible),
       onClick: () => setVisibility(!visible),
     },
   ];
+  const prepDockEnabled = isAdminPrepDockEnabled(isDesktop, visible);
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1">
       <div className="min-h-0 min-w-0 flex-1">
-        {visible ? (
+        {prepDockEnabled ? (
           <SplitPane
             storageKey="admin-prep-split:v1"
             className="h-full min-h-0 min-w-0"
             left={children}
             right={() => (
               <div id={ADMIN_PREP_DOCK_ID} className="h-full min-h-0">
-                <PrepDock enabled={visible} />
+                <PrepDock enabled={prepDockEnabled} />
               </div>
             )}
           />
