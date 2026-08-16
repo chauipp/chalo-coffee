@@ -1,54 +1,7 @@
-"use client";
-// src/app/(staff)/_components/PrepDock.tsx
-// Vùng phải cố định của layout staff — luôn hiển thị ở mọi màn staff để theo dõi
-// các đơn đang pha. Tự lấy dữ liệu: trang Đơn hàng có SSE đẩy realtime, các màn
-// khác dựa vào refetchInterval bên dưới.
-import {
-  useGetActiveOrder,
-  useSetItemPrepared,
-  useUpdateOrderStatus,
-} from "@/services/order/order.queries";
-import { OrderDto } from "@/services/order/order.types";
-import { PrepUnit, nextPreparedQuantity } from "@/utils/prep-grouping";
-import { useMemo } from "react";
-import { PrepStation } from "./PrepStation";
+// Vùng phải cố định của layout staff. Giữ adapter này mỏng để dock desktop
+// tiếp tục có cùng contract/kích thước, còn logic nằm trong PrepWorkspace.
+import { PrepWorkspace } from "./PrepWorkspace";
 
-/** Nhịp làm mới cho các màn staff không mở SSE (POS, Bàn…) */
-const PREP_POLL_MS = 10_000;
-
-const byCreatedAsc = (a: OrderDto, b: OrderDto) =>
-  +new Date(a.createdAt) - +new Date(b.createdAt);
-
-export const PrepDock = ({ enabled }: { enabled: boolean }) => {
-  const { data: activeOrders } = useGetActiveOrder({
-    enabled,
-    refetchInterval: PREP_POLL_MS,
-  });
-  const setPrepared = useSetItemPrepared();
-  const updateStatus = useUpdateOrderStatus();
-
-  /** Đơn đang pha chế, cũ nhất trước (thứ tự nên pha) */
-  const preparingOrders = useMemo(
-    () =>
-      (activeOrders ?? [])
-        .filter((o) => o.status === "PREPARING")
-        .sort(byCreatedAsc),
-    [activeOrders],
-  );
-
-  const handleToggleUnit = (unit: PrepUnit) =>
-    setPrepared.mutate({
-      itemId: unit.itemId,
-      preparedQuantity: nextPreparedQuantity(unit),
-    });
-
-  return (
-    <PrepStation
-      orders={preparingOrders}
-      onToggleUnit={handleToggleUnit}
-      onDropOrder={(orderId) =>
-        updateStatus.mutate({ orderId, status: "PREPARING" })
-      }
-    />
-  );
-};
+export const PrepDock = ({ enabled }: { enabled: boolean }) => (
+  <PrepWorkspace enabled={enabled} />
+);
