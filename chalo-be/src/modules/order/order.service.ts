@@ -85,6 +85,35 @@ type EstimatedWaitQueueRow = {
   prepMinutes: string;
 };
 
+type EstimatedWaitValues = {
+  estimatedMinutes: number;
+  orderPrepMinutes: number;
+  estimatedCompletionMinutes: number;
+};
+
+export function buildEstimatedWaitByOrderId(
+  rows: EstimatedWaitQueueRow[],
+  baristaCount: number,
+): Map<string, EstimatedWaitValues> {
+  const baristas = baristaCount || ESTIMATED_WAIT_BARISTAS;
+  const waitsByOrderId = new Map<string, EstimatedWaitValues>();
+  let queueBeforeMinutes = 0;
+
+  for (const row of rows) {
+    const orderPrepMinutes = parseFloat(row.prepMinutes || '0');
+    waitsByOrderId.set(row.id, {
+      estimatedMinutes: Math.ceil(queueBeforeMinutes / baristas),
+      orderPrepMinutes: Math.ceil(orderPrepMinutes),
+      estimatedCompletionMinutes: Math.ceil(
+        (queueBeforeMinutes + orderPrepMinutes) / baristas,
+      ),
+    });
+    queueBeforeMinutes += orderPrepMinutes;
+  }
+
+  return waitsByOrderId;
+}
+
 @Injectable()
 export class OrderService {
   constructor(
@@ -319,7 +348,6 @@ export class OrderService {
     baristaCount: number,
     rows: EstimatedWaitQueueRow[],
   ) {
-    const baristas = baristaCount || ESTIMATED_WAIT_BARISTAS;
     if (
       status === OrderStatus.COMPLETED ||
       status === OrderStatus.CANCELLED ||
@@ -335,8 +363,8 @@ export class OrderService {
       };
     }
 
-    const targetIndex = rows.findIndex((r) => r.id === orderId);
-    if (targetIndex < 0) {
+    const wait = buildEstimatedWaitByOrderId(rows, baristaCount).get(orderId);
+    if (!wait) {
       // Trường hợp trạng thái đơn vừa chuyển trong lúc đang tính
       return {
         mode: 'order' as const,
@@ -348,23 +376,16 @@ export class OrderService {
       };
     }
 
-    const queueBeforeMinutes = rows
-      .slice(0, targetIndex)
-      .reduce((sum, r) => sum + parseFloat(r.prepMinutes || '0'), 0);
-    const ownPrepMinutes = parseFloat(rows[targetIndex]?.prepMinutes || '0');
-
     return {
       mode: 'order' as const,
       orderId,
       status,
       // Thời gian chờ để order này bắt đầu được xử lý
-      estimatedMinutes: Math.ceil(queueBeforeMinutes / baristas),
+      estimatedMinutes: wait.estimatedMinutes,
       // Thời gian prep riêng của order (chưa chia barista)
-      orderPrepMinutes: Math.ceil(ownPrepMinutes),
+      orderPrepMinutes: wait.orderPrepMinutes,
       // ETA hoàn thành order này (chờ + prep)
-      estimatedCompletionMinutes: Math.ceil(
-        (queueBeforeMinutes + ownPrepMinutes) / baristas,
-      ),
+      estimatedCompletionMinutes: wait.estimatedCompletionMinutes,
     };
   }
 
@@ -680,19 +701,21 @@ export class OrderService {
     const queue = orders.some(needsEstimatedWait)
       ? await this.loadEstimatedWaitQueue()
       : [];
+    const waitsByOrderId = buildEstimatedWaitByOrderId(
+      queue,
+      settings.baristaCount,
+    );
 
     return orders.map((order) => {
       const dto = this.buildDto(order);
       // Các đơn cũ có thể chưa lưu ETA lúc tạo. Dùng một queue snapshot cho cả
       // response để giữ nguyên công thức ETA mà không phát sinh N+1 truy vấn.
       if (needsEstimatedWait(order)) {
-        const wait = this.estimatedWaitFromQueue(
-          dto.id,
-          dto.status,
-          settings.baristaCount,
-          queue,
-        );
-        return { ...dto, estimateWaitMinutes: wait.estimatedCompletionMinutes };
+        return {
+          ...dto,
+          estimateWaitMinutes:
+            waitsByOrderId.get(dto.id)?.estimatedCompletionMinutes ?? 0,
+        };
       }
       return dto;
     });
