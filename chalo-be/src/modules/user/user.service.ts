@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto, ChangePasswordDto } from './dto/update-user.dto';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { BCRYPT_SALT_ROUNDS } from '../../common/constants';
+import { normalizePagination } from '../../common/pagination';
 import type { VerifiedGoogleProfile } from '../auth/google-oauth.types';
 import { randomBytes } from 'crypto';
 
@@ -114,8 +115,8 @@ export class UserService {
     role?: UserRole;
     isActive?: boolean;
   }) {
-    const { pageNo = 1, pageSize = 10, keyword, role, isActive } = query;
-    const skip = (pageNo - 1) * pageSize;
+    const { keyword, role, isActive } = query;
+    const { skip, pageSize } = normalizePagination(query, 10);
 
     const qb = this.userRepo.createQueryBuilder('u');
     if (keyword) {

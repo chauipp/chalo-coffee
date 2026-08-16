@@ -9,19 +9,16 @@ import {
 } from "@/services/pager";
 
 interface PagerBoardProps {
-  open: boolean;
   onClose: () => void;
 }
 
-export const PagerBoard = ({ open, onClose }: PagerBoardProps) => {
+export const PagerBoard = ({ onClose }: PagerBoardProps) => {
   const { data: pagers, isLoading } = useGetActivePagers();
   // PagerObject only carries { id, number, status, orderId }; the table name and
   // total live on the order, so we join by orderId against the active orders.
   const { data: orders } = useGetActiveOrder();
   const callMutation = useCallPager();
   const releaseMutation = useReleasePager();
-
-  if (!open) return null;
 
   const active = pagers ?? [];
 

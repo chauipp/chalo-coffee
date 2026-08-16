@@ -13,6 +13,7 @@ import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto, RegenerateQrDto } from './dto/update-table.dto';
 import { TableStatus } from '../../common/enums/table-status.enum';
 import { OrderStatus } from '../../common/enums/order-status.enum';
+import { normalizePagination } from '../../common/pagination';
 
 @Injectable()
 export class TableService {
@@ -106,8 +107,8 @@ export class TableService {
     area?: string;
     status?: TableStatus;
   }) {
-    const { pageNo = 1, pageSize = 10, area, status } = query;
-    const skip = (pageNo - 1) * pageSize;
+    const { area, status } = query;
+    const { skip, pageSize } = normalizePagination(query, 10);
 
     const qb = this.tableRepo.createQueryBuilder('t');
     if (area) qb.andWhere('t.area = :area', { area });

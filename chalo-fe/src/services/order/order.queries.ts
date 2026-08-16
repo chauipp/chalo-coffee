@@ -79,7 +79,10 @@ export const useGetEstimatedWait = (orderId?: string) => {
 
 // ===STAFF===
 /** `refetchInterval` cho nơi không có SSE (vd khu pha chế ở layout, mở trên mọi màn staff) */
-export const useGetActiveOrder = (options?: { refetchInterval?: number }) =>
+export const useGetActiveOrder = (options?: {
+  enabled?: boolean;
+  refetchInterval?: number;
+}) =>
   useQuery({
     queryKey: QUERY_KEYS.ORDERS.ACTIVE,
     queryFn: () => getActiveOrders(),

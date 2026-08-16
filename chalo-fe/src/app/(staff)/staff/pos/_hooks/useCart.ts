@@ -1,14 +1,15 @@
 //src/app/(staff)/staff/pos/_hooks/useCart.ts
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { POSCartItem } from "../page";
 import { ProductDto } from "@/services/menu";
 import { buildSelectedModifiers, canonicalModifierKey, modifierPrice } from "@/utils/cart-modifiers";
+import { buildQuantitiesByProductId } from "../_components/virtualProductGrid.utils";
 
 export const useCart = () => {
   const [cart, setCart] = useState<POSCartItem[]>([]);
 
-  const addToCart = (product: ProductDto, modifierOptionIds: string[] = []) => {
+  const addToCart = useCallback((product: ProductDto, modifierOptionIds: string[] = []) => {
     const cartKey = `${product.id}:${canonicalModifierKey(modifierOptionIds)}`;
     setCart((prev) => {
       const existing = prev.find((i) => i.cartKey === cartKey);
@@ -30,21 +31,21 @@ export const useCart = () => {
         },
       ];
     });
-  };
+  }, []);
 
-  const updateItemNote = (cartKey: string, note: string) => {
+  const updateItemNote = useCallback((cartKey: string, note: string) => {
     setCart((prev) =>
       prev.map((item) =>
         item.cartKey === cartKey ? { ...item, note } : item,
       ),
     );
-  };
+  }, []);
 
-  const removeFromCart = (cartKey: string) => {
+  const removeFromCart = useCallback((cartKey: string) => {
     setCart((prev) => prev.filter((item) => item.cartKey !== cartKey));
-  };
+  }, []);
 
-  const updateQuantity = (cartKey: string, delta: number) => {
+  const updateQuantity = useCallback((cartKey: string, delta: number) => {
     setCart((prev) =>
       prev
         .map((item) =>
@@ -54,9 +55,9 @@ export const useCart = () => {
         )
         .filter((item) => item.quantity > 0),
     );
-  };
+  }, []);
 
-  const clearCart = () => setCart([]);
+  const clearCart = useCallback(() => setCart([]), []);
 
   const totalItems = useMemo(
     () => cart.reduce((sum, i) => sum + i.quantity, 0),
@@ -66,6 +67,7 @@ export const useCart = () => {
     () => cart.reduce((sum, i) => sum + i.quantity * i.price, 0),
     [cart],
   );
+  const quantitiesByProductId = useMemo(() => buildQuantitiesByProductId(cart), [cart]);
 
   return {
     cart,
@@ -76,5 +78,6 @@ export const useCart = () => {
     clearCart,
     totalItems,
     totalAmount,
+    quantitiesByProductId,
   };
 };

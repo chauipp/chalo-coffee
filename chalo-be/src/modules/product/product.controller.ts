@@ -33,7 +33,7 @@ export class ProductController {
 
   @Get('page')
   @ApiQuery({ name: 'pageNo', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'pageSize', required: false, maximum: 100 })
   @ApiQuery({ name: 'name', required: false })
   @ApiQuery({ name: 'categoryId', required: false })
   @ApiQuery({ name: 'status', required: false, enum: ProductStatus })

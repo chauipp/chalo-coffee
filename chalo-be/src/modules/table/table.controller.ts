@@ -25,7 +25,7 @@ export class TableController {
 
   @Get('page')
   @ApiQuery({ name: 'pageNo', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'pageSize', required: false, maximum: 100 })
   @ApiQuery({ name: 'area', required: false })
   @ApiQuery({ name: 'status', required: false, enum: TableStatus })
   @ApiOkResponse({ description: 'Paginated tables', schema: { example: { code: 200, message: 'success', data: { list: [], total: 0 } } } })

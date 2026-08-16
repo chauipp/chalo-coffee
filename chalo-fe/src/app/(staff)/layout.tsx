@@ -7,12 +7,32 @@ import { SplitPane } from "./_components/SplitPane";
 import { MobileStaffNav } from "./_components/MobileStaffNav";
 import { STAFF_HEADER_ITEMS } from "./staff/_components/header.config";
 import { BrandLogo } from "@/components/shared/BrandLogo";
+import { useEffect, useState } from "react";
+
+const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
+
+/** Starts false to match SSR, then enables the desktop-only dock after hydration. */
+function useDesktopMedia() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(DESKTOP_MEDIA_QUERY);
+    const update = () => setIsDesktop(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  return isDesktop;
+}
 
 export default function StaffLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const isDesktop = useDesktopMedia();
+
   return (
     <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-950 md:flex-row">
       <div className="hidden md:flex">
@@ -36,7 +56,9 @@ export default function StaffLayout({
             {children}
           </main>
         }
-        right={() => <PrepDock />}
+        right={() =>
+          isDesktop ? <PrepDock enabled={isDesktop} /> : null
+        }
       />
       <MobileStaffNav />
     </div>

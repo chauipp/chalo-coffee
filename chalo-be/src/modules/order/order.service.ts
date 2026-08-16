@@ -34,7 +34,11 @@ import { OrderStatus } from '../../common/enums/order-status.enum';
 import { OrderSource } from '../../common/enums/order-source.enum';
 import { TableStatus } from '../../common/enums/table-status.enum';
 import { ProductStatus } from '../../common/enums/product-status.enum';
-import { ESTIMATED_WAIT_BARISTAS } from '../../common/constants';
+import {
+  ESTIMATED_WAIT_BARISTAS,
+  PAGINATION_MAX_PAGE_SIZE,
+} from '../../common/constants';
+import { normalizePagination } from '../../common/pagination';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
 import { CustomerService } from '../customer/customer.service';
@@ -65,6 +69,47 @@ const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
     OrderStatus.CANCELLED,
   ],
 };
+
+export const MAX_PAGE_SIZE = PAGINATION_MAX_PAGE_SIZE;
+
+export function normalizePageSize(pageSize?: number): number {
+  return normalizePagination({ pageSize }).pageSize;
+}
+
+type EstimatedWaitQueueRow = {
+  id: string;
+  createdAt: string;
+  prepMinutes: string;
+};
+
+type EstimatedWaitValues = {
+  estimatedMinutes: number;
+  orderPrepMinutes: number;
+  estimatedCompletionMinutes: number;
+};
+
+export function buildEstimatedWaitByOrderId(
+  rows: EstimatedWaitQueueRow[],
+  baristaCount: number,
+): Map<string, EstimatedWaitValues> {
+  const baristas = baristaCount || ESTIMATED_WAIT_BARISTAS;
+  const waitsByOrderId = new Map<string, EstimatedWaitValues>();
+  let queueBeforeMinutes = 0;
+
+  for (const row of rows) {
+    const orderPrepMinutes = parseFloat(row.prepMinutes || '0');
+    waitsByOrderId.set(row.id, {
+      estimatedMinutes: Math.ceil(queueBeforeMinutes / baristas),
+      orderPrepMinutes: Math.ceil(orderPrepMinutes),
+      estimatedCompletionMinutes: Math.ceil(
+        (queueBeforeMinutes + orderPrepMinutes) / baristas,
+      ),
+    });
+    queueBeforeMinutes += orderPrepMinutes;
+  }
+
+  return waitsByOrderId;
+}
 
 @Injectable()
 export class OrderService {
@@ -272,36 +317,14 @@ export class OrderService {
     return Math.ceil(totalMinutes / baristas);
   }
 
-  private async computeEstimatedWaitForOrder(orderId: string, baristaCount: number) {
-    const baristas = baristaCount || ESTIMATED_WAIT_BARISTAS;
-    const targetOrder = await this.orderRepo.findOne({
-      where: { id: orderId },
-      select: { id: true, status: true },
-    });
-    if (!targetOrder) throw new NotFoundException('Đơn hàng không tồn tại');
-
-    if (
-      targetOrder.status === OrderStatus.COMPLETED ||
-      targetOrder.status === OrderStatus.CANCELLED ||
-      targetOrder.status === OrderStatus.READY
-    ) {
-      return {
-        mode: 'order' as const,
-        orderId,
-        status: targetOrder.status,
-        estimatedMinutes: 0,
-        orderPrepMinutes: 0,
-        estimatedCompletionMinutes: 0,
-      };
-    }
-
+  private async loadEstimatedWaitQueue(): Promise<EstimatedWaitQueueRow[]> {
     const queueStatuses = [
       OrderStatus.PENDING,
       OrderStatus.CONFIRMED,
       OrderStatus.PREPARING,
     ];
 
-    const rows = await this.orderRepo
+    return this.orderRepo
       .createQueryBuilder('o')
       .select('o.id', 'id')
       .addSelect('o.createdAt', 'createdAt')
@@ -313,39 +336,69 @@ export class OrderService {
       .addGroupBy('o.createdAt')
       .orderBy('o.createdAt', 'ASC')
       .addOrderBy('o.id', 'ASC')
-      .getRawMany<{ id: string; createdAt: string; prepMinutes: string }>();
+      .getRawMany<EstimatedWaitQueueRow>();
+  }
 
-    const targetIndex = rows.findIndex((r) => r.id === orderId);
-    if (targetIndex < 0) {
-      // Trường hợp trạng thái đơn vừa chuyển trong lúc đang tính
+  private estimatedWaitFromQueue(
+    orderId: string,
+    status: OrderStatus,
+    baristaCount: number,
+    rows: EstimatedWaitQueueRow[],
+  ) {
+    if (
+      status === OrderStatus.COMPLETED ||
+      status === OrderStatus.CANCELLED ||
+      status === OrderStatus.READY
+    ) {
       return {
         mode: 'order' as const,
         orderId,
-        status: targetOrder.status,
+        status,
         estimatedMinutes: 0,
         orderPrepMinutes: 0,
         estimatedCompletionMinutes: 0,
       };
     }
 
-    const queueBeforeMinutes = rows
-      .slice(0, targetIndex)
-      .reduce((sum, r) => sum + parseFloat(r.prepMinutes || '0'), 0);
-    const ownPrepMinutes = parseFloat(rows[targetIndex]?.prepMinutes || '0');
+    const wait = buildEstimatedWaitByOrderId(rows, baristaCount).get(orderId);
+    if (!wait) {
+      // Trường hợp trạng thái đơn vừa chuyển trong lúc đang tính
+      return {
+        mode: 'order' as const,
+        orderId,
+        status,
+        estimatedMinutes: 0,
+        orderPrepMinutes: 0,
+        estimatedCompletionMinutes: 0,
+      };
+    }
 
     return {
       mode: 'order' as const,
       orderId,
-      status: targetOrder.status,
+      status,
       // Thời gian chờ để order này bắt đầu được xử lý
-      estimatedMinutes: Math.ceil(queueBeforeMinutes / baristas),
+      estimatedMinutes: wait.estimatedMinutes,
       // Thời gian prep riêng của order (chưa chia barista)
-      orderPrepMinutes: Math.ceil(ownPrepMinutes),
+      orderPrepMinutes: wait.orderPrepMinutes,
       // ETA hoàn thành order này (chờ + prep)
-      estimatedCompletionMinutes: Math.ceil(
-        (queueBeforeMinutes + ownPrepMinutes) / baristas,
-      ),
+      estimatedCompletionMinutes: wait.estimatedCompletionMinutes,
     };
+  }
+
+  private async computeEstimatedWaitForOrder(orderId: string, baristaCount: number) {
+    const targetOrder = await this.orderRepo.findOne({
+      where: { id: orderId },
+      select: { id: true, status: true },
+    });
+    if (!targetOrder) throw new NotFoundException('Đơn hàng không tồn tại');
+
+    return this.estimatedWaitFromQueue(
+      orderId,
+      targetOrder.status,
+      baristaCount,
+      await this.loadEstimatedWaitQueue(),
+    );
   }
 
   async create(
@@ -499,8 +552,8 @@ export class OrderService {
     tableId?: string;
     date?: string;
   }) {
-    const { pageNo = 1, pageSize = 20, status, tableId, date } = query;
-    const skip = (pageNo - 1) * pageSize;
+    const { status, tableId, date } = query;
+    const { skip, pageSize: normalizedPageSize } = normalizePagination(query);
 
     let dateStart: Date | undefined;
     let dateEnd: Date | undefined;
@@ -539,7 +592,7 @@ export class OrderService {
     )
       .orderBy('o.createdAt', 'DESC')
       .skip(skip)
-      .take(pageSize)
+      .take(normalizedPageSize)
       .getMany();
 
     return { list: orders.map((o) => this.buildDto(o, true)), total };
@@ -635,27 +688,33 @@ export class OrderService {
       .orderBy('o.createdAt', 'DESC')
       .getMany();
     const settings = await this.settingsService.get();
-    return Promise.all(
-      orders.map(async (order) => {
-        const dto = this.buildDto(order);
-        // Các đơn cũ có thể chưa lưu ETA lúc tạo. Tính lại theo chính order
-        // để khách luôn thấy thời gian hoàn tất thay vì mất hẳn badge.
-        if (
-          settings.waitTimeEnabled &&
-          dto.estimateWaitMinutes == null &&
-          dto.status !== OrderStatus.READY &&
-          dto.status !== OrderStatus.COMPLETED &&
-          dto.status !== OrderStatus.CANCELLED
-        ) {
-          const wait = await this.computeEstimatedWaitForOrder(
-            dto.id,
-            settings.baristaCount,
-          );
-          return { ...dto, estimateWaitMinutes: wait.estimatedCompletionMinutes };
-        }
-        return dto;
-      }),
+    const needsEstimatedWait = (order: Order) =>
+      settings.waitTimeEnabled &&
+      order.estimatedWaitMinutes == null &&
+      order.status !== OrderStatus.READY &&
+      order.status !== OrderStatus.COMPLETED &&
+      order.status !== OrderStatus.CANCELLED;
+    const queue = orders.some(needsEstimatedWait)
+      ? await this.loadEstimatedWaitQueue()
+      : [];
+    const waitsByOrderId = buildEstimatedWaitByOrderId(
+      queue,
+      settings.baristaCount,
     );
+
+    return orders.map((order) => {
+      const dto = this.buildDto(order);
+      // Các đơn cũ có thể chưa lưu ETA lúc tạo. Dùng một queue snapshot cho cả
+      // response để giữ nguyên công thức ETA mà không phát sinh N+1 truy vấn.
+      if (needsEstimatedWait(order)) {
+        return {
+          ...dto,
+          estimateWaitMinutes:
+            waitsByOrderId.get(dto.id)?.estimatedCompletionMinutes ?? 0,
+        };
+      }
+      return dto;
+    });
   }
 
   async estimatedWait(orderId?: string) {

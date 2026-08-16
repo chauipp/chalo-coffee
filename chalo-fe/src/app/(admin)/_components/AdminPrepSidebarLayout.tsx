@@ -66,7 +66,7 @@ export function AdminPrepSidebarLayout({
             left={children}
             right={() => (
               <div id={ADMIN_PREP_DOCK_ID} className="h-full min-h-0">
-                <PrepDock />
+                <PrepDock enabled={visible} />
               </div>
             )}
           />

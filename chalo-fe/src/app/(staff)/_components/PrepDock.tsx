@@ -19,8 +19,9 @@ const PREP_POLL_MS = 10_000;
 const byCreatedAsc = (a: OrderDto, b: OrderDto) =>
   +new Date(a.createdAt) - +new Date(b.createdAt);
 
-export const PrepDock = () => {
+export const PrepDock = ({ enabled }: { enabled: boolean }) => {
   const { data: activeOrders } = useGetActiveOrder({
+    enabled,
     refetchInterval: PREP_POLL_MS,
   });
   const setPrepared = useSetItemPrepared();

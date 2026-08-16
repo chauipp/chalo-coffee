@@ -7,7 +7,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface BaseFilter extends PageParam {}
 
@@ -24,6 +24,7 @@ export interface UseTablePaginationProps<T, F extends BaseFilter> {
   queryFn: (params: F) => Promise<PageResult<T>>;
   initialFilter: F;
   staleTime?: number;
+  enabled?: boolean;
 }
 
 export interface UseTablePaginationReturn<T, F extends BaseFilter> {
@@ -47,9 +48,11 @@ export function useTablePagination<T, F extends BaseFilter>({
   queryFn,
   initialFilter,
   staleTime = 30_000,
+  enabled = true,
 }: UseTablePaginationProps<T, F>): UseTablePaginationReturn<T, F> {
   const [filter, setFilter] = useState<F>(initialFilter);
   const qc = useQueryClient();
+  const wasEnabled = useRef(enabled);
 
   const qkFull = useMemo(() => {
     return [...queryKey, filter];
@@ -61,12 +64,22 @@ export function useTablePagination<T, F extends BaseFilter>({
     isFetching,
     isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: qkFull,
     queryFn: () => queryFn(filter),
     staleTime,
     placeholderData: keepPreviousData,
+    enabled,
+    // A history tab may remain mounted while disabled. Fetch explicitly when
+    // it becomes visible again instead of waiting for its stale timer.
+    refetchOnMount: enabled ? "always" : false,
   });
+
+  useEffect(() => {
+    if (enabled && !wasEnabled.current) void refetch();
+    wasEnabled.current = enabled;
+  }, [enabled, refetch]);
 
   const total = res?.total ?? 0;
 

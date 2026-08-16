@@ -33,13 +33,14 @@ const STATUS_BADGE: Record<OrderStatus, { label: string; variant: BadgeVariant }
 
 const INITIAL_FILTER: OrderPageParams = { pageNo: 1, pageSize: 20 };
 
-export default function AdminOrdersHistory() {
+export default function AdminOrdersHistory({ enabled = true }: { enabled?: boolean }) {
   const router = useRouter();
   const { data: tables } = useGetTableList();
   const table = useTablePagination<OrderDto, OrderPageParams>({
     initialFilter: INITIAL_FILTER,
     queryFn: getOrderPage,
     queryKey: QUERY_KEYS.ORDERS.PAGE({}),
+    enabled,
   });
   const [date, setDate] = useState("");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
