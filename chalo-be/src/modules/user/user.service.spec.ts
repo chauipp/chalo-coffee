@@ -121,6 +121,17 @@ describe('UserService.page', () => {
     const roleFilter = calls.find((call) => call.clause.includes('u.role'));
     expect(roleFilter?.params).toMatchObject({ role: UserRole.CUSTOMER });
   });
+
+  it('caps a direct page caller at 100 rows', async () => {
+    const { repo } = buildRepo();
+    const service = new UserService(repo as unknown as Repository<User>);
+
+    await service.page({ pageNo: 2, pageSize: 1_000 });
+
+    const qb = repo.createQueryBuilder.mock.results[0].value;
+    expect(qb.skip).toHaveBeenCalledWith(100);
+    expect(qb.take).toHaveBeenCalledWith(100);
+  });
 });
 
 describe('UserService.setActive', () => {

@@ -31,7 +31,7 @@ export class UserController {
   @Get('page')
   @Roles(UserRole.ADMIN)
   @ApiQuery({ name: 'pageNo', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'pageSize', required: false, maximum: 100 })
   @ApiQuery({ name: 'keyword', required: false })
   @ApiQuery({ name: 'role', required: false, enum: UserRole })
   @ApiQuery({ name: 'isActive', required: false })
@@ -83,7 +83,7 @@ export class UserController {
   @Get(':id/orders')
   @Roles(UserRole.ADMIN)
   @ApiQuery({ name: 'pageNo', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'pageSize', required: false, maximum: 100 })
   @ApiOkResponse({
     description: 'Lịch sử đơn hàng của 1 khách hàng (admin xem)',
     schema: { example: { code: 200, message: 'success', data: { list: [], total: 0, pageNo: 1, pageSize: 5 } } },

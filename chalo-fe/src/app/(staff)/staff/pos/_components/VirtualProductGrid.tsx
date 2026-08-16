@@ -16,9 +16,10 @@ interface VirtualProductGridProps {
   loadMoreRef: RefObject<HTMLDivElement | null>;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  resetKey: string;
 }
 
-export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectProduct, loadMoreRef, hasNextPage, isFetchingNextPage }: VirtualProductGridProps) => {
+export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectProduct, loadMoreRef, hasNextPage, isFetchingNextPage, resetKey }: VirtualProductGridProps) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [columnCount, setColumnCount] = useState(1);
   useEffect(() => {
@@ -30,6 +31,11 @@ export const VirtualProductGrid = ({ products, quantitiesByProductId, onSelectPr
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
+  // Only filters change this key. Pagination appends keep the operator's
+  // viewport stable, while a new search/category always starts at the top.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [resetKey]);
   const virtualizer = useVirtualizer({ count: products.length, getScrollElement: () => scrollRef.current, estimateSize: () => ROW_HEIGHT, overscan: 3, lanes: columnCount });
   const horizontalGap = (columnCount - 1) * GRID_GAP;
   return <div ref={scrollRef} data-testid="pos-product-scroll" className="flex-1 min-h-0 overflow-y-auto p-3">

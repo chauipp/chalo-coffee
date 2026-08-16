@@ -73,6 +73,7 @@ export default function StaffPOSPage() {
   const createOrderMutation = useCreateOrder();
 
   const products = productPage.data;
+  const productGridResetKey = `${selectedCategoryId}:${debouncedSearch}`;
 
   const {
     cart,
@@ -207,6 +208,7 @@ export default function StaffPOSPage() {
               loadMoreRef={productPage.loadMoreRef}
               hasNextPage={productPage.hasNextPage}
               isFetchingNextPage={productPage.isFetchingNextPage}
+              resetKey={productGridResetKey}
             />
           )}
         </div>

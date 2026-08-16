@@ -91,6 +91,7 @@ test("mobile POS does not mount the desktop prep dock", async ({ page }) => {
 test("admin history pauses operations requests and preserves its date filter", async ({ page }) => {
   let activeOrderRequests = 0;
   let eventRequests = 0;
+  let historyPageRequests = 0;
   await stubCommonApi(page);
   await page.route("**/api/auth/me", (route) => route.fulfill(ok(admin)));
   await page.route("**/api/order/active", (route) => {
@@ -101,13 +102,19 @@ test("admin history pauses operations requests and preserves its date filter", a
     eventRequests += 1;
     return route.fulfill({ status: 200, contentType: "text/event-stream", body: ": connected\n\n" });
   });
+  await page.route("**/api/order/page**", (route) => {
+    historyPageRequests += 1;
+    return route.fulfill(ok({ list: [order], total: 1 }));
+  });
 
   await login(page, "admin");
   await page.goto("/admin/orders?view=history");
   const dateFilter = page.locator('input[type="date"]');
   await expect(dateFilter).toBeVisible();
   await dateFilter.fill("2026-08-16");
-  await page.waitForTimeout(500);
+  // One initial request plus the query keyed by the newly selected date.
+  await expect.poll(() => historyPageRequests).toBeGreaterThan(1);
+  const historyRequestsBeforeOperations = historyPageRequests;
   expect(activeOrderRequests).toBe(0);
   expect(eventRequests).toBe(0);
 
@@ -117,10 +124,13 @@ test("admin history pauses operations requests and preserves its date filter", a
   await expect(page.getByText(/Real-time/)).toBeVisible();
   await expect.poll(() => activeOrderRequests).toBeGreaterThan(0);
   await expect.poll(() => eventRequests).toBeGreaterThan(0);
+  await page.waitForTimeout(500);
+  expect(historyPageRequests).toBe(historyRequestsBeforeOperations);
 
   await modeSwitch.getByRole("tab", { name: "Lịch sử" }).click();
   await expect(page).toHaveURL(/\/admin\/orders\?view=history/);
   await expect(dateFilter).toHaveValue("2026-08-16");
+  await expect.poll(() => historyPageRequests).toBeGreaterThan(historyRequestsBeforeOperations);
   const activeRequestsAfterHistory = activeOrderRequests;
   const eventRequestsAfterHistory = eventRequests;
   await page.waitForTimeout(500);

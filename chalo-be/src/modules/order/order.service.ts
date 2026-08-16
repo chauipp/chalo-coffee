@@ -36,9 +36,9 @@ import { TableStatus } from '../../common/enums/table-status.enum';
 import { ProductStatus } from '../../common/enums/product-status.enum';
 import {
   ESTIMATED_WAIT_BARISTAS,
-  PAGINATION_DEFAULT_PAGE_SIZE,
   PAGINATION_MAX_PAGE_SIZE,
 } from '../../common/constants';
+import { normalizePagination } from '../../common/pagination';
 import { SseService } from '../sse/sse.service';
 import { SettingsService } from '../settings/settings.service';
 import { CustomerService } from '../customer/customer.service';
@@ -73,10 +73,7 @@ const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
 export const MAX_PAGE_SIZE = PAGINATION_MAX_PAGE_SIZE;
 
 export function normalizePageSize(pageSize?: number): number {
-  if (!Number.isFinite(pageSize) || !pageSize || pageSize < 0) {
-    return PAGINATION_DEFAULT_PAGE_SIZE;
-  }
-  return Math.min(Math.floor(pageSize), MAX_PAGE_SIZE);
+  return normalizePagination({ pageSize }).pageSize;
 }
 
 type EstimatedWaitQueueRow = {
@@ -555,9 +552,8 @@ export class OrderService {
     tableId?: string;
     date?: string;
   }) {
-    const { pageNo = 1, pageSize, status, tableId, date } = query;
-    const normalizedPageSize = normalizePageSize(pageSize);
-    const skip = (pageNo - 1) * normalizedPageSize;
+    const { status, tableId, date } = query;
+    const { skip, pageSize: normalizedPageSize } = normalizePagination(query);
 
     let dateStart: Date | undefined;
     let dateEnd: Date | undefined;

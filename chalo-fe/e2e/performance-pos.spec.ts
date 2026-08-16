@@ -26,14 +26,32 @@ const products = Array.from({ length: 300 }, (_, index) => ({
   modifierGroups: [],
   createdAt: "2026-08-16T08:00:00.000Z",
 }));
+const filteredProduct = {
+  ...products[0],
+  id: "filtered-product",
+  categoryId: "filtered-category",
+  categoryName: "Đã lọc",
+  name: "Món lọc mới",
+};
+
+const FRAME_INTERVAL_BUDGET_MS = 1000 / 24; // 24fps is the minimum usable POS scroll budget.
 
 async function installFixture(page: Page) {
   await page.route("**/api/auth/login", (route) =>
     route.fulfill(ok({ accessToken: "test-token", refreshToken: "test-refresh", user: staff })),
   );
   await page.route("**/api/auth/me", (route) => route.fulfill(ok(staff)));
-  await page.route("**/api/menu/category/simple-list", (route) => route.fulfill(ok([])));
-  await page.route("**/api/menu/product/page**", (route) => route.fulfill(ok({ list: products, total: products.length })));
+  await page.route("**/api/menu/category/simple-list", (route) => route.fulfill(ok([
+    { id: "performance-category", name: "Hiệu năng" },
+    { id: "filtered-category", name: "Đã lọc" },
+  ])));
+  await page.route("**/api/menu/product/page**", (route) => {
+    const url = new URL(route.request().url());
+    const isFiltered = url.searchParams.get("name") === "lọc" || url.searchParams.get("categoryId") === "filtered-category";
+    return route.fulfill(ok(isFiltered
+      ? { list: [filteredProduct], total: 1 }
+      : { list: products, total: products.length }));
+  });
   await page.route("**/api/table/list", (route) => route.fulfill(ok([])));
   await page.route("**/api/order/active", (route) => route.fulfill(ok([])));
   await page.route("**/api/order/events**", (route) => route.fulfill({
@@ -78,6 +96,21 @@ for (const viewport of [
     await expect(page.getByText("Món hiệu năng 0")).toBeVisible();
     await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeGreaterThan(0);
     await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeLessThan(100);
+    const frameIntervals = await page.locator('[data-testid="pos-product-scroll"]').evaluate(async (element) => {
+      const intervals: number[] = [];
+      let previous = performance.now();
+      for (let frame = 0; frame < 90; frame += 1) {
+        await new Promise<void>((resolve) => requestAnimationFrame((timestamp) => {
+          intervals.push(timestamp - previous);
+          previous = timestamp;
+          element.scrollTop += 20;
+          resolve();
+        }));
+      }
+      return intervals.slice(1).sort((a, b) => a - b);
+    });
+    const p95FrameInterval = frameIntervals[Math.floor(frameIntervals.length * 0.95)];
+    expect(p95FrameInterval).toBeLessThan(FRAME_INTERVAL_BUDGET_MS);
     await page.locator('[data-testid="pos-product-scroll"]').evaluate((element) => {
       element.scrollTop = element.scrollHeight;
       element.dispatchEvent(new Event("scroll"));
@@ -87,10 +120,27 @@ for (const viewport of [
     await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeLessThan(100);
     await page.getByText("Món hiệu năng 299").click();
 
+    await page.getByLabel("Tìm món").fill("lọc");
+    await expect(page.getByText("Món lọc mới")).toBeVisible();
+    await expect(page.locator('[data-testid="pos-product-scroll"]')).toHaveJSProperty("scrollTop", 0);
+
+    if (viewport.name === "desktop") {
+      await expect(page.getByText("Món hiệu năng 299").last()).toBeVisible();
+    }
+    await page.getByLabel("Tìm món").fill("");
+    await expect(page.getByText("Món hiệu năng 0")).toBeVisible();
+    await page.locator('[data-testid="pos-product-scroll"]').evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+      element.dispatchEvent(new Event("scroll"));
+    });
+    await expect(page.getByText("Món hiệu năng 299").first()).toBeVisible();
+    await page.getByText("Đã lọc", { exact: true }).click();
+    await expect(page.getByText("Món lọc mới")).toBeVisible();
+    await expect(page.locator('[data-testid="pos-product-scroll"]')).toHaveJSProperty("scrollTop", 0);
     if (viewport.name === "mobile") {
       await page.getByRole("button", { name: /Giỏ hàng.*1 món/ }).click();
+      await expect(page.getByText("Món hiệu năng 299").last()).toBeVisible();
     }
-    await expect(page.getByText("Món hiệu năng 299").last()).toBeVisible();
     expect(pagerRequests).toBe(0);
     expect(consoleErrors).toEqual([]);
     expect(failedResponses).toEqual([]);

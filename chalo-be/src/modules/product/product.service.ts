@@ -8,6 +8,7 @@ import { UpdateProductDto, UpdateProductStatusDto } from './dto/update-product.d
 import { CategoryService } from '../category/category.service';
 import { ProductStatus } from '../../common/enums/product-status.enum';
 import { ProductModifierGroup } from './entities/product-modifier-group.entity';
+import { normalizePagination } from '../../common/pagination';
 
 @Injectable()
 export class ProductService {
@@ -70,8 +71,8 @@ export class ProductService {
     status?: string;
     isActive?: boolean;
   }) {
-    const { pageNo = 1, pageSize = 10, name, categoryId, status, isActive } = query;
-    const skip = (pageNo - 1) * pageSize;
+    const { name, categoryId, status, isActive } = query;
+    const { skip, pageSize } = normalizePagination(query, 10);
 
     const qb = this.productRepo
       .createQueryBuilder('p')

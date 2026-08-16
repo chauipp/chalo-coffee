@@ -51,7 +51,7 @@ export default function AdminOrdersPage() {
         <div className="mt-3"><AdminOrdersModeSwitch /></div>
       </div>
       <div className={isHistory ? "" : "hidden"} aria-hidden={!isHistory}>
-        <AdminOrdersHistory />
+        <AdminOrdersHistory enabled={isHistory} />
       </div>
       <div className={isHistory ? "hidden" : ""} aria-hidden={isHistory}>
         <AdminOrdersOperations enabled={!isHistory} />
