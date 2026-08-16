@@ -386,10 +386,9 @@ export default function StaffPOSPage() {
       />
 
       {/* active pager board */}
-      <PagerBoard
-        open={showPagerBoard}
-        onClose={() => setShowPagerBoard(false)}
-      />
+      {showPagerBoard && (
+        <PagerBoard onClose={() => setShowPagerBoard(false)} />
+      )}
     </div>
   );
 }

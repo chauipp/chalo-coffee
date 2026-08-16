@@ -15,16 +15,16 @@ import { AdminOrdersModeSwitch } from "./_components/AdminOrdersModeSwitch";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
 
-function AdminOrdersOperations() {
+function AdminOrdersOperations({ enabled }: { enabled: boolean }) {
   const qc = useQueryClient();
   const token = useAuthStore((s) => s.accessToken);
-  const { data: orders, isLoading, refetch } = useGetActiveOrder();
+  const { data: orders, isLoading, refetch } = useGetActiveOrder({ enabled });
   const mutation = useUpdateOrderStatus();
   const [isLive, setIsLive] = useState(false);
   useSSE({
     url: `${API_BASE}${API.SSE.ORDER_EVENTS}`,
     token,
-    enabled: !!token,
+    enabled: enabled && !!token,
     onConnectionChange: setIsLive,
     onEvent: (type) => {
       if (["new_order", "payment_completed", "order_status_changed", "order_prep_progress"].includes(type)) {
@@ -54,7 +54,7 @@ export default function AdminOrdersPage() {
         <AdminOrdersHistory />
       </div>
       <div className={isHistory ? "hidden" : ""} aria-hidden={isHistory}>
-        <AdminOrdersOperations />
+        <AdminOrdersOperations enabled={!isHistory} />
       </div>
     </div>
   );
