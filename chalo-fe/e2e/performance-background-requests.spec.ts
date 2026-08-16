@@ -23,6 +23,7 @@ const order = {
   tableName: "Bàn 1",
   tableToken: "table-token-1",
   status: "PENDING",
+  orderSource: "N_A",
   paidStatus: false,
   items: [],
   totalAmount: 42_000,
@@ -87,10 +88,11 @@ test("mobile POS does not mount the desktop prep dock", async ({ page }) => {
   await expect(page.getByRole("button", { name: /Giỏ hàng/ })).toBeVisible();
 });
 
-test("admin history does not start operations fetch/SSE", async ({ page }) => {
+test("admin history pauses operations requests and preserves its date filter", async ({ page }) => {
   let activeOrderRequests = 0;
   let eventRequests = 0;
   await stubCommonApi(page);
+  await page.route("**/api/auth/me", (route) => route.fulfill(ok(admin)));
   await page.route("**/api/order/active", (route) => {
     activeOrderRequests += 1;
     return route.fulfill(ok([order]));
@@ -108,5 +110,21 @@ test("admin history does not start operations fetch/SSE", async ({ page }) => {
   await page.waitForTimeout(500);
   expect(activeOrderRequests).toBe(0);
   expect(eventRequests).toBe(0);
+
+  const modeSwitch = page.getByRole("tablist", { name: "Chế độ đơn hàng" });
+  await modeSwitch.getByRole("tab", { name: "Vận hành" }).click();
+  await expect(page).toHaveURL(/\/admin\/orders\?view=operations/);
+  await expect(page.getByText(/Real-time/)).toBeVisible();
+  await expect.poll(() => activeOrderRequests).toBeGreaterThan(0);
+  await expect.poll(() => eventRequests).toBeGreaterThan(0);
+
+  await modeSwitch.getByRole("tab", { name: "Lịch sử" }).click();
+  await expect(page).toHaveURL(/\/admin\/orders\?view=history/);
+  await expect(dateFilter).toHaveValue("2026-08-16");
+  const activeRequestsAfterHistory = activeOrderRequests;
+  const eventRequestsAfterHistory = eventRequests;
+  await page.waitForTimeout(500);
+  expect(activeOrderRequests).toBe(activeRequestsAfterHistory);
+  expect(eventRequests).toBe(eventRequestsAfterHistory);
 
 });
