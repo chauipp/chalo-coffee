@@ -22,7 +22,6 @@ export const ADMIN_NAV_ITEMS = [
 ];
 
 const ADMIN_MOBILE_PRIMARY_HREFS: readonly string[] = [
-  ROUTES.ADMIN.DASHBOARD,
   ROUTES.ADMIN.MENU_CATEGORIES,
   ROUTES.ADMIN.ORDERS,
 ];
@@ -41,6 +40,7 @@ const ADMIN_MOBILE_PREP_NAV_ITEM = {
 };
 
 export const ADMIN_MOBILE_PRIMARY_NAV_ITEMS = [
+  { label: "Tổng quan", href: ROUTES.ADMIN.DASHBOARD, icon: ChartBarIcon },
   ...ADMIN_NAV_ITEMS.filter((item) => ADMIN_MOBILE_PRIMARY_HREFS.includes(item.href)),
   ADMIN_MOBILE_PREP_NAV_ITEM,
 ];

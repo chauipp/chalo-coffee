@@ -12,3 +12,10 @@ export function readAdminPrepVisible(
 ): boolean {
   return storage.getItem(ADMIN_PREP_VISIBLE_STORAGE_KEY) === "true";
 }
+
+export function isAdminPrepDockEnabled(
+  isDesktop: boolean,
+  visible: boolean,
+): boolean {
+  return isDesktop && visible;
+}
