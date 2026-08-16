@@ -46,3 +46,7 @@ màn này tạo ra.
 - Không đổi logic nhóm món, công thức ETA, trạng thái order hay endpoint backend.
 - Không thay thiết kế dock/sidebar desktop.
 - Không triển khai UI customer cho pha chế.
+
+## Plan thực thi
+
+Sau khi duyệt: [plan](../plans/2026-08-16-mobile-prep-workspace.md).
