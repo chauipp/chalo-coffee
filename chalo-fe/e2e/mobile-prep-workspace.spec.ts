@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import type { BrowserContext } from "@playwright/test";
+import type { BrowserContext, Page } from "@playwright/test";
 import type { OrderDto } from "../src/services/order/order.types";
 
 const now = "2026-08-16T08:00:00.000Z";
@@ -38,6 +38,7 @@ let preparedRequests: { method: string; payload: unknown }[] = [];
 type TestPersona = "ADMIN" | "MODERATOR";
 
 async function usePersona(
+  page: Page,
   context: BrowserContext,
   baseURL: string,
   role: TestPersona,
@@ -47,12 +48,18 @@ async function usePersona(
     : { id: "2", username: "staff", fullName: "Nhân viên", role, permission: [] };
   const accessToken = `test-${role.toLowerCase()}-token`;
 
+  // Establish a same-origin document before adding auth cookies. Otherwise
+  // /login redirects to the role home and creates an unrelated active-order
+  // request before this helper has written the intended local auth state.
+  if (new URL(page.url()).origin !== new URL(baseURL).origin) {
+    await page.goto(`${baseURL}/login`);
+  }
   await context.clearCookies();
   await context.addCookies([
     { name: "ACCESS_TOKEN", value: accessToken, url: baseURL },
     { name: "USER_ROLE", value: role, url: baseURL },
   ]);
-  await context.addInitScript(
+  await page.evaluate(
     ({ accessToken: token, user: authenticatedUser }) => {
       localStorage.setItem("chalo-auth", JSON.stringify({
         state: {
@@ -113,7 +120,7 @@ test("staff và admin mở workspace pha chế riêng", async ({ baseURL, contex
     }
   });
 
-  await usePersona(context, baseURL!, "MODERATOR");
+  await usePersona(page, context, baseURL!, "MODERATOR");
   await page.goto("/staff/prep");
   await expect(
     page.getByRole("heading", { name: "Pha chế", exact: true }),
@@ -132,7 +139,13 @@ test("staff và admin mở workspace pha chế riêng", async ({ baseURL, contex
   ]);
   await expect(staffUnit).toHaveAttribute("aria-pressed", "true");
 
-  await usePersona(context, baseURL!, "ADMIN");
+  await usePersona(page, context, baseURL!, "ADMIN");
+  await expect
+    .poll(() => page.evaluate(() => {
+      const auth = localStorage.getItem("chalo-auth");
+      return auth ? JSON.parse(auth).state.user.role : null;
+    }))
+    .toBe("ADMIN");
   await page.goto("/admin/prep");
   await expect(
     page.getByRole("heading", { name: "Pha chế", exact: true }),
@@ -170,7 +183,7 @@ test("mobile navigation đưa Pha chế ra tab trực tiếp và giữ Khác kh�
 
   await page.setViewportSize({ width: 375, height: 667 });
 
-  await usePersona(context, baseURL!, "MODERATOR");
+  await usePersona(page, context, baseURL!, "MODERATOR");
   await page.goto("/staff/orders");
   const staffNav = page.getByTestId("staff-mobile-nav");
   await staffNav.getByRole("link", { name: "Pha chế" }).click();
@@ -185,7 +198,7 @@ test("mobile navigation đưa Pha chế ra tab trực tiếp và giữ Khác kh�
   await expect(staffOverflow.getByRole("link", { name: "Chốt ca" })).toBeVisible();
   await expect(staffOverflow.getByRole("button", { name: "Đăng xuất" })).toBeVisible();
 
-  await usePersona(context, baseURL!, "ADMIN");
+  await usePersona(page, context, baseURL!, "ADMIN");
   await page.goto("/admin/orders");
   const adminNav = page.getByTestId("admin-mobile-nav");
   await expect(adminNav.getByRole("link", { name: "Tổng quan" })).toBeVisible();
@@ -208,7 +221,7 @@ test("mobile navigation đưa Pha chế ra tab trực tiếp và giữ Khác kh�
   const adminOverflow = page.getByRole("dialog", { name: "Mục quản trị khác" });
   await expect(adminOverflow.getByRole("link", { name: "Bàn & QR" })).toBeVisible();
 
-  await usePersona(context, baseURL!, "MODERATOR");
+  await usePersona(page, context, baseURL!, "MODERATOR");
   await page.goto("/staff/prep");
   await staffNav.getByRole("button", { name: "Khác" }).click();
   await page
@@ -252,22 +265,22 @@ test("workspace pha chế ẩn không tải đơn đang làm trên các route mo
   );
 
   await page.setViewportSize({ width: 375, height: 667 });
-  await usePersona(context, baseURL!, "MODERATOR");
+  await usePersona(page, context, baseURL!, "MODERATOR");
   await page.goto("/staff/pos");
   await expect(page.getByRole("textbox", { name: "Tìm món" })).toBeVisible();
   await page.waitForTimeout(11_000);
   expect(activeOrderRequests).toBe(0);
 
-  await usePersona(context, baseURL!, "ADMIN");
-  await context.addInitScript((key) => {
-    localStorage.setItem(key, "true");
-  }, "admin-prep-visible:v1");
+  await usePersona(page, context, baseURL!, "ADMIN");
+  await page.evaluate(() => {
+    localStorage.setItem("admin-prep-visible:v1", "true");
+  });
   await page.goto("/admin/dashboard");
   await expect(page.getByRole("heading", { name: /tổng quan/i })).toBeVisible();
   await page.waitForTimeout(11_000);
   expect(activeOrderRequests).toBe(0);
 
-  await usePersona(context, baseURL!, "MODERATOR");
+  await usePersona(page, context, baseURL!, "MODERATOR");
   await page.goto("/staff/prep");
   await expect(
     page.getByRole("heading", { name: "Pha chế", exact: true }),
