@@ -75,12 +75,16 @@ for (const viewport of [
     await login(page);
     await page.goto("/staff/pos");
     await expect(page.getByTestId("pos-product-scroll")).toBeVisible();
+    await expect(page.getByText("Món hiệu năng 0")).toBeVisible();
+    await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeGreaterThan(0);
     await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeLessThan(100);
     await page.locator('[data-testid="pos-product-scroll"]').evaluate((element) => {
       element.scrollTop = element.scrollHeight;
       element.dispatchEvent(new Event("scroll"));
     });
     await expect(page.getByText("Món hiệu năng 299")).toBeVisible();
+    await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeGreaterThan(0);
+    await expect.poll(() => page.getByTestId("pos-product-card").count()).toBeLessThan(100);
     await page.getByText("Món hiệu năng 299").click();
 
     if (viewport.name === "mobile") {
