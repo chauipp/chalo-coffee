@@ -31,7 +31,7 @@
 - `chalo-fe/e2e/mobile-prep-workspace.spec.ts`: fixture Staff/Admin, route, click/toggle và request lifecycle.
 - `docs/superpowers/summaries/2026-08-16-mobile-prep-workspace-summary.md`: kết quả sau khi hoàn thành.
 
-- [ ] Task 1: Tách workspace pha chế và tạo hai route
+- [x] Task 1: Tách workspace pha chế và tạo hai route
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/_components/PrepWorkspace.tsx`
@@ -88,7 +88,7 @@ git add chalo-fe/src/app/'(staff)'/_components chalo-fe/src/app/'(staff)'/staff/
 git commit -m "feat: add shared mobile prep workspace"
 ```
 
-- [ ] Task 2: Đưa Pha chế thành tab mobile một chạm
+- [x] Task 2: Đưa Pha chế thành tab mobile một chạm
 
 **Files:**
 - Modify: `chalo-fe/src/app/(staff)/staff/_components/header.config.ts`
@@ -156,7 +156,7 @@ git add chalo-fe/src/app/'(staff)'/staff/_components/header.config.ts chalo-fe/s
 git commit -m "feat: expose prep workspace in mobile navigation"
 ```
 
-- [ ] Task 3: Kiểm chứng lifecycle và bàn giao
+- [x] Task 3: Kiểm chứng lifecycle và bàn giao
 
 **Files:**
 - Modify: `chalo-fe/e2e/mobile-prep-workspace.spec.ts`

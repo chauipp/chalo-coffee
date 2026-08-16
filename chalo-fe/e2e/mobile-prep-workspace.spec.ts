@@ -194,3 +194,54 @@ test("mobile navigation đưa Pha chế ra tab trực tiếp và giữ Khác kh�
   expect(failedResponses).toEqual([]);
   expect(consoleErrors).toEqual([]);
 });
+
+test("workspace pha chế ẩn không tải đơn đang làm trên các route mobile khác", async ({ page }) => {
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
+  let activeOrderRequests = 0;
+
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  page.on("response", (response) => {
+    if (response.status() >= 400) {
+      failedResponses.push(`${response.status()} ${response.url()}`);
+    }
+  });
+  await page.route("**/api/order/active**", (route) => {
+    activeOrderRequests += 1;
+    return route.fulfill(ok(activeOrders));
+  });
+  await page.route("**/api/menu/product/page**", (route) =>
+    route.fulfill(ok({ list: [], total: 0 })),
+  );
+  await page.route("**/api/order/stats/revenue**", (route) =>
+    route.fulfill(ok({ totalRevenue: 0 })),
+  );
+  await page.route("**/api/order/stats/top-products**", (route) =>
+    route.fulfill(ok([])),
+  );
+  await page.route("**/api/auth/refresh-token", (route) =>
+    route.fulfill(ok({ accessToken: "test-admin-token", refreshToken: "test-refresh-token" })),
+  );
+
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/staff/pos");
+  await expect(page.getByRole("textbox", { name: "Tìm món" })).toBeVisible();
+  await page.waitForTimeout(11_000);
+  expect(activeOrderRequests).toBe(0);
+
+  await page.goto("/admin/dashboard");
+  await expect(page.getByRole("heading", { name: /tổng quan/i })).toBeVisible();
+  await page.waitForTimeout(11_000);
+  expect(activeOrderRequests).toBe(0);
+
+  await page.goto("/staff/prep");
+  await expect(
+    page.getByRole("heading", { name: "Pha chế", exact: true }),
+  ).toBeVisible();
+  await expect.poll(() => activeOrderRequests).toBeGreaterThan(0);
+  expect(failedResponses).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
