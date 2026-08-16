@@ -18,8 +18,8 @@ Liên quan: [spec](../specs/2026-08-16-application-smoothness-design.md) · [pla
 
 ## Khác với plan
 
-Không lệch. Bản standalone được chạy trên cổng 3016 vì cổng 3015 đã có tiến trình khác chiếm; assets `public` và `.next/static` được copy vào bundle trước khi test.
+Lệch một phần ở hạng mục kiểm chứng database: chưa thu được bằng chứng `EXPLAIN (ANALYZE, BUFFERS)` trước/sau index với dữ liệu volume vì môi trường local không có thông tin xác thực PostgreSQL hợp lệ. Bản standalone được chạy trên cổng 3016 vì cổng 3015 đã có tiến trình khác chiếm; assets `public` và `.next/static` được copy vào bundle trước khi test.
 
 ## Còn dở / cần lưu ý
 
-Pha 2 vẫn được hoãn cho đến khi các metrics sản lượng production cho thấy cần tối ưu thêm.
+Khi được cấp thông tin xác thực PostgreSQL hợp lệ và dữ liệu đủ volume, cần thu thập `EXPLAIN (ANALYZE, BUFFERS)` trước/sau cho các truy vấn chịu ảnh hưởng bởi index, lưu lại query plan và số liệu thực tế. Bằng chứng này hiện chưa có; tài liệu không khẳng định bất kỳ kết quả đo query plan nào. Pha 2 vẫn được hoãn cho đến khi các metrics sản lượng production cho thấy cần tối ưu thêm.
