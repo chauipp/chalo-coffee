@@ -28,12 +28,14 @@ theo token...) bằng Playwright, và phải dựng server qua `next build` + st
    standalone:
 
    ```bash
-   cp -r chalo-fe/.next/static chalo-fe/.next/standalone/.next/
+   cp -R chalo-fe/.next/static chalo-fe/.next/standalone/.next/
+   cp -R chalo-fe/public chalo-fe/.next/standalone/public
    cd chalo-fe/.next/standalone
    PORT=3023 HOSTNAME=127.0.0.1 node server.js
    ```
 
-   Chạy `node chalo-fe/.next/standalone/server.js` từ root làm HTML vẫn trả
+   Thiếu thư mục `public` cũng làm các asset thương hiệu như logo trả `404`,
+   dù trang vẫn có thể hydrate. Chạy `node chalo-fe/.next/standalone/server.js` từ root làm HTML vẫn trả
    `200`, nhưng `/_next/static/*` trả `404`; browser chỉ hiện trang trắng hoặc
    hydration không hoàn tất.
 
