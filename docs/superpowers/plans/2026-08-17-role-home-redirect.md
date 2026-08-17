@@ -18,7 +18,7 @@
 
 ---
 
-- [ ] Task 1: Viết kiểm thử điều hướng trang chủ theo role
+- [x] Task 1: Viết kiểm thử điều hướng trang chủ theo role
 
 **Files:**
 
