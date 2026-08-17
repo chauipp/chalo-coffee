@@ -29,7 +29,7 @@
 - Consumes: cookie `ACCESS_TOKEN`, `USER_ROLE` và đích từ `ROLE_DEFAULT_ROUTES`.
 - Produces: regression coverage cho request đầu tiên tới `/` của ba role và trạng thái khách.
 
-- [ ] **Step 1: Viết test redirect cho mọi role có phiên**
+- [x] **Step 1: Viết test redirect cho mọi role có phiên**
 
 ```ts
 import { expect, test } from "@playwright/test";
@@ -53,7 +53,7 @@ for (const [role, destination] of roleDestinations) {
 }
 ```
 
-- [ ] **Step 2: Viết test giữ landing khi không có cookie xác thực**
+- [x] **Step 2: Viết test giữ landing khi không có cookie xác thực**
 
 ```ts
 test("khách chưa đăng nhập mở / vẫn thấy landing", async ({ page }) => {
@@ -63,13 +63,13 @@ test("khách chưa đăng nhập mở / vẫn thấy landing", async ({ page }) 
 });
 ```
 
-- [ ] **Step 3: Chạy test để xác nhận lỗi trước khi sửa middleware**
+- [x] **Step 3: Chạy test để xác nhận lỗi trước khi sửa middleware**
 
 Run: `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm exec playwright test e2e/home-role-redirect.spec.ts --project=chromium`
 
 Expected: ba case role vẫn ở `/` và fail; case khách pass.
 
-- [ ] **Step 4: Commit test đỏ**
+- [x] **Step 4: Commit test đỏ**
 
 ```bash
 git add chalo-fe/e2e/home-role-redirect.spec.ts
@@ -88,7 +88,7 @@ git commit -m "test: cover role-aware home redirect"
 - Consumes: `token`, `role`, `ROLE_DEFAULT_ROUTES` và `ROUTES.LOGIN` đã có trong `middleware`.
 - Produces: `NextResponse.redirect()` trước khi Home server component render khi `/` có token và role hợp lệ.
 
-- [ ] **Step 1: Thay điều kiện route công khai để bao gồm `/`**
+- [x] **Step 1: Thay điều kiện route công khai để bao gồm `/`**
 
 ```ts
 if (pathname === "/") {
@@ -108,23 +108,23 @@ if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
 }
 ```
 
-- [ ] **Step 2: Chạy test mới để xác nhận pass**
+- [x] **Step 2: Chạy test mới để xác nhận pass**
 
 Run: `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm exec playwright test e2e/home-role-redirect.spec.ts --project=chromium`
 
-Expected: 4 passed.
+Expected: 6 passed.
 
-- [ ] **Step 3: Chạy regression của guard customer**
+- [x] **Step 3: Chạy regression của guard customer**
 
 Run: `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm exec playwright test e2e/customer-role-guard.spec.ts --project=chromium`
 
 Expected: 2 passed.
 
-- [ ] **Step 4: Kiểm UI theo luồng thật**
+- [x] **Step 4: Kiểm UI theo luồng thật**
 
 Run dev server, rồi mở `/` bằng Playwright với cookie của từng role ở desktop và 375×667. Xác nhận URL đích, snapshot có shell role tương ứng, console không có error và network không có HTTP 4xx/5xx ngoài SSE `http://localhost:8080/api/order/events` nếu chính endpoint đó không được mock.
 
-- [ ] **Step 5: Commit implementation**
+- [x] **Step 5: Commit implementation**
 
 ```bash
 git add chalo-fe/middleware.ts chalo-fe/e2e/home-role-redirect.spec.ts

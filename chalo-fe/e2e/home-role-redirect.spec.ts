@@ -47,7 +47,7 @@ test("role không ánh xạ có token mở / vẫn thấy landing", async ({
   ).toBeVisible();
 });
 
-test("role không ánh xạ có token mở /menu vẫn bị chuyển về login", async ({
+test("role không ánh xạ có token mở /menu vẫn giữ menu", async ({
   context,
   page,
   baseURL,
@@ -58,5 +58,5 @@ test("role không ánh xạ có token mở /menu vẫn bị chuyển về login"
   ]);
 
   await page.goto("/menu", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/menu$/);
 });

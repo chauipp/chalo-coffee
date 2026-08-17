@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get(TOKEN_KEYS.ACCESS)?.value
   const role = request.cookies.get(TOKEN_KEYS.ROLE)?.value
 
-  if (pathname.startsWith(ROUTES.MENU) && pathname !== ROUTES.MENU) {
+  if (pathname.startsWith(ROUTES.MENU)) {
     return NextResponse.next()
   }
 
