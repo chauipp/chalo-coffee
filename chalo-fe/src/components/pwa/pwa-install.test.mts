@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getPwaPromptKind, isStandaloneDisplay } from "./pwa-install.ts";
+import {
+  getPwaPromptKind,
+  isStandaloneDisplay,
+  shouldRegisterServiceWorker,
+} from "./pwa-install.ts";
 
 test("installed display mode never shows a prompt", () => {
   assert.equal(isStandaloneDisplay(true, false), true);
@@ -19,4 +23,10 @@ test("navigator standalone also marks an installed display", () => {
 test("desktop and unavailable Chromium installs do not show a prompt", () => {
   assert.equal(getPwaPromptKind({ standalone: false, mobile: false, ios: false, installAvailable: true }), "none");
   assert.equal(getPwaPromptKind({ standalone: false, mobile: true, ios: false, installAvailable: false }), "none");
+});
+
+test("service worker registration stays out of development MSW scope", () => {
+  assert.equal(shouldRegisterServiceWorker(true, "development"), false);
+  assert.equal(shouldRegisterServiceWorker(true, "production"), true);
+  assert.equal(shouldRegisterServiceWorker(false, "production"), false);
 });

@@ -1,5 +1,12 @@
 export type PwaPromptKind = "none" | "install" | "ios-guide";
 
+export function shouldRegisterServiceWorker(
+  serviceWorkerSupported: boolean,
+  nodeEnv: string | undefined,
+): boolean {
+  return serviceWorkerSupported && nodeEnv === "production";
+}
+
 export function isStandaloneDisplay(
   mediaMatches: boolean,
   navigatorStandalone?: boolean,

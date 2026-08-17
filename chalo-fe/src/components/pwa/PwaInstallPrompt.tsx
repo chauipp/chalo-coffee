@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   getPwaPromptKind,
   isStandaloneDisplay,
+  shouldRegisterServiceWorker,
   type PwaPromptKind,
 } from "./pwa-install";
 
@@ -37,6 +38,7 @@ export default function PwaInstallPrompt() {
   const dismissedRef = useRef(false);
   const [promptKind, setPromptKind] = useState<PwaPromptKind>("none");
   const [dismissed, setDismissed] = useState(false);
+  const [installing, setInstalling] = useState(false);
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
@@ -51,7 +53,7 @@ export default function PwaInstallPrompt() {
     dismissedRef.current = wasDismissed;
     setDismissed(wasDismissed);
 
-    if ("serviceWorker" in navigator) {
+    if (shouldRegisterServiceWorker("serviceWorker" in navigator, process.env.NODE_ENV)) {
       void navigator.serviceWorker.register("/sw.js").catch(() => undefined);
     }
 
@@ -95,12 +97,20 @@ export default function PwaInstallPrompt() {
 
   const install = async () => {
     const installPrompt = deferredPrompt.current;
-    if (!installPrompt) return;
+    if (!installPrompt || installing) return;
 
-    await installPrompt.prompt();
-    await installPrompt.userChoice;
     deferredPrompt.current = null;
-    setPromptKind("none");
+    setInstalling(true);
+
+    try {
+      await installPrompt.prompt();
+      await installPrompt.userChoice;
+    } catch {
+      // Browser prompt failures should not surface as app errors or toasts.
+    } finally {
+      setInstalling(false);
+      setPromptKind("none");
+    }
   };
 
   if (dismissed || promptKind === "none") return null;
@@ -131,9 +141,11 @@ export default function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => void install()}
-            className="min-h-11 rounded-lg bg-brand-500 px-3 text-sm font-semibold text-white hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+            disabled={installing}
+            aria-busy={installing}
+            className="min-h-11 rounded-lg bg-brand-500 px-3 text-sm font-semibold text-white hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Cài ứng dụng
+            {installing ? "Đang mở…" : "Cài ứng dụng"}
           </button>
         )}
       </div>
