@@ -25,8 +25,9 @@ export class SettingsController {
       },
     },
   })
-  get() {
-    return this.settingsService.get();
+  async get() {
+    const s = await this.settingsService.get();
+    return this.settingsService.toPublicDto(s);
   }
 
   @Put()
@@ -42,7 +43,8 @@ export class SettingsController {
       },
     },
   })
-  update(@Body() dto: UpdateSettingsDto) {
-    return this.settingsService.update(dto);
+  async update(@Body() dto: UpdateSettingsDto) {
+    const s = await this.settingsService.update(dto);
+    return this.settingsService.toPublicDto(s);
   }
 }

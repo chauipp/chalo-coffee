@@ -41,6 +41,17 @@ export class SettingsService {
     if (dto.bankAccountNo !== undefined) settings.bankAccountNo = dto.bankAccountNo || null;
     if (dto.bankAccountName !== undefined)
       settings.bankAccountName = dto.bankAccountName.trim() || null;
+    if (dto.sepayWebhookKey !== undefined)
+      settings.sepayWebhookKey = dto.sepayWebhookKey.trim() || null;
     return this.settingsRepo.save(settings);
+  }
+
+  /**
+   * DTO công khai cho controller: GET /settings là public nên tuyệt đối không
+   * trả raw sepayWebhookKey — chỉ trả cờ đã-cấu-hình để admin UI hiển thị.
+   */
+  toPublicDto(s: AppSettings) {
+    const { sepayWebhookKey, ...rest } = s;
+    return { ...rest, sepayWebhookKeySet: !!sepayWebhookKey };
   }
 }

@@ -18,6 +18,7 @@ describe('SettingsService', () => {
     bankBin: null,
     bankAccountNo: null,
     bankAccountName: null,
+    sepayWebhookKey: null,
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
   };
 
@@ -66,5 +67,20 @@ describe('SettingsService', () => {
     const result = await service.update({ baristaCount: 5 });
     expect(result.baristaCount).toBe(5);
     expect(result.waitTimeEnabled).toBe(true);
+  });
+
+  it('update() lưu và xoá sepayWebhookKey (trim, rỗng = null)', async () => {
+    repo.findOneBy.mockResolvedValue({ ...defaultRow });
+    const set = await service.update({ sepayWebhookKey: '  my-key  ' });
+    expect(set.sepayWebhookKey).toBe('my-key');
+    const cleared = await service.update({ sepayWebhookKey: '' });
+    expect(cleared.sepayWebhookKey).toBeNull();
+  });
+
+  it('toPublicDto() không lộ key, chỉ trả cờ sepayWebhookKeySet', () => {
+    const dto = service.toPublicDto({ ...defaultRow, sepayWebhookKey: 'secret' });
+    expect((dto as Record<string, unknown>).sepayWebhookKey).toBeUndefined();
+    expect(dto.sepayWebhookKeySet).toBe(true);
+    expect(service.toPublicDto({ ...defaultRow }).sepayWebhookKeySet).toBe(false);
   });
 });
