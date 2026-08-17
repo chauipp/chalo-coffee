@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { Body, Controller, Get, Put, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { SettingsService } from './settings.service';
@@ -43,8 +43,8 @@ export class SettingsController {
       },
     },
   })
-  async update(@Body() dto: UpdateSettingsDto) {
-    const s = await this.settingsService.update(dto);
+  async update(@Body() dto: UpdateSettingsDto, @Request() req: { user: { id: number } }) {
+    const s = await this.settingsService.update(dto, req.user.id);
     return this.settingsService.toPublicDto(s);
   }
 }

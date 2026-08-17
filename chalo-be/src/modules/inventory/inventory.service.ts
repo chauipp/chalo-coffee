@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { Ingredient } from './entities/ingredient.entity';
@@ -7,6 +7,8 @@ import { ProductRecipe } from './entities/product-recipe.entity';
 import { Product } from '../product/entities/product.entity';
 import { ProductStatus } from '../../common/enums/product-status.enum';
 import { AdjustIngredientDto, CreateIngredientDto, ReceiveIngredientDto, UpdateIngredientDto } from './dto/ingredient.dto';
+import { AuditAction } from '../audit/entities/audit-log.entity';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class InventoryService {
@@ -15,6 +17,7 @@ export class InventoryService {
     @InjectRepository(InventoryMovement) private readonly movementRepo: Repository<InventoryMovement>,
     @InjectRepository(ProductRecipe) private readonly recipeRepo: Repository<ProductRecipe>,
     @InjectRepository(Product) private readonly productRepo: Repository<Product>,
+    @Optional() private readonly auditService?: AuditService,
   ) {}
 
   private ingredientDto(row: Ingredient) {
@@ -67,6 +70,7 @@ export class InventoryService {
       ingredientId: id, type: InventoryMovementType.ADJUSTMENT, delta: dto.delta,
       onHandAfter: nextOnHand, reason: dto.reason.trim(), actorId, orderId: null,
     }));
+    await this.auditService?.record({ actorUserId: actorId, action: AuditAction.INVENTORY_ADJUSTED, entityType: 'ingredient', entityId: id, metadata: { delta: dto.delta, reason: dto.reason.trim() } });
     await this.syncProductsForIngredient(id);
     return this.ingredientDto(saved);
   }
@@ -81,6 +85,7 @@ export class InventoryService {
       ingredientId: id, type: InventoryMovementType.RECEIPT, delta: dto.quantity,
       onHandAfter: nextOnHand, reason: dto.reason.trim(), actorId, orderId: null,
     }));
+    await this.auditService?.record({ actorUserId: actorId, action: AuditAction.INVENTORY_RECEIVED, entityType: 'ingredient', entityId: id, metadata: { quantity: dto.quantity, reason: dto.reason.trim() } });
     await this.syncProductsForIngredient(id);
     return this.ingredientDto(saved);
   }
@@ -109,7 +114,7 @@ export class InventoryService {
     }));
   }
 
-  async updateProductRecipe(productId: string, lines: Array<{ ingredientId: string; quantity: number }>) {
+  async updateProductRecipe(productId: string, lines: Array<{ ingredientId: string; quantity: number }>, actorId?: number) {
     if (new Set(lines.map((line) => line.ingredientId)).size !== lines.length) {
       throw new BadRequestException('Một nguyên liệu chỉ được có một lần trong công thức');
     }
@@ -123,6 +128,7 @@ export class InventoryService {
       await manager.delete(ProductRecipe, { productId });
       if (lines.length) await manager.save(ProductRecipe, lines.map((line) => manager.create(ProductRecipe, { productId, ...line })));
       await this.syncProductAvailability(manager, [productId]);
+      await this.auditService?.record({ actorUserId: actorId ?? null, action: AuditAction.PRODUCT_RECIPE_UPDATED, entityType: 'product', entityId: productId, metadata: { lineCount: lines.length } }, manager);
     });
     return this.recipeForProduct(productId);
   }

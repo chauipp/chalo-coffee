@@ -53,7 +53,7 @@ export class InventoryController {
 
   @Put('products/:productId/recipe')
   @Roles(UserRole.ADMIN)
-  updateRecipe(@Param('productId') productId: string, @Body() dto: UpdateProductRecipeDto) {
-    return this.inventoryService.updateProductRecipe(productId, dto.lines);
+  updateRecipe(@Param('productId') productId: string, @Body() dto: UpdateProductRecipeDto, @Request() req: { user: { id: number } }) {
+    return this.inventoryService.updateProductRecipe(productId, dto.lines, req.user.id);
   }
 }

@@ -6,9 +6,10 @@ import { ProductRecipe } from './entities/product-recipe.entity';
 import { Product } from '../product/entities/product.entity';
 import { InventoryController } from './inventory.controller';
 import { InventoryService } from './inventory.service';
+import { AuditModule } from '../audit/audit.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Ingredient, InventoryMovement, ProductRecipe, Product])],
+  imports: [TypeOrmModule.forFeature([Ingredient, InventoryMovement, ProductRecipe, Product]), AuditModule],
   controllers: [InventoryController],
   providers: [InventoryService],
   exports: [InventoryService, TypeOrmModule],
