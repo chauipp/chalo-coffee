@@ -48,4 +48,4 @@ Biến web Chalo Coffee thành PWA mức 1: người dùng cài từ Home Screen
 
 ## Plan thực thi
 
-Sẽ bổ sung sau khi spec được duyệt: `../plans/2026-08-17-pwa-install.md`.
+[Kế hoạch triển khai](../plans/2026-08-17-pwa-install.md).
