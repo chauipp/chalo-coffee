@@ -36,6 +36,7 @@ export const ROUTES = {
     SETTINGS: "/admin/settings",
     SHIFT: "/admin/shift",
     INVENTORY: "/admin/inventory",
+    AUDIT: "/admin/audit",
   },
 } as const;
 

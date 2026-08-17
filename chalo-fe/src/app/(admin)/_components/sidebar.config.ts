@@ -20,6 +20,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "Người dùng", href: ROUTES.ADMIN.USERS, icon: UsersIcon },
   { label: "Cài đặt", href: ROUTES.ADMIN.SETTINGS, icon: SettingsIcon },
   { label: "Chốt ca", href: ROUTES.ADMIN.SHIFT, icon: ChartBarIcon },
+  { label: "Nhật ký hoạt động", href: ROUTES.ADMIN.AUDIT, icon: ClipboardListIcon },
 ];
 
 const ADMIN_MOBILE_PRIMARY_HREFS: readonly string[] = [
@@ -33,6 +34,7 @@ const ADMIN_MOBILE_OVERFLOW_HREFS: readonly string[] = [
   ROUTES.ADMIN.SETTINGS,
   ROUTES.ADMIN.SHIFT,
   ROUTES.ADMIN.INVENTORY,
+  ROUTES.ADMIN.AUDIT,
 ];
 
 const ADMIN_MOBILE_PREP_NAV_ITEM = {
