@@ -59,7 +59,7 @@ Browser/PWA ─same-origin cookies─> Caddy ─> Nest API
 4. Login/register/refresh có throttle riêng; seed production không thể tạo account với mật khẩu mặc định.
 5. `pnpm audit --prod` không còn advisory high; FE và BE build/test xanh.
 6. CI chạy audit, type/build, unit và e2e trước deploy; deploy chỉ thành công sau smoke-test health. Tài liệu có backup PostgreSQL + uploads và quy trình restore đã thử được ở staging.
-7. Health chia liveness (process) và readiness (DB); logs có request id, status/duration và đã redaction. Metrics/traces có thể export qua OpenTelemetry khi khai báo endpoint.
+7. Health chia liveness (process) và readiness (DB); logs có request id, status/duration và đã redaction. Metrics Prometheus-compatible được bảo vệ bởi bearer token; request id là correlation id để nối với tracing khi cần bổ sung OpenTelemetry collector.
 
 ## Không thuộc đợt nền tảng
 
@@ -73,6 +73,18 @@ Browser/PWA ─same-origin cookies─> Caddy ─> Nest API
 - Node unit frontend: auth state không persist credential; URL SSE không có query token.
 - Playwright: login role → restart PWA → vào đúng dashboard/POS; SSE update; logout; desktop và 375×667 không lỗi console/network.
 - CI: audit, build, unit và Playwright sau khi backend/frontend khởi động.
+
+### Ma trận bằng chứng 2026-08-17
+
+| Tiêu chí | Bằng chứng đã chạy |
+| --- | --- |
+| CORS allow-list | `chalo-be/src/config/cors.spec.ts` trong `pnpm test --runInBand` (147/147 pass) |
+| Cookie/PWA/SSE | `auth-cookie`, `auth.controller`, `auth-session-source` và Playwright `auth-persistence.spec.ts` (2/2 pass) |
+| Redaction/throttle/seed | `redact-request-url`, `auth.controller`, `seed.service` trong backend suite |
+| Dependency production | `node scripts/audit-production-dependencies.mjs`: backend high=0/critical=0, frontend high=0/critical=0 |
+| Health/metrics/log | `health.controller`, `metrics.controller`, `request-context.middleware` trong backend suite |
+| Release/backup | `bash -n` + `shellcheck` (nếu có) hai script và `docker compose ... config` với biến môi trường mẫu |
+| UI responsive | Chromium Playwright: admin khôi phục session ở desktop; staff khôi phục session/POS ở 375×667 |
 
 ## Rủi ro và vận hành
 

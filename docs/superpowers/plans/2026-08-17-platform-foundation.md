@@ -118,7 +118,7 @@
 - [x] Step 5: Add Docker API healthchecks and CI jobs: frozen install, audit script, backend test/build, frontend unit/build and Playwright browser-session check; deploy has an equivalent verification gate, readiness smoke test and rollback to the last checkout when deployment fails.
 - [x] Step 6: Run shellcheck if available, compose config validation, all app tests/builds; commit `feat(ops): thêm health CI backup và quan sát an toàn`.
 
-- [ ] Task 5: Kiểm chứng release foundation và cập nhật tài liệu
+- [x] Task 5: Kiểm chứng release foundation và cập nhật tài liệu
 
 **Files:**
 - Modify: `docs/superpowers/specs/2026-08-17-platform-foundation-design.md`
@@ -129,10 +129,10 @@
 **Interfaces:**
 - Produces: evidence matrix mapping seven acceptance criteria in spec to a command/test/browser run; summary links spec + plan.
 
-- [ ] Step 1: Run fresh production audit and record zero high/critical result.
-- [ ] Step 2: Run backend test/build and frontend test:unit/build; run Playwright flow with browser console/network checks at desktop and 375×667.
-- [ ] Step 3: Tick every verified task/step in this plan, update spec if implementation chose a safer equivalent, and write the required outcome summary from actual diff/commits.
-- [ ] Step 4: Commit `docs: tổng kết nền tảng an toàn vận hành`.
+- [x] Step 1: Run fresh production audit and record zero high/critical result.
+- [x] Step 2: Run backend test/build and frontend test:unit/build; run Playwright flow with browser console/network checks at desktop and 375×667.
+- [x] Step 3: Tick every verified task/step in this plan, update spec if implementation chose a safer equivalent, and write the required outcome summary from actual diff/commits.
+- [x] Step 4: Commit `docs: tổng kết nền tảng an toàn vận hành`.
 
 ## Kết quả
 
