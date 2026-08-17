@@ -91,11 +91,17 @@ git commit -m "test: cover role-aware home redirect"
 - [ ] **Step 1: Thay điều kiện route công khai để bao gồm `/`**
 
 ```ts
-const isPublicRoute = pathname === "/" || PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
-
-if (isPublicRoute) {
+if (pathname === "/") {
   const dest = token && role ? ROLE_DEFAULT_ROUTES[role] : undefined;
   if (dest) {
+    return NextResponse.redirect(new URL(dest, request.url));
+  }
+  return NextResponse.next();
+}
+
+if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
+  if (token && role) {
+    const dest = ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN;
     return NextResponse.redirect(new URL(dest, request.url));
   }
   return NextResponse.next();
