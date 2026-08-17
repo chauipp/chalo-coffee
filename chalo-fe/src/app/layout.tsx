@@ -1,5 +1,6 @@
 // src\app\layout.tsx
 import QueryProvider from "@/providers/QueryProvider";
+import PwaInstallPrompt from "@/components/pwa/PwaInstallPrompt";
 import "./globals.css";
 import { MSWProvider } from "@/mocks/MSWProvider";
 import { ThemeProvider, ThemeScript } from "@/providers/ThemeProvider";
@@ -22,6 +23,13 @@ export const metadata: Metadata = {
   description: "Chalo Coffee — thực đơn cà phê, trà và những khoảng chậm dành cho bạn.",
   icons: {
     icon: "/brand/chalo-logo-round.png",
+    apple: "/brand/chalo-pwa-192.png",
+  },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Chalo Coffee",
+    statusBarStyle: "default",
   },
 };
 
@@ -30,6 +38,7 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
     { media: "(prefers-color-scheme: dark)", color: "#0c0a09" },
   ],
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -53,7 +62,10 @@ export default function RootLayout({
                 style: { zIndex: 99999 }, // Đảm bảo luôn nằm trên cùng mọi Layer
               }}
             />
-            <MSWProvider>{children}</MSWProvider>
+            <MSWProvider>
+              <PwaInstallPrompt />
+              {children}
+            </MSWProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

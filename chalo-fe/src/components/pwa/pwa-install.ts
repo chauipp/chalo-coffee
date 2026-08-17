@@ -1,0 +1,38 @@
+export type PwaPromptKind = "none" | "install" | "ios-guide";
+
+export function shouldRegisterServiceWorker(
+  serviceWorkerSupported: boolean,
+  nodeEnv: string | undefined,
+): boolean {
+  return serviceWorkerSupported && nodeEnv === "production";
+}
+
+export function isIOSDevice(userAgent: string, maxTouchPoints = 0): boolean {
+  return (
+    /iPhone|iPad|iPod/i.test(userAgent) ||
+    (/Macintosh/i.test(userAgent) && maxTouchPoints > 1)
+  );
+}
+
+export function isStandaloneDisplay(
+  mediaMatches: boolean,
+  navigatorStandalone?: boolean,
+): boolean {
+  return mediaMatches || navigatorStandalone === true;
+}
+
+export function getPwaPromptKind({
+  standalone,
+  mobile,
+  ios,
+  installAvailable,
+}: {
+  standalone: boolean;
+  mobile: boolean;
+  ios: boolean;
+  installAvailable: boolean;
+}): PwaPromptKind {
+  if (standalone || !mobile) return "none";
+  if (ios) return "ios-guide";
+  return installAvailable ? "install" : "none";
+}
