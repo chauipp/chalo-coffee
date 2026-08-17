@@ -32,12 +32,13 @@ const ok = (data: unknown) => ({
 async function restoreBrowserSession(
   context: BrowserContext,
   role: keyof typeof responses,
+  baseURL: string,
 ) {
   await context.addCookies([
     {
       name: "chalo_access",
       value: "http-only-session-token",
-      url: "http://localhost:3060",
+      url: baseURL,
       httpOnly: true,
       sameSite: "Strict",
       expires: Math.floor(Date.now() / 1_000) + 15 * 60,
@@ -45,7 +46,7 @@ async function restoreBrowserSession(
     {
       name: "chalo_refresh",
       value: "http-only-refresh-token",
-      url: "http://localhost:3060/api/auth",
+      url: `${baseURL}/api/auth`,
       httpOnly: true,
       sameSite: "Strict",
       expires: Math.floor(Date.now() / 1_000) + 7 * 24 * 60 * 60,
@@ -53,7 +54,7 @@ async function restoreBrowserSession(
     {
       name: "chalo_role",
       value: role,
-      url: "http://localhost:3060",
+      url: baseURL,
       sameSite: "Strict",
       expires: Math.floor(Date.now() / 1_000) + 7 * 24 * 60 * 60,
     },
@@ -69,14 +70,16 @@ async function mockAuthenticatedApi(page: Page, role: keyof typeof responses) {
     route.fulfill(ok({ list: [], total: 0 })),
   );
   await page.route("**/api/table/list", (route) => route.fulfill(ok([])));
+  await page.route("**/api/inventory/low-stock", (route) => route.fulfill(ok([])));
 }
 
 test("admin mở PWA lại vẫn vào dashboard từ HttpOnly cookie, không cần refresh", async ({
   browser,
   context,
   page,
+  baseURL,
 }) => {
-  await restoreBrowserSession(context, "ADMIN");
+  await restoreBrowserSession(context, "ADMIN", baseURL!);
   await mockAuthenticatedApi(page, "ADMIN");
   await page.goto("/");
   await expect(page).toHaveURL(/\/admin\/dashboard$/);
@@ -105,6 +108,7 @@ test("admin mở PWA lại vẫn vào dashboard từ HttpOnly cookie, không c�
 test("staff mở PWA lại đi thẳng tới POS trên mobile", async ({
   context,
   page,
+  baseURL,
 }) => {
   const consoleErrors: string[] = [];
   const failedResponses: string[] = [];
@@ -117,7 +121,7 @@ test("staff mở PWA lại đi thẳng tới POS trên mobile", async ({
     }
   });
   await page.setViewportSize({ width: 375, height: 667 });
-  await restoreBrowserSession(context, "MODERATOR");
+  await restoreBrowserSession(context, "MODERATOR", baseURL!);
   await mockAuthenticatedApi(page, "MODERATOR");
   await page.goto("/");
   await expect(page).toHaveURL(/\/staff\/pos$/);
