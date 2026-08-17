@@ -1,6 +1,6 @@
 type OriginCallback = (error: Error | null, allow?: boolean) => void;
 
-const normalizeOrigins = (csv: string): Set<string> =>
+export const parseAllowedOrigins = (csv: string): Set<string> =>
   new Set(
     csv
       .split(',')
@@ -13,7 +13,7 @@ const normalizeOrigins = (csv: string): Set<string> =>
  * Origin (health check, CLI, server-to-server) không phải CORS nên vẫn cho qua.
  */
 export const buildCorsOriginPolicy = (csv: string) => {
-  const allowedOrigins = normalizeOrigins(csv);
+  const allowedOrigins = parseAllowedOrigins(csv);
 
   return (origin: string | undefined, callback: OriginCallback): void => {
     if (!origin) {

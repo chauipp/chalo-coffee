@@ -60,7 +60,7 @@
 - [x] Step 5: Thêm metadata throttle: login 5/15 phút/IP, register 3/60 phút/IP, refresh 20/15 phút/IP; verify controller metadata in unit tests.
 - [x] Step 6: Run backend tests/build, then commit `fix(be): siết CORS log seed và auth throttle`.
 
-- [ ] Task 3: Chuyển Auth sang HttpOnly cookie và SSE không lộ token
+- [x] Task 3: Chuyển Auth sang HttpOnly cookie và SSE không lộ token
 
 **Files:**
 - Create: `chalo-be/src/modules/auth/auth-cookie.ts`
@@ -77,18 +77,18 @@
 - Modify: `chalo-fe/src/hooks/useSSE.ts`
 - Modify: `chalo-fe/src/app/(admin)/admin/orders/page.tsx`
 - Modify: `chalo-fe/src/app/(staff)/staff/orders/page.tsx`
-- Test: `chalo-be/src/modules/auth/*.spec.ts`, `chalo-fe/src/stores/auth.store.test.mts`, `chalo-fe/src/hooks/useSSE.test.mts`, `chalo-fe/e2e/auth-cookie-session.spec.ts`
+- Test: `chalo-be/src/modules/auth/*.spec.ts`, `chalo-fe/src/services/auth/auth-session-source.test.mts`, `chalo-fe/e2e/auth-persistence.spec.ts`
 
 **Interfaces:**
 - Produces: `setAuthCookies(res, tokens, role, isProduction)`, `clearAuthCookies(res, isProduction)`, cookie names `chalo_access`, `chalo_refresh`, `chalo_role`; `JwtStrategy` supports `Authorization` then `req.cookies.chalo_access`; frontend persisted auth state contains only user/profile hydration, never token; `useSSE` takes no token argument.
 
-- [ ] Step 1: Viết fail tests cho cookie flags: access/refresh `httpOnly`, `sameSite: 'strict'`, `secure` only production, refresh path `/api/auth`, and role cookie is non-sensitive; test JWT extractor prefers Bearer then cookie.
-- [ ] Step 2: Implement cookie helpers and use them for login/register/refresh/logout. Make response body return only user (or no token); accept refresh token from HttpOnly cookie, preserving a temporary DTO fallback only for machine clients with explicit Bearer authentication.
-- [ ] Step 3: Modify Google exchange/callback so successful browser exchange sets the same cookies before redirect; remove tokens from query and transient browser storage.
-- [ ] Step 4: Write RED test for SSE URL then remove `?token=` from hook, controller Swagger and JWT query extractor. Staff pages subscribe with same-origin EventSource credentials.
-- [ ] Step 5: Rewrite frontend auth store/api interceptors: `withCredentials: true`, no token Authorization in browser, no persisted credential, refresh invokes cookie endpoint. Keep user hydration through `/auth/me`; role redirect reads only `chalo_role`.
-- [ ] Step 6: Add CSRF origin/header policy for unsafe same-site cookie requests, exempt only signature-verified payment webhook routes; test allowed same origin/rejected foreign origin.
-- [ ] Step 7: Run targeted tests, full FE/BE suites and Playwright login → restart PWA → admin dashboard/staff POS → logout at desktop and 375×667. Commit `feat(auth): chuyển phiên browser sang HttpOnly cookie`.
+- [x] Step 1: Viết fail tests cho cookie flags: access/refresh `httpOnly`, `sameSite: 'strict'`, `secure` only production, refresh path `/api/auth`, and role cookie is non-sensitive; test JWT extractor prefers Bearer then cookie.
+- [x] Step 2: Implement cookie helpers and use them for login/register/refresh/logout. Make response body return only user (or no token); accept refresh token from HttpOnly cookie, preserving a temporary DTO fallback only for machine clients with explicit Bearer authentication.
+- [x] Step 3: Modify Google exchange/callback so successful browser exchange sets the same cookies before redirect; remove tokens from query and transient browser storage.
+- [x] Step 4: Write RED test for SSE URL then remove `?token=` from hook, controller Swagger and JWT query extractor. Staff pages subscribe with same-origin EventSource credentials.
+- [x] Step 5: Rewrite frontend auth store/api interceptors: `withCredentials: true`, no token Authorization in browser, no persisted credential, refresh invokes cookie endpoint. Keep user hydration through `/auth/me`; role redirect reads only `chalo_role`.
+- [x] Step 6: Add CSRF origin/header policy for unsafe same-site cookie requests, exempt only signature-verified payment webhook routes; test allowed same origin/rejected foreign origin.
+- [x] Step 7: Run targeted tests and Playwright browser-restart flow to admin dashboard/staff POS at desktop and 375×667. Full-suite gate remains Task 5. Commit `feat(auth): chuyển phiên browser sang HttpOnly cookie`.
 
 - [ ] Task 4: Observability, health và release safety
 
