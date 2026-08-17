@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Max, MaxLength, Min, ValidateNested } from 'class-validator';
 
 export class CreateIngredientDto {
   @ApiProperty({ example: 'Hạt cà phê' })
@@ -56,4 +56,20 @@ export class ReceiveIngredientDto {
   @ApiProperty({ example: 'Nhập từ nhà cung cấp' })
   @IsString() @IsNotEmpty() @MaxLength(300)
   reason: string;
+}
+
+export class RecipeLineDto {
+  @ApiProperty({ example: 'uuid-ingredient' })
+  @IsUUID()
+  ingredientId: string;
+
+  @ApiProperty({ example: 18 })
+  @Type(() => Number) @IsNumber({ maxDecimalPlaces: 3 }) @Min(0.001) @Max(99_999_999)
+  quantity: number;
+}
+
+export class UpdateProductRecipeDto {
+  @ApiProperty({ type: [RecipeLineDto] })
+  @IsArray() @ValidateNested({ each: true }) @Type(() => RecipeLineDto)
+  lines: RecipeLineDto[];
 }

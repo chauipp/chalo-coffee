@@ -51,6 +51,7 @@ import { PaymentTransaction } from '../payment/entities/payment-transaction.enti
 import { PaymentAllocation } from '../payment/entities/payment-allocation.entity';
 import { LoyaltyPointTransaction } from '../customer/entities/loyalty-point-transaction.entity';
 import { PaymentService } from '../payment/payment.service';
+import { InventoryService } from '../inventory/inventory.service';
 
 export type OptionalOrderCustomer = {
   id: number;
@@ -132,6 +133,8 @@ export class OrderService {
     @Optional()
     @Inject(forwardRef(() => PaymentService))
     private readonly paymentService?: PaymentService,
+    @Optional()
+    private readonly inventoryService?: InventoryService,
   ) {}
 
   private buildDto(order: Order, includeStaffContext = false) {
@@ -506,6 +509,11 @@ export class OrderService {
         items: orderItems as OrderItem[],
       });
       const saved = await manager.save(Order, order);
+      await this.inventoryService?.reserveForOrder(
+        manager,
+        orderItems.map(({ productId, quantity }) => ({ productId: productId!, quantity: quantity! })),
+        saved.id,
+      );
 
       if (dto.pagerNumber != null) {
         const activePager = await manager
@@ -765,6 +773,9 @@ export class OrderService {
         where: { id: lockedOrder.id },
         relations: ['items', 'table'],
       });
+      if (dto.status === OrderStatus.CANCELLED) {
+        await this.inventoryService?.releaseForCancelledOrder(manager, lockedOrder.id);
+      }
       const result = this.buildDto(full!);
 
       this.sseService.emit({

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Request } from '@nestjs/common
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../common/enums/user-role.enum';
-import { AdjustIngredientDto, CreateIngredientDto, ReceiveIngredientDto, UpdateIngredientDto } from './dto/ingredient.dto';
+import { AdjustIngredientDto, CreateIngredientDto, ReceiveIngredientDto, UpdateIngredientDto, UpdateProductRecipeDto } from './dto/ingredient.dto';
 import { InventoryService } from './inventory.service';
 
 @ApiTags('Inventory')
@@ -22,6 +22,10 @@ export class InventoryController {
   @Get('ingredients/:id/movements')
   @Roles(UserRole.ADMIN)
   history(@Param('id') id: string) { return this.inventoryService.movementHistory(id); }
+
+  @Get('products/:productId/recipe')
+  @Roles(UserRole.ADMIN)
+  recipe(@Param('productId') productId: string) { return this.inventoryService.recipeForProduct(productId); }
 
   @Post('ingredients')
   @Roles(UserRole.ADMIN)
@@ -45,5 +49,11 @@ export class InventoryController {
   @Roles(UserRole.ADMIN)
   receive(@Param('id') id: string, @Body() dto: ReceiveIngredientDto, @Request() req: { user: { id: number } }) {
     return this.inventoryService.receiveIngredient(id, dto, req.user.id);
+  }
+
+  @Put('products/:productId/recipe')
+  @Roles(UserRole.ADMIN)
+  updateRecipe(@Param('productId') productId: string, @Body() dto: UpdateProductRecipeDto) {
+    return this.inventoryService.updateProductRecipe(productId, dto.lines);
   }
 }

@@ -41,7 +41,7 @@ Jest và Playwright.
 - [ ] Chạy `pnpm test -- inventory.service` và `pnpm build` trong `chalo-be`.
 - [ ] Commit `feat(be): thêm nguyên liệu và sổ biến động tồn kho`.
 
-- [ ] Task 2: Công thức, reservation và hoàn kho từ vòng đời đơn
+- [x] Task 2: Công thức, reservation và hoàn kho từ vòng đời đơn
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/{order.module.ts,order.service.ts}`.

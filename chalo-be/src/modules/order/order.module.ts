@@ -13,6 +13,7 @@ import { SettingsModule } from '../settings/settings.module';
 import { CustomerModule } from '../customer/customer.module';
 import { OptionalJwtAuthGuard } from './optional-jwt-auth.guard';
 import { PaymentModule } from '../payment/payment.module';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PaymentModule } from '../payment/payment.module';
     SettingsModule,
     CustomerModule,
     forwardRef(() => PaymentModule),
+    InventoryModule,
   ],
   providers: [OrderService, OptionalJwtAuthGuard],
   controllers: [OrderController],

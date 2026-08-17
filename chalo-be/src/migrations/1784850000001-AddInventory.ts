@@ -4,6 +4,7 @@ export class AddInventory1784850000001 implements MigrationInterface {
   name = 'AddInventory1784850000001';
 
   async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "products" ADD "inventoryAutoOutOfStock" boolean NOT NULL DEFAULT false`);
     await queryRunner.query(`CREATE TABLE "ingredients" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(100) NOT NULL, "unit" character varying(16) NOT NULL, "onHand" numeric(12,3) NOT NULL DEFAULT '0', "reorderLevel" numeric(12,3) NOT NULL DEFAULT '0', "isActive" boolean NOT NULL DEFAULT true, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_ingredients_name" UNIQUE ("name"), CONSTRAINT "PK_ingredients_id" PRIMARY KEY ("id"))`);
     await queryRunner.query(`CREATE TYPE "public"."inventory_movement_type_enum" AS ENUM('OPENING', 'RECEIPT', 'ADJUSTMENT', 'SALE', 'CANCELLATION')`);
     await queryRunner.query(`CREATE TABLE "inventory_movements" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "ingredientId" uuid NOT NULL, "type" "public"."inventory_movement_type_enum" NOT NULL, "delta" numeric(12,3) NOT NULL, "onHandAfter" numeric(12,3) NOT NULL, "reason" character varying(300), "actorId" integer, "orderId" uuid, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_inventory_movements_id" PRIMARY KEY ("id"))`);
@@ -16,6 +17,7 @@ export class AddInventory1784850000001 implements MigrationInterface {
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "products" DROP COLUMN "inventoryAutoOutOfStock"`);
     await queryRunner.query(`DROP TABLE "product_recipes"`);
     await queryRunner.query(`DROP TABLE "inventory_movements"`);
     await queryRunner.query(`DROP TYPE "public"."inventory_movement_type_enum"`);

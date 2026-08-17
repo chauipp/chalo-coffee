@@ -145,7 +145,10 @@ export class ProductService {
 
   async updateStatus(dto: UpdateProductStatusDto) {
     await this.detail(dto.id);
-    await this.productRepo.update(dto.id, { status: dto.status });
+    await this.productRepo.update(dto.id, {
+      status: dto.status,
+      inventoryAutoOutOfStock: false,
+    });
     return this.detail(dto.id);
   }
 

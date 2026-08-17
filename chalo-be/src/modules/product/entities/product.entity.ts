@@ -47,6 +47,10 @@ export class Product {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  /** Chỉ inventory service được bật cờ này; tránh mở lại món admin tự tắt. */
+  @Column({ type: 'boolean', default: false })
+  inventoryAutoOutOfStock: boolean;
+
   @Column({ type: 'int', default: 0 })
   sortOrder: number;
 
