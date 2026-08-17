@@ -82,6 +82,14 @@ export class PaymentService {
     };
   }
 
+  async refundsForOrder(orderId: string) {
+    const allocation = await this.allocationRepo.findOne({
+      where: { orderId }, relations: ['paymentTransaction'],
+    });
+    if (!allocation?.paymentTransaction) return null;
+    return this.listRefunds(allocation.paymentTransactionId);
+  }
+
   async refund(paymentTransactionId: string, dto: CreateRefundDto, processedByUserId: number) {
     return this.transactionRepo.manager.transaction(async (manager) => {
       const payment = await manager.findOne(PaymentTransaction, {

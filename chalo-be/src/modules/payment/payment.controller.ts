@@ -12,6 +12,11 @@ import { PaymentService } from './payment.service';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
+  @Get('by-order/:orderId/refunds')
+  refundsForOrder(@Param('orderId') orderId: string) {
+    return this.paymentService.refundsForOrder(orderId);
+  }
+
   @Get(':paymentTransactionId/refunds')
   listRefunds(@Param('paymentTransactionId') paymentTransactionId: string) {
     return this.paymentService.listRefunds(paymentTransactionId);
