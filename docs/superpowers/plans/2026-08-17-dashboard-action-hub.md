@@ -16,30 +16,30 @@
 
 ---
 
-- [ ] Task 1: Utility và hub hành động
+- [x] Task 1: Utility và hub hành động
 
 **Files:**
 - Create: `chalo-fe/src/app/(admin)/admin/dashboard/_components/actionHub.utils.ts`
 - Create: `chalo-fe/src/app/(admin)/admin/dashboard/_components/actionHub.utils.test.mts`
 - Create: `chalo-fe/src/app/(admin)/admin/dashboard/_components/ActionHub.tsx`
 
-- [ ] Viết test fail: queue có 3 đơn và 1 payment-requested trả summary `3 đơn đang xử lý` và `1 yêu cầu thanh toán`; `null` shift trả `Chưa mở ca`.
-- [ ] Implement `getActiveOrderSummary(orders)` và `getShiftSummary(shift)`; component nhận dữ liệu/loading/error/refetch của từng nguồn, dùng link `/admin/orders`, `/admin/shift`, `/admin/inventory`.
-- [ ] Chạy `pnpm test:unit` để xác nhận test utility xanh và commit `feat(fe): thêm hub hành động dashboard`.
+- [x] Viết test fail: queue có 3 đơn và 1 payment-requested trả summary `3 đơn đang xử lý` và `1 yêu cầu thanh toán`; `null` shift trả `Chưa mở ca`.
+- [x] Implement `getActiveOrderSummary(orders)` và `getShiftSummary(shift)`; component nhận dữ liệu/loading/error/refetch của từng nguồn, dùng link `/admin/orders`, `/admin/shift`, `/admin/inventory`.
+- [x] Chạy `pnpm test:unit` để xác nhận test utility xanh và commit `feat(fe): thêm hub hành động dashboard`.
 
-- [ ] Task 2: Ghép dashboard và kiểm browser
+- [x] Task 2: Ghép dashboard và kiểm browser
 
 **Files:**
 - Modify: `chalo-fe/src/app/(admin)/admin/dashboard/page.tsx`
 - Modify: `chalo-fe/e2e/admin-dashboard.spec.ts` hoặc tạo `chalo-fe/e2e/admin-dashboard-action-hub.spec.ts`
 
-- [ ] Viết Playwright mock session admin + route `/api/order/active`, `/api/shift/current`, `/api/inventory/low-stock`, stats; assert nhãn, link và retry của một query lỗi.
-- [ ] Render `ActionHub` bên dưới header, truyền `useGetActiveOrder`, `useCurrentShift`, `useLowStockIngredients`; giữ alert kho cũ hoặc thay bằng thông tin không trùng lặp.
-- [ ] Chạy `pnpm build` và Playwright chromium desktop + mobile với console/network assertions, commit `test(fe): kiểm dashboard hành động nhanh`.
+- [x] Viết Playwright mock session admin + route `/api/order/active`, `/api/shift/current`, `/api/inventory/low-stock`, stats; assert nhãn, link và retry của một query lỗi.
+- [x] Render `ActionHub` bên dưới header, truyền `useGetActiveOrder`, `useCurrentShift`, `useLowStockIngredients`; thay cảnh báo kho cũ bằng action card giàu ngữ cảnh hơn.
+- [x] Chạy `pnpm build` và Playwright chromium desktop + mobile với console/network assertions, commit `feat(fe): thêm hub hành động dashboard`.
 
-- [ ] Task 3: Tổng kết
+- [x] Task 3: Tổng kết
 
-- [ ] Rà diff/full frontend unit, tick tasks, viết `docs/superpowers/summaries/2026-08-17-dashboard-action-hub-summary.md`, commit docs.
+- [x] Rà diff/full frontend unit, tick tasks, viết `docs/superpowers/summaries/2026-08-17-dashboard-action-hub-summary.md`, commit docs.
 
 ## Kết quả
 
