@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   getPwaPromptKind,
   isIOSDevice,
@@ -16,6 +16,7 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = "chalo-pwa-install-dismissed";
 const mobileUserAgent = /Android|iPhone|iPad|iPod/i;
+const NOTICE_HEADER_GAP = 8;
 
 function getSessionDismissal(): boolean {
   try {
@@ -39,6 +40,63 @@ export default function PwaInstallPrompt() {
   const [promptKind, setPromptKind] = useState<PwaPromptKind>("none");
   const [dismissed, setDismissed] = useState(false);
   const [installing, setInstalling] = useState(false);
+  const [headerBottom, setHeaderBottom] = useState(0);
+
+  useEffect(() => {
+    let animationFrame: number | undefined;
+    const resizeObserver = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(scheduleMeasurement);
+
+    function scheduleMeasurement() {
+      if (animationFrame !== undefined) return;
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = undefined;
+        const visibleHeaderBottom = [...document.querySelectorAll("header")].reduce(
+          (maxBottom, header) => {
+            const rect = header.getBoundingClientRect();
+            const style = window.getComputedStyle(header);
+            const isVisible =
+              rect.width > 0 &&
+              rect.height > 0 &&
+              rect.bottom > 0 &&
+              style.display !== "none" &&
+              style.visibility !== "hidden";
+
+            return isVisible ? Math.max(maxBottom, rect.bottom) : maxBottom;
+          },
+          0,
+        );
+        setHeaderBottom((currentBottom) => {
+          const nextBottom = Math.ceil(visibleHeaderBottom);
+          return currentBottom === nextBottom ? currentBottom : nextBottom;
+        });
+      });
+    }
+
+    function observeCurrentHeaders() {
+      resizeObserver?.disconnect();
+      document.querySelectorAll("header").forEach((header) => resizeObserver?.observe(header));
+      scheduleMeasurement();
+    }
+
+    const mutationObserver = new MutationObserver(observeCurrentHeaders);
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "style", "hidden"],
+    });
+    window.addEventListener("resize", scheduleMeasurement);
+    window.addEventListener("orientationchange", scheduleMeasurement);
+    observeCurrentHeaders();
+
+    return () => {
+      if (animationFrame !== undefined) window.cancelAnimationFrame(animationFrame);
+      resizeObserver?.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener("resize", scheduleMeasurement);
+      window.removeEventListener("orientationchange", scheduleMeasurement);
+    };
+  }, []);
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
@@ -120,11 +178,16 @@ export default function PwaInstallPrompt() {
 
   if (dismissed || promptKind === "none") return null;
 
+  const noticeStyle = {
+    "--pwa-notice-top": `${headerBottom + NOTICE_HEADER_GAP}px`,
+  } as CSSProperties & { "--pwa-notice-top": string };
+
   return (
     <aside
       data-testid="pwa-install-prompt"
-      className="fixed inset-x-4 top-[calc(3.5rem+env(safe-area-inset-top))] z-50 mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-700 dark:bg-stone-900"
+      className="fixed inset-x-4 top-[calc(var(--pwa-notice-top)+env(safe-area-inset-top))] z-50 mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-700 dark:bg-stone-900"
       aria-label="Cài ứng dụng Chalo Coffee"
+      style={noticeStyle}
     >
       <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
         Cài ứng dụng Chalo Coffee

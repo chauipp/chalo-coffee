@@ -177,6 +177,38 @@ async function loginStaff(page: Page) {
   await page.waitForURL("**/staff/**");
 }
 
+async function installCustomerAccountFixture(page: Page) {
+  await page.route("**/api/auth/login", (route) => route.fulfill(apiResponse({ accessToken: "pwa-customer-token", refreshToken: "pwa-customer-refresh", user: customer })));
+  await page.route("**/api/auth/me", (route) => route.fulfill(apiResponse(customer)));
+  await page.route("**/api/customer/me", (route) => route.fulfill(apiResponse(customer)));
+  await page.route("**/api/customer/table-session", (route) => route.fulfill(apiResponse(null)));
+  await page.route("**/api/customer/loyalty", (route) => route.fulfill(apiResponse({ balance: 0 })));
+  await page.route("**/api/customer/orders?*", (route) => route.fulfill(apiResponse({ list: [], total: 0, pageNo: 1, pageSize: 10 })));
+}
+
+async function loginCustomer(page: Page) {
+  await page.goto("/login");
+  await page.locator("#username").fill("pwa_customer");
+  await page.locator("#password").fill("password");
+  await page.getByRole("button", { name: "Đăng nhập" }).click();
+  await page.waitForURL("**/account");
+}
+
+async function expectPromptBelowVisibleHeaders(page: Page) {
+  const positions = await page.evaluate(() => {
+    const headers = [...document.querySelectorAll("header")].filter((header) => {
+      const rect = header.getBoundingClientRect();
+      const style = window.getComputedStyle(header);
+      return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && style.display !== "none" && style.visibility !== "hidden";
+    });
+    const headerBottom = Math.max(0, ...headers.map((header) => header.getBoundingClientRect().bottom));
+    const prompt = document.querySelector<HTMLElement>("[data-testid='pwa-install-prompt']");
+    return { headerBottom, promptTop: prompt?.getBoundingClientRect().top ?? 0 };
+  });
+
+  expect(positions.promptTop).toBeGreaterThanOrEqual(positions.headerBottom + 8);
+}
+
 function collectBrowserFailures(page: Page) {
   const consoleErrors: string[] = [];
   const pageErrors: string[] = [];
@@ -268,8 +300,7 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
   await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
   const promptBox = await page.getByTestId("pwa-install-prompt").boundingBox();
   expect(promptBox).not.toBeNull();
-  // Staff/admin mobile navs are about 68px tall; the prompt reserves 80px plus safe area.
-  expect((promptBox?.y ?? 0) + (promptBox?.height ?? 0)).toBeLessThanOrEqual(667 - 80);
+  await expectPromptBelowVisibleHeaders(page);
   await expect(page.locator("body").evaluate((body) => body.scrollWidth <= body.clientWidth)).resolves.toBe(true);
   await page.getByRole("button", { name: "Cài ứng dụng" }).click();
   await expect(page.getByRole("button", { name: "Đang mở…" })).toBeDisabled();
@@ -315,6 +346,19 @@ test("iPadOS desktop user agent receives the iOS install guide", async ({ page }
   await expect(page.getByRole("button", { name: "Cài ứng dụng" })).toHaveCount(0);
 });
 
+test("PWA notice follows the taller customer account header", async ({ page }) => {
+  await emulateMobileChromium(page);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await installCustomerAccountFixture(page);
+  await loginCustomer(page);
+  await expect(page.getByRole("heading", { name: "Tài khoản của bạn" })).toBeVisible();
+
+  const installEvent = await dispatchDeferredInstallEvent(page);
+  expect(installEvent.defaultPrevented).toBe(true);
+  await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
+  await expectPromptBelowVisibleHeaders(page);
+});
+
 test("PWA notice stays above staff POS bottom controls on mobile", async ({ page }) => {
   await emulateMobileChromium(page);
   await page.setViewportSize({ width: 375, height: 667 });
@@ -337,7 +381,7 @@ test("PWA notice stays above staff POS bottom controls on mobile", async ({ page
   expect(headerBox).not.toBeNull();
   expect(cartButtonBox).not.toBeNull();
   expect(mobileNavBox).not.toBeNull();
-  expect(promptBox?.y ?? 0).toBeGreaterThanOrEqual((headerBox?.y ?? 0) + (headerBox?.height ?? 0));
+  await expectPromptBelowVisibleHeaders(page);
   expect((promptBox?.y ?? 0) + (promptBox?.height ?? 0)).toBeLessThan(cartButtonBox?.y ?? 0);
   expect((promptBox?.y ?? 0) + (promptBox?.height ?? 0)).toBeLessThan(mobileNavBox?.y ?? 0);
 });
