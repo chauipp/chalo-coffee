@@ -133,4 +133,4 @@ git commit -m "fix: redirect authenticated roles from home"
 
 ## Kết quả
 
-Sẽ liên kết tới `../summaries/2026-08-17-role-home-redirect-summary.md` sau khi hoàn tất toàn bộ task.
+Xem [summary kết quả](../summaries/2026-08-17-role-home-redirect-summary.md).
