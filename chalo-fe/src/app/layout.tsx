@@ -1,5 +1,6 @@
 // src\app\layout.tsx
 import QueryProvider from "@/providers/QueryProvider";
+import PwaInstallPrompt from "@/components/pwa/PwaInstallPrompt";
 import "./globals.css";
 import { MSWProvider } from "@/mocks/MSWProvider";
 import { ThemeProvider, ThemeScript } from "@/providers/ThemeProvider";
@@ -60,7 +61,10 @@ export default function RootLayout({
                 style: { zIndex: 99999 }, // Đảm bảo luôn nằm trên cùng mọi Layer
               }}
             />
-            <MSWProvider>{children}</MSWProvider>
+            <MSWProvider>
+              <PwaInstallPrompt />
+              {children}
+            </MSWProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>
