@@ -76,7 +76,7 @@ git add chalo-fe/e2e/home-role-redirect.spec.ts
 git commit -m "test: cover role-aware home redirect"
 ```
 
-- [ ] Task 2: Chuyển hướng route gốc trong middleware
+- [x] Task 2: Chuyển hướng route gốc trong middleware
 
 **Files:**
 
