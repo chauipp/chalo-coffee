@@ -7,6 +7,13 @@ export function shouldRegisterServiceWorker(
   return serviceWorkerSupported && nodeEnv === "production";
 }
 
+export function isIOSDevice(userAgent: string, maxTouchPoints = 0): boolean {
+  return (
+    /iPhone|iPad|iPod/i.test(userAgent) ||
+    (/Macintosh/i.test(userAgent) && maxTouchPoints > 1)
+  );
+}
+
 export function isStandaloneDisplay(
   mediaMatches: boolean,
   navigatorStandalone?: boolean,

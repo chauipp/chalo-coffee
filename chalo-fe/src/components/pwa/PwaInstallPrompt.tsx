@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   getPwaPromptKind,
+  isIOSDevice,
   isStandaloneDisplay,
   shouldRegisterServiceWorker,
   type PwaPromptKind,
@@ -15,7 +16,6 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = "chalo-pwa-install-dismissed";
 const mobileUserAgent = /Android|iPhone|iPad|iPod/i;
-const iosUserAgent = /iPhone|iPad|iPod/i;
 
 function getSessionDismissal(): boolean {
   try {
@@ -42,8 +42,8 @@ export default function PwaInstallPrompt() {
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
-    const mobile = mobileUserAgent.test(userAgent);
-    const ios = iosUserAgent.test(userAgent);
+    const ios = isIOSDevice(userAgent, navigator.maxTouchPoints);
+    const mobile = mobileUserAgent.test(userAgent) || ios;
     const standalone = isStandaloneDisplay(
       window.matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches,
       (navigator as Navigator & { standalone?: boolean }).standalone,
@@ -104,7 +104,12 @@ export default function PwaInstallPrompt() {
 
     try {
       await installPrompt.prompt();
-      await installPrompt.userChoice;
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === "dismissed") {
+        dismissedRef.current = true;
+        saveSessionDismissal();
+        setDismissed(true);
+      }
     } catch {
       // Browser prompt failures should not surface as app errors or toasts.
     } finally {
@@ -118,7 +123,7 @@ export default function PwaInstallPrompt() {
   return (
     <aside
       data-testid="pwa-install-prompt"
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-700 dark:bg-stone-900"
+      className="fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-700 dark:bg-stone-900 sm:bottom-4"
       aria-label="Cài ứng dụng Chalo Coffee"
     >
       <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">

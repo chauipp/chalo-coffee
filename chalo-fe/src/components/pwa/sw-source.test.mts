@@ -6,7 +6,7 @@ import vm from "node:vm";
 
 const workerPath = fileURLToPath(new URL("../../../public/sw.js", import.meta.url));
 
-async function loadWorker(fetchResponse: Response) {
+async function loadWorker(fetchResponse: Response, foreignCacheResponse?: Response) {
   const listeners = new Map<string, (event: any) => void>();
   const cachedRequests: Request[] = [];
 
@@ -15,8 +15,9 @@ async function loadWorker(fetchResponse: Response) {
     URL,
     Promise,
     caches: {
-      match: async () => undefined,
+      match: async () => foreignCacheResponse,
       open: async () => ({
+        match: async () => undefined,
         put: async (request: Request) => cachedRequests.push(request),
         addAll: async () => undefined,
       }),
@@ -97,5 +98,16 @@ test("worker does not cache HTML, JSON, or event-stream responses", async () => 
 test("worker caches a successful static asset response", async () => {
   const worker = await loadWorker(new Response("body", { status: 200, headers: { "Content-Type": "image/png" } }));
   await worker.fetch(new Request("https://chalo.test/brand/chalo-pwa-192.png"));
+  assert.equal(worker.cachedRequests.length, 1);
+});
+
+test("worker only reads cache entries from its current static cache", async () => {
+  const worker = await loadWorker(
+    new Response("current", { status: 200, headers: { "Content-Type": "image/png" } }),
+    new Response("foreign", { status: 200, headers: { "Content-Type": "image/png" } }),
+  );
+  const result = await worker.fetch(new Request("https://chalo.test/brand/chalo-pwa-192.png"));
+
+  assert.equal(await result?.text(), "current");
   assert.equal(worker.cachedRequests.length, 1);
 });

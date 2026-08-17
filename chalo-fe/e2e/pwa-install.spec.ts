@@ -47,6 +47,21 @@ async function emulateMobileChromium(page: Page, standalone = false) {
   }, { installed: standalone });
 }
 
+async function emulateIpadOsDesktop(page: Page) {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "userAgent", {
+      configurable: true,
+      get: () =>
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 " +
+        "Version/13.1 Mobile/15E148 Safari/604.1",
+    });
+    Object.defineProperty(navigator, "maxTouchPoints", {
+      configurable: true,
+      get: () => 5,
+    });
+  });
+}
+
 async function activateWorkerAndReload(page: Page) {
   await expect
     .poll(() =>
@@ -66,25 +81,49 @@ async function waitForPwaClient(page: Page) {
 }
 
 async function dispatchDeferredInstallEvent(page: Page) {
-  return page.evaluate(async () => {
+  return page.evaluate(() => {
     const event = new Event("beforeinstallprompt", { cancelable: true });
-    let prompted = false;
+    let resolveChoice: ((choice: { outcome: "accepted" | "dismissed"; platform: string }) => void) | undefined;
+    const testWindow = window as typeof window & {
+      __pwaInstallTest?: {
+        promptCalls: number;
+        resolveChoice: (choice: { outcome: "accepted" | "dismissed"; platform: string }) => void;
+      };
+    };
+    const userChoice = new Promise<{ outcome: "accepted" | "dismissed"; platform: string }>((resolve) => {
+      resolveChoice = resolve;
+    });
+    const installTest = {
+      promptCalls: 0,
+      resolveChoice: (choice: { outcome: "accepted" | "dismissed"; platform: string }) => resolveChoice?.(choice),
+    };
+    testWindow.__pwaInstallTest = installTest;
 
     Object.defineProperties(event, {
       prompt: {
         value: async () => {
-          prompted = true;
+          installTest.promptCalls += 1;
         },
       },
       userChoice: {
-        value: Promise.resolve({ outcome: "dismissed", platform: "web" }),
+        value: userChoice,
       },
     });
 
     window.dispatchEvent(event);
-    await Promise.resolve();
-    return { defaultPrevented: event.defaultPrevented, prompted };
+    return { defaultPrevented: event.defaultPrevented, prompted: installTest.promptCalls > 0 };
   });
+}
+
+async function resolveDeferredInstallChoice(page: Page, outcome: "accepted" | "dismissed") {
+  await page.evaluate((choice) => {
+    const testWindow = window as typeof window & {
+      __pwaInstallTest?: {
+        resolveChoice: (value: { outcome: "accepted" | "dismissed"; platform: string }) => void;
+      };
+    };
+    testWindow.__pwaInstallTest?.resolveChoice({ outcome: choice, platform: "web" });
+  }, outcome);
 }
 
 async function seedCustomer(page: Page) {
@@ -136,6 +175,7 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
   await page.goto("/");
 
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "/manifest.webmanifest");
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "/brand/chalo-pwa-192.png");
   const manifest = await page.evaluate(async () => {
     const response = await fetch("/manifest.webmanifest");
     return response.json();
@@ -151,6 +191,12 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
   await activateWorkerAndReload(page);
   const cacheKeys = await page.evaluate(async () => caches.keys());
   expect(cacheKeys.some((cacheKey) => cacheKey.startsWith("chalo-static-"))).toBe(true);
+  const pwaIconIsCached = await page.evaluate(async () => {
+    const cacheName = (await caches.keys()).find((name) => name.startsWith("chalo-static-"));
+    const response = cacheName ? await (await caches.open(cacheName)).match("/brand/chalo-pwa-192.png") : undefined;
+    return response?.headers.get("content-type")?.startsWith("image/") ?? false;
+  });
+  expect(pwaIconIsCached).toBe(true);
 
   await seedCustomer(page);
   await page.reload();
@@ -171,9 +217,17 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
   const installEvent = await dispatchDeferredInstallEvent(page);
   expect(installEvent).toEqual({ defaultPrevented: true, prompted: false });
   await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
+  const promptBox = await page.getByTestId("pwa-install-prompt").boundingBox();
+  expect(promptBox).not.toBeNull();
+  // Staff/admin mobile navs are about 68px tall; the prompt reserves 80px plus safe area.
+  expect((promptBox?.y ?? 0) + (promptBox?.height ?? 0)).toBeLessThanOrEqual(667 - 80);
   await expect(page.locator("body").evaluate((body) => body.scrollWidth <= body.clientWidth)).resolves.toBe(true);
-  await page.getByRole("button", { name: "Để sau" }).click();
+  await page.getByRole("button", { name: "Cài ứng dụng" }).click();
+  await expect(page.getByRole("button", { name: "Đang mở…" })).toBeDisabled();
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { __pwaInstallTest?: { promptCalls: number } }).__pwaInstallTest?.promptCalls ?? 0)).toBe(1);
+  await resolveDeferredInstallChoice(page, "dismissed");
   await expect(page.getByTestId("pwa-install-prompt")).toBeHidden();
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem("chalo-pwa-install-dismissed"))).toBe("true");
 
   expect(failures.consoleErrors).toEqual([]);
   expect(failures.pageErrors).toEqual([]);
@@ -199,4 +253,15 @@ test("PWA notice is suppressed in installed display mode", async ({ page }) => {
   const installEvent = await dispatchDeferredInstallEvent(page);
   expect(installEvent.defaultPrevented).toBe(true);
   await expect(page.getByTestId("pwa-install-prompt")).toHaveCount(0);
+});
+
+test("iPadOS desktop user agent receives the iOS install guide", async ({ page }) => {
+  await emulateIpadOsDesktop(page);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/");
+  await waitForPwaClient(page);
+
+  await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
+  await expect(page.getByText("Thêm vào Màn hình chính")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cài ứng dụng" })).toHaveCount(0);
 });

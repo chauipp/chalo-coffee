@@ -82,19 +82,19 @@ self.addEventListener("fetch", (event) => {
   if (!isStaticRequest(event.request)) return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) return cachedResponse;
 
-      return fetch(event.request).then((response) => {
-        if (isCacheableStaticResponse(event.request, response)) {
-          const responseCopy = response.clone();
-          event.waitUntil(
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseCopy)),
-          );
-        }
+        return fetch(event.request).then((response) => {
+          if (isCacheableStaticResponse(event.request, response)) {
+            const responseCopy = response.clone();
+            event.waitUntil(cache.put(event.request, responseCopy));
+          }
 
-        return response;
-      });
-    }),
+          return response;
+        });
+      }),
+    ),
   );
 });

@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   description: "Chalo Coffee — thực đơn cà phê, trà và những khoảng chậm dành cho bạn.",
   icons: {
     icon: "/brand/chalo-logo-round.png",
+    apple: "/brand/chalo-pwa-192.png",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
