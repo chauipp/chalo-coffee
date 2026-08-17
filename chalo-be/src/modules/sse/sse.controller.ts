@@ -1,5 +1,5 @@
 import { Controller, Header, Param, Sse, MessageEvent } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Observable, map } from 'rxjs';
 import { SseService } from './sse.service';
@@ -18,10 +18,9 @@ export class SseController {
     summary: 'SSE stream — nhân viên nhận sự kiện real-time',
     description: [
       'Sự kiện phát: `new_order`, `payment_request`, `order_status_changed`, `order_prep_progress`.',
-      'Browser EventSource không gửi header → truyền token qua query param `?token=<accessToken>`.',
+      'Browser EventSource dùng HttpOnly session cookie cùng origin.',
     ].join('\n'),
   })
-  @ApiQuery({ name: 'token', required: false, description: 'Access token (dùng thay cho Bearer header khi dùng EventSource)' })
   @ApiOkResponse({
     description: 'SSE stream opened',
     schema: { example: { code: 200, message: 'success', data: 'text/event-stream' } },

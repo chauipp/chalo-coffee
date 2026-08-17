@@ -181,7 +181,17 @@ export class AuthService {
     const tokens = this.buildTokens(user.id, user.username, user.role);
     const newHash = await bcrypt.hash(tokens.refreshToken, BCRYPT_SALT_ROUNDS);
     await this.userService.setRefreshTokenHash(user.id, newHash);
-    return tokens;
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        username: user.username,
+        fullName: user.fullName,
+        avatar: user.avatar,
+        role: user.role,
+        permission: PERMISSIONS[user.role],
+      },
+    };
   }
 
   async logout(userId: number) {

@@ -63,8 +63,6 @@ export interface SSEPayload {
 
 interface UseSSEOptions {
   url: string; // Đường dẫn API của Server để nối ống
-  /** token gắn vào query param `?token=` — bỏ qua (null) với stream public */
-  token?: string | null;
   onEvent: <T extends SSEEventType>(type: T, data: SSEPayload[T]) => void;
   /** Báo trạng thái kết nối (true khi ống mở, false khi đứt) */
   onConnectionChange?: (connected: boolean) => void;
@@ -75,7 +73,6 @@ interface UseSSEOptions {
 export function useSSE({
   url,
   onEvent,
-  token = null,
   onConnectionChange,
   enabled = true,
   reconnectDelay = 3000,
@@ -98,8 +95,7 @@ export function useSSE({
     const connect = () => {
       if (disposed) return;
 
-      const sseUrl = token ? `${url}?token=${encodeURIComponent(token)}` : url;
-      es = new EventSource(sseUrl);
+      es = new EventSource(url, { withCredentials: true });
 
       es.onopen = () => onConnectionChangeRef.current?.(true);
 
@@ -128,5 +124,5 @@ export function useSSE({
       if (timer) clearTimeout(timer);
       onConnectionChangeRef.current?.(false);
     };
-  }, [url, enabled, reconnectDelay, token]);
+  }, [url, enabled, reconnectDelay]);
 }

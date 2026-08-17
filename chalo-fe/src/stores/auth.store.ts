@@ -1,5 +1,5 @@
 import { type UserRole } from "@/constants";
-import { clearAuthCookies, persistAuthCookies } from "@/services/auth/auth.helper";
+import { clearAuthCookies } from "@/services/auth/auth.helper";
 import { create } from "zustand"
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -13,14 +13,11 @@ export interface AuthUser {
 }
 
 interface AuthState {
-  accessToken: string | null,
-  refreshToken: string | null,
   user: AuthUser | null,
 
   isHydrated: boolean,
   isInitialized: boolean,
 
-  setTokens: (accessToken: string, refreshToken: string) => void,
   setUser: (user: AuthUser) => void,
   setHydrated: () => void,
   setInitialized: () => void,
@@ -34,25 +31,13 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      accessToken: null,
-      refreshToken: null,
       user: null,
 
       isHydrated: false,
       isInitialized: false,
 
-      setTokens: (accessToken: string, refreshToken: string) => {
-        set({ accessToken, refreshToken })
-        if(typeof document !== 'undefined' && get().user){
-          persistAuthCookies(accessToken, get().user!.role)
-        }
-      },
       setUser: (user) => {
         set({ user: user })
-        const token = get().accessToken
-        if (typeof document !== 'undefined' && token) {
-          persistAuthCookies(token, user.role)
-        }
       },
       setHydrated: () => {
         set({ isHydrated: true })
@@ -61,15 +46,15 @@ export const useAuthStore = create<AuthState>()(
         set({ isInitialized: true })
       },
       logout: () => {
-        set({ accessToken: null, refreshToken: null, user: null, isInitialized: false })
+        set({ user: null, isInitialized: false })
         if (typeof document !== 'undefined') {
           clearAuthCookies()
         }
       },
 
       isAuthenticated: () => {
-        const { accessToken, isHydrated } = get()
-        return isHydrated && !!accessToken
+        const { user, isHydrated } = get()
+        return isHydrated && !!user
       },
       hasPermission: (permission: string) => {
         const { user } = get()
@@ -83,8 +68,6 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         user: state.user
       }),
 
