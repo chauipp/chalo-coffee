@@ -19,7 +19,7 @@
 
 ---
 
-- [ ] Task 1: Nâng dependency an toàn và lập hàng rào kiểm tra
+- [x] Task 1: Nâng dependency an toàn và lập hàng rào kiểm tra
 
 **Files:**
 - Modify: `chalo-fe/package.json`, `chalo-fe/pnpm-lock.yaml`
@@ -30,11 +30,11 @@
 **Interfaces:**
 - Produces: Next.js >= `16.2.11`, Axios >= `1.18.0`, và script trả exit code khác 0 khi một package có advisory high/critical production.
 
-- [ ] Step 1: Ghi baseline audit vào commit message/plan và chạy `pnpm audit --prod --audit-level=high` trong hai package để chứng minh RED.
-- [ ] Step 2: Nâng `next`, `eslint-config-next`, `axios` và dependency backend theo phiên bản audit gợi ý bằng `pnpm up`; không dùng `--latest` không kiểm soát.
-- [ ] Step 3: Viết `scripts/audit-production-dependencies.mjs` gọi `pnpm audit --json`, parse metadata vulnerabilities và báo rõ package/level; script nhận mảng thư mục `['chalo-be', 'chalo-fe']`.
-- [ ] Step 4: Chạy audit xanh, `pnpm build`, backend `pnpm test`, frontend `pnpm test:unit`.
-- [ ] Step 5: Commit `chore: nâng dependency production an toàn`.
+- [x] Step 1: Ghi baseline audit vào commit message/plan và chạy `pnpm audit --prod --audit-level=high` trong hai package để chứng minh RED.
+- [x] Step 2: Nâng `next`, `eslint-config-next`, `axios` và dependency backend theo phiên bản audit gợi ý bằng `pnpm up`; không dùng `--latest` không kiểm soát.
+- [x] Step 3: Viết `scripts/audit-production-dependencies.mjs` gọi `pnpm audit --json`, parse metadata vulnerabilities và báo rõ package/level; script nhận mảng thư mục `['chalo-be', 'chalo-fe']`.
+- [x] Step 4: Chạy audit xanh, `pnpm build`, backend `pnpm test`, frontend `pnpm test:unit`.
+- [x] Step 5: Commit `chore: nâng dependency production an toàn`.
 
 - [ ] Task 2: CORS, log redaction, seed và rate limit
 
