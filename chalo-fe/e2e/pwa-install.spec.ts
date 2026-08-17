@@ -18,6 +18,15 @@ const staff = {
   permissions: ["order:read"],
 };
 
+const admin = {
+  id: "pwa-admin",
+  username: "pwa_admin",
+  fullName: "PWA Admin",
+  avatar: null,
+  role: "ADMIN",
+  permission: [],
+};
+
 function response(data: unknown) {
   return {
     code: 200,
@@ -157,6 +166,22 @@ async function seedCustomer(page: Page) {
       }),
     );
   }, customer);
+}
+
+async function seedAuthBeforeStartup(page: Page, user: typeof admin) {
+  await page.addInitScript((authenticatedUser) => {
+    localStorage.setItem(
+      "chalo-auth",
+      JSON.stringify({
+        state: {
+          accessToken: "pwa-access-token",
+          refreshToken: "pwa-refresh-token",
+          user: authenticatedUser,
+        },
+        version: 0,
+      }),
+    );
+  }, user);
 }
 
 async function installStaffPosFixture(page: Page) {
@@ -333,6 +358,49 @@ test("PWA notice is suppressed in installed display mode", async ({ page }) => {
   const installEvent = await dispatchDeferredInstallEvent(page);
   expect(installEvent.defaultPrevented).toBe(true);
   await expect(page.getByTestId("pwa-install-prompt")).toHaveCount(0);
+});
+
+test("PWA standalone không giữ landing cũ sau khi khôi phục phiên admin", async ({
+  context,
+  page,
+  baseURL,
+}) => {
+  const failures = collectBrowserFailures(page);
+  await emulateMobileChromium(page, true);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await seedAuthBeforeStartup(page, admin);
+  await context.addCookies([
+    { name: "ACCESS_TOKEN", value: "pwa-admin-token", url: baseURL },
+    { name: "USER_ROLE", value: "ADMIN", url: baseURL },
+  ]);
+  await page.route("**/api/auth/me", (route) => route.fulfill(apiResponse(admin)));
+  await page.route("**/api/order/stats/revenue**", (route) =>
+    route.fulfill(apiResponse({ totalRevenue: 0, totalOrders: 0, data: [] })),
+  );
+  await page.route("**/api/order/stats/top-products**", (route) =>
+    route.fulfill(apiResponse([])),
+  );
+
+  let servedLandingWithoutCookies = false;
+  await page.route(
+    (url) => new URL(url).pathname === "/",
+    (route) => {
+      const headers = { ...route.request().headers(), cookie: "" };
+      servedLandingWithoutCookies = true;
+      return route.fetch({ headers }).then((response) => route.fulfill({ response }));
+    },
+  );
+
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/admin\/dashboard$/);
+  await expect(page.getByRole("heading", { name: "Tổng quan" })).toBeVisible();
+  await page.getByRole("link", { name: "Chalo Coffee về trang chủ" }).click();
+  await expect(page).toHaveURL(/\/?landing=1$/);
+  await expect(page.getByRole("heading", { name: /Một ly ngon/i })).toBeVisible();
+  expect(servedLandingWithoutCookies).toBe(true);
+  expect(failures.consoleErrors).toEqual([]);
+  expect(failures.pageErrors).toEqual([]);
+  expect(failures.failedResponses).toEqual([]);
 });
 
 test("iPadOS desktop user agent receives the iOS install guide", async ({ page }) => {

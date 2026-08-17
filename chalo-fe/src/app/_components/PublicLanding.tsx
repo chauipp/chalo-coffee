@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingCategory } from "./landing-data";
 import { findLandingCategoryByKeywords, formatVnd } from "./landing-data";
 import { BrandLogo } from "@/components/shared/BrandLogo";
+import { isStandaloneDisplay } from "@/components/pwa/pwa-install";
 
 const MAPS_URL = "https://maps.app.goo.gl/miDX5WUrMF9vxkia8?g_st=ac";
 const ZALO_URL = "https://zalo.me/0913017988";
@@ -128,6 +129,25 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const redirectRestoredStandalone = () => {
+      const explicitlyRequestedLanding = new URLSearchParams(window.location.search).get("landing") === "1";
+      const standalone = isStandaloneDisplay(
+        window.matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches,
+        (navigator as Navigator & { standalone?: boolean }).standalone,
+      );
+      const destination = user ? ROLE_DEFAULT_ROUTES[user.role] : undefined;
+
+      if (!explicitlyRequestedLanding && standalone && isHydrated && accessToken && destination) {
+        window.location.replace(destination);
+      }
+    };
+
+    redirectRestoredStandalone();
+    window.addEventListener("pageshow", redirectRestoredStandalone);
+    return () => window.removeEventListener("pageshow", redirectRestoredStandalone);
+  }, [accessToken, isHydrated, user]);
+
   function selectCategoryFromMood(keywords: readonly string[]) {
     setActiveCategoryId(findLandingCategoryByKeywords(menu, keywords));
     document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
@@ -137,7 +157,7 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
     <div className="min-h-screen overflow-x-clip bg-brand-50 pb-24 text-stone-900 sm:pb-0">
       <header className="sticky top-0 z-30 border-b border-brand-100/80 bg-brand-50/90 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-          <Link href="/" aria-label="Chalo Coffee về trang chủ" className="shrink-0 rounded-xl bg-white/70 p-1 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
+          <Link href="/?landing=1" aria-label="Chalo Coffee về trang chủ" className="shrink-0 rounded-xl bg-white/70 p-1 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">
             <BrandLogo className="size-10 object-contain" />
           </Link>
           <nav aria-label="Điều hướng trang chủ" className="flex items-center gap-1 text-sm font-medium sm:gap-3">

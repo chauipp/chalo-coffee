@@ -30,6 +30,46 @@ test("khách chưa đăng nhập mở / vẫn thấy landing", async ({ page }) 
   ).toBeVisible();
 });
 
+test("người đã đăng nhập vẫn có thể chủ động mở landing", async ({
+  context,
+  page,
+  baseURL,
+}) => {
+  await context.addCookies([
+    { name: "ACCESS_TOKEN", value: "admin-token", url: baseURL },
+    { name: "USER_ROLE", value: "ADMIN", url: baseURL },
+  ]);
+
+  await page.goto("/?landing=1", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/?landing=1$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Một ly ngon/i }),
+  ).toBeVisible();
+});
+
+test("PWA start URL chuyển role và không được cache", async ({
+  context,
+  page,
+  baseURL,
+}) => {
+  await context.addCookies([
+    { name: "ACCESS_TOKEN", value: "admin-token", url: baseURL },
+    { name: "USER_ROLE", value: "ADMIN", url: baseURL },
+  ]);
+
+  const startResponses: import("@playwright/test").Response[] = [];
+  page.on("response", (response) => {
+    if (new URL(response.url()).pathname === "/pwa-launch") {
+      startResponses.push(response);
+    }
+  });
+
+  await page.goto("/pwa-launch", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/admin\/dashboard$/);
+  expect(startResponses).toHaveLength(1);
+  expect(startResponses[0]?.headers()["cache-control"]).toContain("no-store");
+});
+
 test("role không ánh xạ có token mở / vẫn thấy landing", async ({
   context,
   page,

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "chalo-static-";
-const CACHE_NAME = `${CACHE_PREFIX}v1`;
+const CACHE_NAME = `${CACHE_PREFIX}v2`;
 const PRECACHE_URLS = [
   "/manifest.webmanifest",
   "/icon.svg",

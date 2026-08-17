@@ -121,7 +121,9 @@ export const Sidebar = ({
             </button>
           ) : (
             <>
-              <BrandLogo className="size-9 shrink-0 rounded-xl border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
+              <Link href="/?landing=1" aria-label="Chalo Coffee về trang chủ" className="shrink-0 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">
+                <BrandLogo className="size-9 rounded-xl border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
+              </Link>
               <div className="ml-3 min-w-0 flex-1">
                 <p className="truncate text-sm font-bold text-gray-900 dark:text-gray-100">
                   Chalo Coffee

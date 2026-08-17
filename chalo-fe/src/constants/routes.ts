@@ -3,6 +3,7 @@ export const ROUTES = {
   //public
   LOGIN: "/login",
   REGISTER: "/register",
+  PWA_LAUNCH: "/pwa-launch",
 
   //public (customer)
   MENU: "/menu",

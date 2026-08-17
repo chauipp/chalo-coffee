@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Chalo Coffee",
     short_name: "Chalo",
-    start_url: "/",
+    start_url: "/pwa-launch",
     display: "standalone",
     background_color: "#fafaf9",
     theme_color: "#d4a15a",

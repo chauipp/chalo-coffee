@@ -8,6 +8,7 @@ import { MobileStaffNav } from "./_components/MobileStaffNav";
 import { STAFF_HEADER_ITEMS } from "./staff/_components/header.config";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
 
@@ -39,7 +40,9 @@ export default function StaffLayout({
         <Sidebar subtitle="Nhân viên" items={STAFF_HEADER_ITEMS} />
       </div>
       <header className="flex h-14 shrink-0 items-center border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 md:hidden">
-        <BrandLogo className="size-8 rounded-lg border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
+        <Link href="/?landing=1" aria-label="Chalo Coffee về trang chủ">
+          <BrandLogo className="size-8 rounded-lg border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
+        </Link>
         <div className="ml-2 min-w-0">
           <p className="truncate text-sm font-bold text-gray-900 dark:text-gray-100">
             Chalo Coffee

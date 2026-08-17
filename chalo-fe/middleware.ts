@@ -10,6 +10,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (pathname === ROUTES.PWA_LAUNCH) {
+    const dest = token && role ? ROLE_DEFAULT_ROUTES[role] : "/"
+    const response = NextResponse.redirect(new URL(dest, request.url))
+    response.headers.set("Cache-Control", "no-store, max-age=0")
+    return response
+  }
+
   if (pathname.startsWith(ROUTES.ACCOUNT)) {
     if (!token) {
       const url = new URL(ROUTES.LOGIN, request.url)
@@ -24,7 +31,8 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathname === "/") {
-    const dest = token && role ? ROLE_DEFAULT_ROUTES[role] : undefined
+    const explicitlyRequestedLanding = request.nextUrl.searchParams.get("landing") === "1"
+    const dest = !explicitlyRequestedLanding && token && role ? ROLE_DEFAULT_ROUTES[role] : undefined
     if (dest) {
       return NextResponse.redirect(new URL(dest, request.url))
     }
