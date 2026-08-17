@@ -85,6 +85,10 @@ export const API = {
     UPDATE: "/settings",
   },
   SHIFT: { CURRENT: "/shift/current", OPEN: "/shift/open", CLOSE: "/shift/current/close", REPORT: "/shift/report" },
+  PAYMENT: {
+    REFUNDS: (paymentTransactionId: string) => `/payment-transactions/${paymentTransactionId}/refunds`,
+    REFUNDS_BY_ORDER: (orderId: string) => `/payment-transactions/by-order/${orderId}/refunds`,
+  },
   INVENTORY: {
     INGREDIENTS: "/inventory/ingredients",
     INGREDIENT: (id: string) => `/inventory/ingredients/${id}`,
