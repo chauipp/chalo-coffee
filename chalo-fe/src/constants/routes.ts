@@ -19,6 +19,7 @@ export const ROUTES = {
     TABLES: "/staff/tables",
     PREP: "/staff/prep",
     SHIFT: "/staff/shift",
+    PRINT_STATION: "/staff/print-station",
   },
 
   //admin
