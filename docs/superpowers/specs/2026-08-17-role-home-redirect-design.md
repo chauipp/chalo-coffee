@@ -34,4 +34,4 @@ Kiểm UI bằng Playwright trên desktop và viewport 375×667: diễn lại vi
 
 ## Plan thực thi
 
-Sẽ liên kết tới `../plans/2026-08-17-role-home-redirect.md` sau khi plan được tạo.
+Xem [plan triển khai](../plans/2026-08-17-role-home-redirect.md).
