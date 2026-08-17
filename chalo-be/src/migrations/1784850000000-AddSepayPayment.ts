@@ -4,6 +4,7 @@ export class AddSepayPayment1784850000000 implements MigrationInterface {
     name = 'AddSepayPayment1784850000000'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TYPE "public"."payment_transactions_source_enum" ADD VALUE IF NOT EXISTS 'SEPAY'`);
         await queryRunner.query(`ALTER TABLE "checkout_sessions" ADD "payCode" character varying(16)`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_checkout_sessions_payCode" ON "checkout_sessions" ("payCode")`);
         await queryRunner.query(`ALTER TABLE "app_settings" ADD "sepayWebhookKey" character varying(128)`);
@@ -12,6 +13,7 @@ export class AddSepayPayment1784850000000 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        // PostgreSQL không hỗ trợ bỏ từng enum value an toàn; migration down giữ SEPAY.
         await queryRunner.query(`DROP TABLE "sepay_transactions"`);
         await queryRunner.query(`DROP TYPE "public"."sepay_transactions_status_enum"`);
         await queryRunner.query(`ALTER TABLE "app_settings" DROP COLUMN "sepayWebhookKey"`);

@@ -2,6 +2,9 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
+  Optional,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, EntityManager, In } from 'typeorm';
@@ -48,7 +51,6 @@ import { PaymentTransaction } from '../payment/entities/payment-transaction.enti
 import { PaymentAllocation } from '../payment/entities/payment-allocation.entity';
 import { LoyaltyPointTransaction } from '../customer/entities/loyalty-point-transaction.entity';
 import { PaymentService } from '../payment/payment.service';
-import { Optional } from '@nestjs/common';
 
 export type OptionalOrderCustomer = {
   id: number;
@@ -127,7 +129,9 @@ export class OrderService {
     private readonly sseService: SseService,
     private readonly settingsService: SettingsService,
     private readonly customerService: CustomerService,
-    @Optional() private readonly paymentService?: PaymentService,
+    @Optional()
+    @Inject(forwardRef(() => PaymentService))
+    private readonly paymentService?: PaymentService,
   ) {}
 
   private buildDto(order: Order, includeStaffContext = false) {
@@ -1000,7 +1004,7 @@ export class OrderService {
       if (this.paymentService) {
         await this.paymentService.record(manager, [order], {
           method: dto.method ?? PaymentMethod.BANK_TRANSFER,
-          source: cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION,
+          source: PaymentSource.STAFF,
           collectedByUserId: cashierId ?? null,
           receivedAmount: dto.receivedAmount,
         });
@@ -1019,6 +1023,7 @@ export class OrderService {
           tableId: order.tableId,
           tableToken: order.tableToken,
           totalAmount: order.totalAmount,
+          source: 'staff',
         },
       });
 
@@ -1054,7 +1059,7 @@ export class OrderService {
         if (this.paymentService) {
           await this.paymentService.record(manager, orders, {
             method: dto.method ?? PaymentMethod.BANK_TRANSFER,
-            source: cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION,
+            source: PaymentSource.STAFF,
             collectedByUserId: cashierId ?? null,
             receivedAmount: dto.receivedAmount,
           });
@@ -1075,6 +1080,7 @@ export class OrderService {
             tableId: table.id,
             tableToken: dto.tableToken,
             totalAmount: orders.reduce((s, o) => s + o.totalAmount, 0),
+            source: 'staff',
           },
         });
       }
@@ -1160,7 +1166,12 @@ export class OrderService {
   private async finalizeCheckoutSessionLocked(
     manager: EntityManager,
     session: CheckoutSession,
-    paymentInput?: { method?: PaymentMethod; receivedAmount?: number; cashierId?: number },
+    paymentInput?: {
+      method?: PaymentMethod;
+      receivedAmount?: number;
+      cashierId?: number;
+      source?: PaymentSource;
+    },
   ) {
     const orderRepo = manager.getRepository(Order);
     const orders: Order[] = [];
@@ -1194,7 +1205,7 @@ export class OrderService {
     if (this.paymentService) {
       await this.paymentService.record(manager, orders, {
         method: paymentInput?.method ?? PaymentMethod.BANK_TRANSFER,
-        source: paymentInput?.cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION,
+        source: paymentInput?.source ?? (paymentInput?.cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION),
         collectedByUserId: paymentInput?.cashierId ?? null,
         receivedAmount: paymentInput?.receivedAmount,
       });
@@ -1293,7 +1304,11 @@ export class OrderService {
     });
   }
 
-  async checkoutCompleteStaff(dto: CheckoutCompleteStaffDto, cashierId?: number) {
+  async checkoutCompleteStaff(
+    dto: CheckoutCompleteStaffDto,
+    cashierId?: number,
+    source: PaymentSource = PaymentSource.STAFF,
+  ) {
     return this.dataSource.transaction(async (manager) => {
       const sessRepo = manager.getRepository(CheckoutSession);
       const session = await sessRepo.findOne({
@@ -1323,7 +1338,12 @@ export class OrderService {
         throw new BadRequestException('Phiên thanh toán đã hết hạn');
       }
 
-      const result = await this.finalizeCheckoutSessionLocked(manager, session, { method: dto.method, receivedAmount: dto.receivedAmount, cashierId });
+      const result = await this.finalizeCheckoutSessionLocked(manager, session, {
+        method: dto.method,
+        receivedAmount: dto.receivedAmount,
+        cashierId,
+        source,
+      });
 
       this.sseService.emit({
         type: 'payment_completed',
@@ -1333,6 +1353,7 @@ export class OrderService {
           tableToken: session.tableToken,
           orderIds: result.orderIds,
           totalAmount: result.totalAmount,
+          source: source === PaymentSource.SEPAY ? 'sepay' : 'staff',
         },
       });
 

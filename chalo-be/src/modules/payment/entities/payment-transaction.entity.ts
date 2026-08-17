@@ -9,6 +9,7 @@ export enum PaymentMethod {
 
 export enum PaymentSource {
   STAFF = 'STAFF',
+  SEPAY = 'SEPAY',
   CUSTOMER_CONFIRMATION = 'CUSTOMER_CONFIRMATION',
   LEGACY = 'LEGACY',
 }

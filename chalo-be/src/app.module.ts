@@ -24,6 +24,7 @@ import { SseModule } from './modules/sse/sse.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { ShiftModule } from './modules/shift/shift.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ShiftModule } from './modules/shift/shift.module';
     UserModule,
     CustomerModule,
     ShiftModule,
+    PaymentModule,
     CategoryModule,
     ProductModule,
     TableModule,
