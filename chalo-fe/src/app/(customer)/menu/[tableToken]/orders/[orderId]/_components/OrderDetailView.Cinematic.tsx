@@ -9,6 +9,7 @@ interface OrderDetailViewProps {
   isServed: boolean;
   isPaid: boolean;
   canPay: boolean;
+  isStartingPayment: boolean;
   currentStepIndex: number;
   steps: {
     statuses: OrderStatus[];
@@ -28,6 +29,7 @@ export const OrderDetailViewCinematic = ({
   isServed,
   isPaid,
   canPay,
+  isStartingPayment,
   currentStepIndex,
   steps,
   onPayClick,
@@ -182,9 +184,12 @@ export const OrderDetailViewCinematic = ({
         {canPay && (
           <button
             onClick={onPayClick}
-            className="w-full rounded-full bg-green-700 py-4 text-base font-semibold text-brand-50 dark:bg-green-700"
+            disabled={isStartingPayment}
+            className="w-full rounded-full bg-green-700 py-4 text-base font-semibold text-brand-50 disabled:opacity-60 dark:bg-green-700"
           >
-            Thanh toán · {order.totalAmount.toLocaleString("vi-VN")}đ
+            {isStartingPayment
+              ? "Đang tạo phiên thanh toán..."
+              : `Thanh toán · ${order.totalAmount.toLocaleString("vi-VN")}đ`}
           </button>
         )}
         <div className="flex gap-3">

@@ -3,14 +3,14 @@
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { useCustomerOrderEvents } from "@/hooks/useCustomerOrderEvents";
 import {
+  useCheckoutStart,
   useGetOrderByToken,
-  usePayOrder,
 } from "@/services/order/order.queries";
-import { OrderStatus } from "@/services/order/order.types";
+import { CheckoutSessionResult, OrderStatus } from "@/services/order/order.types";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { OrderDetailViewCinematic } from "./_components/OrderDetailView.Cinematic";
-import { PayConfirmModal } from "./_components/PayConfirmModal";
+import { PaySessionModal } from "./_components/PaySessionModal";
 
 // CONFIRMED là trạng thái di sản (BE không còn chuyển PENDING → CONFIRMED),
 // nên gộp chung một bước với PENDING — tránh 2 bước trùng nhãn trong stepper.
@@ -65,13 +65,22 @@ export default function OrderTrackingPage() {
     orderId: string;
   }>();
   const router = useRouter();
-  const [showPayConfirm, setShowPayConfirm] = useState<boolean>(false);
+  const [paySession, setPaySession] = useState<CheckoutSessionResult | null>(null);
 
   const { data: orders, isLoading } = useGetOrderByToken(tableToken);
   const order = orders?.find((o) => o.id === orderId);
-  useCustomerOrderEvents(tableToken);
+  useCustomerOrderEvents(tableToken, {
+    onPaymentCompleted: (data) => {
+      if (
+        paySession &&
+        (data.sessionId === paySession.sessionId || data.orderIds.includes(orderId))
+      ) {
+        setPaySession(null);
+      }
+    },
+  });
 
-  const payOrderMutation = usePayOrder(tableToken);
+  const startMutation = useCheckoutStart();
 
   if (isLoading)
     return (
@@ -111,9 +120,12 @@ export default function OrderTrackingPage() {
 
   const canPay = !isPaid && !isCancelled;
 
-  const handlePay = async () => {
-    await payOrderMutation.mutateAsync({ orderId: order.id, tableToken });
-    setShowPayConfirm(false);
+  const handleOpenPay = async () => {
+    const session = await startMutation.mutateAsync({
+      tableToken,
+      orderIds: [order.id],
+    });
+    setPaySession(session);
   };
 
   const viewProps = {
@@ -122,22 +134,21 @@ export default function OrderTrackingPage() {
     isServed,
     isPaid,
     canPay,
+    isStartingPayment: startMutation.isPending,
     currentStepIndex,
     steps: SERVICE_STEPS,
-    onPayClick: () => setShowPayConfirm(true),
+    onPayClick: handleOpenPay,
     onBackToOrders: () => router.push(`/menu/${tableToken}/orders`),
     onBackToMenu: () => router.push(`/menu/${tableToken}`),
   };
 
   return (
     <>
-      {showPayConfirm && (
-        <PayConfirmModal
-          isPending={payOrderMutation.isPending}
-          onCancel={() => setShowPayConfirm(false)}
-          onConfirm={handlePay}
-          total={order.totalAmount}
-          addInfo={`CHALO ${order.tableName ?? ""} DON ${order.id.slice(-6)}`}
+      {paySession && (
+        <PaySessionModal
+          session={paySession}
+          onClose={() => setPaySession(null)}
+          onRestart={handleOpenPay}
         />
       )}
       <OrderDetailViewCinematic {...viewProps} />
