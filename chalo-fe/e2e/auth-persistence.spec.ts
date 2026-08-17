@@ -55,6 +55,7 @@ async function mockPosData(page: Page) {
 }
 
 test("admin login writes cookies that survive a browser restart", async ({
+  browser,
   context,
   page,
 }) => {
@@ -67,6 +68,14 @@ test("admin login writes cookies that survive a browser restart", async ({
 
   expect(accessCookie?.expires).toBeGreaterThan(Date.now() / 1_000);
   expect(roleCookie?.expires).toBeGreaterThan(Date.now() / 1_000);
+
+  const restartedContext = await browser.newContext({
+    storageState: await context.storageState(),
+  });
+  const restartedPage = await restartedContext.newPage();
+  await restartedPage.goto("/");
+  await expect(restartedPage).toHaveURL(/\/admin\/dashboard$/);
+  await restartedContext.close();
 });
 
 test("staff login opens POS by default on mobile without browser errors", async ({

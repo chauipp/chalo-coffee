@@ -46,6 +46,10 @@ theo token...) bằng Playwright, và phải dựng server qua `next build` + st
    `pathname.startsWith(ROUTES.MENU)` hiện là bypass có chủ ý cho **cả** `/menu` và
    `/menu/...`; đừng để exact `/menu` rơi xuống nhánh `PUBLIC_ROUTES`. Với mỗi bypass,
    thêm một test có cookie role lạ để xác nhận URL vẫn không bị redirect.
+6. Redirect theo role ở middleware chỉ sống qua lần mở lại trình duyệt khi cookie
+   `ACCESS_TOKEN` và `USER_ROLE` có `Max-Age` hoặc `Expires`. Cookie không có hai thuộc tính
+   này có expiry `-1` trong Playwright (session-only): Zustand vẫn giữ token ở localStorage,
+   nhưng request đầu tiên tới `/` không gửi cookie nên middleware chỉ trả landing page.
 
 ## Cái bẫy
 
@@ -63,6 +67,10 @@ sai request. Hãy thiết lập origin khi chưa có cookie, rồi mới cài co
 đó vừa bị một early return bắt trước; đưa route đó vào nhánh chung có thể làm test redirect ở
 route khác xanh nhưng âm thầm đổi hành vi deep link. So sánh request exact route với base branch,
 không chỉ kiểm sub-route hoặc route mới đang sửa.
+
+Đừng chỉ test `localStorage` sau login khi sửa middleware. Lấy cookie từ `context.cookies()`
+và assert `expires > Date.now() / 1000`, rồi mở `/` trong browser context mới; đó mới là state
+mà middleware nhận được trước khi JavaScript hydrate.
 
 ## Kiểm thế nào là đúng
 
