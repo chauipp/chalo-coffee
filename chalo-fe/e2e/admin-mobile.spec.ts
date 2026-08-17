@@ -212,7 +212,7 @@ test("mobile admin presents every data collection as readable cards", async ({ p
   }
 });
 
-test("mobile dashboard and settings keep primary controls reachable", async ({ page }) => {
+test("mobile dashboard and settings keep the shell and form controls reachable", async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto("/admin/dashboard");
 
@@ -222,15 +222,29 @@ test("mobile dashboard and settings keep primary controls reachable", async ({ p
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/admin/settings");
+  const appHeader = page
+    .locator("header")
+    .filter({ hasText: "Chalo Coffee" })
+    .filter({ hasText: "Admin Panel" })
+    .last();
+  const content = page.locator("main");
   const settingsSave = page.getByTestId("admin-mobile-settings-save");
+  const accountName = page.getByPlaceholder("VD: NGUYEN VAN A");
   await expect(settingsSave).toBeVisible();
-  await expect(settingsSave).toHaveCSS("position", "sticky");
-  await settingsSave.scrollIntoViewIfNeeded();
+  await content.evaluate((node) => {
+    node.scrollTop = node.scrollHeight;
+  });
+  await expect.poll(() => content.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+  await expect(appHeader).toBeVisible();
+  await accountName.scrollIntoViewIfNeeded();
   const saveBox = await settingsSave.boundingBox();
+  const accountNameBox = await accountName.boundingBox();
   const mobileNavBox = await page.locator("nav.fixed").boundingBox();
   expect(saveBox).not.toBeNull();
+  expect(accountNameBox).not.toBeNull();
   expect(mobileNavBox).not.toBeNull();
   expect(saveBox!.y + saveBox!.height).toBeLessThanOrEqual(mobileNavBox!.y);
+  expect(accountNameBox!.y + accountNameBox!.height).toBeLessThanOrEqual(saveBox!.y);
   await expect(
     settingsSave.getByRole("button", { name: "Lưu thay đổi" }),
   ).toBeVisible();

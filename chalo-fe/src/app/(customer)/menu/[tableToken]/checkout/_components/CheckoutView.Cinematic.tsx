@@ -111,7 +111,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
         </h1>
       </header>
 
-      <main className="space-y-4 p-4 pb-32">
+      <main className="space-y-4 p-4 pb-36">
         {step === "done" ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
             <div className="flex size-20 items-center justify-center rounded-full bg-green-50 text-4xl dark:bg-green-900/20">
@@ -183,7 +183,7 @@ export const CheckoutViewCinematic = (props: CheckoutViewProps) => {
       </main>
 
       {step === "review" && (
-        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
+        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-stone-50/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
           <button
             onClick={onStart}
             disabled={isStarting}

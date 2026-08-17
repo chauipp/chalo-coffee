@@ -178,7 +178,7 @@ export const OrderDetailViewCinematic = ({
         )}
       </main>
 
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-stone-200 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-3 border-t border-stone-200 bg-stone-50/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
         {canPay && (
           <button
             onClick={onPayClick}

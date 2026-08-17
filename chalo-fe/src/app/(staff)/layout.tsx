@@ -35,11 +35,11 @@ export default function StaffLayout({
   const isDesktop = useDesktopMedia();
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-950 md:flex-row">
+    <div className="flex h-dvh flex-col bg-gray-50 dark:bg-gray-950 md:flex-row">
       <div className="hidden md:flex">
         <Sidebar subtitle="Nhân viên" items={STAFF_HEADER_ITEMS} />
       </div>
-      <header className="flex h-14 shrink-0 items-center border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 md:hidden">
+      <header className="flex h-[calc(3.5rem+env(safe-area-inset-top))] shrink-0 items-center border-b border-gray-200 bg-white px-4 pt-[env(safe-area-inset-top)] dark:border-gray-800 dark:bg-gray-900 md:hidden">
         <Link href="/?landing=1" aria-label="Chalo Coffee về trang chủ">
           <BrandLogo className="size-8 rounded-lg border border-brand-200 bg-white object-contain p-0.5 shadow dark:border-gray-700 dark:bg-gray-800" />
         </Link>
@@ -55,7 +55,7 @@ export default function StaffLayout({
         storageKey="staff-prep-split"
         className="min-h-0 min-w-0 flex-1"
         left={
-          <main className="h-full overflow-auto pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
+          <main className="mobile-scroll-clearance h-full overflow-auto">
             {children}
           </main>
         }

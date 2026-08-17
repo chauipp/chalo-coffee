@@ -228,7 +228,7 @@ export default function StaffPOSPage() {
       <div
         className={`w-72 shrink-0 flex-col overflow-hidden bg-white dark:bg-gray-900 md:flex ${
           showMobileCart
-            ? "fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[calc(100dvh-9rem)] w-full rounded-t-3xl border-t border-gray-200 shadow-2xl dark:border-gray-800 md:static md:w-72 md:rounded-none md:border-0 md:shadow-none"
+            ? "fixed inset-x-0 bottom-[var(--mobile-bottom-nav-clearance)] z-50 flex max-h-[calc(100dvh-9rem)] w-full rounded-t-3xl border-t border-gray-200 shadow-2xl dark:border-gray-800 md:static md:w-72 md:rounded-none md:border-0 md:shadow-none"
             : "hidden"
         }`}
       >
@@ -359,7 +359,7 @@ export default function StaffPOSPage() {
       <button
         type="button"
         onClick={() => setShowMobileCart(true)}
-        className={`fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 min-h-12 items-center justify-between rounded-2xl bg-brand-500 px-4 text-sm font-bold text-white shadow-lg transition-colors hover:bg-brand-600 md:hidden ${
+        className={`fixed inset-x-4 bottom-[var(--mobile-bottom-nav-clearance)] z-30 min-h-12 items-center justify-between rounded-2xl bg-brand-500 px-4 text-sm font-bold text-white shadow-lg transition-colors hover:bg-brand-600 md:hidden ${
           showMobileCart ? "hidden" : "flex"
         }`}
       >

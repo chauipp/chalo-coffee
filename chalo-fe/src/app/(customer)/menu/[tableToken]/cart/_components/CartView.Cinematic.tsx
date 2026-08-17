@@ -70,7 +70,7 @@ export const CartViewCinematic = ({
         </span>
       </header>
 
-      <main className="space-y-1 p-4 pb-32">
+      <main className="space-y-1 p-4 pb-40">
         {!!estimatedMinutes && estimatedMinutes > 0 && (
           <div className="mb-3 flex items-center gap-3 rounded-2xl bg-brand-100/60 p-3.5 dark:bg-stone-900">
             <span className="text-xl">⏱️</span>
@@ -167,7 +167,7 @@ export const CartViewCinematic = ({
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 space-y-3 border-t border-brand-200/60 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-0 right-0 z-30 space-y-3 border-t border-brand-200/60 bg-stone-50/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
         <div className="flex items-center justify-between">
           <span className="text-base text-brand-700 dark:text-brand-200/70">
             Tổng cộng

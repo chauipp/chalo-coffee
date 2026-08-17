@@ -66,8 +66,23 @@ html.dark body {
   background: #0c0a09;
 }
 
+.mobile-scroll-clearance::after {
+  content: "";
+  display: block;
+  height: var(--mobile-bottom-nav-clearance);
+}
+
+@media (min-width: 768px) {
+  .mobile-scroll-clearance::after {
+    display: none;
+  }
+}
+
 /* ── Chart tokens (recharts đọc CSS var trong SVG) ────────────── */
 :root {
+  /* Chiều cao dành cho thanh điều hướng mobile (gồm cả safe area). Mọi vùng
+     cuộn, drawer và CTA cố định phải dùng cùng một mốc để không chồng lên nav. */
+  --mobile-bottom-nav-clearance: calc(5.5rem + env(safe-area-inset-bottom));
   --chart-grid: #e7e5e4;
   --chart-text: #78716c;
   --chart-tooltip-bg: #ffffff;

@@ -47,7 +47,7 @@ export const OrdersListViewCinematic = ({
         </div>
       </header>
 
-      <main className="space-y-4 p-4 pb-32">
+      <main className="space-y-4 p-4 pb-44">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <SpinnerIcon className="size-8 animate-spin text-brand-400" />
@@ -127,7 +127,7 @@ export const OrdersListViewCinematic = ({
         )}
       </main>
 
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-stone-200 bg-stone-50/95 px-4 py-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 space-y-2.5 border-t border-stone-200 bg-stone-50/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl dark:border-stone-700 dark:bg-stone-950/95">
         {unpaidOrders.length > 0 && (
           <button
             onClick={onCheckout}

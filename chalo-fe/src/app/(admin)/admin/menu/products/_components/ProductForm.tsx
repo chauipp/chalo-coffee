@@ -305,7 +305,7 @@ export const ProductForm = ({
 
       <div
         data-testid="product-edit-actions"
-        className="sticky bottom-0 -mx-4 border-t border-gray-200 bg-white/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0"
+        className="-mx-4 border-t border-gray-200 bg-white/95 px-4 py-3 dark:border-gray-800 dark:bg-gray-900/95 sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0"
       >
         <div className="flex flex-row gap-2 sm:justify-end">
           <button
