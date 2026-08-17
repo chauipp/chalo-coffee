@@ -9,11 +9,28 @@ const customer = {
   permission: [],
 };
 
+const staff = {
+  id: "pwa-staff",
+  username: "pwa_staff",
+  fullName: "PWA Staff",
+  avatar: null,
+  role: "MODERATOR",
+  permissions: ["order:read"],
+};
+
 function response(data: unknown) {
   return {
     code: 200,
     message: "pwa-network-fixture",
     data,
+  };
+}
+
+function apiResponse(data: unknown) {
+  return {
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify(response(data)),
   };
 }
 
@@ -142,6 +159,24 @@ async function seedCustomer(page: Page) {
   }, customer);
 }
 
+async function installStaffPosFixture(page: Page) {
+  await page.route("**/api/auth/login", (route) => route.fulfill(apiResponse({ accessToken: "pwa-staff-token", refreshToken: "pwa-staff-refresh", user: staff })));
+  await page.route("**/api/auth/me", (route) => route.fulfill(apiResponse(staff)));
+  await page.route("**/api/menu/category/simple-list", (route) => route.fulfill(apiResponse([])));
+  await page.route("**/api/menu/product/page**", (route) => route.fulfill(apiResponse({ list: [], total: 0 })));
+  await page.route("**/api/table/list", (route) => route.fulfill(apiResponse([])));
+  await page.route("**/api/order/active", (route) => route.fulfill(apiResponse([])));
+  await page.route("**/api/order/events**", (route) => route.fulfill({ status: 200, contentType: "text/event-stream", body: ": fixture connected\n\n" }));
+}
+
+async function loginStaff(page: Page) {
+  await page.goto("/login");
+  await page.locator("#username").fill("pwa_staff");
+  await page.locator("#password").fill("password");
+  await page.getByRole("button", { name: "Đăng nhập" }).click();
+  await page.waitForURL("**/staff/**");
+}
+
 function collectBrowserFailures(page: Page) {
   const consoleErrors: string[] = [];
   const pageErrors: string[] = [];
@@ -197,6 +232,20 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
     return response?.headers.get("content-type")?.startsWith("image/") ?? false;
   });
   expect(pwaIconIsCached).toBe(true);
+  let blockedStaticAssetRequests = 0;
+  await page.route("**/brand/chalo-pwa-192.png", (route) => {
+    blockedStaticAssetRequests += 1;
+    return route.abort();
+  });
+  const cachedStaticAsset = await page.evaluate(async () => {
+    const response = await fetch("/brand/chalo-pwa-192.png");
+    return {
+      ok: response.ok,
+      contentType: response.headers.get("content-type"),
+    };
+  });
+  expect(cachedStaticAsset).toEqual({ ok: true, contentType: expect.stringMatching(/^image\//) });
+  expect(blockedStaticAssetRequests).toBe(0);
 
   await seedCustomer(page);
   await page.reload();
@@ -264,4 +313,31 @@ test("iPadOS desktop user agent receives the iOS install guide", async ({ page }
   await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
   await expect(page.getByText("Thêm vào Màn hình chính")).toBeVisible();
   await expect(page.getByRole("button", { name: "Cài ứng dụng" })).toHaveCount(0);
+});
+
+test("PWA notice stays above staff POS bottom controls on mobile", async ({ page }) => {
+  await emulateMobileChromium(page);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await installStaffPosFixture(page);
+  await loginStaff(page);
+  await page.goto("/staff/pos");
+  await expect(page.getByRole("button", { name: /Giỏ hàng/ })).toBeVisible();
+
+  const installEvent = await dispatchDeferredInstallEvent(page);
+  expect(installEvent.defaultPrevented).toBe(true);
+  await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
+
+  const [promptBox, headerBox, cartButtonBox, mobileNavBox] = await Promise.all([
+    page.getByTestId("pwa-install-prompt").boundingBox(),
+    page.getByRole("banner").boundingBox(),
+    page.getByRole("button", { name: /Giỏ hàng/ }).boundingBox(),
+    page.getByTestId("staff-mobile-nav").boundingBox(),
+  ]);
+  expect(promptBox).not.toBeNull();
+  expect(headerBox).not.toBeNull();
+  expect(cartButtonBox).not.toBeNull();
+  expect(mobileNavBox).not.toBeNull();
+  expect(promptBox?.y ?? 0).toBeGreaterThanOrEqual((headerBox?.y ?? 0) + (headerBox?.height ?? 0));
+  expect((promptBox?.y ?? 0) + (promptBox?.height ?? 0)).toBeLessThan(cartButtonBox?.y ?? 0);
+  expect((promptBox?.y ?? 0) + (promptBox?.height ?? 0)).toBeLessThan(mobileNavBox?.y ?? 0);
 });

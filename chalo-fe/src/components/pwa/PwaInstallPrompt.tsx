@@ -123,7 +123,7 @@ export default function PwaInstallPrompt() {
   return (
     <aside
       data-testid="pwa-install-prompt"
-      className="fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-700 dark:bg-stone-900 sm:bottom-4"
+      className="fixed inset-x-4 top-[calc(3.5rem+env(safe-area-inset-top))] z-50 mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl dark:border-stone-700 dark:bg-stone-900"
       aria-label="Cài ứng dụng Chalo Coffee"
     >
       <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
