@@ -7,6 +7,7 @@ export const QUERY_KEYS = {
     PROFILE: ["customer", "profile"] as const,
     SHORTCUT: ["customer", "shortcut"] as const,
     LOYALTY: ["customer", "loyalty"] as const,
+    LOYALTY_HISTORY: (params: object) => ["customer", "loyalty", "history", params] as const,
     ORDERS: (params: object) => ["customer", "orders", params] as const,
   },
   USERS: {
@@ -18,6 +19,7 @@ export const QUERY_KEYS = {
     ORDERS: (id: number, params: object) =>
       ["customers", id, "orders", params] as const,
     LOYALTY: (id: number) => ["customers", id, "loyalty"] as const,
+    LOYALTY_HISTORY: (id: number, params: object) => ["customers", id, "loyalty", "history", params] as const,
   },
   SETTINGS: {
     ALL: ["settings"] as const,

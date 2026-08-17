@@ -8,6 +8,7 @@ import {
   CustomerOrderDto,
   getCustomerOrders,
   useGetCustomerLoyalty,
+  useGetCustomerLoyaltyHistory,
 } from "@/services/customer-admin";
 import { OrderStatus } from "@/services/order/order.types";
 import { PageParam } from "@/services/types";
@@ -29,6 +30,7 @@ const INITIAL_ORDER_FILTER: PageParam = { pageNo: 1, pageSize: 5 };
 
 export function CustomerDetailContent({ customer }: Props) {
   const loyaltyQuery = useGetCustomerLoyalty(customer.id);
+  const loyaltyHistoryQuery = useGetCustomerLoyaltyHistory(customer.id);
   const orders = useTablePagination<CustomerOrderDto, PageParam>({
     initialFilter: INITIAL_ORDER_FILTER,
     queryFn: (params) => getCustomerOrders(customer.id, params),
@@ -64,6 +66,51 @@ export function CustomerDetailContent({ customer }: Props) {
               : `${loyaltyQuery.data?.balance ?? 0} điểm`}
           </p>
         </div>
+      </section>
+
+      <section>
+        <h3 className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Lần tích điểm gần nhất
+        </h3>
+        {loyaltyHistoryQuery.isLoading ? (
+          <p className="text-sm text-gray-400">Đang tải...</p>
+        ) : loyaltyHistoryQuery.isError ? (
+          <button
+            type="button"
+            onClick={() => void loyaltyHistoryQuery.refetch()}
+            className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400"
+          >
+            Tải lại lịch sử điểm
+          </button>
+        ) : loyaltyHistoryQuery.data?.list.length ? (
+          <ul className="space-y-2">
+            {loyaltyHistoryQuery.data.list.map((entry) => (
+              <li
+                key={entry.id}
+                className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 px-3 py-2 text-sm dark:border-gray-800"
+              >
+                <div className="min-w-0">
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                    Đơn #{entry.orderId.slice(-6).toUpperCase()}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {new Date(entry.createdAt).toLocaleString("vi-VN")}
+                    {entry.orderTotalAmount !== null
+                      ? ` · ${entry.orderTotalAmount.toLocaleString("vi-VN")}đ`
+                      : ""}
+                  </p>
+                </div>
+                <span className="shrink-0 font-semibold text-emerald-600 dark:text-emerald-400">
+                  +{entry.points} điểm
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-xl border border-dashed border-gray-200 px-4 py-4 text-center text-sm text-gray-400 dark:border-gray-800">
+            Khách chưa có lần tích điểm nào.
+          </p>
+        )}
       </section>
 
       <section>

@@ -37,6 +37,22 @@ export interface CustomerLoyalty {
   balance: number;
 }
 
+export interface CustomerLoyaltyHistoryEntry {
+  id: string;
+  orderId: string;
+  points: number;
+  type: "EARN";
+  createdAt: string;
+  orderTotalAmount: number | null;
+}
+
+export interface CustomerLoyaltyHistoryPage {
+  list: CustomerLoyaltyHistoryEntry[];
+  total: number;
+  pageNo: number;
+  pageSize: number;
+}
+
 export interface CustomerOrder {
   id: string;
   tableId: string;

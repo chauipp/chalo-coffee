@@ -15,6 +15,7 @@ export const API = {
     SCAN_TABLE: "/customer/table-session/scan",
     LEAVE_TABLE: "/customer/table-session/leave",
     LOYALTY: "/customer/loyalty",
+    LOYALTY_HISTORY: "/customer/loyalty/history",
     ORDERS: "/customer/orders",
   },
   USER: {
@@ -25,6 +26,7 @@ export const API = {
     DELETE: "/user/delete",
     CUSTOMER_ORDERS: (id: number) => `/user/${id}/orders`,
     CUSTOMER_LOYALTY: (id: number) => `/user/${id}/loyalty`,
+    CUSTOMER_LOYALTY_HISTORY: (id: number) => `/user/${id}/loyalty/history`,
     SET_ACTIVE: (id: number) => `/user/${id}/active`,
   },
   CATEGORY: {

@@ -25,6 +25,22 @@ export interface CustomerLoyaltyDto {
   balance: number;
 }
 
+export interface CustomerLoyaltyHistoryEntryDto {
+  id: string;
+  orderId: string;
+  points: number;
+  type: "EARN";
+  createdAt: string;
+  orderTotalAmount: number | null;
+}
+
+export interface CustomerLoyaltyHistoryPageDto {
+  list: CustomerLoyaltyHistoryEntryDto[];
+  total: number;
+  pageNo: number;
+  pageSize: number;
+}
+
 export interface CustomerPageParams extends PageParam {
   keyword?: string;
 }

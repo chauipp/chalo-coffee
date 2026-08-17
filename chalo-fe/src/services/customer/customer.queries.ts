@@ -4,6 +4,7 @@ import { QUERY_KEYS } from "@/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCustomerLoyalty,
+  getCustomerLoyaltyHistory,
   getCustomerOrders,
   getCustomerProfile,
   getCustomerShortcut,
@@ -30,6 +31,14 @@ export const useCustomerLoyalty = () =>
   useQuery({
     queryKey: QUERY_KEYS.CUSTOMER.LOYALTY,
     queryFn: getCustomerLoyalty,
+    staleTime: 30_000,
+  });
+
+export const useCustomerLoyaltyHistory = ({ enabled = true }: { enabled?: boolean } = {}) =>
+  useQuery({
+    queryKey: QUERY_KEYS.CUSTOMER.LOYALTY_HISTORY({ pageNo: 1, pageSize: 10 }),
+    queryFn: getCustomerLoyaltyHistory,
+    enabled,
     staleTime: 30_000,
   });
 

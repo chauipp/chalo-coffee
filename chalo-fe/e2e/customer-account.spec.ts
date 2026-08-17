@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
 const apiResponse = <T,>(data: T) => ({
   code: 200,
@@ -38,7 +38,28 @@ const shortcut = {
   },
 };
 
-async function authenticateCustomer(page: Page) {
+async function authenticateCustomer(
+  context: BrowserContext,
+  page: Page,
+  baseURL: string,
+) {
+  await context.addCookies([
+    {
+      name: "chalo_access",
+      value: "customer-access-token",
+      url: baseURL,
+      httpOnly: true,
+      sameSite: "Strict",
+      expires: Math.floor(Date.now() / 1_000) + 900,
+    },
+    {
+      name: "chalo_role",
+      value: "CUSTOMER",
+      url: baseURL,
+      sameSite: "Strict",
+      expires: Math.floor(Date.now() / 1_000) + 7 * 86400,
+    },
+  ]);
   await page.addInitScript((user) => {
     localStorage.setItem(
       "chalo-auth",
@@ -51,8 +72,6 @@ async function authenticateCustomer(page: Page) {
         version: 0,
       }),
     );
-    document.cookie = "ACCESS_TOKEN=customer-access-token; path=/";
-    document.cookie = "USER_ROLE=CUSTOMER; path=/";
   }, customer);
 }
 
@@ -78,7 +97,7 @@ async function mockCustomerApis(page: Page) {
       body: JSON.stringify(apiResponse(shortcut)),
     }),
   );
-  await page.route("**/api/customer/loyalty", (route) =>
+  await page.route(/\/api\/customer\/loyalty(?:\?.*)?$/, (route) =>
     route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -128,8 +147,8 @@ async function mockCustomerApis(page: Page) {
   );
 }
 
-test.beforeEach(async ({ page }) => {
-  await authenticateCustomer(page);
+test.beforeEach(async ({ context, page, baseURL }) => {
+  await authenticateCustomer(context, page, baseURL!);
   await mockCustomerApis(page);
 });
 
@@ -166,6 +185,66 @@ test("customer sees points and can continue only their active shortcut", async (
     path: testInfo.outputPath("customer-account-mobile.png"),
     fullPage: true,
   });
+
+  expect(consoleErrors).toEqual([]);
+  expect(failedResponses).toEqual([]);
+});
+
+test("customer can expand their earned-points history without a mobile overflow", async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
+  let historyRequests = 0;
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 400) {
+      failedResponses.push(`${response.status()} ${response.url()}`);
+    }
+  });
+  await page.route("**/api/customer/loyalty/history?*", async (route) => {
+    historyRequests += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(
+        apiResponse({
+          list: [
+            {
+              id: "point-1",
+              orderId: "order-abcdef",
+              points: 70,
+              type: "EARN",
+              createdAt: "2026-08-12T02:10:00.000Z",
+              orderTotalAmount: 70_000,
+            },
+          ],
+          total: 1,
+          pageNo: 1,
+          pageSize: 10,
+        }),
+      ),
+    });
+  });
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/account");
+  await expect(page.getByText("Lịch sử tích điểm")).toBeVisible();
+  expect(historyRequests).toBe(0);
+
+  await page.getByRole("button", { name: /Lịch sử tích điểm/ }).click();
+  await expect(page.getByText("Đơn #ABCDEF")).toBeVisible();
+  await expect(page.getByText("+70")).toBeVisible();
+  expect(historyRequests).toBe(1);
+
+  await page.setViewportSize({ width: 375, height: 667 });
+  await expect(
+    page.locator("body").evaluate((body) => body.scrollWidth <= body.clientWidth),
+  ).resolves.toBe(true);
+  await page.getByRole("button", { name: /Lịch sử tích điểm/ }).click();
+  await expect(page.getByText("Đơn #ABCDEF")).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
   expect(failedResponses).toEqual([]);
