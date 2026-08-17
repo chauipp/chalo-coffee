@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PaymentAllocation } from './payment-allocation.entity';
+import { RefundTransaction } from './refund-transaction.entity';
 
 export enum PaymentMethod {
   CASH = 'CASH',
@@ -28,4 +29,5 @@ export class PaymentTransaction {
   @Column({ type: 'timestamptz' }) @Index() paidAt: Date;
   @CreateDateColumn() createdAt: Date;
   @OneToMany(() => PaymentAllocation, (allocation) => allocation.paymentTransaction) allocations: PaymentAllocation[];
+  @OneToMany(() => RefundTransaction, (refund) => refund.paymentTransaction) refunds: RefundTransaction[];
 }

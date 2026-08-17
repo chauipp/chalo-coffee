@@ -26,6 +26,7 @@ import { CustomerModule } from './modules/customer/customer.module';
 import { ShiftModule } from './modules/shift/shift.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
+import { AuditModule } from './modules/audit/audit.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { InventoryModule } from './modules/inventory/inventory.module';
     ShiftModule,
     PaymentModule,
     InventoryModule,
+    AuditModule,
     CategoryModule,
     ProductModule,
     TableModule,
