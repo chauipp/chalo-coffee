@@ -102,7 +102,8 @@ async function bootstrap() {
   logger.log(line);
   logger.log(`  Web (base)     ${baseUrl}`);
   logger.log(`  API            ${baseUrl}/api`);
-  logger.log(`  Health         ${baseUrl}/api/health`);
+  logger.log(`  Health live    ${baseUrl}/api/health/live`);
+  logger.log(`  Health ready   ${baseUrl}/api/health/ready`);
   if (!isProduction) {
     logger.log(`  Swagger        ${baseUrl}/api/docs`);
   }

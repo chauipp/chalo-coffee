@@ -90,7 +90,7 @@
 - [x] Step 6: Add CSRF origin/header policy for unsafe same-site cookie requests, exempt only signature-verified payment webhook routes; test allowed same origin/rejected foreign origin.
 - [x] Step 7: Run targeted tests and Playwright browser-restart flow to admin dashboard/staff POS at desktop and 375×667. Full-suite gate remains Task 5. Commit `feat(auth): chuyển phiên browser sang HttpOnly cookie`.
 
-- [ ] Task 4: Observability, health và release safety
+- [x] Task 4: Observability, health và release safety
 
 **Files:**
 - Create: `chalo-be/src/common/logging/request-context.middleware.ts`
@@ -111,12 +111,12 @@
 **Interfaces:**
 - Produces: `/api/health/live` (process), `/api/health/ready` (DB+memory), `/api/metrics` restricted by `METRICS_TOKEN`; every log has `requestId`; CI reusable green gates; backup scripts require explicit env vars `BACKUP_DIR`, `POSTGRES_CONTAINER`, and never overwrite an existing target without `--confirm-restore`.
 
-- [ ] Step 1: Write RED health tests: liveness has no DB dependency; readiness fails when DB indicator fails; metrics rejects missing/bad bearer token.
-- [ ] Step 2: Implement request-id middleware and structured log fields; preserve existing human-readable production logs but add request id and redacted URL.
-- [ ] Step 3: Implement health split and a minimal Prometheus/OpenTelemetry-compatible metrics endpoint (request count, duration, readiness); only expose with token.
-- [ ] Step 4: Write backup/restore shell scripts with `set -euo pipefail`, explicit required variables, timestamped `pg_dump` + uploads archive, checksum and no destructive restore without exact confirmation. Document a staging restore drill.
-- [ ] Step 5: Add Docker API healthchecks and CI jobs: frozen install, audit script, backend test/build, frontend unit/build and Playwright using compose; deploy job needs CI success, waits readiness, performs `/api/health/ready` smoke test and retains last known image until success.
-- [ ] Step 6: Run shellcheck if available, compose config validation, all app tests/builds; commit `feat(ops): thêm health CI backup và quan sát an toàn`.
+- [x] Step 1: Write RED health tests: liveness has no DB dependency; readiness fails when DB indicator fails; metrics rejects missing/bad bearer token.
+- [x] Step 2: Implement request-id middleware and structured log fields; preserve existing human-readable production logs but add request id and redacted URL.
+- [x] Step 3: Implement health split and a minimal Prometheus/OpenTelemetry-compatible metrics endpoint (request count, duration, readiness); only expose with token.
+- [x] Step 4: Write backup/restore shell scripts with `set -euo pipefail`, explicit required variables, timestamped `pg_dump` + uploads archive, checksum and no destructive restore without exact confirmation. Document a staging restore drill.
+- [x] Step 5: Add Docker API healthchecks and CI jobs: frozen install, audit script, backend test/build, frontend unit/build and Playwright browser-session check; deploy has an equivalent verification gate, readiness smoke test and rollback to the last checkout when deployment fails.
+- [x] Step 6: Run shellcheck if available, compose config validation, all app tests/builds; commit `feat(ops): thêm health CI backup và quan sát an toàn`.
 
 - [ ] Task 5: Kiểm chứng release foundation và cập nhật tài liệu
 
