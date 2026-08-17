@@ -67,6 +67,7 @@ export const QUERY_KEYS = {
   PAYMENT: {
     REFUNDS_BY_ORDER: (orderId: string) => ["payment", "order", orderId, "refunds"] as const,
   },
+  AUDIT: { LOGS: (params: object) => ["audit", "logs", params] as const },
   INVENTORY: {
     ALL: ["inventory"] as const,
     INGREDIENTS: ["inventory", "ingredients"] as const,

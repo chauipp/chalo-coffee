@@ -58,11 +58,14 @@ test("admin ghi nhận hoàn tiền có xác nhận", async ({ page, context, ba
   await page.route("**/api/order/detail**", (route) => route.fulfill(ok(paidOrder)));
   await page.route("**/api/payment-transactions/by-order/order-refund-1/refunds", (route) => route.fulfill(ok(refunds)));
   await page.route("**/api/payment-transactions/payment-refund-1/refunds", (route) => route.fulfill(ok({ refund: { id: "refund-1", amount: 10_000, method: "CASH", reason: "Khách đổi ý" }, refundedAmount: 10_000, refundableAmount: 19_000 })));
+  await page.route("**/api/audit-logs**", (route) => route.fulfill(ok([{ id: "audit-1", actorUserId: 1, action: "REFUND_CREATED", entityType: "payment_transaction", entityId: "payment-refund-1", metadata: null, createdAt: "2026-08-17T01:00:00.000Z" }])));
   await restoreAdmin(context, baseURL!);
   await page.goto("/admin/orders");
   await page.getByRole("tab", { name: "Lịch sử" }).click();
   await page.getByRole("button", { name: /order-re/ }).click();
   await expect(page.getByTestId("refund-panel")).toContainText("còn có thể hoàn 29.000đ");
+  await page.getByText("Nhật ký thao tác").click();
+  await expect(page.getByText("Đã ghi nhận hoàn tiền").first()).toBeVisible();
   await page.getByRole("button", { name: "Ghi nhận hoàn tiền" }).click();
   await page.getByLabel("Số tiền hoàn").fill("10000");
   await page.getByLabel("Lý do hoàn tiền").fill("Khách đổi ý");

@@ -89,6 +89,7 @@ export const API = {
     REFUNDS: (paymentTransactionId: string) => `/payment-transactions/${paymentTransactionId}/refunds`,
     REFUNDS_BY_ORDER: (orderId: string) => `/payment-transactions/by-order/${orderId}/refunds`,
   },
+  AUDIT: { LOGS: "/audit-logs" },
   INVENTORY: {
     INGREDIENTS: "/inventory/ingredients",
     INGREDIENT: (id: string) => `/inventory/ingredients/${id}`,
