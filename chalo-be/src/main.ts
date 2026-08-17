@@ -12,6 +12,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { assertProductionSecrets } from './config/env.validation';
 import { HTTP_BODY_LIMIT } from './common/constants';
 import { UPLOAD_STATIC_ASSET_OPTIONS } from './config/upload-static-assets';
+import { buildCorsOriginPolicy } from './config/cors';
 
 async function bootstrap() {
   // Validate production secrets BEFORE bootstrap NestJS
@@ -32,12 +33,10 @@ async function bootstrap() {
 
   app.use(helmet());
 
-  const corsOrigins = configService
-    .get<string>('CORS_ORIGIN', 'http://localhost:3000')
-    .split(',')
-    .map((o) => o.trim());
   app.enableCors({
-    origin: true,
+    origin: buildCorsOriginPolicy(
+      configService.get<string>('CORS_ORIGIN', 'http://localhost:3000'),
+    ),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: [
       'Content-Type',

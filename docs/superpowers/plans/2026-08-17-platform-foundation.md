@@ -36,7 +36,7 @@
 - [x] Step 4: Chạy audit xanh, `pnpm build`, backend `pnpm test`, frontend `pnpm test:unit`.
 - [x] Step 5: Commit `chore: nâng dependency production an toàn`.
 
-- [ ] Task 2: CORS, log redaction, seed và rate limit
+- [x] Task 2: CORS, log redaction, seed và rate limit
 
 **Files:**
 - Create: `chalo-be/src/config/cors.ts`
@@ -53,12 +53,12 @@
 **Interfaces:**
 - Produces: `buildCorsOriginPolicy(csv: string): (origin, callback) => void`; `redactRequestUrl(url: string): string`; protected seed passwords sourced only from `SEED_ADMIN_PASSWORD`/`SEED_STAFF_PASSWORD`; `@Throttle({ default: { limit, ttl } })` on public auth methods.
 
-- [ ] Step 1: Viết test fail: allow `https://chalocoffee.com`, reject foreign/null origin in production; redact `token`, `refreshToken`, `clientSecret`, password/key query values nhưng giữ đường dẫn và query không nhạy cảm.
-- [ ] Step 2: Implement CORS callback from trimmed `CORS_ORIGIN`, reject unknown browser origins, and replace unused `corsOrigins`/`origin: true` in `main.ts`.
-- [ ] Step 3: Route logger through `redactRequestUrl`; never stringify headers/body in logs.
-- [ ] Step 4: Viết test fail rồi sửa seed: production `SEED_ON_STARTUP=true` phải throw when either secret absent/placeholder/weak; create hashes from env, never literals `admin`/`staff`. Update `.env.example` and compose comment.
-- [ ] Step 5: Thêm metadata throttle: login 5/15 phút/IP, register 3/60 phút/IP, refresh 20/15 phút/IP; verify controller metadata in unit tests.
-- [ ] Step 6: Run backend tests/build, then commit `fix(be): siết CORS log seed và auth throttle`.
+- [x] Step 1: Viết test fail: allow `https://chalocoffee.com`, reject foreign/null origin in production; redact `token`, `refreshToken`, `clientSecret`, password/key query values nhưng giữ đường dẫn và query không nhạy cảm.
+- [x] Step 2: Implement CORS callback from trimmed `CORS_ORIGIN`, reject unknown browser origins, and replace unused `corsOrigins`/`origin: true` in `main.ts`.
+- [x] Step 3: Route logger through `redactRequestUrl`; never stringify headers/body in logs.
+- [x] Step 4: Viết test fail rồi sửa seed: production `SEED_ON_STARTUP=true` phải throw when either secret absent/placeholder/weak; create hashes from env, never literals `admin`/`staff`. Update `.env.example` and compose comment.
+- [x] Step 5: Thêm metadata throttle: login 5/15 phút/IP, register 3/60 phút/IP, refresh 20/15 phút/IP; verify controller metadata in unit tests.
+- [x] Step 6: Run backend tests/build, then commit `fix(be): siết CORS log seed và auth throttle`.
 
 - [ ] Task 3: Chuyển Auth sang HttpOnly cookie và SSE không lộ token
 

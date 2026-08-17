@@ -47,7 +47,7 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-}
       FRONTEND_URL: ${PUBLIC_URL}
-      # Seed demo dùng tài khoản hardcode admin/admin, staff/staff (SEED_*_PASSWORD chưa được backend dùng)
+      # Bình thường luôn false. Nếu bật seed production, phải truyền hai password mạnh SEED_*_PASSWORD.
       SEED_ON_STARTUP: ${SEED_ON_STARTUP:-false}
     volumes:
       - uploads_data:/app/uploads

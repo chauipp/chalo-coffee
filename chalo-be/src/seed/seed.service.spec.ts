@@ -23,8 +23,14 @@ function makeService() {
 
 describe('SeedService.onModuleInit — destructive-seed gate', () => {
   const original = process.env.SEED_ON_STARTUP;
+  const originalNodeEnv = process.env.NODE_ENV;
+  const originalAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const originalStaffPassword = process.env.SEED_STAFF_PASSWORD;
   afterEach(() => {
     process.env.SEED_ON_STARTUP = original;
+    process.env.NODE_ENV = originalNodeEnv;
+    process.env.SEED_ADMIN_PASSWORD = originalAdminPassword;
+    process.env.SEED_STAFF_PASSWORD = originalStaffPassword;
     jest.restoreAllMocks();
   });
 
@@ -47,5 +53,17 @@ describe('SeedService.onModuleInit — destructive-seed gate', () => {
     const { service, reset } = makeService();
     await service.onModuleInit();
     expect(reset).toHaveBeenCalledTimes(1);
+  });
+
+  it('từ chối seed production khi password khởi tạo chưa được đặt an toàn', async () => {
+    process.env.SEED_ON_STARTUP = 'true';
+    process.env.NODE_ENV = 'production';
+    delete process.env.SEED_ADMIN_PASSWORD;
+    delete process.env.SEED_STAFF_PASSWORD;
+    const { service } = makeService();
+
+    await expect(service.onModuleInit()).rejects.toThrow(
+      'SEED_ADMIN_PASSWORD và SEED_STAFF_PASSWORD',
+    );
   });
 });
