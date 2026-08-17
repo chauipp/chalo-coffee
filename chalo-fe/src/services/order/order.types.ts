@@ -46,6 +46,7 @@ export interface OrderDto {
   items: OrderItemDto[];
   status: OrderStatus;
   paidStatus: boolean;
+  paymentRequested?: boolean;
   totalAmount: number;
   estimateWaitMinutes: number | null;
   note: string | null;
