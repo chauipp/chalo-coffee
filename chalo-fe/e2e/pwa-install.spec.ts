@@ -105,16 +105,18 @@ async function seedCustomer(page: Page) {
 
 function collectBrowserFailures(page: Page) {
   const consoleErrors: string[] = [];
+  const pageErrors: string[] = [];
   const failedResponses: string[] = [];
 
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
   });
+  page.on("pageerror", (error) => pageErrors.push(error.message));
   page.on("response", (response) => {
     if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`);
   });
 
-  return { consoleErrors, failedResponses };
+  return { consoleErrors, pageErrors, failedResponses };
 }
 
 test("PWA production manifest, worker, prompt, and API network boundary", async ({ page }) => {
@@ -152,7 +154,10 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
 
   await seedCustomer(page);
   await page.reload();
-  await expect.poll(() => apiRouteCalls).toBe(1);
+  await expect.poll(() => apiRouteCalls).toBeGreaterThan(0);
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(300);
+  expect(apiRouteCalls).toBe(1);
   const cachedRequestPaths = await page.evaluate(async () => {
     const cacheNames = await caches.keys();
     const requests = await Promise.all(
@@ -162,6 +167,7 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
   });
   expect(cachedRequestPaths.filter((path) => path.startsWith("/api/"))).toEqual([]);
 
+  await expect(page.getByTestId("pwa-install-prompt")).toHaveCount(0);
   const installEvent = await dispatchDeferredInstallEvent(page);
   expect(installEvent).toEqual({ defaultPrevented: true, prompted: false });
   await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
@@ -170,6 +176,7 @@ test("PWA production manifest, worker, prompt, and API network boundary", async 
   await expect(page.getByTestId("pwa-install-prompt")).toBeHidden();
 
   expect(failures.consoleErrors).toEqual([]);
+  expect(failures.pageErrors).toEqual([]);
   expect(failures.failedResponses).toEqual([]);
 });
 
