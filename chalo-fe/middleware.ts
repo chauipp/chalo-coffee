@@ -23,9 +23,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (PUBLIC_ROUTES.some(r => pathname.startsWith(r))) {
-    if (token && role) {
-      const dest = ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN
+  const isPublicRoute = pathname === "/" || PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
+
+  if (isPublicRoute) {
+    const dest = token && role ? ROLE_DEFAULT_ROUTES[role] : undefined
+    if (dest) {
       return NextResponse.redirect(new URL(dest, request.url))
     }
     return NextResponse.next()
