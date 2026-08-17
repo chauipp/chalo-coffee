@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const roleDestinations = [
   ["ADMIN", "/admin/dashboard"],
-  ["MODERATOR", "/staff/orders"],
+  ["MODERATOR", "/staff/pos"],
   ["CUSTOMER", "/account"],
 ] as const;
 

@@ -33,7 +33,7 @@ test("routes promoted Google accounts to their role area", () => {
     resolveGoogleDestination("/admin/orders?status=NEW", "ADMIN"),
     "/admin/orders?status=NEW",
   );
-  assert.equal(resolveGoogleDestination("/account", "MODERATOR"), "/staff/orders");
+  assert.equal(resolveGoogleDestination("/account", "MODERATOR"), "/staff/pos");
   assert.equal(resolveGoogleDestination("/admin/orders", "CUSTOMER"), "/account");
   assert.equal(resolveGoogleDestination("/menu/fixed-qr", "CUSTOMER"), "/menu/fixed-qr");
 });

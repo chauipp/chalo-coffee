@@ -19,7 +19,7 @@ test("staff mobile đăng xuất từ thanh đáy", async ({ page }, testInfo) =
   await page.locator("#username").fill("staff");
   await page.locator("#password").fill("123456");
   await page.getByRole("button", { name: "Đăng nhập" }).click();
-  await page.waitForURL("**/staff/orders");
+  await page.waitForURL("**/staff/pos");
 
   const logout = page.getByRole("button", { name: "Đăng xuất" });
   await expect(logout).toBeVisible();

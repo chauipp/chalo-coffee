@@ -54,7 +54,7 @@ export const resolveGoogleDestination = (
   if (role === "MODERATOR") {
     return safeReturnTo.startsWith("/staff")
       ? safeReturnTo
-      : "/staff/orders";
+      : "/staff/pos";
   }
 
   return safeReturnTo === "/account" || safeReturnTo.startsWith("/menu/")

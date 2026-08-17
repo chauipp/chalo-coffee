@@ -16,5 +16,6 @@ export type UserRole = typeof USER_ROLE[keyof typeof USER_ROLE]
 
 export const COOKIE_OPTIONS = {
   path: '/',
-  sameSite: 'Strict' as const
+  sameSite: 'Strict' as const,
+  maxAge: 7 * 24 * 60 * 60,
 }

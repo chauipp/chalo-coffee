@@ -2,7 +2,7 @@ import { COOKIE_OPTIONS, TOKEN_KEYS, UserRole } from "@/constants";
 
 export const persistAuthCookies = (accessToken: string, role: UserRole):void => {
     if (typeof document === 'undefined') return
-    const opts = `path=${COOKIE_OPTIONS.path}; SameSite=${COOKIE_OPTIONS.sameSite}`
+    const opts = `path=${COOKIE_OPTIONS.path}; SameSite=${COOKIE_OPTIONS.sameSite}; Max-Age=${COOKIE_OPTIONS.maxAge}`
     document.cookie = `${TOKEN_KEYS.ACCESS}=${accessToken}; ${opts}`
     document.cookie = `${TOKEN_KEYS.ROLE}=${role}; ${opts}`
 }
