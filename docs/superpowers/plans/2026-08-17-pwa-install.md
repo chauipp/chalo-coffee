@@ -184,7 +184,7 @@ git add chalo-fe/src/components/pwa chalo-fe/public/sw.js chalo-fe/src/app/layou
 git commit -m "feat: add PWA install experience"
 ```
 
-- [ ] Task 3: Kiểm chứng PWA trên browser và bàn giao
+- [x] Task 3: Kiểm chứng PWA trên browser và bàn giao
 
 **Files:**
 - Create: `chalo-fe/e2e/pwa-install.spec.ts`

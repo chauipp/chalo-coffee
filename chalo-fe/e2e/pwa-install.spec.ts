@@ -1,0 +1,195 @@
+import { expect, test, type Page } from "@playwright/test";
+
+const customer = {
+  id: "pwa-customer",
+  username: "pwa_customer",
+  fullName: "PWA Customer",
+  avatar: null,
+  role: "CUSTOMER",
+  permission: [],
+};
+
+function response(data: unknown) {
+  return {
+    code: 200,
+    message: "pwa-network-fixture",
+    data,
+  };
+}
+
+async function emulateMobileChromium(page: Page, standalone = false) {
+  await page.addInitScript(({ installed }) => {
+    const nativeMatchMedia = window.matchMedia.bind(window);
+
+    Object.defineProperty(navigator, "userAgent", {
+      configurable: true,
+      get: () =>
+        "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 " +
+        "(KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36",
+    });
+
+    window.matchMedia = ((query: string) => {
+      if (query.includes("display-mode: standalone") || query.includes("display-mode: fullscreen")) {
+        return {
+          matches: installed,
+          media: query,
+          onchange: null,
+          addEventListener: () => undefined,
+          removeEventListener: () => undefined,
+          addListener: () => undefined,
+          removeListener: () => undefined,
+          dispatchEvent: () => false,
+        } as MediaQueryList;
+      }
+
+      return nativeMatchMedia(query);
+    }) as typeof window.matchMedia;
+  }, { installed: standalone });
+}
+
+async function activateWorkerAndReload(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(async () => {
+        const registration = await navigator.serviceWorker.getRegistration();
+        return registration?.active?.state ?? "missing";
+      }),
+    )
+    .toBe("activated");
+
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
+}
+
+async function waitForPwaClient(page: Page) {
+  await expect.poll(() => page.evaluate(() => navigator.serviceWorker.getRegistration().then(Boolean))).toBe(true);
+}
+
+async function dispatchDeferredInstallEvent(page: Page) {
+  return page.evaluate(async () => {
+    const event = new Event("beforeinstallprompt", { cancelable: true });
+    let prompted = false;
+
+    Object.defineProperties(event, {
+      prompt: {
+        value: async () => {
+          prompted = true;
+        },
+      },
+      userChoice: {
+        value: Promise.resolve({ outcome: "dismissed", platform: "web" }),
+      },
+    });
+
+    window.dispatchEvent(event);
+    await Promise.resolve();
+    return { defaultPrevented: event.defaultPrevented, prompted };
+  });
+}
+
+async function seedCustomer(page: Page) {
+  await page.evaluate((authenticatedCustomer) => {
+    localStorage.setItem(
+      "chalo-auth",
+      JSON.stringify({
+        state: {
+          accessToken: "pwa-access-token",
+          refreshToken: "pwa-refresh-token",
+          user: authenticatedCustomer,
+        },
+        version: 0,
+      }),
+    );
+  }, customer);
+}
+
+function collectBrowserFailures(page: Page) {
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
+
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`);
+  });
+
+  return { consoleErrors, failedResponses };
+}
+
+test("PWA production manifest, worker, prompt, and API network boundary", async ({ page }) => {
+  const failures = collectBrowserFailures(page);
+  let apiRouteCalls = 0;
+
+  await page.route("**/api/customer/table-session", async (route) => {
+    apiRouteCalls += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(response(null)),
+    });
+  });
+  await emulateMobileChromium(page);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/");
+
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "/manifest.webmanifest");
+  const manifest = await page.evaluate(async () => {
+    const response = await fetch("/manifest.webmanifest");
+    return response.json();
+  });
+  expect(manifest.display).toBe("standalone");
+  expect(manifest.icons).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ src: "/brand/chalo-pwa-192.png", sizes: "192x192" }),
+      expect.objectContaining({ src: "/brand/chalo-pwa-512.png", sizes: "512x512" }),
+    ]),
+  );
+
+  await activateWorkerAndReload(page);
+  const cacheKeys = await page.evaluate(async () => caches.keys());
+  expect(cacheKeys.some((cacheKey) => cacheKey.startsWith("chalo-static-"))).toBe(true);
+
+  await seedCustomer(page);
+  await page.reload();
+  await expect.poll(() => apiRouteCalls).toBe(1);
+  const cachedRequestPaths = await page.evaluate(async () => {
+    const cacheNames = await caches.keys();
+    const requests = await Promise.all(
+      cacheNames.map(async (cacheName) => (await caches.open(cacheName)).keys()),
+    );
+    return requests.flat().map((request) => new URL(request.url).pathname);
+  });
+  expect(cachedRequestPaths.filter((path) => path.startsWith("/api/"))).toEqual([]);
+
+  const installEvent = await dispatchDeferredInstallEvent(page);
+  expect(installEvent).toEqual({ defaultPrevented: true, prompted: false });
+  await expect(page.getByTestId("pwa-install-prompt")).toBeVisible();
+  await expect(page.locator("body").evaluate((body) => body.scrollWidth <= body.clientWidth)).resolves.toBe(true);
+  await page.getByRole("button", { name: "Để sau" }).click();
+  await expect(page.getByTestId("pwa-install-prompt")).toBeHidden();
+
+  expect(failures.consoleErrors).toEqual([]);
+  expect(failures.failedResponses).toEqual([]);
+});
+
+test("PWA notice is absent on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await waitForPwaClient(page);
+
+  const installEvent = await dispatchDeferredInstallEvent(page);
+  expect(installEvent.defaultPrevented).toBe(true);
+  await expect(page.getByTestId("pwa-install-prompt")).toHaveCount(0);
+});
+
+test("PWA notice is suppressed in installed display mode", async ({ page }) => {
+  await emulateMobileChromium(page, true);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/");
+  await waitForPwaClient(page);
+
+  const installEvent = await dispatchDeferredInstallEvent(page);
+  expect(installEvent.defaultPrevented).toBe(true);
+  await expect(page.getByTestId("pwa-install-prompt")).toHaveCount(0);
+});
