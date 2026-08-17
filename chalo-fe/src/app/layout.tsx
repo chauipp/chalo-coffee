@@ -23,6 +23,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/brand/chalo-logo-round.png",
   },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Chalo Coffee",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {
@@ -30,6 +36,7 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
     { media: "(prefers-color-scheme: dark)", color: "#0c0a09" },
   ],
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
