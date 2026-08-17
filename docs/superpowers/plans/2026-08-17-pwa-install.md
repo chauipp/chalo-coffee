@@ -34,7 +34,7 @@
 - `chalo-fe/e2e/pwa-install.spec.ts`: browser fixture kiểm manifest, worker, prompt và bảo toàn network API.
 - `docs/superpowers/summaries/2026-08-17-pwa-install-summary.md`: bàn giao sau khi hoàn thành.
 
-- [ ] Task 1: Tạo manifest, icon và metadata cài đặt
+- [x] Task 1: Tạo manifest, icon và metadata cài đặt
 
 **Files:**
 - Create: `chalo-fe/src/app/manifest.ts`
@@ -115,7 +115,7 @@ git add chalo-fe/src/app/manifest.ts chalo-fe/src/app/manifest.test.mts chalo-fe
 git commit -m "feat: add installable app manifest"
 ```
 
-- [ ] Task 2: Đăng ký static-only service worker và notice cài app
+- [x] Task 2: Đăng ký static-only service worker và notice cài app
 
 **Files:**
 - Create: `chalo-fe/src/components/pwa/pwa-install.ts`
