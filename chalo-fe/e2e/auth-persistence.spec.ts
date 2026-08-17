@@ -44,6 +44,16 @@ async function loginAs(page: Page, role: keyof typeof responses) {
   await page.getByRole("button", { name: "Đăng nhập" }).click();
 }
 
+async function mockPosData(page: Page) {
+  await page.route("**/api/menu/category/simple-list", (route) =>
+    route.fulfill(ok([])),
+  );
+  await page.route("**/api/menu/product/page**", (route) =>
+    route.fulfill(ok({ list: [], total: 0 })),
+  );
+  await page.route("**/api/table/list", (route) => route.fulfill(ok([])));
+}
+
 test("admin login writes cookies that survive a browser restart", async ({
   context,
   page,
@@ -59,7 +69,27 @@ test("admin login writes cookies that survive a browser restart", async ({
   expect(roleCookie?.expires).toBeGreaterThan(Date.now() / 1_000);
 });
 
-test("staff login opens POS by default", async ({ page }) => {
+test("staff login opens POS by default on mobile without browser errors", async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 400) {
+      failedResponses.push(`${response.status()} ${response.url()}`);
+    }
+  });
+  await page.setViewportSize({ width: 375, height: 667 });
+  await mockPosData(page);
   await loginAs(page, "MODERATOR");
   await page.waitForURL("**/staff/pos");
+  await expect(page.getByRole("textbox", { name: "Tìm món" })).toBeVisible();
+  await expect(
+    page.locator("body").evaluate((body) => body.scrollWidth <= body.clientWidth),
+  ).resolves.toBe(true);
+  expect(consoleErrors).toEqual([]);
+  expect(failedResponses).toEqual([]);
 });
