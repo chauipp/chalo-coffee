@@ -29,3 +29,20 @@ test("khách chưa đăng nhập mở / vẫn thấy landing", async ({ page }) 
     page.getByRole("heading", { level: 1, name: /Một ly ngon/i }),
   ).toBeVisible();
 });
+
+test("role không ánh xạ có token mở / vẫn thấy landing", async ({
+  context,
+  page,
+  baseURL,
+}) => {
+  await context.addCookies([
+    { name: "ACCESS_TOKEN", value: "unknown-role-token", url: baseURL },
+    { name: "USER_ROLE", value: "UNKNOWN_ROLE", url: baseURL },
+  ]);
+
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Một ly ngon/i }),
+  ).toBeVisible();
+});
