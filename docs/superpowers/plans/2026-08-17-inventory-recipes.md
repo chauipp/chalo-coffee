@@ -35,11 +35,11 @@ Jest và Playwright.
 - Create: migration sau `1784850000000`.
 - Test: `chalo-be/src/modules/inventory/inventory.service.spec.ts`.
 
-- [ ] Viết test fail cho create ingredient, receipt/adjustment và public DTO.
-- [ ] Thêm enum movement, 3 entity, index product/ingredient duy nhất và migration.
-- [ ] Implement CRUD/adjust/list/history với guard Admin, validate unit/quantity/note.
-- [ ] Chạy `pnpm test -- inventory.service` và `pnpm build` trong `chalo-be`.
-- [ ] Commit `feat(be): thêm nguyên liệu và sổ biến động tồn kho`.
+- [x] Viết test fail cho create ingredient, receipt/adjustment và public DTO.
+- [x] Thêm enum movement, 3 entity, index product/ingredient duy nhất và migration.
+- [x] Implement CRUD/adjust/list/history với guard Admin, validate unit/quantity/note.
+- [x] Chạy `pnpm test -- inventory.service` và `pnpm build` trong `chalo-be`.
+- [x] Commit `feat(be): thêm nguyên liệu và sổ biến động tồn kho`.
 
 - [x] Task 2: Công thức, reservation và hoàn kho từ vòng đời đơn
 
@@ -48,17 +48,17 @@ Jest và Playwright.
 - Modify: `chalo-be/src/modules/product/{product.module.ts,product.service.ts}`.
 - Create/Test: inventory reservation specs và order inventory specs.
 
-- [ ] Viết test fail cho thiếu một nguyên liệu, tổng nhu cầu hai line món, hủy
+- [x] Viết test fail cho thiếu một nguyên liệu, tổng nhu cầu hai line món, hủy
   đơn hoàn kho một lần và không đổi món `UNAVAILABLE`.
-- [ ] Implement recipe GET/PUT và `reserveForOrder(manager, items)` với lock
+- [x] Implement recipe GET/PUT và `reserveForOrder(manager, items)` với lock
   `Ingredient` theo id tăng dần, SALE movement và cập nhật `onHand`.
-- [ ] Gọi reserve trước `Order` save trong `OrderService.create`; gọi release
+- [x] Gọi reserve trước `Order` save trong `OrderService.create`; gọi release
   chỉ khi transition thực sự sang `CANCELLED`.
-- [ ] Đồng bộ `ProductStatus.OUT_OF_STOCK` sau receipt/adjust/reserve/release.
-- [ ] Chạy toàn bộ test backend + build, commit
+- [x] Đồng bộ `ProductStatus.OUT_OF_STOCK` sau receipt/adjust/reserve/release.
+- [x] Chạy toàn bộ test backend + build, commit
   `feat(be): trừ và hoàn tồn kho theo công thức đơn hàng`.
 
-- [ ] Task 3: Client API, trang kho admin và công thức theo món
+- [x] Task 3: Client API, trang kho admin và công thức theo món
 
 **Files:**
 - Create: `chalo-fe/src/services/inventory/{inventory.api.ts,inventory.types.ts,inventory.queries.ts}`.
@@ -66,35 +66,35 @@ Jest và Playwright.
 - Modify: `chalo-fe/src/constants/{routes.ts,api-endpoints.ts}` và admin navigation.
 - Modify: product form/page để chỉnh recipe.
 
-- [ ] Viết test component/logic fail cho parse số lượng 3 chữ số thập phân và
+- [x] Viết test component/logic fail cho parse số lượng 3 chữ số thập phân và
   phân loại `onHand <= reorderLevel`.
-- [ ] Thêm API/TanStack query, route/nav admin và bảng responsive có empty/error/loading.
-- [ ] Thêm dialog nhập kho/điều chỉnh bắt buộc ghi lý do, lịch sử movement read-only.
-- [ ] Thêm panel công thức trong product form, chỉ hiển thị nguyên liệu active.
-- [ ] Chạy FE unit/build, commit `feat(fe): quản trị kho và công thức món`.
+- [x] Thêm API/TanStack query, route/nav admin và bảng responsive có empty/error/loading.
+- [x] Thêm dialog nhập kho/điều chỉnh bắt buộc ghi lý do, lịch sử movement read-only.
+- [x] Thêm panel công thức trong product form, chỉ hiển thị nguyên liệu active.
+- [x] Chạy FE unit/build, commit `feat(fe): quản trị kho và công thức món`.
 
-- [ ] Task 4: Cảnh báo vận hành và kiểm UI
+- [x] Task 4: Cảnh báo vận hành và kiểm UI
 
 **Files:**
 - Modify: admin dashboard và POS staff alert surface.
 - Create: `chalo-fe/e2e/inventory-management.spec.ts`.
 - Modify: mock handlers cho inventory.
 
-- [ ] Hiển thị low-stock count/link cho admin, read-only alert gọn ở POS staff.
-- [ ] Viết Playwright fixture API, diễn lại create ingredient → receipt → adjust
+- [x] Hiển thị low-stock count/link cho admin, read-only alert gọn ở POS staff.
+- [x] Viết Playwright fixture API, diễn lại create ingredient → receipt → adjust
   → history và low-stock; mở desktop + 375×667, assert no horizontal overflow.
-- [ ] Thu console errors và response >=400, phải rỗng ngoài request chủ ý.
-- [ ] Chạy `pnpm test:unit`, `pnpm build` và Playwright spec; commit
+- [x] Thu console errors và response >=400, phải rỗng ngoài request chủ ý.
+- [x] Chạy `pnpm test:unit`, `pnpm build` và Playwright spec; commit
   `test(fe): kiểm tồn kho và cảnh báo vận hành`.
 
-- [ ] Task 5: Tài liệu, review và tổng kết
+- [x] Task 5: Tài liệu, review và tổng kết
 
-- [ ] Cập nhật vận hành kho trong `deploy/README.md` nếu endpoint/migration có
+- [x] Cập nhật vận hành kho trong `deploy/README.md` nếu endpoint/migration có
   bước deploy đặc biệt.
-- [ ] Rà `git diff --check`, backend/FE full suites và status worktree.
-- [ ] Viết `docs/superpowers/summaries/2026-08-17-inventory-recipes-summary.md`
+- [x] Rà `git diff --check`, backend/FE full suites và status worktree.
+- [x] Viết `docs/superpowers/summaries/2026-08-17-inventory-recipes-summary.md`
   theo diff thực tế, trỏ spec/plan; tick toàn bộ task hoàn tất.
-- [ ] Commit `docs: tổng kết tồn kho và công thức`.
+- [x] Commit `docs: tổng kết tồn kho và công thức`.
 
 ## Kết quả
 
