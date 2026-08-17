@@ -2,6 +2,8 @@
 import { USER_ROLE } from '@/constants';
 import { http, HttpResponse, delay } from 'msw'
 
+let activeUser: object | null = null
+
 export const authHandlers = [
   // POST /api/auth/login
   http.post('*/api/auth/login', async ({ request }) => {
@@ -11,13 +13,9 @@ export const authHandlers = [
     // Mock 3 accounts tương ứng 3 role
     const accounts: Record<string, object> = {
       'admin': {
-        accessToken: 'mock-access-token-admin',
-        refreshToken: 'mock-refresh-token-admin',
         user: { id: 1, username: 'admin', fullName: 'Nguyễn Văn Admin', avatar: null, role: USER_ROLE.ADMIN, permissions: ['menu:write', 'table:write', 'order:write', 'staff:write'] },
       },
       'staff': {
-        accessToken: 'mock-access-token-staff',
-        refreshToken: 'mock-refresh-token-staff',
         user: { id: 2, username: 'staff', fullName: 'Trần Thị Nhân Viên', avatar: null, role: USER_ROLE.MODERATOR, permissions: ['order:write', 'order:read'] },
       },
     }
@@ -27,38 +25,27 @@ export const authHandlers = [
       return HttpResponse.json({ code: 401, message: 'Sai tên đăng nhập hoặc mật khẩu', data: null }, { status: 401 })
     }
 
+    activeUser = (account as { user: object }).user
     return HttpResponse.json({ code: 200, message: 'success', data: account })
   }),
 
   // GET /api/auth/me
-  http.get('*/api/auth/me', ({ request }) => {
-    const auth = request.headers.get('Authorization')
-    if (!auth) return HttpResponse.json({ code: 401, message: 'Unauthorized', data: null }, { status: 401 })
-
-    const isAdmin = auth.includes('admin')
-    return HttpResponse.json({
-      code: 200, message: 'success',
-      data: isAdmin
-        ? { id: 1, username: 'admin', fullName: 'Nguyễn Văn Admin', avatar: null, role: 'ADMIN', permissions: ['menu:write', 'table:write', 'order:write', 'staff:write'] }
-        : { id: 2, username: 'staff', fullName: 'Trần Thị Nhân Viên', avatar: null, role: 'MODERATOR', permissions: ['order:write', 'order:read'] },
-    })
+  http.get('*/api/auth/me', () => {
+    if (!activeUser) return HttpResponse.json({ code: 401, message: 'Unauthorized', data: null }, { status: 401 })
+    return HttpResponse.json({ code: 200, message: 'success', data: activeUser })
   }),
 
   // POST /api/auth/refresh-token
-  http.post('*/api/auth/refresh-token', async ({ request }) => {
+  http.post('*/api/auth/refresh-token', async () => {
     await delay(300)
-    const body = await request.json() as { refreshToken: string }
-    if (!body.refreshToken.startsWith('mock-refresh-token')) {
-      return HttpResponse.json({ code: 401, message: 'Invalid refresh token', data: null }, { status: 401 })
-    }
-    const role = body.refreshToken.includes('admin') ? 'admin' : 'staff'
     return HttpResponse.json({
       code: 200, message: 'success',
-      data: { accessToken: `mock-access-token-${role}-new`, refreshToken: `mock-refresh-token-${role}` },
+      data: { user: activeUser },
     })
   }),
 
-  http.post('*/api/auth/logout', () =>
-    HttpResponse.json({ code: 200, message: 'success', data: null })
-  ),
+  http.post('*/api/auth/logout', () => {
+    activeUser = null
+    return HttpResponse.json({ code: 200, message: 'success', data: null })
+  }),
 ]

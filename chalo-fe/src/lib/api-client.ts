@@ -1,4 +1,3 @@
-import { TOKEN_KEYS } from "@/constants";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -6,7 +5,6 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import { handleApiError, triggerSessionExpired } from "./error-handler";
-import { useAuthStore } from "@/stores/auth.store";
 
 export interface ApiResponse<T = unknown> {
   code: number;
@@ -14,36 +12,25 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
-export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
-
-const isClient = typeof window !== "undefined";
-
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";
 
 export const tokenStore = {
   clearTokens: (): void => {
-    localStorage.removeItem(TOKEN_KEYS.ACCESS);
-    localStorage.removeItem(TOKEN_KEYS.REFRESH);
-    const expired = "path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = `${TOKEN_KEYS.ACCESS}=; ${expired}`;
-    document.cookie = `${TOKEN_KEYS.REFRESH}=; ${expired}`;
-    document.cookie = `${TOKEN_KEYS.ROLE}=; ${expired}`;
+    // Dọn persistence cũ sau khi migrate từ localStorage sang HttpOnly cookie.
+    localStorage.removeItem('chalo-auth');
   },
 };
 
 let isRefreshing = false;
 
 let reqQueue: Array<{
-  resolve: (token: string) => void;
+  resolve: () => void;
   reject: (err: Error) => void;
 }> = [];
 
-const drainQueue = (token: string) => {
-  reqQueue.forEach((req) => req.resolve(token));
+const drainQueue = () => {
+  reqQueue.forEach((req) => req.resolve());
   reqQueue = [];
 };
 
@@ -62,15 +49,12 @@ declare module "axios" {
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE,
   timeout: 30_000,
+  withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const accToken = useAuthStore.getState().accessToken;
-    if (accToken && !config.skipAuth) {
-      config.headers.Authorization = `Bearer ${accToken}`;
-    }
     if (config.method) {
       config.headers["Cache-Control"] = "no-cache";
     }
@@ -109,8 +93,7 @@ apiClient.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           reqQueue.push({
-            resolve: (newToken) => {
-              original.headers.Authorization = `Bearer ${newToken}`;
+          resolve: () => {
               resolve(apiClient(original));
             },
             reject,
@@ -120,19 +103,12 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = useAuthStore.getState().refreshToken;
-        if (!refreshToken) throw new Error("No refresh token");
-        const { data: responseData } = await axios.post<ApiResponse<TokenPair>>(
+        await axios.post<ApiResponse<unknown>>(
           `${API_BASE}/auth/refresh-token`,
-          { refreshToken },
-          { skipAuth: true } as AxiosRequestConfig,
+          undefined,
+          { skipAuth: true, withCredentials: true } as AxiosRequestConfig,
         );
-        const newTokens = responseData.data;
-        useAuthStore
-          .getState()
-          .setTokens(newTokens.accessToken, newTokens.refreshToken);
-        drainQueue(newTokens.accessToken);
-        original.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+        drainQueue();
         return apiClient(original);
       } catch (error) {
         rejectQueue(error as Error);

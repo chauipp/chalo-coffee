@@ -1,9 +1,9 @@
 // src/constants/auth.ts
 
 export const TOKEN_KEYS = {
-  ACCESS: 'ACCESS_TOKEN',
-  REFRESH: 'REFRESH_TOKEN',
-  ROLE: 'USER_ROLE',
+  ACCESS: 'chalo_access',
+  REFRESH: 'chalo_refresh',
+  ROLE: 'chalo_role',
 } as const
 
 export const USER_ROLE = {

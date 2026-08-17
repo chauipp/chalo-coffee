@@ -283,11 +283,11 @@ function CustomerAccountContent() {
 }
 
 export default function CustomerAccountPage() {
-  const { isHydrated, accessToken, user } = useAuthStore();
+  const { isHydrated, user } = useAuthStore();
 
   useEffect(() => {
     if (!isHydrated) return;
-    if (!accessToken) {
+    if (!user) {
       window.location.replace(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.ACCOUNT)}`);
       return;
     }
@@ -296,11 +296,11 @@ export default function CustomerAccountPage() {
         ROLE_DEFAULT_ROUTES[user.role] ?? ROUTES.LOGIN,
       );
     }
-  }, [accessToken, isHydrated, user]);
+  }, [isHydrated, user]);
 
   if (
     !isHydrated ||
-    !accessToken ||
+    !user ||
     (user && user.role !== USER_ROLE.CUSTOMER)
   ) {
     return (

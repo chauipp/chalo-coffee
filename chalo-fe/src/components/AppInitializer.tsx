@@ -32,7 +32,7 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
   const {
     isHydrated,
     isInitialized,
-    accessToken,
+    user: storedUser,
     setUser,
     logout,
     setInitialized,
@@ -45,7 +45,7 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
     if (!isHydrated || isInitialized || isFetching.current) return;
 
     try {
-      if (!accessToken) {
+      if (!storedUser && isPublicRoute) {
         return;
       }
       isFetching.current = true;
@@ -57,7 +57,7 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
       setInitialized();
       isFetching.current = false;
     }
-  }, [isInitialized, isHydrated, accessToken, setInitialized, setUser, logout]);
+  }, [isInitialized, isHydrated, storedUser, isPublicRoute, setInitialized, setUser, logout]);
 
   useEffect(() => {
     initialize();
