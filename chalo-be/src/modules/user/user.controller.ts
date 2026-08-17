@@ -122,6 +122,19 @@ export class UserController {
     return this.customerService.getLoyalty(id);
   }
 
+  @Get(':id/loyalty/history')
+  @Roles(UserRole.ADMIN)
+  customerLoyaltyHistory(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('pageNo') pageNo?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.customerService.getLoyaltyHistory(id, {
+      pageNo: pageNo ? Number(pageNo) : undefined,
+      pageSize: pageSize ? Number(pageSize) : undefined,
+    });
+  }
+
   @Put(':id/active')
   @Roles(UserRole.ADMIN)
   @ApiOkResponse({

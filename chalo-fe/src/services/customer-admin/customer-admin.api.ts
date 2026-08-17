@@ -5,6 +5,7 @@ import { PageParam, PageResult } from "../types";
 import {
   CustomerDto,
   CustomerLoyaltyDto,
+  CustomerLoyaltyHistoryPageDto,
   CustomerOrderDto,
   CustomerPageParams,
 } from "./customer-admin.types";
@@ -22,6 +23,13 @@ export const getCustomerOrders = (
 
 export const getCustomerLoyalty = (id: number): Promise<CustomerLoyaltyDto> =>
   request.get(API.USER.CUSTOMER_LOYALTY(id));
+
+export const getCustomerLoyaltyHistory = (
+  id: number,
+): Promise<CustomerLoyaltyHistoryPageDto> =>
+  request.get(API.USER.CUSTOMER_LOYALTY_HISTORY(id), {
+    params: { pageNo: 1, pageSize: 5 },
+  });
 
 export const setCustomerActive = (
   id: number,

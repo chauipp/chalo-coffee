@@ -24,7 +24,7 @@ export const useCurrentUser = (): AuthUser | null => {
 }
 
 export const useIsAuthenticated = (): boolean => {
-  return useAuthStore(s => s.isHydrated && !!s.accessToken)
+  return useAuthStore(s => s.isHydrated && !!s.user)
 }
 
 export const PermissionGuard = ({

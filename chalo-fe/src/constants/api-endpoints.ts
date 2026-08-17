@@ -15,6 +15,7 @@ export const API = {
     SCAN_TABLE: "/customer/table-session/scan",
     LEAVE_TABLE: "/customer/table-session/leave",
     LOYALTY: "/customer/loyalty",
+    LOYALTY_HISTORY: "/customer/loyalty/history",
     ORDERS: "/customer/orders",
   },
   USER: {
@@ -25,6 +26,7 @@ export const API = {
     DELETE: "/user/delete",
     CUSTOMER_ORDERS: (id: number) => `/user/${id}/orders`,
     CUSTOMER_LOYALTY: (id: number) => `/user/${id}/loyalty`,
+    CUSTOMER_LOYALTY_HISTORY: (id: number) => `/user/${id}/loyalty/history`,
     SET_ACTIVE: (id: number) => `/user/${id}/active`,
   },
   CATEGORY: {
@@ -71,7 +73,6 @@ export const API = {
     CALL_STAFF: "/order/call-staff",
     CHECKOUT_PREVIEW: "/order/checkout/preview",
     CHECKOUT_START: "/order/checkout/start",
-    CHECKOUT_COMPLETE: "/order/checkout/complete",
     STATS_REVENUE: "/order/stats/revenue",
     STATS_TOP_PRODUCTS: "/order/stats/top-products",
   },
@@ -86,6 +87,20 @@ export const API = {
     UPDATE: "/settings",
   },
   SHIFT: { CURRENT: "/shift/current", OPEN: "/shift/open", CLOSE: "/shift/current/close", REPORT: "/shift/report" },
+  PAYMENT: {
+    REFUNDS: (paymentTransactionId: string) => `/payment-transactions/${paymentTransactionId}/refunds`,
+    REFUNDS_BY_ORDER: (orderId: string) => `/payment-transactions/by-order/${orderId}/refunds`,
+  },
+  AUDIT: { LOGS: "/audit-logs" },
+  INVENTORY: {
+    INGREDIENTS: "/inventory/ingredients",
+    INGREDIENT: (id: string) => `/inventory/ingredients/${id}`,
+    LOW_STOCK: "/inventory/low-stock",
+    MOVEMENTS: (id: string) => `/inventory/ingredients/${id}/movements`,
+    RECEIVE: (id: string) => `/inventory/ingredients/${id}/receive`,
+    ADJUST: (id: string) => `/inventory/ingredients/${id}/adjust`,
+    RECIPE: (productId: string) => `/inventory/products/${productId}/recipe`,
+  },
   UPLOAD: {
     IMAGE: "/upload/image",
   },

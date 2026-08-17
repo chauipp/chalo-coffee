@@ -1,10 +1,11 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, DataSource, Repository } from 'typeorm';
+import { Between, DataSource, In, Repository } from 'typeorm';
 import { CashShift, CashShiftStatus } from './entities/cash-shift.entity';
 import { PaymentMethod, PaymentSource, PaymentTransaction } from '../payment/entities/payment-transaction.entity';
 import { PaymentAllocation } from '../payment/entities/payment-allocation.entity';
 import { Order } from '../order/entities/order.entity';
+import { RefundTransaction } from '../payment/entities/refund-transaction.entity';
 
 @Injectable()
 export class ShiftService {
@@ -12,6 +13,7 @@ export class ShiftService {
     @InjectRepository(CashShift) private readonly shiftRepo: Repository<CashShift>,
     @InjectRepository(PaymentTransaction) private readonly transactionRepo: Repository<PaymentTransaction>,
     @InjectRepository(PaymentAllocation) private readonly allocationRepo: Repository<PaymentAllocation>,
+    @InjectRepository(RefundTransaction) private readonly refundRepo: Repository<RefundTransaction>,
     @InjectRepository(Order) private readonly orderRepo: Repository<Order>,
     private readonly dataSource: DataSource,
   ) {}
@@ -40,7 +42,13 @@ export class ShiftService {
         .where('p.cashShiftId = :shiftId', { shiftId: shift.id })
         .andWhere('p.method = :method', { method: PaymentMethod.CASH })
         .getRawOne<{ total: string }>();
-      const expectedCash = shift.openingCash + Number(cash?.total ?? 0);
+      const cashRefunds = await manager.getRepository(RefundTransaction).createQueryBuilder('r')
+        .select('COALESCE(SUM(r.amount), 0)', 'total')
+        .innerJoin(PaymentTransaction, 'p', 'p.id = r."paymentTransactionId"')
+        .where('p."cashShiftId" = :shiftId', { shiftId: shift.id })
+        .andWhere('r.method = :method', { method: PaymentMethod.CASH })
+        .getRawOne<{ total: string }>();
+      const expectedCash = shift.openingCash + Number(cash?.total ?? 0) - Number(cashRefunds?.total ?? 0);
       const variance = countedCash - expectedCash;
       if (variance !== 0 && !note?.trim()) throw new BadRequestException('Cần ghi chú khi tiền thực đếm lệch');
       Object.assign(shift, { status: CashShiftStatus.CLOSED, closedByUserId: userId, closedAt: new Date(), countedCash, expectedCash, variance, note: note?.trim() || null });
@@ -56,14 +64,23 @@ export class ShiftService {
     const from = shift?.openedAt ?? (params.from ? new Date(params.from) : new Date(new Date().setHours(0, 0, 0, 0)));
     const to = shift?.closedAt ?? (params.to ? new Date(params.to) : new Date());
     const rows = await this.transactionRepo.find({ where: shift ? { cashShiftId: shift.id } : { paidAt: Between(from, to) }, order: { paidAt: 'DESC' } });
-    const summary = { cash: 0, bankTransfer: 0, customerConfirmation: 0, legacy: 0, paidOrders: 0, paidRevenue: 0 };
+    const refunds = rows.length
+      ? await this.refundRepo.find({ where: { paymentTransactionId: In(rows.map((row) => row.id)) } })
+      : [];
+    const refundsByPaymentId = new Map<string, number>();
+    for (const refund of refunds) refundsByPaymentId.set(refund.paymentTransactionId, (refundsByPaymentId.get(refund.paymentTransactionId) ?? 0) + refund.amount);
+    const summary = { cash: 0, bankTransfer: 0, customerConfirmation: 0, legacy: 0, paidOrders: 0, paidRevenue: 0, refunds: 0, netRevenue: 0 };
     for (const row of rows) {
       summary.paidRevenue += row.totalAmount;
-      if (row.method === PaymentMethod.CASH) summary.cash += row.totalAmount;
-      else if (row.method === PaymentMethod.BANK_TRANSFER && row.source === PaymentSource.STAFF) summary.bankTransfer += row.totalAmount;
-      else if (row.source === PaymentSource.CUSTOMER_CONFIRMATION) summary.customerConfirmation += row.totalAmount;
-      else summary.legacy += row.totalAmount;
+      const refundedAmount = refundsByPaymentId.get(row.id) ?? 0;
+      summary.refunds += refundedAmount;
+      const netAmount = row.totalAmount - refundedAmount;
+      if (row.method === PaymentMethod.CASH) summary.cash += netAmount;
+      else if (row.method === PaymentMethod.BANK_TRANSFER && row.source === PaymentSource.STAFF) summary.bankTransfer += netAmount;
+      else if (row.source === PaymentSource.CUSTOMER_CONFIRMATION) summary.customerConfirmation += netAmount;
+      else summary.legacy += netAmount;
     }
+    summary.netRevenue = summary.paidRevenue - summary.refunds;
     summary.paidOrders = rows.length
       ? await this.allocationRepo.count({
           where: rows.map((row) => ({ paymentTransactionId: row.id })),

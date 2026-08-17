@@ -26,7 +26,6 @@ import {
 import {
   CheckoutPreviewDto,
   CheckoutStartDto,
-  CheckoutCompleteDto,
   CheckoutCompleteStaffDto,
   CheckoutRequestBatchPaymentDto,
 } from './dto/checkout.dto';
@@ -374,6 +373,7 @@ export class OrderController {
           orderIds: ['uuid'],
           totalAmount: 210000,
           expiresAt: '2026-05-05T12:15:00.000Z',
+          payCode: 'CK7F3K2M',
           orders: [],
         },
       },
@@ -381,30 +381,6 @@ export class OrderController {
   })
   checkoutStart(@Body() dto: CheckoutStartDto) {
     return this.orderService.checkoutStart(dto);
-  }
-
-  @Post('checkout/complete')
-  @Public()
-  @HttpCode(200)
-  @ApiOkResponse({
-    description:
-      'Xác nhận đã thanh toán gộp (khách / callback sau cổng thanh toán). Cần đúng sessionId + tableToken + clientSecret.',
-    schema: {
-      example: {
-        code: 200,
-        message: 'success',
-        data: {
-          idempotent: false,
-          sessionId: 'uuid',
-          orderIds: ['uuid'],
-          totalAmount: 210000,
-          orders: [],
-        },
-      },
-    },
-  })
-  checkoutComplete(@Body() dto: CheckoutCompleteDto) {
-    return this.orderService.checkoutComplete(dto);
   }
 
   @Post('checkout/complete-staff')

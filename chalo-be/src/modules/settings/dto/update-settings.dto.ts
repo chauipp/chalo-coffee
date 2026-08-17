@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsInt,
   IsOptional,
+  IsString,
   Matches,
   Max,
   MaxLength,
@@ -39,4 +40,12 @@ export class UpdateSettingsDto {
   @IsOptional()
   @MaxLength(100)
   bankAccountName?: string;
+
+  @ApiPropertyOptional({
+    description: 'SePay: API key webhook. Chuỗi rỗng = xoá (tắt webhook tự xác nhận).',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  sepayWebhookKey?: string;
 }

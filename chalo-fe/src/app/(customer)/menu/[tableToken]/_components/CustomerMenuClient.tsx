@@ -42,7 +42,7 @@ export const CustomerMenuClient = ({
   const cooldownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scannedShortcutKey = useRef<string | null>(null);
 
-  const { isHydrated, accessToken, user } = useAuthStore();
+  const { isHydrated, user } = useAuthStore();
   const itemCount = useCartStore((s) => s.getItemCount());
   const addItem = useCartStore((s) => s.addItem);
   const setTable = useCartStore((s) => s.setTable);
@@ -57,7 +57,7 @@ export const CustomerMenuClient = ({
   useEffect(() => {
     if (
       !isHydrated ||
-      !accessToken ||
+      !user ||
       user?.role !== USER_ROLE.CUSTOMER ||
       !tableToken
     ) {
@@ -68,7 +68,7 @@ export const CustomerMenuClient = ({
     if (scannedShortcutKey.current === scanKey) return;
     scannedShortcutKey.current = scanKey;
     scanTableMutation.mutate({ tableToken });
-  }, [accessToken, isHydrated, scanTableMutation, tableToken, user]);
+  }, [isHydrated, scanTableMutation, tableToken, user]);
 
   useEffect(() => {
     return () => {
@@ -136,7 +136,7 @@ export const CustomerMenuClient = ({
     );
     if (
       isHydrated &&
-      accessToken &&
+      user &&
       user?.role === USER_ROLE.CUSTOMER &&
       tableToken
     ) {

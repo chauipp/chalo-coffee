@@ -10,6 +10,7 @@ import { useGetCategorySimpleList } from "@/services/lookup/lookup.queries";
 import { getProductPage, ProductDto, ProductPageParam } from "@/services/menu";
 import { useCreateOrder } from "@/services/order/order.queries";
 import { useGetTableList } from "@/services/table";
+import { useLowStockIngredients } from "@/services/inventory";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CartItem } from "./_components/CartItem";
@@ -72,6 +73,7 @@ export default function StaffPOSPage() {
 
   const { data: tables } = useGetTableList();
   const createOrderMutation = useCreateOrder();
+  const lowStockQuery = useLowStockIngredients();
 
   const products = productPage.data;
   const productGridResetKey = `${selectedCategoryId}:${debouncedSearch}`;
@@ -189,6 +191,11 @@ export default function StaffPOSPage() {
             </button>
           ))}
         </div>
+        {lowStockQuery.data?.length ? (
+          <p data-testid="pos-low-stock-alert" className="shrink-0 border-b border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
+            Kho đang có {lowStockQuery.data.length} nguyên liệu cần chú ý. Món thiếu nguyên liệu sẽ tự không còn bán được.
+          </p>
+        ) : null}
 
         {/* Product grid */}
         <div className="flex-1 min-h-0 overflow-hidden flex flex-col">

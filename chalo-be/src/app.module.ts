@@ -8,6 +8,8 @@ import { envValidationSchema } from './config/env.validation';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { CsrfOriginMiddleware } from './common/middleware/csrf-origin.middleware';
+import { RequestContextMiddleware } from './common/middleware/request-context.middleware';
 import { THROTTLE_LIMIT, THROTTLE_TTL_MS } from './common/constants';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -22,6 +24,9 @@ import { SseModule } from './modules/sse/sse.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { ShiftModule } from './modules/shift/shift.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
+import { AuditModule } from './modules/audit/audit.module';
 
 @Module({
   imports: [
@@ -40,6 +45,9 @@ import { ShiftModule } from './modules/shift/shift.module';
     UserModule,
     CustomerModule,
     ShiftModule,
+    PaymentModule,
+    InventoryModule,
+    AuditModule,
     CategoryModule,
     ProductModule,
     TableModule,
@@ -58,6 +66,6 @@ import { ShiftModule } from './modules/shift/shift.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+    consumer.apply(RequestContextMiddleware, RequestLoggerMiddleware, CsrfOriginMiddleware).forRoutes('*');
   }
 }

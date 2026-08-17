@@ -42,18 +42,27 @@ services:
       APP_URL: ${PUBLIC_URL}
       APP_FRONTEND_URL: ${PUBLIC_URL}
       CORS_ORIGIN: ${PUBLIC_URL}
+      METRICS_TOKEN: ${METRICS_TOKEN}
       GOOGLE_OAUTH_ENABLED: ${GOOGLE_OAUTH_ENABLED:-false}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-}
       FRONTEND_URL: ${PUBLIC_URL}
-      # Seed demo dùng tài khoản hardcode admin/admin, staff/staff (SEED_*_PASSWORD chưa được backend dùng)
+      # Bình thường luôn false. Nếu bật seed production, phải truyền hai password mạnh SEED_*_PASSWORD.
       SEED_ON_STARTUP: ${SEED_ON_STARTUP:-false}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}
+      SEED_STAFF_PASSWORD: ${SEED_STAFF_PASSWORD:-}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/api/health/live').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   frontend:
     build:
@@ -70,7 +79,14 @@ services:
       # Server components gọi backend qua mạng nội bộ docker.
       INTERNAL_API_BASE_URL: http://backend:8080/api
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   caddy:
     image: caddy:2-alpine
@@ -88,8 +104,15 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - frontend
-      - backend
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/api/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

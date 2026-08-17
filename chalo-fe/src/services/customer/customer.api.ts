@@ -2,6 +2,7 @@ import { API } from "@/constants";
 import { request } from "@/lib/api-client";
 import type {
   CustomerLoyalty,
+  CustomerLoyaltyHistoryPage,
   CustomerOrderPage,
   CustomerOrderParams,
   CustomerProfile,
@@ -24,6 +25,9 @@ export const leaveCustomerTable = (): Promise<null> =>
 
 export const getCustomerLoyalty = (): Promise<CustomerLoyalty> =>
   request.get(API.CUSTOMER.LOYALTY);
+
+export const getCustomerLoyaltyHistory = (): Promise<CustomerLoyaltyHistoryPage> =>
+  request.get(API.CUSTOMER.LOYALTY_HISTORY, { params: { pageNo: 1, pageSize: 10 } });
 
 export const getCustomerOrders = (
   params: CustomerOrderParams = {},

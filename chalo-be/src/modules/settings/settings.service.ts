@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AppSettings } from './entities/app-settings.entity';
 import { UpdateSettingsDto } from './dto/update-settings.dto';
 import { ESTIMATED_WAIT_BARISTAS } from '../../common/constants';
+import { AuditAction } from '../audit/entities/audit-log.entity';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class SettingsService {
@@ -13,6 +15,7 @@ export class SettingsService {
   constructor(
     @InjectRepository(AppSettings)
     private readonly settingsRepo: Repository<AppSettings>,
+    @Optional() private readonly auditService?: AuditService,
   ) {}
 
   /**
@@ -32,7 +35,7 @@ export class SettingsService {
     return settings;
   }
 
-  async update(dto: UpdateSettingsDto): Promise<AppSettings> {
+  async update(dto: UpdateSettingsDto, actorUserId?: number): Promise<AppSettings> {
     const settings = await this.get();
     if (dto.waitTimeEnabled !== undefined) settings.waitTimeEnabled = dto.waitTimeEnabled;
     if (dto.baristaCount !== undefined) settings.baristaCount = dto.baristaCount;
@@ -41,6 +44,19 @@ export class SettingsService {
     if (dto.bankAccountNo !== undefined) settings.bankAccountNo = dto.bankAccountNo || null;
     if (dto.bankAccountName !== undefined)
       settings.bankAccountName = dto.bankAccountName.trim() || null;
-    return this.settingsRepo.save(settings);
+    if (dto.sepayWebhookKey !== undefined)
+      settings.sepayWebhookKey = dto.sepayWebhookKey.trim() || null;
+    const saved = await this.settingsRepo.save(settings);
+    await this.auditService?.record({ actorUserId: actorUserId ?? null, action: AuditAction.SETTINGS_UPDATED, entityType: 'settings', entityId: String(saved.id), metadata: { changedFields: Object.keys(dto) } });
+    return saved;
+  }
+
+  /**
+   * DTO công khai cho controller: GET /settings là public nên tuyệt đối không
+   * trả raw sepayWebhookKey — chỉ trả cờ đã-cấu-hình để admin UI hiển thị.
+   */
+  toPublicDto(s: AppSettings) {
+    const { sepayWebhookKey, ...rest } = s;
+    return { ...rest, sepayWebhookKeySet: !!sepayWebhookKey };
   }
 }

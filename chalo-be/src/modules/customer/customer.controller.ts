@@ -51,6 +51,20 @@ export class CustomerController {
     return this.customerService.getLoyalty(req.user.id);
   }
 
+  @Get('loyalty/history')
+  @ApiQuery({ name: 'pageNo', required: false })
+  @ApiQuery({ name: 'pageSize', required: false, maximum: 50 })
+  loyaltyHistory(
+    @Request() req: CustomerRequest,
+    @Query('pageNo') pageNo?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.customerService.getLoyaltyHistory(req.user.id, {
+      pageNo: pageNo ? Number(pageNo) : undefined,
+      pageSize: pageSize ? Number(pageSize) : undefined,
+    });
+  }
+
   @Get('orders')
   @ApiQuery({ name: 'pageNo', required: false })
   @ApiQuery({ name: 'pageSize', required: false })

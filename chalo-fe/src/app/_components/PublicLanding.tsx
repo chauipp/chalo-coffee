@@ -97,11 +97,11 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
   const [activeCategoryId, setActiveCategoryId] = useState<string | "all">("all");
   const [showMobileDock, setShowMobileDock] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const { isHydrated, accessToken, user } = useAuthStore();
+  const { isHydrated, user } = useAuthStore();
   const cartItems = useCartStore((state) => state.items);
   const cartTableToken = useCartStore((state) => state.tableToken);
   const isCustomer =
-    isHydrated && !!accessToken && user?.role === USER_ROLE.CUSTOMER;
+    isHydrated && !!user && user.role === USER_ROLE.CUSTOMER;
   const customerShortcut = useCustomerShortcut({ enabled: isCustomer });
   const shortcut = isCustomer ? customerShortcut.data : null;
   const shortcutItemCount = useMemo(
@@ -138,7 +138,7 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
       );
       const destination = user ? ROLE_DEFAULT_ROUTES[user.role] : undefined;
 
-      if (!explicitlyRequestedLanding && standalone && isHydrated && accessToken && destination) {
+      if (!explicitlyRequestedLanding && standalone && isHydrated && user && destination) {
         window.location.replace(destination);
       }
     };
@@ -146,7 +146,7 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
     redirectRestoredStandalone();
     window.addEventListener("pageshow", redirectRestoredStandalone);
     return () => window.removeEventListener("pageshow", redirectRestoredStandalone);
-  }, [accessToken, isHydrated, user]);
+  }, [isHydrated, user]);
 
   function selectCategoryFromMood(keywords: readonly string[]) {
     setActiveCategoryId(findLandingCategoryByKeywords(menu, keywords));
@@ -181,7 +181,7 @@ export default function PublicLanding({ menu }: { menu: LandingCategory[] }) {
                 ) : null}
               </Link>
             ) : null}
-            {isHydrated && accessToken && user ? (
+            {isHydrated && user ? (
               <Link href={accountHref} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-brand-700 px-3 py-2 text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">
                 {user.avatar ? (
                   <img src={user.avatar} alt="" className="size-6 rounded-full object-cover" />

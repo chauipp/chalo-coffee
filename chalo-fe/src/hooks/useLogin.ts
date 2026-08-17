@@ -14,7 +14,7 @@ interface UseLoginReturn {
 
 export const useLogin = (): UseLoginReturn => {
   const searchParams = useSearchParams();
-  const { setTokens, setUser } = useAuthStore();
+  const { setUser } = useAuthStore();
 
   const redirectUrl = searchParams.get("redirect");
 
@@ -27,7 +27,6 @@ export const useLogin = (): UseLoginReturn => {
     try {
       const res = await userLogin(data);
       // try {
-      setTokens(res.accessToken, res.refreshToken);
       setUser(res.user);
       // } catch (error) {
       //     console.error('Lỗi lưu trữ: ', error)

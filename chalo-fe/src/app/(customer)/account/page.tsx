@@ -5,6 +5,7 @@ import { ROLE_DEFAULT_ROUTES, ROUTES, USER_ROLE } from "@/constants";
 import { useLogout } from "@/hooks/useLogout";
 import {
   useCustomerLoyalty,
+  useCustomerLoyaltyHistory,
   useCustomerOrders,
   useCustomerProfile,
   useCustomerShortcut,
@@ -25,6 +26,7 @@ import {
   RefreshIcon,
 } from "./_components/icons";
 import LoyaltyBalanceCard from "./_components/LoyaltyBalanceCard";
+import LoyaltyHistoryCard from "./_components/LoyaltyHistoryCard";
 import TableQrScanner from "./_components/TableQrScanner";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 
@@ -101,11 +103,13 @@ function OrderHistoryCard({ order }: { order: CustomerOrder }) {
 
 function CustomerAccountContent() {
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [loyaltyHistoryOpen, setLoyaltyHistoryOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const logout = useLogout();
   const profile = useCustomerProfile();
   const shortcut = useCustomerShortcut();
   const loyalty = useCustomerLoyalty();
+  const loyaltyHistory = useCustomerLoyaltyHistory({ enabled: loyaltyHistoryOpen });
   const orders = useCustomerOrders({ pageNo: 1, pageSize: 10 });
   const leaveTable = useLeaveTable();
 
@@ -190,6 +194,15 @@ function CustomerAccountContent() {
             isLoading={loyalty.isLoading}
             isError={loyalty.isError}
             onRetry={() => void loyalty.refetch()}
+          />
+
+          <LoyaltyHistoryCard
+            data={loyaltyHistory.data}
+            isOpen={loyaltyHistoryOpen}
+            isLoading={loyaltyHistory.isLoading}
+            isError={loyaltyHistory.isError}
+            onToggle={() => setLoyaltyHistoryOpen((isOpen) => !isOpen)}
+            onRetry={() => void loyaltyHistory.refetch()}
           />
 
           <button
@@ -283,11 +296,11 @@ function CustomerAccountContent() {
 }
 
 export default function CustomerAccountPage() {
-  const { isHydrated, accessToken, user } = useAuthStore();
+  const { isHydrated, user } = useAuthStore();
 
   useEffect(() => {
     if (!isHydrated) return;
-    if (!accessToken) {
+    if (!user) {
       window.location.replace(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.ACCOUNT)}`);
       return;
     }
@@ -296,11 +309,11 @@ export default function CustomerAccountPage() {
         ROLE_DEFAULT_ROUTES[user.role] ?? ROUTES.LOGIN,
       );
     }
-  }, [accessToken, isHydrated, user]);
+  }, [isHydrated, user]);
 
   if (
     !isHydrated ||
-    !accessToken ||
+    !user ||
     (user && user.role !== USER_ROLE.CUSTOMER)
   ) {
     return (

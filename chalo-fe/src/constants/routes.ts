@@ -19,6 +19,7 @@ export const ROUTES = {
     TABLES: "/staff/tables",
     PREP: "/staff/prep",
     SHIFT: "/staff/shift",
+    PRINT_STATION: "/staff/print-station",
   },
 
   //admin
@@ -34,6 +35,8 @@ export const ROUTES = {
     USERS: "/admin/users",
     SETTINGS: "/admin/settings",
     SHIFT: "/admin/shift",
+    INVENTORY: "/admin/inventory",
+    AUDIT: "/admin/audit",
   },
 } as const;
 

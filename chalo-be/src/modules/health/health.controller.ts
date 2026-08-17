@@ -18,7 +18,14 @@ export class HealthController {
     private readonly memory: MemoryHealthIndicator,
   ) {}
 
-  @Get()
+  @Get('live')
+  @Public()
+  @SkipThrottle()
+  live() {
+    return { status: 'ok' };
+  }
+
+  @Get(['', 'ready'])
   @Public()
   @SkipThrottle()
   @HealthCheck()
@@ -26,7 +33,7 @@ export class HealthController {
     description: 'Health check response',
     schema: { example: { code: 200, message: 'success', data: { status: 'ok', info: { database: { status: 'up' } } } } },
   })
-  check() {
+  ready() {
     return this.health.check([
       () => this.db.pingCheck('database', { timeout: 1500 }),
       () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024),

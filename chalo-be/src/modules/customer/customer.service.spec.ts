@@ -110,6 +110,7 @@ function buildService(initialSessions: CustomerTableSession[] = []) {
       where: jest.fn().mockReturnThis(),
       getRawOne: jest.fn().mockResolvedValue({ balance: '0' }),
     })),
+    findAndCount: jest.fn().mockResolvedValue([[], 0]),
   };
   const orderRepo = {
     findAndCount: jest.fn().mockResolvedValue([[], 0]),
@@ -127,6 +128,19 @@ function buildService(initialSessions: CustomerTableSession[] = []) {
 }
 
 describe('CustomerService table shortcut', () => {
+  it('returns only the requested customer loyalty ledger in newest-first pages', async () => {
+    const { service } = buildService();
+    const loyaltyRepo = (service as any).loyaltyRepo;
+    loyaltyRepo.findAndCount.mockResolvedValue([
+      [{ id: 'point-1', customerId: 7, orderId: 'order-1', points: 29, type: 'EARN', createdAt: new Date('2026-08-17T01:00:00.000Z'), order: { totalAmount: 29_000 } }],
+      1,
+    ]);
+
+    const result = await service.getLoyaltyHistory(7, { pageNo: 2, pageSize: 5 });
+
+    expect(loyaltyRepo.findAndCount).toHaveBeenCalledWith(expect.objectContaining({ where: { customerId: 7 }, skip: 5, take: 5 }));
+    expect(result).toMatchObject({ total: 1, pageNo: 2, list: [{ orderId: 'order-1', points: 29, orderTotalAmount: 29_000 }] });
+  });
   it('does not let one customer scanning a table close another customer shortcut', async () => {
     const now = new Date('2026-08-12T02:00:00.000Z');
     const sessionA = createSession(1);

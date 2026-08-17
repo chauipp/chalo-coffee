@@ -21,6 +21,11 @@ export const envValidationSchema = Joi.object({
   APP_URL: Joi.string().uri().default('http://localhost:8080'),
   APP_FRONTEND_URL: Joi.string().uri().default('http://localhost:3000'),
   CORS_ORIGIN: Joi.string().default('http://localhost:3000'),
+  METRICS_TOKEN: Joi.when('NODE_ENV', {
+    is: 'production',
+    then: Joi.string().min(24).required(),
+    otherwise: Joi.string().min(24).optional(),
+  }),
 
   GOOGLE_OAUTH_ENABLED: Joi.string().valid('true', 'false').default('false'),
   GOOGLE_CLIENT_ID: Joi.when('GOOGLE_OAUTH_ENABLED', {

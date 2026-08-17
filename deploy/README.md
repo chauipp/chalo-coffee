@@ -71,7 +71,7 @@ nano .env
   - Chạy thử bằng IP (HTTP): `PUBLIC_URL=http://<IP_VPS>` và `SITE_ADDRESS=:80`
   - Chính thức bằng tên miền (HTTPS): `PUBLIC_URL=https://<tên_miền>`, `SITE_ADDRESS=<tên_miền>`, `ACME_EMAIL=email_của_bạn`
 - `DB_PASSWORD` — mật khẩu DB mạnh:  `openssl rand -base64 24`
-- `JWT_SECRET` và `JWT_REFRESH_SECRET` — hai giá trị **khác nhau**:  `openssl rand -hex 32`
+- `JWT_SECRET`, `JWT_REFRESH_SECRET` và `METRICS_TOKEN` — ba giá trị **khác nhau**:  `openssl rand -hex 32`
   (backend sẽ **từ chối khởi động** nếu để giá trị mặc định.)
 - Nếu bật đăng nhập Google, làm theo [google-oauth.md](google-oauth.md) để khai
   báo đúng origin, callback và secret.
@@ -105,7 +105,7 @@ Trên **production** (`NODE_ENV=production`), seed đã được thiết kế **
    ```bash
    docker compose -f docker-compose.prod.yml up -d --build backend
    ```
-2. Đăng nhập `https://chalocoffee.com` bằng `admin / admin` (và `staff / staff`) → **đổi mật khẩu ngay**.
+2. Đăng nhập bằng password đã đặt trong `SEED_ADMIN_PASSWORD` / `SEED_STAFF_PASSWORD`.
 3. (Khuyến nghị) Đặt lại `SEED_ON_STARTUP=false` trong `.env` rồi chạy lại — cho gọn, tránh chạy seed thừa mỗi lần khởi động:
    ```bash
    docker compose -f docker-compose.prod.yml up -d backend
@@ -133,17 +133,7 @@ docker compose -f docker-compose.prod.yml up -d --build
 > Lưu ý: nếu đổi `DOMAIN`, phải build lại **frontend** vì `NEXT_PUBLIC_API_BASE_URL`
 > được nhúng cứng vào bundle lúc build.
 
-**Sao lưu database:**
-```bash
-docker compose -f docker-compose.prod.yml exec postgres \
-  pg_dump -U "$DB_USERNAME" "$DB_DATABASE" > backup_$(date +%F).sql
-```
-
-**Khôi phục:**
-```bash
-cat backup_YYYY-MM-DD.sql | docker compose -f docker-compose.prod.yml exec -T postgres \
-  psql -U "$DB_USERNAME" -d "$DB_DATABASE"
-```
+**Sao lưu và khôi phục database:** xem [BACKUP_AND_RECOVERY.md](BACKUP_AND_RECOVERY.md). Script mới bắt checksum và câu xác nhận trước khi khôi phục.
 
 **Dữ liệu bền** nằm trong Docker volumes (không mất khi rebuild container):
 - `postgres_data` — database
@@ -159,3 +149,10 @@ cat backup_YYYY-MM-DD.sql | docker compose -f docker-compose.prod.yml exec -T po
 | Backend restart liên tục | JWT secret còn giá trị mặc định, hoặc sai thông tin DB trong `.env` |
 | Frontend gọi API ra `localhost` | Đổi domain nhưng chưa build lại frontend (`--build`) |
 | Build frontend bị OOM (killed) | VPS thiếu RAM — nâng lên 2GB, hoặc thêm swap |
+
+---
+
+## 9. Thanh toán tự động và máy in hoá đơn
+
+Xem [PRINTING.md](./PRINTING.md) để cấu hình SePay, kiểm tra đối soát và dựng
+trạm in Chrome kiosk trên PC quầy.

@@ -12,6 +12,8 @@ import { useGetActivePagers } from "@/services/pager";
 import { useState } from "react";
 import { NEXT_STATUS, NEXT_STATUS_LABEL } from "@/components/orders/operations/orders.config";
 import { OrderPaymentPanel } from "@/app/(staff)/staff/orders/_components/OrderPaymentPanel";
+import { RefundPanel } from "@/components/orders/RefundPanel";
+import { useAuthStore } from "@/stores/auth.store";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: "Khách đặt",
@@ -28,6 +30,8 @@ export default function OrderDetailModalContent({ orderId, closeHref, onClose, o
   onClose: () => void;
   onSuccess: () => void;
 }) {
+
+  const isAdmin = useAuthStore((state) => state.user?.role === "ADMIN");
 
   const { data: order, isLoading } = useGetOrderById(orderId);
   const updateStatusMutation = useUpdateOrderStatus();
@@ -181,6 +185,7 @@ export default function OrderDetailModalContent({ orderId, closeHref, onClose, o
                       : `Cộng ${Math.floor(order.totalAmount / 1_000)} điểm khi thanh toán`}
                   </p>
                 )}
+                {isAdmin && order.paidStatus ? <RefundPanel orderId={order.id} /> : null}
               </div>
             )}
           </div>

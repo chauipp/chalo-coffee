@@ -1,9 +1,7 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
 const responses = {
   ADMIN: {
-    accessToken: "admin-access-token",
-    refreshToken: "admin-refresh-token",
     user: {
       id: "admin-1",
       username: "admin",
@@ -14,8 +12,6 @@ const responses = {
     },
   },
   MODERATOR: {
-    accessToken: "staff-access-token",
-    refreshToken: "staff-refresh-token",
     user: {
       id: "staff-1",
       username: "staff",
@@ -33,18 +29,40 @@ const ok = (data: unknown) => ({
   body: JSON.stringify({ code: 200, message: "success", data }),
 });
 
-async function loginAs(page: Page, role: keyof typeof responses) {
-  await page.route("**/api/auth/login", (route) =>
-    route.fulfill(ok(responses[role])),
-  );
-
-  await page.goto("/login");
-  await page.locator("#username").fill(role.toLowerCase());
-  await page.locator("#password").fill("password");
-  await page.getByRole("button", { name: "Đăng nhập" }).click();
+async function restoreBrowserSession(
+  context: BrowserContext,
+  role: keyof typeof responses,
+  baseURL: string,
+) {
+  await context.addCookies([
+    {
+      name: "chalo_access",
+      value: "http-only-session-token",
+      url: baseURL,
+      httpOnly: true,
+      sameSite: "Strict",
+      expires: Math.floor(Date.now() / 1_000) + 15 * 60,
+    },
+    {
+      name: "chalo_refresh",
+      value: "http-only-refresh-token",
+      url: `${baseURL}/api/auth`,
+      httpOnly: true,
+      sameSite: "Strict",
+      expires: Math.floor(Date.now() / 1_000) + 7 * 24 * 60 * 60,
+    },
+    {
+      name: "chalo_role",
+      value: role,
+      url: baseURL,
+      sameSite: "Strict",
+      expires: Math.floor(Date.now() / 1_000) + 7 * 24 * 60 * 60,
+    },
+  ]);
 }
 
-async function mockPosData(page: Page) {
+async function mockAuthenticatedApi(page: Page, role: keyof typeof responses) {
+  await page.route("**/api/auth/me", (route) => route.fulfill(ok(responses[role].user)));
   await page.route("**/api/menu/category/simple-list", (route) =>
     route.fulfill(ok([])),
   );
@@ -52,20 +70,25 @@ async function mockPosData(page: Page) {
     route.fulfill(ok({ list: [], total: 0 })),
   );
   await page.route("**/api/table/list", (route) => route.fulfill(ok([])));
+  await page.route("**/api/inventory/low-stock", (route) => route.fulfill(ok([])));
 }
 
-test("admin login writes cookies that survive a browser restart", async ({
+test("admin mở PWA lại vẫn vào dashboard từ HttpOnly cookie, không cần refresh", async ({
   browser,
   context,
   page,
+  baseURL,
 }) => {
-  await loginAs(page, "ADMIN");
-  await page.waitForURL("**/admin/dashboard");
+  await restoreBrowserSession(context, "ADMIN", baseURL!);
+  await mockAuthenticatedApi(page, "ADMIN");
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/admin\/dashboard$/);
 
   const cookies = await context.cookies();
-  const accessCookie = cookies.find((cookie) => cookie.name === "ACCESS_TOKEN");
-  const roleCookie = cookies.find((cookie) => cookie.name === "USER_ROLE");
+  const accessCookie = cookies.find((cookie) => cookie.name === "chalo_access");
+  const roleCookie = cookies.find((cookie) => cookie.name === "chalo_role");
 
+  expect(accessCookie?.httpOnly).toBe(true);
   expect(accessCookie?.expires).toBeGreaterThan(Date.now() / 1_000);
   expect(roleCookie?.expires).toBeGreaterThan(Date.now() / 1_000);
 
@@ -73,13 +96,19 @@ test("admin login writes cookies that survive a browser restart", async ({
     storageState: await context.storageState(),
   });
   const restartedPage = await restartedContext.newPage();
+  await mockAuthenticatedApi(restartedPage, "ADMIN");
   await restartedPage.goto("/");
   await expect(restartedPage).toHaveURL(/\/admin\/dashboard$/);
+  const persistedAuth = await restartedPage.evaluate(() => localStorage.getItem("chalo-auth"));
+  expect(persistedAuth).not.toContain("accessToken");
+  expect(persistedAuth).not.toContain("refreshToken");
   await restartedContext.close();
 });
 
-test("staff login opens POS by default on mobile without browser errors", async ({
+test("staff mở PWA lại đi thẳng tới POS trên mobile", async ({
+  context,
   page,
+  baseURL,
 }) => {
   const consoleErrors: string[] = [];
   const failedResponses: string[] = [];
@@ -92,9 +121,10 @@ test("staff login opens POS by default on mobile without browser errors", async 
     }
   });
   await page.setViewportSize({ width: 375, height: 667 });
-  await mockPosData(page);
-  await loginAs(page, "MODERATOR");
-  await page.waitForURL("**/staff/pos");
+  await restoreBrowserSession(context, "MODERATOR", baseURL!);
+  await mockAuthenticatedApi(page, "MODERATOR");
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/staff\/pos$/);
   await expect(page.getByRole("textbox", { name: "Tìm món" })).toBeVisible();
   await expect(
     page.locator("body").evaluate((body) => body.scrollWidth <= body.clientWidth),

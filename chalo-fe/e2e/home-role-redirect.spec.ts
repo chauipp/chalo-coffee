@@ -13,8 +13,8 @@ for (const [role, destination] of roleDestinations) {
     baseURL,
   }) => {
     await context.addCookies([
-      { name: "ACCESS_TOKEN", value: `${role}-token`, url: baseURL },
-      { name: "USER_ROLE", value: role, url: baseURL },
+      { name: "chalo_access", value: `${role}-token`, url: baseURL, httpOnly: true },
+      { name: "chalo_role", value: role, url: baseURL },
     ]);
 
     await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -36,8 +36,8 @@ test("người đã đăng nhập vẫn có thể chủ động mở landing", a
   baseURL,
 }) => {
   await context.addCookies([
-    { name: "ACCESS_TOKEN", value: "admin-token", url: baseURL },
-    { name: "USER_ROLE", value: "ADMIN", url: baseURL },
+    { name: "chalo_access", value: "admin-token", url: baseURL, httpOnly: true },
+    { name: "chalo_role", value: "ADMIN", url: baseURL },
   ]);
 
   await page.goto("/?landing=1", { waitUntil: "domcontentloaded" });
@@ -53,8 +53,8 @@ test("PWA start URL chuyển role và không được cache", async ({
   baseURL,
 }) => {
   await context.addCookies([
-    { name: "ACCESS_TOKEN", value: "admin-token", url: baseURL },
-    { name: "USER_ROLE", value: "ADMIN", url: baseURL },
+    { name: "chalo_access", value: "admin-token", url: baseURL, httpOnly: true },
+    { name: "chalo_role", value: "ADMIN", url: baseURL },
   ]);
 
   const startResponses: import("@playwright/test").Response[] = [];
@@ -76,8 +76,8 @@ test("role không ánh xạ có token mở / vẫn thấy landing", async ({
   baseURL,
 }) => {
   await context.addCookies([
-    { name: "ACCESS_TOKEN", value: "unknown-role-token", url: baseURL },
-    { name: "USER_ROLE", value: "UNKNOWN_ROLE", url: baseURL },
+    { name: "chalo_access", value: "unknown-role-token", url: baseURL, httpOnly: true },
+    { name: "chalo_role", value: "UNKNOWN_ROLE", url: baseURL },
   ]);
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -93,8 +93,8 @@ test("role không ánh xạ có token mở /menu vẫn giữ menu", async ({
   baseURL,
 }) => {
   await context.addCookies([
-    { name: "ACCESS_TOKEN", value: "unknown-role-token", url: baseURL },
-    { name: "USER_ROLE", value: "UNKNOWN_ROLE", url: baseURL },
+    { name: "chalo_access", value: "unknown-role-token", url: baseURL, httpOnly: true },
+    { name: "chalo_role", value: "UNKNOWN_ROLE", url: baseURL },
   ]);
 
   await page.goto("/menu", { waitUntil: "domcontentloaded" });

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
@@ -13,6 +13,7 @@ import { SettingsModule } from '../settings/settings.module';
 import { CustomerModule } from '../customer/customer.module';
 import { OptionalJwtAuthGuard } from './optional-jwt-auth.guard';
 import { PaymentModule } from '../payment/payment.module';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
   imports: [
@@ -20,9 +21,11 @@ import { PaymentModule } from '../payment/payment.module';
     SseModule,
     SettingsModule,
     CustomerModule,
-    PaymentModule,
+    forwardRef(() => PaymentModule),
+    InventoryModule,
   ],
   providers: [OrderService, OptionalJwtAuthGuard],
   controllers: [OrderController],
+  exports: [OrderService],
 })
 export class OrderModule {}

@@ -26,7 +26,7 @@
 
 ---
 
-### Task 1: BE — Schema + Settings (payCode, sepay_transactions, sepayWebhookKey) [ ]
+- [x] Task 1: BE — Schema + Settings (payCode, sepay_transactions, sepayWebhookKey)
 
 **Files:**
 - Modify: `chalo-be/src/modules/order/entities/checkout-session.entity.ts`
@@ -239,7 +239,7 @@ git commit -m "feat(be): schema SePay — payCode phiên thanh toán, bảng sep
 
 ---
 
-### Task 2: BE — Sinh payCode trong checkoutStart [ ]
+- [x] Task 2: BE — Sinh payCode trong checkoutStart
 
 **Files:**
 - Create: `chalo-be/src/modules/order/pay-code.ts`
@@ -433,7 +433,7 @@ git commit -m "feat(be): checkout session sinh payCode duy nhất làm nội dun
 
 ---
 
-### Task 3: BE — SSE `source` + `payment_review_needed`; đóng đường tự khai [ ]
+- [x] Task 3: BE — SSE `source` + `payment_review_needed`; đóng đường tự khai
 
 **Files:**
 - Modify: `chalo-be/src/modules/sse/sse.service.ts:5-13`
@@ -500,7 +500,7 @@ git commit -m "feat(be): payment_completed mang source, thêm payment_review_nee
 
 ---
 
-### Task 4: BE — PaymentModule: webhook SePay [ ]
+- [x] Task 4: BE — PaymentModule: webhook SePay
 
 **Files:**
 - Create: `chalo-be/src/modules/payment/dto/sepay-webhook.dto.ts`
@@ -1010,7 +1010,7 @@ git commit -m "feat(be): webhook SePay — khớp payCode + số tiền, tự co
 
 ---
 
-### Task 5: FE — Checkout cả bàn: chờ webhook thay vì tự khai [ ]
+- [x] Task 5: FE — Checkout cả bàn: chờ webhook thay vì tự khai
 
 **Files:**
 - Modify: `chalo-fe/src/services/order/order.types.ts` (CheckoutSessionResult + xóa types complete)
@@ -1315,7 +1315,7 @@ git commit -m "feat(fe): checkout cả bàn chờ webhook xác nhận — bỏ n
 
 ---
 
-### Task 6: FE — Thanh toán 1 đơn qua session + dọn code tự khai [ ]
+- [x] Task 6: FE — Thanh toán 1 đơn qua session + dọn code tự khai
 
 **Files:**
 - Create: `chalo-fe/src/app/(customer)/menu/[tableToken]/orders/[orderId]/_components/PaySessionModal.tsx`
@@ -1494,7 +1494,7 @@ git commit -m "feat(fe): khách thanh toán 1 đơn qua checkout session + payCo
 
 ---
 
-### Task 7: FE — Trạm in `/staff/print-station` [ ]
+- [x] Task 7: FE — Trạm in `/staff/print-station`
 
 **Files:**
 - Create: `chalo-fe/src/app/(staff)/staff/print-station/page.tsx`
@@ -1916,7 +1916,7 @@ git commit -m "feat(fe): trạm in hoá đơn /staff/print-station — tự in q
 
 ---
 
-### Task 8: FE — Admin settings SePay key + toast đối soát cho staff [ ]
+- [x] Task 8: FE — Admin settings SePay key + toast đối soát cho staff
 
 **Files:**
 - Modify: `chalo-fe/src/services/settings/settings.types.ts`
@@ -2048,7 +2048,7 @@ git commit -m "feat(fe): cài đặt SePay key (write-only) + toast CK tự đ�
 
 ---
 
-### Task 9: E2E — cập nhật spec cũ + spec trạm in mới [ ]
+- [ ] Task 9: E2E — cập nhật spec cũ + spec trạm in mới
 
 **Files:**
 - Modify: `chalo-fe/e2e/customer-checkout.spec.ts:66-95`
@@ -2236,7 +2236,7 @@ git commit -m "test(e2e): checkout chờ webhook + xác nhận staff; spec trạ
 
 ---
 
-### Task 10: Docs — deploy/PRINTING.md + trỏ từ README [ ]
+- [x] Task 10: Docs — deploy/PRINTING.md + trỏ từ README
 
 **Files:**
 - Create: `deploy/PRINTING.md`

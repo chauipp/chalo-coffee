@@ -7,6 +7,7 @@ export const QUERY_KEYS = {
     PROFILE: ["customer", "profile"] as const,
     SHORTCUT: ["customer", "shortcut"] as const,
     LOYALTY: ["customer", "loyalty"] as const,
+    LOYALTY_HISTORY: (params: object) => ["customer", "loyalty", "history", params] as const,
     ORDERS: (params: object) => ["customer", "orders", params] as const,
   },
   USERS: {
@@ -18,6 +19,7 @@ export const QUERY_KEYS = {
     ORDERS: (id: number, params: object) =>
       ["customers", id, "orders", params] as const,
     LOYALTY: (id: number) => ["customers", id, "loyalty"] as const,
+    LOYALTY_HISTORY: (id: number, params: object) => ["customers", id, "loyalty", "history", params] as const,
   },
   SETTINGS: {
     ALL: ["settings"] as const,
@@ -64,4 +66,15 @@ export const QUERY_KEYS = {
       ["orders", "stats", "top-products", params] as const,
   },
   SHIFT: { CURRENT: ["shift", "current"] as const, REPORT: (params: object = {}) => ["shift", "report", params] as const },
+  PAYMENT: {
+    REFUNDS_BY_ORDER: (orderId: string) => ["payment", "order", orderId, "refunds"] as const,
+  },
+  AUDIT: { LOGS: (params: object) => ["audit", "logs", params] as const },
+  INVENTORY: {
+    ALL: ["inventory"] as const,
+    INGREDIENTS: ["inventory", "ingredients"] as const,
+    LOW_STOCK: ["inventory", "low-stock"] as const,
+    MOVEMENTS: (id: string) => ["inventory", "ingredients", id, "movements"] as const,
+    RECIPE: (productId: string) => ["inventory", "products", productId, "recipe"] as const,
+  },
 } as const;

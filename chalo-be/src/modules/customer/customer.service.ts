@@ -157,6 +157,34 @@ export class CustomerService {
     return { balance: Number(result?.balance ?? 0) };
   }
 
+  async getLoyaltyHistory(
+    customerId: number,
+    query: { pageNo?: number; pageSize?: number } = {},
+  ) {
+    const pageNo = Math.max(1, query.pageNo ?? 1);
+    const pageSize = Math.min(50, Math.max(1, query.pageSize ?? 10));
+    const [transactions, total] = await this.loyaltyRepo.findAndCount({
+      where: { customerId },
+      relations: { order: true },
+      order: { createdAt: 'DESC' },
+      skip: (pageNo - 1) * pageSize,
+      take: pageSize,
+    });
+    return {
+      list: transactions.map((transaction) => ({
+        id: transaction.id,
+        orderId: transaction.orderId,
+        points: transaction.points,
+        type: transaction.type,
+        createdAt: transaction.createdAt,
+        orderTotalAmount: transaction.order?.totalAmount ?? null,
+      })),
+      total,
+      pageNo,
+      pageSize,
+    };
+  }
+
   async getOrders(
     customerId: number,
     query: { pageNo?: number; pageSize?: number } = {},

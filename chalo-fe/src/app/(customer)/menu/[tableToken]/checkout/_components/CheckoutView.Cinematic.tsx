@@ -2,8 +2,7 @@
 // src/app/(customer)/menu/[tableToken]/checkout/_components/CheckoutView.Cinematic.tsx
 import { SpinnerIcon } from "@/components/shared/icons/SpinnerIcon";
 import { CheckoutSessionResult, OrderDto } from "@/services/order/order.types";
-import { QRCodeSVG } from "qrcode.react";
-import { useCheckoutSession } from "./useCheckoutSession";
+import { PaymentQRBox } from "@/components/shared/PaymentQRBox";
 
 interface CheckoutViewProps {
   step: "review" | "session" | "done" | "loading" | "empty";
@@ -12,8 +11,6 @@ interface CheckoutViewProps {
   session: CheckoutSessionResult | null;
   onStart: () => void;
   isStarting: boolean;
-  onConfirmPaid: () => void;
-  isConfirming: boolean;
   onRestartSession: () => void;
   tableName?: string | null;
   onGoToOrders: () => void;
@@ -22,16 +19,11 @@ interface CheckoutViewProps {
 
 const SessionPanel = ({
   session,
-  tableName,
-  onConfirmPaid,
-  isConfirming,
   onRestartSession,
 }: Pick<
   CheckoutViewProps,
-  "session" | "tableName" | "onConfirmPaid" | "isConfirming" | "onRestartSession"
+  "session" | "onRestartSession"
 >) => {
-  const { settings, expired, mm, ss, qrPayload } = useCheckoutSession(session, tableName);
-
   return (
     <div className="space-y-4 rounded-2xl bg-white p-5 dark:bg-stone-900">
       <div className="text-center">
@@ -41,58 +33,13 @@ const SessionPanel = ({
         <p className="mt-2 font-semibold text-3xl text-brand-800 dark:text-brand-300">
           {session!.totalAmount.toLocaleString("vi-VN")}đ
         </p>
-        <p
-          className={`mt-2 text-sm ${
-            expired ? "text-red-600 dark:text-red-400" : "text-brand-700 dark:text-brand-200/60"
-          }`}
-        >
-          {expired ? "Phiên đã hết hạn" : `Hết hạn sau ${mm}:${ss.toString().padStart(2, "0")}`}
-        </p>
       </div>
-
-      {qrPayload && !expired && (
-        <div className="flex flex-col items-center gap-3">
-          <div data-testid="vietqr-code" className="rounded-2xl border-2 border-brand-100 bg-white p-3">
-            <QRCodeSVG value={qrPayload} size={208} marginSize={1} />
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-brand-900 dark:text-brand-100">
-              {settings!.bankAccountName}
-            </p>
-            <p className="font-mono text-xs text-brand-600 dark:text-brand-300/60">
-              {settings!.bankAccountNo}
-            </p>
-            <p className="mt-1 text-xs text-brand-500 dark:text-brand-300/50">
-              Mở app ngân hàng bất kỳ, quét mã — số tiền và nội dung đã điền
-              sẵn. Chuyển xong hãy bấm nút bên dưới.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {expired ? (
-        <button
-          onClick={onRestartSession}
-          className="w-full rounded-full bg-brand-700 py-3.5 text-sm font-semibold text-brand-50 dark:bg-brand-300 dark:text-stone-900"
-        >
-          Tạo lại phiên thanh toán
-        </button>
-      ) : (
-        <button
-          onClick={onConfirmPaid}
-          disabled={isConfirming}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-base font-semibold text-white disabled:opacity-60 dark:bg-green-700"
-        >
-          {isConfirming ? (
-            <>
-              <SpinnerIcon className="size-5 animate-spin" />
-              Đang xử lý...
-            </>
-          ) : (
-            "✓ Tôi đã thanh toán"
-          )}
-        </button>
-      )}
+      <PaymentQRBox
+        totalAmount={session!.totalAmount}
+        expiresAt={session!.expiresAt}
+        payCode={session!.payCode}
+        onRestart={onRestartSession}
+      />
     </div>
   );
 };

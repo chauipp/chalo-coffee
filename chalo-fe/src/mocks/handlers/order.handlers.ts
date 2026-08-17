@@ -319,7 +319,7 @@ export const orderHandlers = [
     return ok(orders[idx]);
   }),
 
-  // POST /api/order/pay (Customer hoặc Staff)
+  // POST /api/order/pay (chỉ Staff/Admin trong backend thật)
   http.post("*/api/order/pay", async ({ request }) => {
     await delay(400);
     const body = (await request.json()) as { orderId: string };
@@ -336,7 +336,7 @@ export const orderHandlers = [
     return ok({ message: "Đã gọi nhân viên" });
   }),
 
-  // POST /api/order/pay-all (Customer)
+  // POST /api/order/pay-all (chỉ Staff/Admin trong backend thật)
   http.post("*/api/order/pay-all", async ({ request }) => {
     await delay(500);
     const body = (await request.json()) as { tableToken: string };

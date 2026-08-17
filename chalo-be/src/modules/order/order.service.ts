@@ -2,6 +2,9 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
+  Optional,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, EntityManager, In } from 'typeorm';
@@ -48,13 +51,14 @@ import { PaymentTransaction } from '../payment/entities/payment-transaction.enti
 import { PaymentAllocation } from '../payment/entities/payment-allocation.entity';
 import { LoyaltyPointTransaction } from '../customer/entities/loyalty-point-transaction.entity';
 import { PaymentService } from '../payment/payment.service';
-import { Optional } from '@nestjs/common';
+import { InventoryService } from '../inventory/inventory.service';
 
 export type OptionalOrderCustomer = {
   id: number;
   username: string;
   role: UserRole;
 };
+import { generatePayCode } from './pay-code';
 
 const STATUS_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
   // Khách đặt -> kéo thẳng vào pha, bỏ bước xác nhận
@@ -126,7 +130,11 @@ export class OrderService {
     private readonly sseService: SseService,
     private readonly settingsService: SettingsService,
     private readonly customerService: CustomerService,
-    @Optional() private readonly paymentService?: PaymentService,
+    @Optional()
+    @Inject(forwardRef(() => PaymentService))
+    private readonly paymentService?: PaymentService,
+    @Optional()
+    private readonly inventoryService?: InventoryService,
   ) {}
 
   private buildDto(order: Order, includeStaffContext = false) {
@@ -501,6 +509,11 @@ export class OrderService {
         items: orderItems as OrderItem[],
       });
       const saved = await manager.save(Order, order);
+      await this.inventoryService?.reserveForOrder(
+        manager,
+        orderItems.map(({ productId, quantity }) => ({ productId: productId!, quantity: quantity! })),
+        saved.id,
+      );
 
       if (dto.pagerNumber != null) {
         const activePager = await manager
@@ -760,6 +773,9 @@ export class OrderService {
         where: { id: lockedOrder.id },
         relations: ['items', 'table'],
       });
+      if (dto.status === OrderStatus.CANCELLED) {
+        await this.inventoryService?.releaseForCancelledOrder(manager, lockedOrder.id);
+      }
       const result = this.buildDto(full!);
 
       this.sseService.emit({
@@ -999,7 +1015,7 @@ export class OrderService {
       if (this.paymentService) {
         await this.paymentService.record(manager, [order], {
           method: dto.method ?? PaymentMethod.BANK_TRANSFER,
-          source: cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION,
+          source: PaymentSource.STAFF,
           collectedByUserId: cashierId ?? null,
           receivedAmount: dto.receivedAmount,
         });
@@ -1018,6 +1034,7 @@ export class OrderService {
           tableId: order.tableId,
           tableToken: order.tableToken,
           totalAmount: order.totalAmount,
+          source: 'staff',
         },
       });
 
@@ -1053,7 +1070,7 @@ export class OrderService {
         if (this.paymentService) {
           await this.paymentService.record(manager, orders, {
             method: dto.method ?? PaymentMethod.BANK_TRANSFER,
-            source: cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION,
+            source: PaymentSource.STAFF,
             collectedByUserId: cashierId ?? null,
             receivedAmount: dto.receivedAmount,
           });
@@ -1074,6 +1091,7 @@ export class OrderService {
             tableId: table.id,
             tableToken: dto.tableToken,
             totalAmount: orders.reduce((s, o) => s + o.totalAmount, 0),
+            source: 'staff',
           },
         });
       }
@@ -1116,6 +1134,20 @@ export class OrderService {
       const clientSecret = randomBytes(24).toString('hex');
       const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
 
+      // Nội dung CK duy nhất — webhook SePay khớp phiên theo mã này
+      const sessRepo = manager.getRepository(CheckoutSession);
+      let payCode = generatePayCode();
+      let attempts = 0;
+      while (await sessRepo.findOne({ where: { payCode } })) {
+        attempts += 1;
+        if (attempts >= 5) {
+          throw new BadRequestException(
+            'Không sinh được mã thanh toán, vui lòng thử lại',
+          );
+        }
+        payCode = generatePayCode();
+      }
+
       const session = manager.create(CheckoutSession, {
         tableToken: dto.tableToken,
         tableId: table.id,
@@ -1124,6 +1156,7 @@ export class OrderService {
         status: CheckoutSessionStatus.PENDING,
         clientSecret,
         expiresAt,
+        payCode,
       });
       const saved = await manager.save(CheckoutSession, session);
 
@@ -1135,6 +1168,7 @@ export class OrderService {
         orderIds: saved.orderIds,
         totalAmount: saved.totalAmount,
         expiresAt: saved.expiresAt,
+        payCode: saved.payCode,
         orders: orders.map((o) => this.buildDto(o)),
       };
     });
@@ -1143,7 +1177,12 @@ export class OrderService {
   private async finalizeCheckoutSessionLocked(
     manager: EntityManager,
     session: CheckoutSession,
-    paymentInput?: { method?: PaymentMethod; receivedAmount?: number; cashierId?: number },
+    paymentInput?: {
+      method?: PaymentMethod;
+      receivedAmount?: number;
+      cashierId?: number;
+      source?: PaymentSource;
+    },
   ) {
     const orderRepo = manager.getRepository(Order);
     const orders: Order[] = [];
@@ -1177,7 +1216,7 @@ export class OrderService {
     if (this.paymentService) {
       await this.paymentService.record(manager, orders, {
         method: paymentInput?.method ?? PaymentMethod.BANK_TRANSFER,
-        source: paymentInput?.cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION,
+        source: paymentInput?.source ?? (paymentInput?.cashierId ? PaymentSource.STAFF : PaymentSource.CUSTOMER_CONFIRMATION),
         collectedByUserId: paymentInput?.cashierId ?? null,
         receivedAmount: paymentInput?.receivedAmount,
       });
@@ -1276,7 +1315,11 @@ export class OrderService {
     });
   }
 
-  async checkoutCompleteStaff(dto: CheckoutCompleteStaffDto, cashierId?: number) {
+  async checkoutCompleteStaff(
+    dto: CheckoutCompleteStaffDto,
+    cashierId?: number,
+    source: PaymentSource = PaymentSource.STAFF,
+  ) {
     return this.dataSource.transaction(async (manager) => {
       const sessRepo = manager.getRepository(CheckoutSession);
       const session = await sessRepo.findOne({
@@ -1306,7 +1349,12 @@ export class OrderService {
         throw new BadRequestException('Phiên thanh toán đã hết hạn');
       }
 
-      const result = await this.finalizeCheckoutSessionLocked(manager, session, { method: dto.method, receivedAmount: dto.receivedAmount, cashierId });
+      const result = await this.finalizeCheckoutSessionLocked(manager, session, {
+        method: dto.method,
+        receivedAmount: dto.receivedAmount,
+        cashierId,
+        source,
+      });
 
       this.sseService.emit({
         type: 'payment_completed',
@@ -1316,6 +1364,7 @@ export class OrderService {
           tableToken: session.tableToken,
           orderIds: result.orderIds,
           totalAmount: result.totalAmount,
+          source: source === PaymentSource.SEPAY ? 'sepay' : 'staff',
         },
       });
 
