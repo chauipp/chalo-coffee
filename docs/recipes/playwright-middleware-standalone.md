@@ -42,6 +42,10 @@ theo token...) bằng Playwright, và phải dựng server qua `next build` + st
    dù trang vẫn có thể hydrate. Chạy `node chalo-fe/.next/standalone/server.js` từ root làm HTML vẫn trả
    `200`, nhưng `/_next/static/*` trả `404`; browser chỉ hiện trang trắng hoặc
    hydration không hoàn tất.
+5. Trước khi gom route vào cùng một nhánh redirect, đọc các early return phía trên nó.
+   `pathname.startsWith(ROUTES.MENU)` hiện là bypass có chủ ý cho **cả** `/menu` và
+   `/menu/...`; đừng để exact `/menu` rơi xuống nhánh `PUBLIC_ROUTES`. Với mỗi bypass,
+   thêm một test có cookie role lạ để xác nhận URL vẫn không bị redirect.
 
 ## Cái bẫy
 
@@ -54,6 +58,11 @@ Next 16 bỏ qua" (vì đúng là nó deprecated thật) thay vì đi kiểm ti�
 Tương tự, cài cookie role trước khi mở `/login` sẽ khiến middleware redirect ngay sang trang
 role mặc định. Trang trung gian đó có thể khởi động query ngoài ý muốn, làm test lifecycle đếm
 sai request. Hãy thiết lập origin khi chưa có cookie, rồi mới cài cookie và local auth state.
+
+`PUBLIC_ROUTES` không tự nói lên thứ tự chạy thực tế. Một route có thể vừa nằm trong danh sách
+đó vừa bị một early return bắt trước; đưa route đó vào nhánh chung có thể làm test redirect ở
+route khác xanh nhưng âm thầm đổi hành vi deep link. So sánh request exact route với base branch,
+không chỉ kiểm sub-route hoặc route mới đang sửa.
 
 ## Kiểm thế nào là đúng
 
