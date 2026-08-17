@@ -64,4 +64,11 @@ export const QUERY_KEYS = {
       ["orders", "stats", "top-products", params] as const,
   },
   SHIFT: { CURRENT: ["shift", "current"] as const, REPORT: (params: object = {}) => ["shift", "report", params] as const },
+  INVENTORY: {
+    ALL: ["inventory"] as const,
+    INGREDIENTS: ["inventory", "ingredients"] as const,
+    LOW_STOCK: ["inventory", "low-stock"] as const,
+    MOVEMENTS: (id: string) => ["inventory", "ingredients", id, "movements"] as const,
+    RECIPE: (productId: string) => ["inventory", "products", productId, "recipe"] as const,
+  },
 } as const;

@@ -35,6 +35,7 @@ export const ROUTES = {
     USERS: "/admin/users",
     SETTINGS: "/admin/settings",
     SHIFT: "/admin/shift",
+    INVENTORY: "/admin/inventory",
   },
 } as const;
 

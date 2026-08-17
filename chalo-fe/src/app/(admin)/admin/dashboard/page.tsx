@@ -9,6 +9,8 @@ import { DashboardControls, DashboardFilter } from "./_components/DashboardContr
 import { RevenueChart } from "./_components/RevenueChart";
 import { TopProductsChart } from "./_components/TopProductsChart";
 import { AdminMobilePageHeader } from "../../_components/AdminMobilePageHeader";
+import { useLowStockIngredients } from "@/services/inventory";
+import Link from "next/link";
 
 export default function AdminDashboardPage() {
   const [filter, setFilter] = useState<DashboardFilter>({ period: Period.DAY });
@@ -19,6 +21,7 @@ export default function AdminDashboardPage() {
   const revenue = revenueQuery.data;
   const topProducts = topProductsQuery.data ?? [];
   const bestSeller = topProducts[0];
+  const lowStockQuery = useLowStockIngredients();
 
   return (
     <div className="space-y-5 p-4 sm:p-6">
@@ -27,6 +30,16 @@ export default function AdminDashboardPage() {
         description="Doanh thu & sản phẩm bán chạy"
         action={<DashboardControls value={filter} onChange={setFilter} />}
       />
+
+      {lowStockQuery.data?.length ? (
+        <Link
+          href="/admin/inventory"
+          className="flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 transition hover:bg-amber-100 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-100 dark:hover:bg-amber-950/50"
+        >
+          <span><strong>{lowStockQuery.data.length} nguyên liệu</strong> đang cần nhập hoặc đã hết — một số món có thể tự ngừng bán.</span>
+          <span className="shrink-0 font-semibold">Xem tồn kho →</span>
+        </Link>
+      ) : null}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard

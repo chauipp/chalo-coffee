@@ -85,6 +85,15 @@ export const API = {
     UPDATE: "/settings",
   },
   SHIFT: { CURRENT: "/shift/current", OPEN: "/shift/open", CLOSE: "/shift/current/close", REPORT: "/shift/report" },
+  INVENTORY: {
+    INGREDIENTS: "/inventory/ingredients",
+    INGREDIENT: (id: string) => `/inventory/ingredients/${id}`,
+    LOW_STOCK: "/inventory/low-stock",
+    MOVEMENTS: (id: string) => `/inventory/ingredients/${id}/movements`,
+    RECEIVE: (id: string) => `/inventory/ingredients/${id}/receive`,
+    ADJUST: (id: string) => `/inventory/ingredients/${id}/adjust`,
+    RECIPE: (productId: string) => `/inventory/products/${productId}/recipe`,
+  },
   UPLOAD: {
     IMAGE: "/upload/image",
   },

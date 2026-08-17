@@ -16,6 +16,7 @@ import { type Resolver, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useProductDraft } from "@/hooks/useProductDraft";
 import { ProductModifierFields } from "@/components/menu/ProductModifierFields";
+import { ProductRecipeEditor } from "./ProductRecipeEditor";
 
 interface ProductFormProps {
   defaultValue?: ProductDto;
@@ -158,6 +159,8 @@ export const ProductForm = ({
       </section>
 
       <ProductModifierFields control={control} register={register} setValue={setValue} />
+
+      {defaultValue?.id ? <ProductRecipeEditor productId={defaultValue.id} /> : null}
 
       <section
         data-testid="product-edit-section-operations"
