@@ -26,7 +26,7 @@ Jest và Playwright.
 
 ---
 
-- [ ] Task 1: Domain inventory, migration và API quản trị
+- [x] Task 1: Domain inventory, migration và API quản trị
 
 **Files:**
 - Create: `chalo-be/src/modules/inventory/{inventory.module.ts,inventory.service.ts,inventory.controller.ts}`
