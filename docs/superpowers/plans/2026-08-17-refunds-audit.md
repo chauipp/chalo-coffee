@@ -17,46 +17,46 @@
 
 ---
 
-- [ ] Task 1: Refund domain, API và audit append-only
+- [x] Task 1: Refund domain, API và audit append-only
 
 **Files:**
 - Create: `chalo-be/src/modules/payment/entities/refund-transaction.entity.ts`, `src/modules/audit/*`, migration.
 - Modify: `payment.module.ts`, `payment.service.ts`, app module và payment controller.
 - Test: `payment.service.spec.ts`, `audit.service.spec.ts`.
 
-- [ ] Viết Jest RED cho partial/multiple refund, vượt số còn lại và audit immutable.
-- [ ] Thêm entity/migration/refund DTO; tạo transaction lock và endpoints Admin.
-- [ ] Ghi audit khi refund thành công, inventory recipe/adjust và cài đặt payment thay đổi.
-- [ ] Chạy backend tests/build và commit `feat(be): thêm hoàn tiền và audit vận hành`.
+- [x] Viết Jest RED cho partial/multiple refund, vượt số còn lại và audit immutable.
+- [x] Thêm entity/migration/refund DTO; tạo transaction lock và endpoints Admin.
+- [x] Ghi audit khi refund thành công, inventory recipe/adjust và cài đặt payment thay đổi.
+- [x] Chạy backend tests/build và commit `feat(be): thêm hoàn tiền và audit vận hành`.
 
-- [ ] Task 2: Báo cáo ca và dữ liệu frontend
+- [x] Task 2: Báo cáo ca và dữ liệu frontend
 
 **Files:**
 - Modify: `chalo-be/src/modules/shift/shift.service.ts`, `shift.module.ts`.
 - Modify: `chalo-fe/src/services/{order,shift}/`, constants query/API.
 - Test: `shift.service.spec.ts`.
 
-- [ ] Viết test RED cho expected cash, gross/refunds/net của ca.
-- [ ] Tổng hợp refunds theo payment/ca và trả DTO net không đổi payment gốc.
-- [ ] Thêm service/query types frontend và test/build.
-- [ ] Commit `feat: phản ánh hoàn tiền trong báo cáo ca`.
+- [x] Viết test RED cho expected cash, gross/refunds/net của ca.
+- [x] Tổng hợp refunds theo payment/ca và trả DTO net không đổi payment gốc.
+- [x] Thêm service/query types frontend và test/build.
+- [x] Commit `feat: phản ánh hoàn tiền trong báo cáo ca`.
 
-- [ ] Task 3: UI admin hoàn tiền, lịch sử và kiểm UI
+- [x] Task 3: UI admin hoàn tiền, lịch sử và kiểm UI
 
 **Files:**
 - Create: admin refund/audit components and Playwright spec.
 - Modify: admin order detail/history and shift workspace.
 
-- [ ] Viết test utility/form RED cho VND/refundable validation.
-- [ ] Thêm admin-only dialog confirm, history refund/audit và net report; staff không thấy action.
-- [ ] Chạy Playwright mock desktop + 375×667, unit/build, console/network assertions.
-- [ ] Commit `feat(fe): hoàn tiền và nhật ký vận hành`.
+- [x] Viết test utility/form RED cho VND/refundable validation.
+- [x] Thêm admin-only dialog confirm, history refund/audit và net report; staff không thấy action.
+- [x] Chạy Playwright mock desktop + 375×667, unit/build, console/network assertions.
+- [x] Commit `feat(fe): hoàn tiền và nhật ký vận hành`.
 
-- [ ] Task 4: Tổng kết
+- [x] Task 4: Tổng kết
 
-- [ ] Rà diff/check, full suites và migration deploy note.
-- [ ] Viết summary `docs/superpowers/summaries/2026-08-17-refunds-audit-summary.md`, tick task.
-- [ ] Commit `docs: tổng kết hoàn tiền và audit`.
+- [x] Rà diff/check, full suites và migration deploy note.
+- [x] Viết summary `docs/superpowers/summaries/2026-08-17-refunds-audit-summary.md`, tick task.
+- [x] Commit `docs: tổng kết hoàn tiền và audit`.
 
 ## Kết quả
 
