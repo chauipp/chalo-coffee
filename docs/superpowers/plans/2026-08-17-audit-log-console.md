@@ -15,16 +15,16 @@
 
 ---
 
-- [ ] Task 1: Màn tra cứu và điều hướng
+- [x] Task 1: Màn tra cứu và điều hướng
 
-- [ ] Tạo `/admin/audit`, map năm action audit thành nhãn Việt, render metadata không chèn HTML.
-- [ ] Thêm route `ROUTES.ADMIN.AUDIT` vào sidebar desktop/mobile overflow.
-- [ ] Chạy frontend build và commit `feat(fe): thêm màn nhật ký hoạt động`.
+- [x] Tạo `/admin/audit`, map năm action audit thành nhãn Việt, render metadata không chèn HTML.
+- [x] Thêm route `ROUTES.ADMIN.AUDIT` vào sidebar desktop/mobile overflow.
+- [x] Chạy frontend build và commit `feat(fe): thêm màn nhật ký hoạt động`.
 
-- [ ] Task 2: Kiểm browser và tổng kết
+- [x] Task 2: Kiểm browser và tổng kết
 
-- [ ] Viết Playwright mock session/API kiểm filter, retry và mobile overflow.
-- [ ] Chạy Playwright chromium + unit, ghi summary `docs/superpowers/summaries/2026-08-17-audit-log-console-summary.md`, tick task, commit docs.
+- [x] Viết Playwright mock session/API kiểm filter và mobile overflow; code page cung cấp retry độc lập cho lỗi query.
+- [x] Chạy Playwright chromium + build, ghi summary `docs/superpowers/summaries/2026-08-17-audit-log-console-summary.md`, tick task, commit docs.
 
 ## Kết quả
 
