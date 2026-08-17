@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get(TOKEN_KEYS.ACCESS)?.value
   const role = request.cookies.get(TOKEN_KEYS.ROLE)?.value
 
-  if (pathname.startsWith(ROUTES.MENU)) {
+  if (pathname.startsWith(ROUTES.MENU) && pathname !== ROUTES.MENU) {
     return NextResponse.next()
   }
 
@@ -23,11 +23,20 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const isPublicRoute = pathname === "/" || PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
-
-  if (isPublicRoute) {
+  if (pathname === "/") {
     const dest = token && role ? ROLE_DEFAULT_ROUTES[role] : undefined
     if (dest) {
+      return NextResponse.redirect(new URL(dest, request.url))
+    }
+    return NextResponse.next()
+  }
+
+  if (PUBLIC_ROUTES.some(r => pathname.startsWith(r))) {
+    if (token && role) {
+      const dest = ROLE_DEFAULT_ROUTES[role] ?? ROUTES.LOGIN
+      if (dest === pathname) {
+        return NextResponse.next()
+      }
       return NextResponse.redirect(new URL(dest, request.url))
     }
     return NextResponse.next()

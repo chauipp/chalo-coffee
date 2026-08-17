@@ -46,3 +46,17 @@ test("role không ánh xạ có token mở / vẫn thấy landing", async ({
     page.getByRole("heading", { level: 1, name: /Một ly ngon/i }),
   ).toBeVisible();
 });
+
+test("role không ánh xạ có token mở /menu vẫn bị chuyển về login", async ({
+  context,
+  page,
+  baseURL,
+}) => {
+  await context.addCookies([
+    { name: "ACCESS_TOKEN", value: "unknown-role-token", url: baseURL },
+    { name: "USER_ROLE", value: "UNKNOWN_ROLE", url: baseURL },
+  ]);
+
+  await page.goto("/menu", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/login$/);
+});
