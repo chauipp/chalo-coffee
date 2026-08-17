@@ -16,21 +16,21 @@
 
 ---
 
-- [ ] Task 1: API ledger points ownership-scoped
+- [x] Task 1: API ledger points ownership-scoped
 
-- [ ] Viết test RED cho thứ tự, pagination và chỉ customer đúng owner nhận entry.
-- [ ] Implement `CustomerService.getLoyaltyHistory`, DTO/controller customer/admin.
-- [ ] Chạy backend test/build, commit `feat(be): thêm lịch sử tích điểm khách hàng`.
+- [x] Viết test RED cho thứ tự, pagination và chỉ customer đúng owner nhận entry.
+- [x] Implement `CustomerService.getLoyaltyHistory`, DTO/controller customer/admin.
+- [x] Chạy backend test/build, commit `feat(be): thêm lịch sử tích điểm khách hàng`.
 
-- [ ] Task 2: Account/admin UI và kiểm browser
+- [x] Task 2: Account/admin UI và kiểm browser
 
-- [ ] Viết test utility/client RED cho định dạng entry/empty state.
-- [ ] Thêm query/card lịch sử vào account và customer detail admin.
-- [ ] Chạy unit/build/Playwright desktop + mobile, console/network assertions; commit `feat(fe): hiển thị lịch sử tích điểm`.
+- [x] Viết test utility/client RED cho định dạng entry/empty state.
+- [x] Thêm query/card lịch sử vào account và customer detail admin.
+- [x] Chạy unit/build/Playwright desktop + mobile, console/network assertions; commit `feat(fe): hiển thị lịch sử tích điểm`.
 
-- [ ] Task 3: Tổng kết
+- [x] Task 3: Tổng kết
 
-- [ ] Rà full suite/diff, summary `docs/superpowers/summaries/2026-08-17-loyalty-history-summary.md`, tick task, commit docs.
+- [x] Rà full suite/diff, summary `docs/superpowers/summaries/2026-08-17-loyalty-history-summary.md`, tick task, commit docs.
 
 ## Kết quả
 
