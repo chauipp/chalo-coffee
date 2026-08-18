@@ -57,3 +57,7 @@ frontend. CI dừng trước build/deploy nếu audit báo high hoặc critical.
 3. Login/register/refresh bị giới hạn thử theo policy đã cấu hình.
 4. Production seed không thể chạy an toàn khi thiếu secret bắt buộc.
 5. Không có high/critical production advisory tại thời điểm merge.
+
+## Plan thực thi
+
+[Kế hoạch triển khai](../plans/2026-08-18-security-operations-foundation.md)
