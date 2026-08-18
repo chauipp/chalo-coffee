@@ -20,7 +20,7 @@
 
 ---
 
-## - [ ] Task 1: CORS allow-list và request-log redaction
+## - [x] Task 1: CORS allow-list và request-log redaction
 
 **Files:**
 - Create: `chalo-be/src/config/cors.ts`, `chalo-be/src/config/cors.spec.ts`
