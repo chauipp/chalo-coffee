@@ -16,6 +16,7 @@ import {
   GoogleOAuthStartQueryDto,
 } from './dto/google-oauth.dto';
 import { GoogleOAuthService } from './google-oauth.service';
+import { setAuthCookies } from './auth-cookie';
 
 @ApiTags('Auth')
 @Controller('auth/google')
@@ -53,7 +54,12 @@ export class GoogleOAuthController {
   @ApiOkResponse({
     description: 'Exchange one-time OAuth code for login tokens',
   })
-  exchange(@Body() dto: GoogleOAuthExchangeDto) {
-    return this.googleOAuthService.exchange(dto.code);
+  async exchange(
+    @Body() dto: GoogleOAuthExchangeDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const session = await this.googleOAuthService.exchange(dto.code);
+    setAuthCookies(response, session, session.user.role, process.env.NODE_ENV === 'production');
+    return { user: session.user };
   }
 }

@@ -72,8 +72,7 @@ function GoogleCallbackContent() {
 
     exchangeGoogleCode(code)
       .then((response) => {
-        const { setTokens, setUser } = useAuthStore.getState();
-        setTokens(response.accessToken, response.refreshToken);
+        const { setUser } = useAuthStore.getState();
         setUser(response.user);
         router.replace(resolveGoogleDestination(returnTo, response.user.role));
       })

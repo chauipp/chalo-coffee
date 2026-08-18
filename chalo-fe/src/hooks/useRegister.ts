@@ -15,7 +15,7 @@ interface UseRegisterReturn {
 
 export const useRegister = (): UseRegisterReturn => {
   const router = useRouter();
-  const { setTokens, setUser } = useAuthStore();
+  const { setUser } = useAuthStore();
 
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(RegisterSchema),
@@ -34,7 +34,6 @@ export const useRegister = (): UseRegisterReturn => {
         username: data.username,
         password: data.password,
       });
-      setTokens(res.accessToken, res.refreshToken);
       setUser(res.user);
       router.push(getSafeRedirectUrl(null, res.user.role));
     } catch (error) {

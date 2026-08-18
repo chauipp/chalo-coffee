@@ -5,7 +5,6 @@ import { useSSE } from "@/hooks/useSSE";
 import { OrderOperationsBoard } from "@/components/orders/operations/OrderOperationsBoard";
 import { useGetActiveOrder, useUpdateOrderStatus } from "@/services/order/order.queries";
 import { OrderStatus } from "@/services/order/order.types";
-import { useAuthStore } from "@/stores/auth.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -17,14 +16,12 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/
 
 function AdminOrdersOperations({ enabled }: { enabled: boolean }) {
   const qc = useQueryClient();
-  const token = useAuthStore((s) => s.accessToken);
   const { data: orders, isLoading, refetch } = useGetActiveOrder({ enabled });
   const mutation = useUpdateOrderStatus();
   const [isLive, setIsLive] = useState(false);
   useSSE({
     url: `${API_BASE}${API.SSE.ORDER_EVENTS}`,
-    token,
-    enabled: enabled && !!token,
+    enabled,
     onConnectionChange: setIsLive,
     onEvent: (type) => {
       if (["new_order", "payment_completed", "order_status_changed", "order_prep_progress"].includes(type)) {
