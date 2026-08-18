@@ -58,7 +58,7 @@
   git commit -m 'fix(auth): chặn CSRF và giới hạn thử endpoint công khai'
   ```
 
-## - [ ] Task 3: Guard seed production, dependency audit và CI gate
+## - [x] Task 3: Guard seed production, dependency audit và CI gate
 
 **Files:**
 - Modify: `chalo-be/src/seed/seed.service.ts`, `chalo-be/src/seed/seed.service.spec.ts`, `chalo-be/.env.example`

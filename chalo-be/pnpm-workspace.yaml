@@ -4,3 +4,6 @@ allowBuilds:
   '@scarf/scarf': false
   bcrypt: false
   unrs-resolver: false
+overrides:
+  brace-expansion@2.1.0: 2.1.4
+  js-yaml@5.2.1: 5.2.2

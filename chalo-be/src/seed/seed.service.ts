@@ -136,6 +136,7 @@ export class SeedService implements OnModuleInit {
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (isProduction) {
+      this.assertProductionSeedPasswords();
       await this.seedEssentials();
       return;
     }
@@ -183,8 +184,11 @@ export class SeedService implements OnModuleInit {
   }
 
   private async seedUsers() {
-    const adminHash = await bcrypt.hash('admin', BCRYPT_SALT_ROUNDS);
-    const staffHash = await bcrypt.hash('staff', BCRYPT_SALT_ROUNDS);
+    const isProduction = process.env.NODE_ENV === 'production';
+    const adminPassword = isProduction ? process.env.SEED_ADMIN_PASSWORD! : 'admin';
+    const staffPassword = isProduction ? process.env.SEED_STAFF_PASSWORD! : 'staff';
+    const adminHash = await bcrypt.hash(adminPassword, BCRYPT_SALT_ROUNDS);
+    const staffHash = await bcrypt.hash(staffPassword, BCRYPT_SALT_ROUNDS);
 
     await this.userRepo.save([
       this.userRepo.create({
@@ -203,7 +207,27 @@ export class SeedService implements OnModuleInit {
       }),
     ]);
 
-    this.logger.log('Seeded accounts: admin/admin and staff/staff');
+    this.logger.log(
+      isProduction
+        ? 'Seeded production accounts from configured passwords'
+        : 'Seeded development accounts: admin/admin and staff/staff',
+    );
+  }
+
+  private assertProductionSeedPasswords() {
+    const values = [process.env.SEED_ADMIN_PASSWORD, process.env.SEED_STAFF_PASSWORD];
+    const isUnsafe = values.some(
+      (value) =>
+        !value ||
+        value.length < 16 ||
+        /^(admin|staff|password|your-.*password.*)$/i.test(value),
+    );
+
+    if (isUnsafe) {
+      throw new Error(
+        'SEED_ADMIN_PASSWORD và SEED_STAFF_PASSWORD phải có ít nhất 16 ký tự và không dùng giá trị mặc định',
+      );
+    }
   }
 
   private async seedCategoriesFromMenu(): Promise<Category[]> {
