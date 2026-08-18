@@ -84,7 +84,7 @@
   git commit -m 'chore: thêm cổng audit dependency production'
   ```
 
-## - [ ] Task 4: Browser regression, review và tài liệu bàn giao
+## - [x] Task 4: Browser regression, review và tài liệu bàn giao
 
 **Files:**
 - Modify: `docs/superpowers/specs/2026-08-18-security-operations-foundation-design.md`
