@@ -8,6 +8,7 @@ import { envValidationSchema } from './config/env.validation';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { CsrfOriginMiddleware } from './common/middleware/csrf-origin.middleware';
 import { THROTTLE_LIMIT, THROTTLE_TTL_MS } from './common/constants';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -58,6 +59,6 @@ import { ShiftModule } from './modules/shift/shift.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+    consumer.apply(RequestLoggerMiddleware, CsrfOriginMiddleware).forRoutes('*');
   }
 }

@@ -39,7 +39,7 @@
   git commit -m 'fix(be): giới hạn CORS và che URL nhạy cảm trong log'
   ```
 
-## - [ ] Task 2: CSRF origin guard và throttle endpoint auth
+## - [x] Task 2: CSRF origin guard và throttle endpoint auth
 
 **Files:**
 - Create: `chalo-be/src/common/middleware/csrf-origin.middleware.ts`, `chalo-be/src/common/middleware/csrf-origin.middleware.spec.ts`

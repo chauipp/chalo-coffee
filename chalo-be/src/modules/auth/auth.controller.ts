@@ -14,6 +14,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Public } from '../../common/decorators/public.decorator';
+import { Throttle } from '@nestjs/throttler';
 import type { Request as ExpressRequest, Response } from 'express';
 import { AUTH_COOKIES, clearAuthCookies, readRequestCookie, setAuthCookies } from './auth-cookie';
 
@@ -24,6 +25,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 15 * 60 * 1000 } })
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Login success',
@@ -37,6 +39,7 @@ export class AuthController {
 
   @Post('register')
   @Public()
+  @Throttle({ default: { limit: 3, ttl: 60 * 60 * 1000 } })
   @ApiOkResponse({
     description: 'Register success',
     schema: {
@@ -57,6 +60,7 @@ export class AuthController {
 
   @Post('refresh-token')
   @Public()
+  @Throttle({ default: { limit: 20, ttl: 15 * 60 * 1000 } })
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Refresh token success',
